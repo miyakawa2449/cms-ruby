@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>コメント管理 - CMS管理画面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+        .sidebar-gradient {
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<!-- Layout Wrapper -->
+<div class="flex min-h-screen">
+    
+    <!-- Sidebar -->
+    <div class="sidebar-gradient w-64 flex flex-col">
+        <!-- Logo -->
+        <div class="p-6 border-b border-slate-600">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">M</span>
+                </div>
+                <div>
+                    <div class="text-white font-semibold">Miyakawa Codes</div>
+                    <div class="text-slate-300 text-xs">CMS管理画面</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 p-4 space-y-2">
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                </svg>
+                <span>ダッシュボード</span>
+            </a>
+            
+            <div class="text-slate-400 text-xs font-semibold uppercase tracking-wider px-3 py-2">コンテンツ</div>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <span>ブログ記事</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                </svg>
+                <span>カテゴリ・タグ</span>
+            </a>
+
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 bg-slate-700 text-white rounded-md">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                <span>コメント管理</span>
+                <span class="ml-auto bg-red-600 text-xs px-2 py-1 rounded-full">5</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span>メディアライブラリ</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+                <span>ポートフォリオ</span>
+            </a>
+
+            <div class="text-slate-400 text-xs font-semibold uppercase tracking-wider px-3 py-2 mt-6">システム</div>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <span>アクセス解析</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+                <span>ユーザー管理</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+                </svg>
+                <span>設定</span>
+            </a>
+        </nav>
+
+        <!-- User Menu -->
+        <div class="p-4 border-t border-slate-600">
+            <div class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 rounded-md cursor-pointer">
+                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                    <span class="text-white font-semibold text-sm">宮</span>
+                </div>
+                <div class="flex-1">
+                    <div class="text-sm font-medium text-white">宮川 剛</div>
+                    <div class="text-xs text-slate-400">管理者</div>
+                </div>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        
+        <!-- Top Header -->
+        <header class="bg-white border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">コメント管理</h1>
+                    <p class="text-gray-600">読者からのコメントを管理・承認します</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-600 hover:text-gray-900 flex items-center space-x-1">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                        </svg>
+                        <span>一括処理</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Filters and Stats -->
+        <div class="bg-white border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Filter Tabs -->
+                <div class="flex space-x-6">
+                    <button class="pb-2 border-b-2 border-blue-600 text-blue-600 font-medium">
+                        すべて <span class="ml-1 text-sm">(142)</span>
+                    </button>
+                    <button class="pb-2 text-gray-600 hover:text-gray-900">
+                        承認待ち <span class="ml-1 text-sm bg-red-100 text-red-800 px-2 py-0.5 rounded-full">5</span>
+                    </button>
+                    <button class="pb-2 text-gray-600 hover:text-gray-900">
+                        承認済み <span class="ml-1 text-sm">(126)</span>
+                    </button>
+                    <button class="pb-2 text-gray-600 hover:text-gray-900">
+                        スパム <span class="ml-1 text-sm">(7)</span>
+                    </button>
+                    <button class="pb-2 text-gray-600 hover:text-gray-900">
+                        ゴミ箱 <span class="ml-1 text-sm">(4)</span>
+                    </button>
+                </div>
+                
+                <!-- Search -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" placeholder="コメント検索..." 
+                               class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comments List -->
+        <main class="flex-1 p-6">
+            <div class="bg-white rounded-lg border border-gray-200">
+                <!-- Table Header -->
+                <div class="px-6 py-3 border-b border-gray-200 bg-gray-50">
+                    <div class="flex items-center">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                        <span class="ml-8 text-xs font-medium text-gray-500 uppercase">コメント</span>
+                        <span class="ml-auto text-xs font-medium text-gray-500 uppercase">記事</span>
+                        <span class="ml-24 text-xs font-medium text-gray-500 uppercase">日時</span>
+                        <span class="ml-24 text-xs font-medium text-gray-500 uppercase">アクション</span>
+                    </div>
+                </div>
+
+                <!-- Comment Items -->
+                <div class="divide-y divide-gray-200">
+                    
+                    <!-- Pending Comment 1 -->
+                    <div class="px-6 py-4 hover:bg-gray-50">
+                        <div class="flex items-start">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mt-1">
+                            <div class="ml-4 flex-1">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-1">
+                                            <span class="font-medium text-gray-900">田中太郎</span>
+                                            <span class="text-gray-500 text-sm">(tanaka@example.com)</span>
+                                            <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">承認待ち</span>
+                                        </div>
+                                        <p class="text-gray-700 text-sm mb-2">
+                                            素晴らしい記事でした！ChatGPT APIの実装部分がとても参考になりました。特にエラーハンドリングの部分が実践的で助かります。
+                                        </p>
+                                        <div class="flex items-center space-x-4 text-sm">
+                                            <span class="text-gray-500">記事: ChatGPT APIとRailsで作る自動記事要約システム</span>
+                                            <span class="text-gray-500">2024/11/26 14:30</span>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4 flex items-center space-x-2">
+                                        <button class="text-green-600 hover:text-green-800">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-800">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a1 1 0 011 1v9a1 1 0 01-1 1H3m0-11l9-9m0 0h7a1 1 0 011 1v7"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Comment 2 (Potential Spam) -->
+                    <div class="px-6 py-4 hover:bg-gray-50 bg-red-50">
+                        <div class="flex items-start">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mt-1">
+                            <div class="ml-4 flex-1">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-1">
+                                            <span class="font-medium text-gray-900">John Smith</span>
+                                            <span class="text-gray-500 text-sm">(spammer@suspicious.com)</span>
+                                            <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">承認待ち</span>
+                                            <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">スパム疑い</span>
+                                        </div>
+                                        <p class="text-gray-700 text-sm mb-2">
+                                            Great article! Check out my website for more info: https://spam-site.com/buy-now
+                                        </p>
+                                        <div class="flex items-center space-x-4 text-sm">
+                                            <span class="text-gray-500">記事: Rails 8.0の新機能解説</span>
+                                            <span class="text-gray-500">2024/11/26 13:15</span>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4 flex items-center space-x-2">
+                                        <button class="text-green-600 hover:text-green-800">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-800">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="text-orange-600 hover:text-orange-800">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Approved Comment with Reply -->
+                    <div class="px-6 py-4 hover:bg-gray-50">
+                        <div class="flex items-start">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mt-1">
+                            <div class="ml-4 flex-1">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-1">
+                                            <span class="font-medium text-gray-900">佐藤花子</span>
+                                            <span class="text-gray-500 text-sm">(sato@company.co.jp)</span>
+                                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">承認済み</span>
+                                        </div>
+                                        <p class="text-gray-700 text-sm mb-2">
+                                            要件定義の記事、とても勉強になりました。16年の経験に基づく知見は貴重ですね。質問ですが、アジャイル開発での要件定義はどのように行うのが良いでしょうか？
+                                        </p>
+                                        
+                                        <!-- Admin Reply -->
+                                        <div class="ml-8 mt-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
+                                            <div class="flex items-center space-x-2 mb-1">
+                                                <span class="font-medium text-gray-900 text-sm">宮川 剛</span>
+                                                <span class="text-gray-500 text-xs">(管理者)</span>
+                                            </div>
+                                            <p class="text-gray-700 text-sm">
+                                                コメントありがとうございます！アジャイル開発では、従来の要件定義書の代わりにプロダクトバックログを活用し、各スプリントごとに詳細化していく方法が効果的です。詳しくは次回の記事で解説予定です。
+                                            </p>
+                                        </div>
+                                        
+                                        <div class="flex items-center space-x-4 text-sm mt-3">
+                                            <span class="text-gray-500">記事: 要件定義書の書き方：16年のPM経験</span>
+                                            <span class="text-gray-500">2024/11/25 10:45</span>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4 flex items-center space-x-2">
+                                        <button class="text-blue-600 hover:text-blue-800">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a1 1 0 011 1v9a1 1 0 01-1 1H3m0-11l9-9m0 0h7a1 1 0 011 1v7"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- More comments... -->
+                    <div class="px-6 py-4 hover:bg-gray-50">
+                        <div class="flex items-start">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mt-1">
+                            <div class="ml-4 flex-1">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-1">
+                                            <span class="font-medium text-gray-900">山田次郎</span>
+                                            <span class="text-gray-500 text-sm">(yamada@developer.jp)</span>
+                                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">承認済み</span>
+                                        </div>
+                                        <p class="text-gray-700 text-sm mb-2">
+                                            Docker環境の記事、参考になりました。docker-composeの設定例がとても実践的で、すぐに自分のプロジェクトに応用できました。
+                                        </p>
+                                        <div class="flex items-center space-x-4 text-sm">
+                                            <span class="text-gray-500">記事: Docker環境でのRails開発</span>
+                                            <span class="text-gray-500">2024/11/24 18:20</span>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4 flex items-center space-x-2">
+                                        <button class="text-blue-600 hover:text-blue-800">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a1 1 0 011 1v9a1 1 0 01-1 1H3m0-11l9-9m0 0h7a1 1 0 011 1v7"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Pagination -->
+                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-700">
+                            1 - 10 件を表示 / 全 142 件
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="px-3 py-1 text-gray-500 bg-white border border-gray-300 rounded hover:bg-gray-50">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                            </button>
+                            <button class="px-3 py-1 bg-blue-600 text-white rounded">1</button>
+                            <button class="px-3 py-1 text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50">2</button>
+                            <button class="px-3 py-1 text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50">3</button>
+                            <span class="text-gray-500">...</span>
+                            <button class="px-3 py-1 text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50">14</button>
+                            <button class="px-3 py-1 text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50">15</button>
+                            <button class="px-3 py-1 text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bulk Actions Bar (Hidden by default) -->
+            <div class="mt-4 p-4 bg-gray-800 rounded-lg text-white flex items-center justify-between hidden">
+                <div class="flex items-center space-x-4">
+                    <span>3 件を選択中</span>
+                    <button class="px-3 py-1 bg-green-600 rounded hover:bg-green-700">承認</button>
+                    <button class="px-3 py-1 bg-red-600 rounded hover:bg-red-700">拒否</button>
+                    <button class="px-3 py-1 bg-orange-600 rounded hover:bg-orange-700">スパムに移動</button>
+                    <button class="px-3 py-1 bg-gray-600 rounded hover:bg-gray-700">ゴミ箱に移動</button>
+                </div>
+                <button class="text-gray-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+</body>
+</html>

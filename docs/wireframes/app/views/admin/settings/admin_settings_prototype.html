@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>設定 - CMS管理画面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+        .sidebar-gradient {
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+        }
+        .tab-active {
+            border-bottom: 2px solid #3b82f6;
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<!-- Layout Wrapper -->
+<div class="flex min-h-screen">
+    
+    <!-- Sidebar -->
+    <div class="sidebar-gradient w-64 flex flex-col">
+        <!-- Logo -->
+        <div class="p-6 border-b border-slate-600">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">M</span>
+                </div>
+                <div>
+                    <div class="text-white font-semibold">Miyakawa Codes</div>
+                    <div class="text-slate-300 text-xs">CMS管理画面</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 p-4 space-y-2">
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                </svg>
+                <span>ダッシュボード</span>
+            </a>
+            
+            <div class="text-slate-400 text-xs font-semibold uppercase tracking-wider px-3 py-2">コンテンツ</div>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <span>ブログ記事</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                </svg>
+                <span>カテゴリ・タグ</span>
+            </a>
+
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                <span>コメント管理</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span>メディアライブラリ</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+                <span>ポートフォリオ</span>
+            </a>
+
+            <div class="text-slate-400 text-xs font-semibold uppercase tracking-wider px-3 py-2 mt-6">システム</div>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <span>アクセス解析</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+                <span>ユーザー管理</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 bg-slate-700 text-white rounded-md">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+                </svg>
+                <span>設定</span>
+            </a>
+        </nav>
+
+        <!-- User Menu -->
+        <div class="p-4 border-t border-slate-600">
+            <div class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 rounded-md cursor-pointer">
+                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                    <span class="text-white font-semibold text-sm">宮</span>
+                </div>
+                <div class="flex-1">
+                    <div class="text-sm font-medium text-white">宮川 剛</div>
+                    <div class="text-xs text-slate-400">管理者</div>
+                </div>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        
+        <!-- Top Header -->
+        <header class="bg-white border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">設定</h1>
+                    <p class="text-gray-600">サイトの各種設定を管理します</p>
+                </div>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span>変更を保存</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Settings Tabs -->
+        <div class="bg-white border-b border-gray-200 px-6">
+            <div class="flex space-x-8">
+                <button class="py-4 px-2 tab-active font-medium">一般設定</button>
+                <button class="py-4 px-2 text-gray-600 hover:text-gray-900">SEO設定</button>
+                <button class="py-4 px-2 text-gray-600 hover:text-gray-900">AI連携</button>
+                <button class="py-4 px-2 text-gray-600 hover:text-gray-900">セキュリティ</button>
+                <button class="py-4 px-2 text-gray-600 hover:text-gray-900">外部連携</button>
+                <button class="py-4 px-2 text-gray-600 hover:text-gray-900">メール設定</button>
+                <button class="py-4 px-2 text-gray-600 hover:text-gray-900">バックアップ</button>
+            </div>
+        </div>
+
+        <!-- Settings Content -->
+        <main class="flex-1 p-6">
+            <div class="max-w-4xl">
+                <!-- General Settings Tab -->
+                <div class="bg-white rounded-lg border border-gray-200 p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-6">一般設定</h2>
+                    
+                    <div class="space-y-6">
+                        <!-- Site Title -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                サイトタイトル
+                            </label>
+                            <input type="text" value="宮川剛のポートフォリオ＆技術ブログ" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                            <p class="mt-1 text-sm text-gray-500">ブラウザのタブや検索結果に表示されます</p>
+                        </div>
+
+                        <!-- Site Description -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                サイト説明
+                            </label>
+                            <textarea rows="3" 
+                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">シニアエンジニアの技術発信。要件定義から実装、AIエンジニアリングまで、16年の経験を基にした実践的な知識をシェア。</textarea>
+                            <p class="mt-1 text-sm text-gray-500">検索結果やOGPで使用されます（160文字以内推奨）</p>
+                        </div>
+
+                        <!-- Site URL -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                サイトURL
+                            </label>
+                            <input type="url" value="https://miyakawa.codes" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                        </div>
+
+                        <!-- Admin Email -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                管理者メールアドレス
+                            </label>
+                            <input type="email" value="miyakawa@example.com" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                            <p class="mt-1 text-sm text-gray-500">システム通知の送信先</p>
+                        </div>
+
+                        <!-- Timezone -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                タイムゾーン
+                            </label>
+                            <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                                <option selected>Asia/Tokyo (GMT+9)</option>
+                                <option>America/New_York (GMT-5)</option>
+                                <option>Europe/London (GMT+0)</option>
+                            </select>
+                        </div>
+
+                        <!-- Language -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                言語設定
+                            </label>
+                            <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                                <option selected>日本語</option>
+                                <option>English</option>
+                            </select>
+                        </div>
+
+                        <!-- Admin Path -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                管理画面パス
+                            </label>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-gray-500">https://miyakawa.codes/</span>
+                                <input type="text" value="admin" 
+                                       class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                            </div>
+                            <p class="mt-1 text-sm text-gray-500">セキュリティ強化のため、デフォルトから変更を推奨</p>
+                        </div>
+
+                        <!-- Maintenance Mode -->
+                        <div class="border-t pt-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-700">メンテナンスモード</h3>
+                                    <p class="text-sm text-gray-500">サイトを一時的に非公開にします</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- SEO Settings Tab (Hidden) -->
+                <div class="bg-white rounded-lg border border-gray-200 p-6 hidden">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-6">SEO設定</h2>
+                    
+                    <div class="space-y-6">
+                        <!-- Default OGP Image -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                デフォルトOGP画像
+                            </label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                                <div class="flex items-center space-x-4">
+                                    <img src="https://via.placeholder.com/200x105?text=OGP+Default" 
+                                         alt="OGP画像" 
+                                         class="w-48 h-auto rounded">
+                                    <div>
+                                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                            画像を変更
+                                        </button>
+                                        <p class="text-sm text-gray-500 mt-2">推奨: 1200×630px</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Google Analytics -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Google Analytics測定ID
+                            </label>
+                            <input type="text" value="G-XXXXXXXXXX" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                        </div>
+
+                        <!-- Google Search Console -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Google Search Console認証
+                            </label>
+                            <input type="text" placeholder="google-site-verification=..." 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                        </div>
+
+                        <!-- Sitemap -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                サイトマップ生成
+                            </label>
+                            <div class="flex items-center space-x-4">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" checked class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                                <span class="text-sm text-gray-600">自動生成を有効にする</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Integration Tab (Hidden) -->
+                <div class="bg-white rounded-lg border border-gray-200 p-6 hidden">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-6">AI連携設定</h2>
+                    
+                    <div class="space-y-6">
+                        <!-- OpenAI API Key -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                OpenAI APIキー
+                            </label>
+                            <div class="relative">
+                                <input type="password" value="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" 
+                                       class="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                                <button class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- AI Model -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                使用モデル
+                            </label>
+                            <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                                <option selected>gpt-4-turbo-preview</option>
+                                <option>gpt-4</option>
+                                <option>gpt-3.5-turbo</option>
+                            </select>
+                        </div>
+
+                        <!-- Monthly Budget -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                月間利用予算
+                            </label>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-gray-500">$</span>
+                                <input type="number" value="50" 
+                                       class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                                <span class="text-gray-500">/ 月</span>
+                            </div>
+                            <p class="mt-1 text-sm text-gray-500">予算到達時に通知を送信します</p>
+                        </div>
+
+                        <!-- AI Features -->
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-700 mb-3">有効化する機能</h3>
+                            <div class="space-y-3">
+                                <label class="flex items-center">
+                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                    <span class="ml-2 text-sm text-gray-600">記事要約生成</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                    <span class="ml-2 text-sm text-gray-600">SEOキーワード抽出</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                    <span class="ml-2 text-sm text-gray-600">関連記事提案</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                    <span class="ml-2 text-sm text-gray-600">AI画像生成（DALL-E）</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Tab (Hidden) -->
+                <div class="bg-white rounded-lg border border-gray-200 p-6 hidden">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-6">セキュリティ設定</h2>
+                    
+                    <div class="space-y-6">
+                        <!-- Two Factor Authentication -->
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-700">二要素認証（2FA）</h3>
+                                    <p class="text-sm text-gray-500">管理画面のセキュリティを強化</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Login Attempts -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                ログイン試行回数制限
+                            </label>
+                            <div class="flex items-center space-x-2">
+                                <input type="number" value="5" 
+                                       class="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                                <span class="text-gray-500">回失敗で30分間ロック</span>
+                            </div>
+                        </div>
+
+                        <!-- IP Whitelist -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                管理画面アクセス許可IP
+                            </label>
+                            <textarea rows="4" placeholder="1行に1つのIPアドレスを記入（空欄=全IP許可）" 
+                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"></textarea>
+                        </div>
+
+                        <!-- Session Timeout -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                セッションタイムアウト
+                            </label>
+                            <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                                <option>30分</option>
+                                <option selected>1時間</option>
+                                <option>2時間</option>
+                                <option>4時間</option>
+                                <option>8時間</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- External Integration Tab (Hidden) -->
+                <div class="bg-white rounded-lg border border-gray-200 p-6 hidden">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-6">外部連携設定</h2>
+                    
+                    <div class="space-y-6">
+                        <!-- Slack Webhook -->
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-700 mb-3">Slack通知</h3>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">
+                                Webhook URL
+                            </label>
+                            <input type="url" value="https://webhook.example.com/slack/T****/B****/****" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                            
+                            <div class="mt-3 space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                    <span class="ml-2 text-sm text-gray-600">新規記事公開時</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                    <span class="ml-2 text-sm text-gray-600">コメント受信時</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                    <span class="ml-2 text-sm text-gray-600">システムエラー時</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Social Media -->
+                        <div class="border-t pt-6">
+                            <h3 class="text-sm font-medium text-gray-700 mb-3">ソーシャルメディア連携</h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">
+                                        X (Twitter) API
+                                    </label>
+                                    <input type="password" placeholder="Bearer Token" 
+                                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">
+                                        LinkedIn
+                                    </label>
+                                    <input type="password" placeholder="Access Token" 
+                                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">
+                                        GitHub
+                                    </label>
+                                    <input type="password" placeholder="Personal Access Token" 
+                                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+
+</body>
+</html>
