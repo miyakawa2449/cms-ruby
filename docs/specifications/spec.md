@@ -83,6 +83,9 @@
 ### 実装・開発計画
 - `/docs/development/api_implementation_plan.md` - Phase 4（Sprint 6-7）API実装詳細計画
 
+### 開発ツール・ワークフロー
+- `/docs/tools/daily_reports.md` - 日々の作業記録システム使用方法
+
 ### 分析・検証ドキュメント
 - `/docs/analysis/spec_features.md` - spec.md機能一覧分析
 - `/docs/analysis/prototype_features.md` - プロトタイプ機能分析

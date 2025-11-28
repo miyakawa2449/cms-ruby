@@ -1,0 +1,29 @@
+# Portfolio Project Aliases
+# このファイルを ~/.zshrc や ~/.bashrc に追加してください:
+# source /path/to/portfolio_rb/.aliases
+
+# 作業報告書作成
+alias report='./create_daily_report.sh'
+alias daily-report='./create_daily_report.sh'
+
+# 今日の報告書一覧
+alias today-reports='ls -la reports/$(date +"%Y-%m-%d")/ 2>/dev/null || echo "📝 今日の報告書はまだ作成されていません"'
+
+# 最新の報告書を開く
+alias latest-report='ls -t reports/$(date +"%Y-%m-%d")/*.md 2>/dev/null | head -1 | xargs -I {} code {}'
+
+# プロジェクト状況確認
+alias project-status='echo "📋 最新コミット:"; git log -1 --oneline; echo "📁 今日の報告書:"; today-reports'
+
+# 簡易レポート作成（タイトル付き）
+alias report-phase='./create_daily_report.sh "Phase進捗報告"'
+alias report-feature='./create_daily_report.sh "機能実装報告"'
+alias report-bug='./create_daily_report.sh "バグ修正報告"'
+alias report-design='./create_daily_report.sh "設計変更報告"'
+
+echo "📝 Portfolio Project Aliases loaded!"
+echo "使用可能コマンド:"
+echo "  report [タイトル] - 作業報告書作成"
+echo "  today-reports - 今日の報告書一覧"
+echo "  latest-report - 最新報告書を開く"
+echo "  project-status - プロジェクト状況確認"
