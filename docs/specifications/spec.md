@@ -7,14 +7,18 @@
 
 ### 1.2 技術スタック
 - **言語**: Ruby 3.4.0（2024年12月25日リリース）
-- **フレームワーク**: Ruby on Rails 8.0.1
+- **フレームワーク**: Ruby on Rails 8.0.1（API機能含む）
+- **API設計**: RESTful API（/api/v1、/api/internal）
+- **認証**: Devise（管理画面）+ JWT（API）
 - **CSSフレームワーク**: Tailwind CSS
-- **データベース**: PostgreSQL
+- **データベース**: PostgreSQL（全文検索・JSONB活用）
+- **キャッシュ**: Redis（API・セッション・Sidekiq）
 - **インフラ**: AWS Lightsail
 - **Webサーバー**: Nginx（構築済み）
 - **ドメイン**: https://miyakawa.code（SSL未設定）
-- **外部API**: OpenAI API（ChatGPT）
-- **バックグラウンドジョブ**: Sidekiq（AI処理用）
+- **外部API**: OpenAI API（ChatGPT）・Slack Webhook・SNS API
+- **バックグラウンドジョブ**: Sidekiq（AI処理・メール送信）
+- **API セキュリティ**: Rack::Attack（レート制限）・CORS・入力検証
 - **開発環境**: Docker Desktop（Mac環境）
 
 ### 1.3 サイトオーナー情報
@@ -40,6 +44,50 @@
    - ChatGPT登場を機に50代でプログラミング本格開始
    - SE/PM経験 × AI技術 × プログラミングスキルの統合
    - 全スキルセット統合による一人完結型エンジニアへ進化
+
+---
+
+## 1.4 関連仕様書・設計ドキュメント一覧
+
+### プロトタイプ・画面設計（16画面完成）
+- **フロントエンド**: 5画面プロトタイプ
+  - `/docs/wireframes/app/views/portfolio/portfolio_prototype.html` - ポートフォリオトップ
+  - `/docs/wireframes/app/views/portfolio/my_story_prototype.html` - My Story詳細ページ
+  - `/docs/wireframes/app/views/blog/blog_top_prototype.html` - ブログトップ（高度検索機能付き）
+  - `/docs/wireframes/app/views/blog/blog_article_prototype.html` - 記事詳細ページ
+  - `/docs/wireframes/app/views/blog/blog_category_prototype.html` - カテゴリ別一覧
+
+- **管理画面**: 11画面プロトタイプ
+  - `/docs/wireframes/app/views/admin/dashboard/admin_dashboard_prototype.html` - ダッシュボード
+  - `/docs/wireframes/app/views/admin/articles/admin_blog_prototype.html` - 記事管理一覧
+  - `/docs/wireframes/app/views/admin/articles/admin_article_editor_prototype.html` - 記事エディタ（AI機能付き）
+  - `/docs/wireframes/app/views/admin/categories/admin_categories_prototype.html` - カテゴリ管理
+  - `/docs/wireframes/app/views/admin/categories/admin_category_create_prototype.html` - カテゴリ作成
+  - `/docs/wireframes/app/views/admin/comments/admin_comments_prototype.html` - コメント管理
+  - `/docs/wireframes/app/views/admin/media/admin_media_prototype.html` - メディアライブラリ
+  - `/docs/wireframes/app/views/admin/users/admin_users_prototype.html` - ユーザー管理
+  - `/docs/wireframes/app/views/admin/portfolio_cms/admin_portfolio_prototype.html` - ポートフォリオCMS
+  - `/docs/wireframes/app/views/admin/settings/admin_settings_prototype.html` - 設定管理（8タブ）
+
+### データベース設計（完全設計完了）
+- `/docs/database/schema_design.md` - 18テーブル完全設計（PostgreSQL特有機能活用）
+- `/docs/database/migrations_plan.md` - 20マイグレーションファイル実装計画
+- `/docs/database/er_diagram.mermaid` - 全テーブルリレーション図
+
+### API設計（公開API + 内部API完全設計）
+- `/docs/api/api_design.md` - RESTful API設計書（公開API + 内部管理API）
+- `/docs/api/endpoint_mapping.md` - API エンドポイントと既存機能のマッピング
+- `/docs/api/migration_gap_analysis.md` - API対応データベース要件分析（追加テーブル不要確認）
+- `/docs/api/prototype_api_integration.md` - プロトタイプAPI統合計画書
+
+### 実装・開発計画
+- `/docs/development/api_implementation_plan.md` - Phase 4（Sprint 6-7）API実装詳細計画
+
+### 分析・検証ドキュメント
+- `/docs/analysis/spec_features.md` - spec.md機能一覧分析
+- `/docs/analysis/prototype_features.md` - プロトタイプ機能分析
+- `/docs/analysis/gap_analysis.md` - 仕様書とプロトタイプの差分分析
+- `/docs/api/integration_analysis.md` - API設計と既存仕様の統合分析
 
 ---
 
@@ -295,6 +343,173 @@ end
 - 適切な見出し構造
 - 画像alt属性
 - AIフレンドリーなコンテンツ構造
+
+### 3.7 API機能
+
+#### 3.7.1 API設計方針
+- **RESTful設計**: リソース指向・HTTP動詞の適切な使用
+- **バージョニング**: `/api/v1/` でバージョン管理
+- **認証分離**: 公開APIと認証必須APIの明確な分離
+- **レスポンス形式**: JSON（一貫性のある構造）
+- **エラーハンドリング**: 適切なHTTPステータスコードとエラーメッセージ
+
+#### 3.7.2 公開API仕様
+
+##### ブログ記事API
+```
+GET /api/v1/articles                          # 記事一覧取得
+GET /api/v1/articles/:slug                    # 記事詳細取得
+GET /api/v1/categories                        # カテゴリ一覧取得
+GET /api/v1/tags                              # タグ一覧取得
+```
+
+**主要機能**:
+- ページネーション対応（最大50件/page）
+- 高度検索・フィルタリング（カテゴリ、タグ、キーワード）
+- ソート機能（公開日、ビュー数）
+- レスポンス包含（作者情報、カテゴリ、タグ、画像情報）
+
+**リアルタイム検索連携**:
+- インクリメンタルサーチ（500ms遅延）
+- 検索サジェスト・履歴機能
+- 全文検索（PostgreSQL tsvector活用）
+
+##### ポートフォリオAPI
+```
+GET /api/v1/portfolio                         # 全セクション取得
+GET /api/v1/portfolio/works                   # 作品一覧取得
+GET /api/v1/portfolio/works/:id               # 作品詳細取得
+```
+
+**セクション管理機能**:
+- 8セクション動的配信（Hero、About、Service、My Story、Works、Blog、Contact、Footer）
+- セクション毎の公開/非公開制御
+- JSONBベースの柔軟なコンテンツ構造
+- バージョン管理・リビジョン対応
+
+##### お問い合わせAPI
+```
+POST /api/v1/contacts                         # お問い合わせ送信
+```
+
+**セキュリティ・通知機能**:
+- reCAPTCHA連携によるスパム対策
+- バリデーション（名前、メール、件名、メッセージ）
+- Slack Webhook自動通知
+- IPアドレス・User Agent記録
+
+##### 自動生成API
+```
+GET /api/v1/sitemap                           # サイトマップJSON配信
+GET /api/v1/feed                              # RSSフィードJSON配信
+GET /api/v1/feed.rss                          # RSS 2.0形式
+GET /api/v1/feed.atom                         # Atom形式
+```
+
+**SEO強化機能**:
+- 動的サイトマップ生成（記事・カテゴリ・固定ページ）
+- RSS/Atomフィード配信
+- 最終更新日時・優先度の自動設定
+
+#### 3.7.3 内部管理API仕様
+
+##### 認証・認可
+- **JWT認証**: Bearer token方式（24時間有効期限）
+- **Devise統合**: 既存の管理画面認証との統合
+- **ロール制御**: admin、editor、viewer権限
+
+##### 記事管理API
+```
+GET    /api/internal/articles                 # 管理用記事一覧（下書き含む）
+POST   /api/internal/articles                 # 記事作成
+PATCH  /api/internal/articles/:id             # 記事更新
+DELETE /api/internal/articles/:id             # 記事削除
+PATCH  /api/internal/articles/bulk            # 一括操作
+```
+
+**高度な管理機能**:
+- ステータス管理（draft、published、scheduled、archived）
+- 一括操作（ステータス変更、カテゴリ移動、削除）
+- リビジョン管理・自動保存
+- AI分析結果との統合
+
+##### AI機能API
+```
+POST /api/internal/ai/analyze                 # AI分析実行
+GET  /api/internal/ai/analyze/:article_id     # 分析結果取得
+```
+
+**AI支援機能詳細**:
+- **記事要約**: GPT-4による自動要約生成
+- **SEO分析**: キーワード抽出・最適化提案
+- **関連記事提案**: コンテンツ類似度ベース
+- **構成改善提案**: 見出し構造・読みやすさ分析
+- **非同期処理**: Sidekiq連携による背景処理
+
+##### メディア管理API
+```
+POST /api/internal/media                      # メディアアップロード
+GET  /api/internal/media                      # メディア一覧取得
+PUT  /api/internal/media/:id                  # メディア情報更新
+DELETE /api/internal/media/:id                # メディア削除
+```
+
+**メディア処理機能**:
+- **ドラッグ&ドロップ対応**: 複数ファイル同時アップロード
+- **自動最適化**: WebP変換・複数サイズ生成・圧縮
+- **使用状況追跡**: 使用箇所表示・未使用ファイル検知
+- **Alt属性管理**: アクセシビリティ・SEO対応
+
+#### 3.7.4 パフォーマンス・セキュリティ
+
+##### キャッシング戦略
+- **記事一覧**: 5分間キャッシュ（Redis）
+- **ポートフォリオ**: 30分間キャッシュ
+- **検索結果**: 1分間キャッシュ
+- **キャッシュクリア**: コンテンツ更新時の自動無効化
+
+##### レート制限・セキュリティ
+```ruby
+# Rack::Attack設定
+- 全API: 300リクエスト/5分/IP
+- 検索API: 60リクエスト/分/IP
+- お問い合わせAPI: 5リクエスト/分/IP
+```
+
+- **CORS設定**: 適切なオリジン制限
+- **入力検証**: SQLインジェクション・XSS対策
+- **ログ収集**: API使用状況・エラー監視
+
+##### エラーハンドリング
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "入力内容に誤りがあります",
+    "details": {
+      "email": ["有効なメールアドレスを入力してください"]
+    }
+  }
+}
+```
+
+#### 3.7.5 既存機能との統合
+
+##### フロントエンド統合
+- **段階的移行**: 既存HTML表示→API経由の動的表示
+- **SEO維持**: 重要ページはSSR継続、補助機能をAPI化
+- **プログレッシブ・エンハンスメント**: JavaScript無効時の代替機能
+
+##### 管理画面統合
+- **UI強化**: リアルタイム機能の追加（自動保存、進捗表示）
+- **一括操作**: 非同期処理によるユーザビリティ向上
+- **AI機能拡張**: 分析結果のリアルタイム表示
+
+##### 外部連携API
+- **OpenAI API**: 記事分析・要約生成（月額$50予算管理）
+- **Slack Webhook**: 各種通知の自動送信
+- **SNS API**: 記事公開時の自動投稿（X/Twitter、LinkedIn）
 
 ---
 
@@ -639,21 +854,40 @@ end
 - カテゴリページ
 - パンくずリスト
 
-#### Phase 4: 高度な機能（Sprint 6-7）
-**Sprint 6: SEO/OGP**
-- メタデータ管理
-- OGP設定
-- 構造化データ
+#### Phase 4: API機能実装（Sprint 6-7）
+**Sprint 6: 公開API実装**
+- ブログ記事API（記事一覧・詳細・カテゴリ・タグ）
+- ポートフォリオAPI（セクション・作品データ）
+- 検索API（インクリメンタルサーチ・サジェスト）
+- お問い合わせAPI（reCAPTCHA・Slack連携）
+- サイトマップ・RSS配信API
+- API認証・レート制限実装
 
-**Sprint 7: AI連携・最適化**
-- OpenAI API統合
-- パフォーマンス改善
-- キャッシュ実装
+**Sprint 7: 内部管理API実装**
+- 記事管理API（CRUD・一括操作）
+- AI分析API（要約・SEO分析・関連記事提案）
+- メディア管理API（アップロード・最適化・使用状況）
+- API統計・ログ収集機能
+- フロントエンド統合（検索・フォーム・動的コンテンツ）
 
-#### Phase 5: 仕上げ（Sprint 8+）
-- UIポリッシュ
-- ユーザビリティ改善
-- 運用ツール整備
+#### Phase 5: SEO/最適化（Sprint 8-9）
+**Sprint 8: SEO/OGP強化**
+- メタデータ管理・構造化データ
+- OGP設定・AI最適化提案
+- XMLサイトマップ・robots.txt自動生成
+- ページパフォーマンス最適化
+
+**Sprint 9: AI連携・キャッシュ最適化**
+- OpenAI API統合・予算管理
+- Redis キャッシュ戦略実装
+- 非同期処理（Sidekiq）最適化
+- API レスポンス最適化
+
+#### Phase 6: 仕上げ・運用（Sprint 10+）
+- UIポリッシュ・ユーザビリティ改善
+- 運用ツール・監視機能整備
+- API ドキュメント（OpenAPI/Swagger）自動生成
+- 負荷テスト・セキュリティ監査
 
 ---
 
@@ -665,17 +899,55 @@ end
 - アクセスログ分析
 
 ### 7.2 拡張性
-- プラグインアーキテクチャ
-- API設計（将来の連携用）
-- 多言語対応準備
+- **RESTful API基盤**: 外部連携・スマホアプリ開発対応
+- **マイクロサービス準備**: API分離によるスケーラビリティ確保
+- **プラグインアーキテクチャ**: 機能拡張の柔軟性
+- **多言語対応準備**: i18n基盤・API国際化対応
 
 ### 7.3 ドキュメント
-- 管理画面操作マニュアル
-- API仕様書
-- デプロイ手順書
+- **管理画面操作マニュアル**: UI操作ガイド・ベストプラクティス
+- **API仕様書**: OpenAPI/Swagger・自動生成・インタラクティブドキュメント
+- **開発者ガイド**: API利用例・SDK・サンプルコード
+- **デプロイ手順書**: 環境構築・CI/CD・運用手順
 
 ---
 
 ## 改訂履歴
-- 2024-11-26: 初版作成
-- 仕様追加時は日付と内容を記載
+- **2024-11-26**: 初版作成
+- **2024-11-27**: 16画面プロトタイプ完成・UI/UXデザイン完了
+- **2024-11-28**: 
+  - ✅ **データベース設計完全完了** - 18テーブル・20マイグレーション・ER図
+  - ✅ **API設計完全完了** - 公開API・内部API・エンドポイント設計
+  - ✅ **統合設計完了** - API-DB統合・プロトタイプ統合計画
+  - ✅ **実装計画完了** - Phase 4 API実装詳細計画・11スプリント構成
+  - **仕様策定Phase 1完全完了**
+
+---
+
+## 📋 プロジェクト完成度・次のステップ
+
+### ✅ Phase 1: 仕様策定・設計 (100% 完了)
+- **基本仕様**: 100% 完了
+- **16画面プロトタイプ**: 100% 完了  
+- **UI/UXデザイン**: 100% 完了
+- **データベース設計**: 100% 完了（18テーブル）
+- **マイグレーション計画**: 100% 完了（20ファイル）
+- **API設計**: 100% 完了（公開API + 内部API）
+- **開発計画**: 100% 完了（11スプリント構成）
+- **統合設計**: 100% 完了
+
+### 🎯 次のマイルストーン: Phase 2開始
+**準備完了**: Rails 8.0.1環境構築・Sprint 0実装開始
+
+**Phase 2実装内容（Sprint 0-3）**:
+- Rails 8.0.1 + PostgreSQL + Docker環境構築
+- 認証システム（Devise）
+- 基本ルーティング・コントローラ
+- Tailwind CSS導入・スタイリング
+- 基本画面実装（静的→動的移行）
+
+**技術基盤準備完了**:
+- 全DB テーブル設計完了
+- 全API エンドポイント設計完了
+- 全画面プロトタイプ完了
+- 実装手順明確化完了

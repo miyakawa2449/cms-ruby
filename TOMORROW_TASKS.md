@@ -38,7 +38,7 @@
   - 認証ガード設定
   - 16画面対応ルーティング
 
-## 📋 中優先タスク（Sprint 1-2）
+## 📋 中優先タスク（Sprint 1-3）
 
 ### Sprint 1: 静的ページ実装
 - [ ] **ポートフォリオページ実装**
@@ -48,6 +48,9 @@
 - [ ] **My Storyページ実装**
   - 3フェーズキャリアタイムライン
   - インタラクティブ要素実装
+- [ ] **基本ルーティング設定**
+  - API用ネームスペース準備（/api/v1, /api/internal）
+  - CORS設定準備
 
 ### Sprint 2: 管理画面基盤
 - [ ] **ダッシュボード実装**
@@ -57,14 +60,79 @@
   - 記事管理（作成・編集・削除）
   - カテゴリ管理（2階層対応）
 
-## 📊 低優先タスク（Sprint 3以降）
+### Sprint 3: ブログ機能
+- [ ] **記事管理機能**
+  - Markdownエディタ実装
+  - 下書き・公開・予約投稿
+  - カテゴリ・タグ管理
 
-### 高度機能実装
-- [ ] **AI機能統合**（OpenAI API）
-- [ ] **検索機能実装**（PostgreSQL全文検索）
-- [ ] **メディア管理**（WebP変換・S3連携）
-- [ ] **セキュリティ強化**（2FA・IP制限）
-- [ ] **監視機能**（システム監視・バックアップ）
+## 🔌 新規追加: API実装フェーズ（Sprint 6-7）
+
+### Sprint 6: 公開API実装 ⭐️
+- [ ] **API基盤構築**
+  - Rails API モード設定
+  - ActiveModelSerializers導入
+  - API バージョニング実装
+  - レート制限（Rack::Attack）設定
+
+- [ ] **ブログ記事API**
+  - GET /api/v1/articles （一覧・検索・フィルタ）
+  - GET /api/v1/articles/:slug （詳細）
+  - GET /api/v1/categories （カテゴリ一覧）
+  - GET /api/v1/tags （タグ一覧）
+  - ページネーション・ソート機能
+
+- [ ] **ポートフォリオAPI**
+  - GET /api/v1/portfolio （全セクション）
+  - GET /api/v1/portfolio/works （作品一覧）
+  - GET /api/v1/portfolio/works/:id （作品詳細）
+  - JSONBコンテンツの動的配信
+
+- [ ] **検索・ユーティリティAPI**
+  - GET /api/v1/search/suggestions （検索サジェスト）
+  - POST /api/v1/contacts （お問い合わせ・reCAPTCHA）
+  - GET /api/v1/sitemap （サイトマップJSON）
+  - GET /api/v1/feed.rss （RSS配信）
+
+### Sprint 7: 内部管理API実装 ⭐️
+- [ ] **認証・認可システム**
+  - JWT認証実装
+  - Devise統合
+  - ロールベースアクセス制御
+
+- [ ] **記事管理API**
+  - POST /api/internal/articles （記事作成）
+  - PATCH /api/internal/articles/:id （記事更新）
+  - DELETE /api/internal/articles/:id （記事削除）
+  - PATCH /api/internal/articles/bulk （一括操作）
+
+- [ ] **AI機能API**
+  - POST /api/internal/ai/analyze （AI分析実行）
+  - GET /api/internal/ai/analyze/:article_id （分析結果）
+  - OpenAI API統合・Sidekiq非同期処理
+
+- [ ] **メディア管理API**
+  - POST /api/internal/media （アップロード）
+  - GET /api/internal/media （一覧・使用状況）
+  - PUT /api/internal/media/:id （情報更新）
+  - WebP変換・自動最適化
+
+- [ ] **フロントエンド統合**
+  - 検索機能のAPI化（インクリメンタルサーチ）
+  - お問い合わせフォームの非同期化
+  - 管理画面のリアルタイム機能
+
+## 📊 高度機能実装（Sprint 8-11）
+
+### Sprint 8-9: SEO/最適化
+- [ ] **SEO強化**（メタデータ管理・構造化データ）
+- [ ] **AI連携完成**（OpenAI API・予算管理）
+- [ ] **キャッシュ最適化**（Redis戦略・API レスポンス最適化）
+
+### Sprint 10-11: 仕上げ・運用
+- [ ] **API ドキュメント**（OpenAPI/Swagger自動生成）
+- [ ] **セキュリティ監査**（API セキュリティ・負荷テスト）
+- [ ] **監視機能**（API使用状況・システム監視・バックアップ）
 
 ---
 

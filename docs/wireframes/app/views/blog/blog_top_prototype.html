@@ -695,9 +695,103 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function addToHistory(query) {
-        // In real implementation, this would save to localStorage or server
-        console.log('Adding to history:', query);
+        // 検索履歴をローカルストレージに保存
+        let history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+        
+        // 重複削除・最新を先頭に
+        history = history.filter(item => item.query !== query);
+        history.unshift({
+            query: query,
+            timestamp: new Date().toISOString()
+        });
+        
+        // 最大10件まで保持
+        if (history.length > 10) {
+            history = history.slice(0, 10);
+        }
+        
+        localStorage.setItem('searchHistory', JSON.stringify(history));
+        updateHistoryDisplay();
     }
+    
+    function updateHistoryDisplay() {
+        const historyContainer = document.querySelector('#search-history .max-h-48');
+        if (!historyContainer) return;
+        
+        const history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+        historyContainer.innerHTML = '';
+        
+        history.forEach(item => {
+            const button = document.createElement('button');
+            button.className = 'flex items-center space-x-3 w-full px-4 py-2 hover:bg-gray-50 text-left border-b border-gray-100';
+            button.innerHTML = `
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="text-sm text-gray-700">${item.query}</span>
+                <div class="flex-1"></div>
+                <span class="text-xs text-gray-400">${new Date(item.timestamp).toLocaleDateString('ja-JP')}</span>
+            `;
+            
+            button.addEventListener('click', function() {
+                searchInput.value = item.query;
+                performSearch(item.query);
+            });
+            
+            historyContainer.appendChild(button);
+        });
+    }
+    
+    // カテゴリAPIから動的に読み込み
+    async function loadCategories() {
+        try {
+            const response = await fetch('/api/v1/categories');
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                renderCategories(data.data);
+            }
+        } catch (error) {
+            console.error('カテゴリ読み込みエラー:', error);
+            showCategoriesError();
+        }
+    }
+    
+    function renderCategories(categories) {
+        const container = document.getElementById('categories-container');
+        container.innerHTML = '';
+        
+        categories.forEach(category => {
+            const categoryElement = document.createElement('div');
+            categoryElement.className = 'category-card bg-blue-50 border border-blue-200 rounded-lg p-6 text-center cursor-pointer';
+            categoryElement.innerHTML = `
+                <div class="text-3xl mb-4">${category.icon || '📁'}</div>
+                <h3 class="text-xl font-bold mb-2 text-blue-800">${category.name}</h3>
+                <p class="text-blue-600 text-sm mb-3">${category.description || ''}</p>
+                <div class="text-blue-700 font-semibold">${category.article_count}記事</div>
+            `;
+            
+            categoryElement.addEventListener('click', function() {
+                window.location.href = `/blog/category/${category.slug}`;
+            });
+            
+            container.appendChild(categoryElement);
+        });
+    }
+    
+    function showCategoriesError() {
+        const container = document.getElementById('categories-container');
+        container.innerHTML = `
+            <div class="col-span-4 text-center py-8">
+                <p class="text-red-600">カテゴリの読み込みに失敗しました</p>
+                <button onclick="loadCategories()" class="mt-2 text-blue-600 hover:text-blue-800">再試行</button>
+            </div>
+        `;
+    }
+    
+    // ページ読み込み時の初期化
+    loadCategories();
+    updateHistoryDisplay();
 });
 </script>
 

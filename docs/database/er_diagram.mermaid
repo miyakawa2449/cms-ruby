@@ -1,0 +1,291 @@
+erDiagram
+    %% ユーザー管理
+    users {
+        bigserial id PK
+        varchar email UK
+        varchar encrypted_password
+        varchar name
+        varchar avatar_url
+        varchar role
+        varchar otp_secret
+        boolean otp_required_for_login
+        integer failed_attempts
+        timestamp locked_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    %% コンテンツ管理
+    articles {
+        bigserial id PK
+        bigint user_id FK
+        varchar title
+        varchar slug UK
+        text content
+        text content_html
+        text excerpt
+        varchar status
+        timestamp published_at
+        varchar meta_description
+        varchar meta_keywords
+        varchar og_title
+        varchar og_description
+        varchar og_image_url
+        integer view_count
+        integer comment_count
+        integer reading_time
+        text ai_summary
+        text ai_keywords
+        decimal ai_seo_score
+        integer revision_count
+        tsvector search_vector
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    categories {
+        bigserial id PK
+        bigint parent_id FK
+        varchar name
+        varchar slug
+        text description
+        varchar icon
+        varchar color
+        integer position
+        integer article_count
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    tags {
+        bigserial id PK
+        varchar name UK
+        varchar slug UK
+        integer article_count
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    %% 中間テーブル
+    article_categories {
+        bigint article_id FK
+        bigint category_id FK
+        boolean is_primary
+        timestamp created_at
+    }
+    
+    article_tags {
+        bigint article_id FK
+        bigint tag_id FK
+        timestamp created_at
+    }
+    
+    %% コメント管理
+    comments {
+        bigserial id PK
+        bigint article_id FK
+        bigint parent_id FK
+        varchar author_name
+        varchar author_email
+        varchar author_url
+        inet author_ip
+        text author_user_agent
+        text content
+        text content_html
+        varchar status
+        bigint moderator_id FK
+        timestamp moderated_at
+        decimal spam_score
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    %% メディア管理
+    media_files {
+        bigserial id PK
+        bigint user_id FK
+        varchar filename
+        varchar original_filename
+        varchar content_type
+        bigint file_size
+        varchar storage_path
+        varchar storage_provider
+        varchar cdn_url
+        integer width
+        integer height
+        varchar thumbnail_path
+        varchar webp_path
+        varchar alt_text
+        text caption
+        integer usage_count
+        timestamp last_used_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    article_media {
+        bigint article_id FK
+        bigint media_file_id FK
+        integer position
+        timestamp created_at
+    }
+    
+    %% ポートフォリオ管理
+    sections {
+        bigserial id PK
+        varchar name UK
+        varchar display_name
+        boolean is_visible
+        integer position
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    section_contents {
+        bigserial id PK
+        bigint section_id FK
+        jsonb content
+        integer version
+        boolean is_active
+        bigint published_by FK
+        timestamp published_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    %% お問い合わせ管理
+    contacts {
+        bigserial id PK
+        varchar name
+        varchar email
+        varchar subject
+        text message
+        inet ip_address
+        text user_agent
+        varchar referrer
+        varchar status
+        bigint assigned_to FK
+        timestamp replied_at
+        text notes
+        decimal spam_score
+        boolean is_spam
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    %% システム設定
+    settings {
+        bigserial id PK
+        varchar key UK
+        text value
+        varchar value_type
+        varchar category
+        text description
+        boolean is_sensitive
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    %% リビジョン管理
+    article_revisions {
+        bigserial id PK
+        bigint article_id FK
+        bigint user_id FK
+        varchar title
+        text content
+        integer revision_number
+        varchar change_summary
+        timestamp created_at
+    }
+    
+    %% AI分析
+    article_ai_analyses {
+        bigserial id PK
+        bigint article_id FK UK
+        text summary
+        text keywords
+        text related_topics
+        decimal seo_score
+        jsonb seo_suggestions
+        decimal readability_score
+        varchar sentiment
+        varchar tone
+        varchar ai_model
+        integer api_response_time
+        decimal api_cost
+        timestamp analyzed_at
+    }
+    
+    %% 通知・ログ管理
+    slack_notifications {
+        bigserial id PK
+        varchar notification_type
+        bigint reference_id
+        varchar reference_type
+        varchar webhook_url
+        varchar channel
+        jsonb payload
+        varchar status
+        text error_message
+        integer retry_count
+        timestamp created_at
+        timestamp sent_at
+    }
+    
+    access_logs {
+        bigserial id PK
+        varchar path
+        varchar method
+        integer status_code
+        inet ip_address
+        text user_agent
+        varchar referrer
+        integer response_time
+        bigint user_id FK
+        varchar session_id
+        timestamp created_at
+    }
+    
+    backups {
+        bigserial id PK
+        varchar backup_type
+        varchar status
+        varchar filename
+        bigint file_size
+        varchar storage_location
+        integer duration_seconds
+        integer tables_count
+        integer records_count
+        text error_message
+        timestamp started_at
+        timestamp completed_at
+    }
+    
+    %% リレーション定義
+    users ||--o{ articles : writes
+    users ||--o{ comments : moderates
+    users ||--o{ media_files : uploads
+    users ||--o{ section_contents : publishes
+    users ||--o{ article_revisions : creates
+    users ||--o{ access_logs : generates
+    users ||--o{ contacts : assigns_to
+    
+    articles ||--o{ article_categories : has
+    articles ||--o{ article_tags : has
+    articles ||--o{ comments : receives
+    articles ||--o{ article_media : uses
+    articles ||--|| article_ai_analyses : has
+    articles ||--o{ article_revisions : has_versions
+    
+    categories ||--o{ article_categories : contains
+    categories ||--o{ categories : has_children
+    
+    tags ||--o{ article_tags : attached_to
+    
+    media_files ||--o{ article_media : used_in
+    
+    sections ||--o{ section_contents : has_versions
+    
+    contacts ||--o{ slack_notifications : triggers
+    
+    comments ||--o{ comments : has_replies
