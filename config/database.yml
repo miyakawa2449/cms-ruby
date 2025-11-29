@@ -1,0 +1,116 @@
+# PostgreSQL Configuration for Portfolio Site
+# PostgreSQL 16+ supported with full-text search and JSONB features
+#
+# Docker Environment Configuration:
+#   - Container: postgres:16-alpine
+#   - User: portfolio
+#   - Password: portfolio_password
+#   - Databases: portfolio_development, portfolio_test, portfolio_production
+#
+# Environment Variables:
+#   DATABASE_URL: Complete connection string (Docker/Production)
+#   POSTGRES_HOST: Database host (default: db for Docker, localhost for local)
+#   POSTGRES_PORT: Database port (default: 5432)
+#   POSTGRES_USER: Database user
+#   POSTGRES_PASSWORD: Database password
+#
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 20 } %>
+  timeout: 5000
+  # PostgreSQL specific settings for performance
+  prepared_statements: true
+  variables:
+    # 日本語全文検索設定
+    default_text_search_config: 'pg_catalog.japanese'
+    # コネクションタイムアウト
+    statement_timeout: 30000
+    idle_in_transaction_session_timeout: 60000
+
+development:
+  <<: *default
+  database: portfolio_development
+  username: <%= ENV.fetch("POSTGRES_USER") { "portfolio" } %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD") { "portfolio_password" } %>
+  host: <%= ENV.fetch("POSTGRES_HOST") { "db" } %>
+  port: <%= ENV.fetch("POSTGRES_PORT") { 5432 } %>
+  
+  # 開発環境固有設定
+  min_messages: notice
+  # デバッグ用ログ設定（必要に応じてコメントアウト）
+  # log_statement: all
+  # log_min_duration_statement: 0
+
+# テスト環境: 高速化のため設定最適化
+test:
+  <<: *default
+  database: portfolio_test
+  username: <%= ENV.fetch("POSTGRES_USER") { "portfolio" } %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD") { "portfolio_password" } %>
+  host: <%= ENV.fetch("POSTGRES_HOST") { "db" } %>
+  port: <%= ENV.fetch("POSTGRES_PORT") { 5432 } %>
+  
+  # テスト高速化設定
+  pool: 10
+  timeout: 1000
+  variables:
+    # テスト用設定
+    fsync: 'off'
+    synchronous_commit: 'off'
+    full_page_writes: 'off'
+
+# Production Environment Configuration
+# 
+# Security Notice:
+# Never store sensitive information like database passwords in source code.
+# Use environment variables for all sensitive configuration.
+#
+# Production Environment Variables Required:
+#   DATABASE_URL: Complete PostgreSQL connection string
+#   POSTGRES_HOST: Production database host
+#   POSTGRES_USER: Production database user
+#   POSTGRES_PASSWORD: Production database password
+#   PORTFOLIO_DB_NAME: Production database name
+#
+# Example DATABASE_URL format:
+#   DATABASE_URL="postgresql://user:password@host:5432/portfolio_production"
+#
+production:
+  <<: *default
+  database: <%= ENV.fetch("PORTFOLIO_DB_NAME") { "portfolio_production" } %>
+  username: <%= ENV.fetch("POSTGRES_USER") %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD") %>
+  host: <%= ENV.fetch("POSTGRES_HOST") %>
+  port: <%= ENV.fetch("POSTGRES_PORT") { 5432 } %>
+  
+  # 本番環境最適化設定
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 25 } %>
+  timeout: 10000
+  prepared_statements: true
+  
+  # 本番環境セキュリティ・パフォーマンス設定
+  variables:
+    # 日本語全文検索
+    default_text_search_config: 'pg_catalog.japanese'
+    # パフォーマンス最適化
+    shared_buffers: '256MB'
+    effective_cache_size: '1GB'
+    work_mem: '4MB'
+    maintenance_work_mem: '64MB'
+    # セキュリティ設定
+    statement_timeout: 60000
+    idle_in_transaction_session_timeout: 120000
+    lock_timeout: 30000
+    # ログ設定
+    log_min_duration_statement: 1000
+    log_checkpoints: 'on'
+    log_connections: 'on'
+    log_disconnections: 'on'
+    log_lock_waits: 'on'
+  
+  # SSL設定（本番環境では必須）
+  sslmode: require
+  sslcert: <%= ENV["POSTGRES_SSL_CERT"] %>
+  sslkey: <%= ENV["POSTGRES_SSL_KEY"] %>
+  sslrootcert: <%= ENV["POSTGRES_SSL_ROOT_CERT"] %>
