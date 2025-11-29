@@ -22,15 +22,17 @@
 ## 🛠 技術スタック
 
 ### Backend
-- **Ruby** 3.4.0
-- **Ruby on Rails** 8.0.1
-- **PostgreSQL** - メインデータベース
+- **Ruby** 3.4.7
+- **Ruby on Rails** 8.0.4
+- **PostgreSQL** 16 - メインデータベース
+- **Redis** 7 - キャッシュ・Sidekiq
 - **Sidekiq** - バックグラウンドジョブ（AI処理）
 
 ### Frontend
 - **Tailwind CSS** - ユーティリティファースト
-- **JavaScript** - インタラクション・検索
+- **ESBuild** - JavaScript バンドラー
 - **Turbo** - SPA風エクスペリエンス
+- **Stimulus** - 軽量JavaScriptフレームワーク
 
 ### Infrastructure
 - **Docker** - 開発環境
@@ -55,7 +57,7 @@
 portfolio_rb/
 ├── README.md
 ├── CLAUDE.md                          # プロジェクトメモリ（Claude Code用）
-├── Gemfile
+├── Gemfile                            # 65 gems設定済み（Rails 8.0.4対応）
 ├── Gemfile.lock
 ├── Dockerfile
 ├── docker-compose.yml
@@ -115,28 +117,39 @@ portfolio_rb/
 ├── docs/
 │   ├── specifications/
 │   │   └── spec.md                     # 詳細仕様書
-│   ├── wireframes/                     # 画面設計プロトタイプ（16画面）
+│   ├── development/
+│   │   ├── phase_2_revision_plan.md    # Phase 2計画見直し
+│   │   └── gem_dependencies.md         # Gem依存関係ドキュメント
+│   ├── wireframes/                     # 画面設計プロトタイプ（17画面）
 │   │   ├── portfolio_prototype.html    # ポートフォリオトップ
 │   │   ├── my_story_prototype.html     # My Storyページ
 │   │   ├── blog_top_prototype.html     # ブログトップ（高度検索付き）
 │   │   ├── blog_article_prototype.html # 記事詳細
 │   │   ├── blog_category_prototype.html # カテゴリページ
 │   │   └── app/views/admin/            # 管理画面プロトタイプ
-│   │       ├── admin_dashboard_prototype.html         # ダッシュボード
-│   │       ├── admin_blog_prototype.html             # 記事管理
-│   │       ├── admin_article_editor_prototype.html   # 記事エディタ（AI機能）
-│   │       ├── admin_categories_prototype.html       # カテゴリ管理
-│   │       ├── admin_category_create_prototype.html  # カテゴリ作成
-│   │       ├── admin_users_prototype.html            # ユーザー管理
-│   │       ├── admin_comments_prototype.html         # コメント管理
-│   │       ├── admin_media_prototype.html            # メディアライブラリ
-│   │       ├── admin_portfolio_prototype.html        # ポートフォリオCMS
-│   │       └── admin_settings_prototype.html         # 設定（8タブ構成）
+│   │       ├── auth/admin_login_prototype.html           # ログイン画面
+│   │       ├── dashboard/admin_dashboard_prototype.html  # ダッシュボード
+│   │       ├── articles/admin_blog_prototype.html        # 記事管理
+│   │       ├── articles/admin_article_editor_prototype.html # 記事エディタ（AI機能）
+│   │       ├── categories/admin_categories_prototype.html # カテゴリ管理
+│   │       ├── categories/admin_category_create_prototype.html # カテゴリ作成
+│   │       ├── users/admin_users_prototype.html          # ユーザー管理
+│   │       ├── comments/admin_comments_prototype.html    # コメント管理
+│   │       ├── media/admin_media_prototype.html          # メディアライブラリ
+│   │       ├── portfolio_cms/admin_portfolio_prototype.html # ポートフォリオCMS
+│   │       └── settings/admin_settings_prototype.html    # 設定（8タブ構成）
+│   ├── database/                       # データベース設計
+│   │   ├── schema_design.md            # 18テーブル設計
+│   │   ├── migrations_plan.md          # 20マイグレーション計画
+│   │   └── er_diagram.mermaid          # ER図
+│   ├── api/                            # API設計
+│   │   └── api_design.md               # RESTful API設計書
 │   ├── analysis/                       # 仕様分析ドキュメント
 │   │   ├── spec_features.md            # spec.md機能一覧
 │   │   ├── prototype_features.md       # プロトタイプ機能分析
 │   │   └── gap_analysis.md            # 差分分析結果
-│   └── api/                            # API仕様
+│   └── tools/
+│       └── daily_reports.md            # 日報システム使用方法
 └── spec/                               # テスト
     ├── models/
     ├── controllers/
@@ -166,9 +179,10 @@ portfolio_rb/
 /blog/tag/{slug}                       # タグ別一覧
 ```
 
-### 管理画面（16画面完備）
+### 管理画面（17画面完備）
 ```
 /{admin_path}                          # ダッシュボード（パス変更可能）
+├── /auth/login                        # ログイン画面（NEW 2024-11-29）
 ├── /dashboard                         # 統計・KPI・クイックアクション
 ├── /articles                          # ブログ記事管理（一括操作・AI機能）
 │   ├── /new                          # 記事作成エディタ（AI要約・SEO提案）
@@ -194,8 +208,9 @@ portfolio_rb/
 ## 🚀 セットアップ
 
 ### 必要な環境
-- Ruby 3.4.0+
-- PostgreSQL 14+
+- Ruby 3.4.7+
+- PostgreSQL 16+
+- Redis 7+
 - Docker Desktop（推奨）
 - **OpenAI API Key** - AI機能利用に必須
 - **Slack Webhook URL** - リアルタイム通知機能（オプション）
@@ -203,50 +218,70 @@ portfolio_rb/
 
 ### 開発環境構築
 
+#### Phase 2A: ネットワーク不要セットアップ（〜2024-12-02）
+現在Phase 2A実行中。ネットワーク機器交換前にgemインストール以外の設定を完了します。
+
 1. **リポジトリクローン**
    ```bash
    git clone [repository-url]
    cd portfolio_rb
    ```
 
-2. **Docker環境での起動**
+2. **設定ファイル準備**
+   ```bash
+   cp .env.example .env
+   # .envファイル編集（下記「環境変数設定」参照）
+   ```
+
+3. **Docker環境構築**
    ```bash
    docker-compose up -d
    ```
 
-3. **データベース初期化**
+#### Phase 2B: gemインストール・動作確認（2024-12-03〜）
+新ネットワーク機器到着後に実施予定。
+
+4. **gemインストール**
+   ```bash
+   bundle install  # 65 gems インストール
+   ```
+
+5. **データベース初期化**
    ```bash
    docker-compose exec app rails db:create
    docker-compose exec app rails db:migrate
    docker-compose exec app rails db:seed
    ```
 
-4. **環境変数設定**
+6. **開発サーバー起動**
    ```bash
-   cp .env.example .env
+   docker-compose exec app rails server
    ```
-   
-   `.env`ファイルに以下の設定を追加：
-   ```bash
-   # 🤖 OpenAI API設定（AI機能に必須）
-   OPENAI_API_KEY=sk-your-openai-api-key-here
-   OPENAI_MODEL=gpt-4-turbo-preview
-   OPENAI_MONTHLY_BUDGET=50
-   
-   # 💬 Slack連携設定（オプション）
-   SLACK_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/WEBHOOK/URL
-   SLACK_CHANNEL=#general
-   
-   # 📊 Analytics設定（オプション）
-   GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
-   
-   # 🔒 セキュリティ設定
-   ADMIN_PATH=admin
-   SECRET_KEY_BASE=generate-with-rails-secret
-   
-   # 🗄️ データベース設定
-   DATABASE_URL=postgresql://user:pass@localhost:5432/portfolio_rb_development
-   ```
+
+### 環境変数設定
+
+`.env`ファイルに以下の設定を追加：
+```bash
+# 🤖 OpenAI API設定（AI機能に必須）
+OPENAI_API_KEY=sk-your-openai-api-key-here
+OPENAI_MODEL=gpt-4-turbo-preview
+OPENAI_MONTHLY_BUDGET=50
+
+# 💬 Slack連携設定（オプション）
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/WEBHOOK/URL
+SLACK_CHANNEL=#general
+
+# 📊 Analytics設定（オプション）
+GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
+
+# 🔒 セキュリティ設定
+ADMIN_PATH=admin
+SECRET_KEY_BASE=generate-with-rails-secret
+
+# 🗄️ データベース設定
+DATABASE_URL=postgresql://user:pass@db:5432/portfolio_rb_development
+REDIS_URL=redis://redis:6379/0
+```
 
 ### 本番環境デプロイ
 
@@ -303,26 +338,46 @@ docker-compose exec app rspec spec/models/article_spec.rb
 
 ## 📈 開発計画
 
-### ✅ Phase 1: 仕様策定・プロトタイプ完了
-- [x] **詳細仕様策定** - spec.md完成（650行超）
-- [x] **16画面プロトタイプ完成** - フロントエンド5画面 + 管理画面11画面
+### ✅ Phase 1: 仕様策定・設計 (100% 完了)
+- [x] **詳細仕様策定** - spec.md完成（1000行超）
+- [x] **17画面プロトタイプ完成** - フロントエンド5画面 + 管理画面12画面
 - [x] **AI機能設計** - OpenAI API統合・SEO最適化・コンテンツ生成
 - [x] **セキュリティ設計** - 2FA・IP制限・バックアップ・監視機能
 - [x] **UI/UXデザインシステム** - ダークサイドバー・レスポンシブ対応
-- [x] **データベーススキーマ設計** - 18テーブル完全設計（2024-11-28追加）
-- [x] **Railsマイグレーション計画** - 20マイグレーションファイル策定（2024-11-28追加）
+- [x] **データベーススキーマ設計** - 18テーブル完全設計
+- [x] **Railsマイグレーション計画** - 20マイグレーションファイル策定
+- [x] **API設計完成** - 公開API + 内部API・RESTful設計
 
-### 🚀 Phase 2: 基盤実装（Sprint 0-3）
-- [ ] **Sprint 0**: Rails 8.0環境構築・Docker設定・DB構築・API基盤準備
-- [ ] **Sprint 1**: 静的ページ実装・Tailwind CSS導入・基本ルーティング
-- [ ] **Sprint 2**: 管理画面基盤・認証システム・ポートフォリオCMS
+### 🚀 Phase 2: 開発実装 - Phase 2A実行中
+#### ⚡ Phase 2A: ネットワーク不要作業（2024-11-29 〜 12-02）
+- [x] **Rails 8.0.4 環境構築完了** - PostgreSQL・Tailwind CSS・ESBuild・Docker
+- [x] **Gemfile統合完了** - 65 gems設定（Rails 8.0.4対応）
+- [x] **Phase 2計画見直し完了** - ネットワーク問題対応・Phase 2A/2B分割
+- [ ] **🎯 実行中**: config/database.yml PostgreSQL設定
+- [ ] 基本ルーティング設計（config/routes.rb）
+- [ ] 20個のマイグレーションファイル作成
+- [ ] 基本コントローラー・モデル設計
+- [ ] Devise設定ファイル準備
+- [ ] RSpec設定ファイル準備
+
+#### ⏳ Phase 2B: ネットワーク必要作業（2024-12-03〜）
+- [ ] bundle install実行（65 gems インストール）
+- [ ] Devise設定・認証実装
+- [ ] データベース初期化・シードデータ投入
+- [ ] Tailwind CSS導入・スタイリング
+- [ ] 実際の動作確認・テスト実行
+- [ ] 本格開発開始準備完了
+
+### 🎯 Phase 3: 基本実装（Sprint 1-3）
+- [ ] **Sprint 1**: 静的ページ実装・基本ルーティング
+- [ ] **Sprint 2**: 管理画面基盤・ポートフォリオCMS
 - [ ] **Sprint 3**: ブログ機能・Markdownエディタ・カテゴリ管理
 
-### 🎯 Phase 3: 検索・メディア（Sprint 4-5）
+### 🔍 Phase 4: 検索・メディア（Sprint 4-5）
 - [ ] **Sprint 4**: メディア管理・画像最適化・WebP自動変換
 - [ ] **Sprint 5**: 全文検索実装・カテゴリページ・パンくずリスト
 
-### 🔌 **Phase 4: API機能実装（Sprint 6-7）** ⭐️新規追加
+### 🔌 Phase 5: API機能実装（Sprint 6-7）
 - [ ] **Sprint 6: 公開API実装**
   - ブログ記事API（記事一覧・詳細・カテゴリ・タグ）
   - ポートフォリオAPI（セクション・作品データ）
@@ -338,16 +393,17 @@ docker-compose exec app rspec spec/models/article_spec.rb
   - API統計・ログ収集機能
   - フロントエンド統合（検索・フォーム・動的コンテンツ）
 
-### 📊 Phase 5: SEO/最適化（Sprint 8-9）
+### 📊 Phase 6: SEO/最適化（Sprint 8-9）
 - [ ] **Sprint 8**: SEO/OGP強化・メタデータ管理・構造化データ・sitemap自動生成
 - [ ] **Sprint 9**: AI連携・キャッシュ最適化・OpenAI API統合・Redis戦略実装
 
-### 🔧 Phase 6: 仕上げ・運用（Sprint 10+）
+### 🔧 Phase 7: 仕上げ・運用（Sprint 10+）
 - [ ] **Sprint 10**: UIポリッシュ・ユーザビリティ改善・API ドキュメント自動生成
 - [ ] **Sprint 11**: 本番デプロイ・監視設定・負荷テスト・セキュリティ監査
 
 詳細な技術仕様: `docs/specifications/spec.md`  
-プロトタイプ一覧: `docs/wireframes/`
+プロトタイプ一覧: `docs/wireframes/`  
+Phase 2計画詳細: `docs/development/phase_2_revision_plan.md`
 
 ## 🤝 コントリビューション
 
@@ -366,6 +422,14 @@ Private Project - All Rights Reserved
 
 ## 🔄 更新履歴
 
+- **2024-11-29**:
+  - ✅ **Phase 2計画見直し完了** - ネットワーク問題対応・Phase 2A/2B分割計画策定
+  - ✅ **Phase 2A開始** - ネットワーク不要作業先行実施（〜12/2）
+  - ✅ **管理画面ログインページプロトタイプ追加** - 17画面完成
+  - ✅ **Rails 8.0.4環境構築完了** - PostgreSQL・Tailwind CSS・ESBuild・Docker
+  - ✅ **Gemfile統合完了** - 65 gems設定（Rails 8.0.4対応・annot8採用）
+  - ✅ **技術スタック確定** - Ruby 3.4.7・Rails 8.0.4・PostgreSQL 16・Redis 7
+
 - **2024-11-28**:
   - ✅ **データベーススキーマ設計完了** - 18テーブル完全設計
   - ✅ **Railsマイグレーション計画完了** - 20マイグレーションファイル策定
@@ -373,6 +437,7 @@ Private Project - All Rights Reserved
   - ✅ **PostgreSQL特有機能活用** - 全文検索・JSONB・パーティショニング設計
   - ✅ **API設計完成・spec.md統合** - RESTful API（公開/内部）・既存機能との統合
   - ✅ **開発計画更新** - API実装フェーズ（Sprint 6-7）追加・11スプリント構成
+
 - **2024-11-27**: 
   - ✅ **16画面プロトタイプ完成** - フロントエンド5画面 + 管理画面11画面
   - ✅ **spec.md大幅アップデート** - AI機能・セキュリティ・監視機能追加
@@ -381,6 +446,7 @@ Private Project - All Rights Reserved
   - ✅ **運用監視機能** - システム監視・バックアップ・パフォーマンス追跡
   - ✅ **AI統合システム** - GPT-4・記事要約・SEO最適化・コンテンツ生成
   - ✅ **セキュリティ強化** - 2FA・IP制限・ログイン監視
+
 - **2024-11-26**: 
   - プロジェクト開始・基本仕様策定完了
   - 3フェーズキャリア構成決定
@@ -392,7 +458,7 @@ Private Project - All Rights Reserved
 
 ### ✅ 完了項目（Phase 1）
 - **仕様策定**: 100% 完了
-- **プロトタイプ**: 16/16画面 完了  
+- **プロトタイプ**: 17/17画面 完了  
 - **UI/UXデザイン**: 100% 完了
 - **AI機能設計**: 100% 完了
 - **セキュリティ設計**: 100% 完了
@@ -401,5 +467,12 @@ Private Project - All Rights Reserved
 - **API設計**: 100% 完了（公開API + 内部API）
 - **開発計画統合**: 100% 完了（11スプリント構成）
 
+### ⚡ Phase 2A実行中（ネットワーク不要作業）
+- **Rails 8.0.4環境構築**: 100% 完了
+- **Gemfile統合**: 100% 完了（65 gems設定）
+- **Phase 2計画見直し**: 100% 完了
+- **config/database.yml設定**: 実行中
+
 ### 🎯 次のマイルストーン
-**Phase 2開始**: Rails環境構築・Sprint 0実装開始
+**Phase 2A完了目標**: 2024-12-02  
+**Phase 2B開始予定**: 2024-12-03（新ネットワーク機器到着後）
