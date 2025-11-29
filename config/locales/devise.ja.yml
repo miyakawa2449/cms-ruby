@@ -1,0 +1,137 @@
+# Devise Japanese Localization
+# 管理画面用の日本語ローカライゼーション
+
+ja:
+  devise:
+    confirmations:
+      confirmed: "アカウントが正常に確認されました。"
+      send_instructions: "数分後に確認メールが送信されます。"
+      send_paranoid_instructions: "メールアドレスがデータベースに存在する場合、数分後に確認メールが送信されます。"
+      
+    failure:
+      already_authenticated: "既にログインしています。"
+      inactive: "アカウントが有効化されていません。"
+      invalid: "メールアドレスまたはパスワードが正しくありません。"
+      locked: "アカウントがロックされています。"
+      last_attempt: "アカウントがロックされる前に、もう1回試行できます。"
+      not_found_in_database: "メールアドレスまたはパスワードが正しくありません。"
+      timeout: "セッションがタイムアウトしました。続行するには再度ログインしてください。"
+      unauthenticated: "ログインしてください。"
+      unconfirmed: "続行する前にアカウントを確認してください。"
+      
+    mailer:
+      confirmation_instructions:
+        subject: "アカウント確認"
+      reset_password_instructions:
+        subject: "パスワードリセット"
+      unlock_instructions:
+        subject: "アカウントロック解除"
+      password_change:
+        subject: "パスワード変更完了"
+      email_changed:
+        subject: "メールアドレス変更完了"
+        
+    omniauth_callbacks:
+      failure: "%{kind} アカウントによる認証に失敗しました。理由：%{reason}"
+      success: "%{kind} アカウントによる認証に成功しました。"
+      
+    passwords:
+      no_token: "パスワードリセットメール経由以外のアクセスはできません。パスワードリセットメールからアクセスした場合、URLが正しいかご確認ください。"
+      send_instructions: "数分後にパスワードリセットメールが送信されます。"
+      send_paranoid_instructions: "メールアドレスがデータベースに存在する場合、数分後にパスワードリセットメールが送信されます。"
+      updated: "パスワードが正常に変更されました。"
+      updated_not_active: "パスワードが正常に変更されました。"
+      
+    registrations:
+      destroyed: "アカウントが正常に削除されました。"
+      signed_up: "アカウント登録が完了しました。"
+      signed_up_but_inactive: "アカウント登録が完了しましたが、アカウントが有効化されていないため、ログインできません。"
+      signed_up_but_locked: "アカウント登録が完了しましたが、アカウントがロックされているため、ログインできません。"
+      signed_up_but_unconfirmed: "確認メールを送信しました。メール内のリンクをクリックしてアカウントを有効化してください。"
+      update_needs_confirmation: "アカウント情報が更新されました。新しいメールアドレスの確認メールを送信しましたので、メール内のリンクをクリックして変更を完了してください。"
+      updated: "アカウント情報が正常に更新されました。"
+      updated_but_not_signed_in: "アカウント情報が正常に更新されましたが、パスワードが変更されたため、再度ログインしてください。"
+      
+    sessions:
+      signed_in: "ログインしました。"
+      signed_out: "ログアウトしました。"
+      already_signed_out: "既にログアウトしています。"
+      
+    unlocks:
+      send_instructions: "数分後にアカウントロック解除メールが送信されます。"
+      send_paranoid_instructions: "アカウントが存在する場合、数分後にアカウントロック解除メールが送信されます。"
+      unlocked: "アカウントが正常にロック解除されました。"
+      
+  errors:
+    messages:
+      already_confirmed: "は既に確認されています。ログインしてください。"
+      confirmation_period_expired: "の確認期限が切れました。%{period} 以内に確認する必要があります。新しくリクエストしてください。"
+      expired: "の有効期限が切れました。新しくリクエストしてください。"
+      not_found: "は見つかりませんでした。"
+      not_locked: "はロックされていません。"
+      not_saved:
+        one: "エラーが発生したため %{resource} は保存されませんでした："
+        other: "%{count} 件のエラーが発生したため %{resource} は保存されませんでした："
+        
+# 管理画面固有のメッセージ
+  admin:
+    sessions:
+      new:
+        title: "管理者ログイン"
+        welcome: "ポートフォリオサイト管理画面"
+        subtitle: "管理者アカウントでログインしてください"
+        email_placeholder: "メールアドレス"
+        password_placeholder: "パスワード"
+        remember_me: "ログイン状態を保持"
+        sign_in: "ログイン"
+        forgot_password: "パスワードを忘れた方はこちら"
+        security_notice: "この画面は管理者専用です。認証されていないアクセスは記録されます。"
+        
+    passwords:
+      new:
+        title: "パスワードリセット"
+        subtitle: "登録されたメールアドレスにリセット手順を送信します"
+        email_placeholder: "登録メールアドレス"
+        send_instructions: "リセット手順を送信"
+        back_to_sign_in: "ログイン画面に戻る"
+        
+      edit:
+        title: "新しいパスワードの設定"
+        subtitle: "アカウントのセキュリティを保つため、強力なパスワードを設定してください"
+        password_placeholder: "新しいパスワード"
+        password_confirmation_placeholder: "パスワード確認"
+        change_password: "パスワードを変更"
+        password_requirements: "パスワードは12文字以上で、大文字・小文字・数字・記号を含む必要があります"
+        
+    unlocks:
+      new:
+        title: "アカウントロック解除"
+        subtitle: "ロック解除手順をメールで送信します"
+        email_placeholder: "登録メールアドレス"
+        send_instructions: "ロック解除手順を送信"
+        back_to_sign_in: "ログイン画面に戻る"
+        
+  # ActiveRecord validation messages
+  activerecord:
+    errors:
+      models:
+        admin_user:
+          attributes:
+            email:
+              taken: "このメールアドレスは既に使用されています"
+              invalid: "有効なメールアドレスを入力してください"
+              blank: "メールアドレスを入力してください"
+            password:
+              blank: "パスワードを入力してください"
+              too_short: "パスワードは%{count}文字以上で入力してください"
+              weak: "パスワードが弱すぎます。大文字・小文字・数字・記号を組み合わせてください"
+            password_confirmation:
+              confirmation: "パスワードと一致しません"
+            name:
+              blank: "名前を入力してください"
+              too_short: "名前は%{count}文字以上で入力してください"
+              too_long: "名前は%{count}文字以下で入力してください"
+            role:
+              inclusion: "有効な役割を選択してください"
+            status:
+              inclusion: "有効なステータスを選択してください"
