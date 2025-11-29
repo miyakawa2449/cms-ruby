@@ -1,0 +1,54 @@
+# syntax=docker/dockerfile:1
+FROM ruby:3.4
+
+# 開発に必要なパッケージのインストール
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+    build-essential \
+    gnupg2 \
+    less \
+    git \
+    vim \
+    libpq-dev \
+    postgresql-client \
+    libvips \
+    curl \
+    libjemalloc2 \
+    libmagickwand-dev \
+    imagemagick \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# jemalloc を使用してメモリ使用量を最適化
+ENV LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libjemalloc.so.2
+
+# Node.js と Yarn をインストール（NodeSource リポジトリ経由）
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g yarn && \
+    rm -rf /var/lib/apt/lists/*
+
+# アプリケーションディレクトリの作成
+RUN mkdir /app
+WORKDIR /app
+
+# 開発用の環境変数
+ENV RAILS_ENV=development
+ENV BUNDLE_PATH=/bundle
+ENV BUNDLE_BIN=/bundle/bin
+ENV PATH="${BUNDLE_BIN}:${PATH}"
+
+# bundler のインストール
+RUN gem install bundler
+
+# ヒストリーファイルの永続化設定
+ENV HISTFILE=/app/.bash_history
+
+# エントリーポイントスクリプトの設定
+COPY entrypoint.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint.sh
+ENTRYPOINT ["entrypoint.sh"]
+
+# Rails サーバーの起動
+EXPOSE 3000
+
+# 開発サーバーのデフォルトコマンド
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
