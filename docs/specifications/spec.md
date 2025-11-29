@@ -6,8 +6,8 @@
 シニアエンジニアの技術発信・ポートフォリオサイトをCMS化し、技術ブログ機能を搭載する
 
 ### 1.2 技術スタック
-- **言語**: Ruby 3.4.0（2024年12月25日リリース）
-- **フレームワーク**: Ruby on Rails 8.0.1（API機能含む）
+- **言語**: Ruby 3.4.7（Docker環境実装済み）
+- **フレームワーク**: Ruby on Rails 8.0.4（API機能含む）
 - **API設計**: RESTful API（/api/v1、/api/internal）
 - **認証**: Devise（管理画面）+ JWT（API）
 - **CSSフレームワーク**: Tailwind CSS
@@ -49,7 +49,7 @@
 
 ## 1.4 関連仕様書・設計ドキュメント一覧
 
-### プロトタイプ・画面設計（16画面完成）
+### プロトタイプ・画面設計（17画面完成）
 - **フロントエンド**: 5画面プロトタイプ
   - `/docs/wireframes/app/views/portfolio/portfolio_prototype.html` - ポートフォリオトップ
   - `/docs/wireframes/app/views/portfolio/my_story_prototype.html` - My Story詳細ページ
@@ -57,7 +57,8 @@
   - `/docs/wireframes/app/views/blog/blog_article_prototype.html` - 記事詳細ページ
   - `/docs/wireframes/app/views/blog/blog_category_prototype.html` - カテゴリ別一覧
 
-- **管理画面**: 11画面プロトタイプ
+- **管理画面**: 12画面プロトタイプ
+  - `/docs/wireframes/app/views/admin/auth/admin_login_prototype.html` - ログイン画面（**NEW 2024-11-29**）
   - `/docs/wireframes/app/views/admin/dashboard/admin_dashboard_prototype.html` - ダッシュボード
   - `/docs/wireframes/app/views/admin/articles/admin_blog_prototype.html` - 記事管理一覧
   - `/docs/wireframes/app/views/admin/articles/admin_article_editor_prototype.html` - 記事エディタ（AI機能付き）
@@ -924,6 +925,11 @@ DELETE /api/internal/media/:id                # メディア削除
   - ✅ **統合設計完了** - API-DB統合・プロトタイプ統合計画
   - ✅ **実装計画完了** - Phase 4 API実装詳細計画・11スプリント構成
   - **仕様策定Phase 1完全完了**
+- **2024-11-29**: 
+  - ✅ **管理画面ログインページプロトタイプ追加** - 17画面完成
+  - ✅ **Phase 2開始: 環境構築完了** - Docker + Rails 8.0.4 + 65 Gems
+  - ✅ **技術スタック確定** - Ruby 3.4.7, Rails 8.0.4, annot8対応
+  - **Phase 2: Sprint 0環境構築完全完了**
 
 ---
 
@@ -931,7 +937,7 @@ DELETE /api/internal/media/:id                # メディア削除
 
 ### ✅ Phase 1: 仕様策定・設計 (100% 完了)
 - **基本仕様**: 100% 完了
-- **16画面プロトタイプ**: 100% 完了  
+- **17画面プロトタイプ**: 100% 完了（ログイン画面追加）  
 - **UI/UXデザイン**: 100% 完了
 - **データベース設計**: 100% 完了（18テーブル）
 - **マイグレーション計画**: 100% 完了（20ファイル）
@@ -939,17 +945,25 @@ DELETE /api/internal/media/:id                # メディア削除
 - **開発計画**: 100% 完了（11スプリント構成）
 - **統合設計**: 100% 完了
 
-### 🎯 次のマイルストーン: Phase 2開始
-**準備完了**: Rails 8.0.1環境構築・Sprint 0実装開始
+### 🚀 Phase 2: 開発実装 - Sprint 0完了！
+**✅ Sprint 0 環境構築完了**: Rails 8.0.4 + Docker + 65 Gemsインストール済み
 
-**Phase 2実装内容（Sprint 0-3）**:
-- Rails 8.0.1 + PostgreSQL + Docker環境構築
-- 認証システム（Devise）
-- 基本ルーティング・コントローラ
-- Tailwind CSS導入・スタイリング
-- 基本画面実装（静的→動的移行）
+### 🎯 次のマイルストーン: Sprint 1開始
+**開始準備完了**: データベース設定・基本アプリケーション構築
 
-**技術基盤準備完了**:
+**Phase 2実装内容（Sprint 1-3）**:
+- ✅ Rails 8.0.4 + PostgreSQL + Docker環境構築（完了）
+- [ ] データベース初期設定 - config/database.yml・初期migration
+- [ ] 認証システム（Devise）導入
+- [ ] Tailwind CSS導入・スタイリング
+- [ ] 基本ルーティング・コントローラ
+- [ ] 基本画面実装（静的→動的移行）
+
+**技術基盤完全完成**:
+- ✅ Docker環境構築完了（PostgreSQL 16 + Redis 7 + Rails 8.0.4）
+- ✅ 65 Gemsインストール完了（Rails 8.0対応調整済み）
+- ✅ 管理画面ログインプロトタイプ追加（17画面完成）
+- ✅ Gem依存関係ドキュメント作成（`/docs/development/gem_dependencies.md`）
 - 全DB テーブル設計完了
 - 全API エンドポイント設計完了
 - 全画面プロトタイプ完了
