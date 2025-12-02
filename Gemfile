@@ -55,7 +55,7 @@ gem "rack-cors", "~> 2.0"
 # API Development
 gem "active_model_serializers", "~> 0.10.14"
 gem "kaminari", "~> 1.2"
-gem "api-pagination", "~> 5.0"
+gem "api-pagination", "~> 7.0"
 
 # Content Processing
 gem "redcarpet", "~> 3.6"
