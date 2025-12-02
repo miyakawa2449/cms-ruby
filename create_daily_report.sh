@@ -106,14 +106,14 @@ EOF
 echo "✅ 作業報告書を作成しました: $filename"
 echo "📝 内容を編集してください"
 
-# ファイルをエディタで開く（オプション）
-if command -v code >/dev/null 2>&1; then
-    echo "🔧 VS Codeで開いています..."
-    code "$filename"
-elif command -v open >/dev/null 2>&1; then
-    echo "📂 ファイルを開いています..."
-    open "$filename"
-fi
+# ファイルをエディタで開く（オプション） - 無効化
+# if command -v code >/dev/null 2>&1; then
+#     echo "🔧 VS Codeで開いています..."
+#     code "$filename"
+# elif command -v open >/dev/null 2>&1; then
+#     echo "📂 ファイルを開いています..."
+#     open "$filename"
+# fi
 
 echo ""
 echo "📁 今日の報告書一覧:"
