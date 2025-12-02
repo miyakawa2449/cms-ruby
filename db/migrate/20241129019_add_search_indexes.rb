@@ -7,7 +7,7 @@ class AddSearchIndexes < ActiveRecord::Migration[8.0]
     
     # Create text search configuration for Japanese
     execute <<-SQL
-      CREATE TEXT SEARCH CONFIGURATION IF NOT EXISTS japanese (COPY = pg_catalog.simple);
+      CREATE TEXT SEARCH CONFIGURATION IF NOT EXISTS english (COPY = pg_catalog.simple);
     SQL
     
     # ========================================
@@ -18,7 +18,7 @@ class AddSearchIndexes < ActiveRecord::Migration[8.0]
     execute <<-SQL
       CREATE INDEX CONCURRENTLY IF NOT EXISTS index_global_content_search 
       ON articles USING gin(
-        to_tsvector('japanese', 
+        to_tsvector('english', 
           coalesce(title, '') || ' ' || 
           coalesce(excerpt, '') || ' ' || 
           coalesce(content, '')
@@ -29,7 +29,7 @@ class AddSearchIndexes < ActiveRecord::Migration[8.0]
     execute <<-SQL
       CREATE INDEX CONCURRENTLY IF NOT EXISTS index_global_portfolio_search 
       ON section_contents USING gin(
-        to_tsvector('japanese', 
+        to_tsvector('english', 
           coalesce(title, '') || ' ' || 
           coalesce(subtitle, '') || ' ' ||
           coalesce(content_data::text, '')
@@ -232,7 +232,7 @@ class AddSearchIndexes < ActiveRecord::Migration[8.0]
     
     # Add comments about index purposes
     execute <<-SQL
-      COMMENT ON INDEX index_global_content_search IS 'Full-text search across all article content in Japanese';
+      COMMENT ON INDEX index_global_content_search IS 'Full-text search across all article content in English';
       COMMENT ON INDEX index_articles_listing_performance IS 'Optimizes article listing queries for public pages';
       COMMENT ON INDEX index_access_logs_analytics_hourly IS 'Supports real-time analytics dashboard queries';
       COMMENT ON INDEX index_articles_api_response IS 'Optimizes API responses for article endpoints';
@@ -274,6 +274,6 @@ class AddSearchIndexes < ActiveRecord::Migration[8.0]
     end
     
     # Remove custom text search configuration
-    execute "DROP TEXT SEARCH CONFIGURATION IF EXISTS japanese;"
+    execute "DROP TEXT SEARCH CONFIGURATION IF EXISTS english;"
   end
 end

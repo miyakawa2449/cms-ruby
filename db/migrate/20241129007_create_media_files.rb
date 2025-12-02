@@ -59,7 +59,6 @@ class CreateMediaFiles < ActiveRecord::Migration[8.0]
     add_index :media_files, :storage_type
     add_index :media_files, :image_format
     add_index :media_files, :folder
-    add_index :media_files, :uploaded_by_id
     add_index :media_files, :usage_count
     add_index :media_files, :last_used_at
     add_index :media_files, :public
@@ -80,7 +79,7 @@ class CreateMediaFiles < ActiveRecord::Migration[8.0]
     add_index :media_files, :alt_text, opclass: :gin_trgm_ops, using: :gin, name: 'index_media_files_alt_text_trgm'
     
     # Performance indexes
-    add_index :media_files, [:public, :content_type, :created_at], where: "expires_at IS NULL OR expires_at > NOW()", name: 'index_media_files_active'
+    add_index :media_files, [:public, :content_type, :created_at], where: "expires_at IS NULL", name: 'index_media_files_active'
     
     # Constraints
     add_check_constraint :media_files, "storage_type IN ('local', 's3', 'cdn')", name: 'media_files_valid_storage_type'

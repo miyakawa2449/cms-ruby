@@ -13,7 +13,6 @@ class CreateArticleCategories < ActiveRecord::Migration[8.0]
 
     # Indexes
     add_index :article_categories, [:article_id, :category_id], unique: true, name: 'index_article_categories_unique'
-    add_index :article_categories, :category_id
     add_index :article_categories, :primary
     add_index :article_categories, [:article_id, :primary], name: 'index_article_categories_primary'
     add_index :article_categories, [:article_id, :sort_order], name: 'index_article_categories_sort'

@@ -81,7 +81,6 @@ class CreateBackups < ActiveRecord::Migration[8.0]
     add_index :backups, :scheduled
     add_index :backups, :verified
     add_index :backups, :restorable
-    add_index :backups, :created_by_id
     add_index :backups, :started_at
     add_index :backups, :completed_at
     add_index :backups, :expires_at
@@ -99,7 +98,7 @@ class CreateBackups < ActiveRecord::Migration[8.0]
     
     # Performance indexes
     add_index :backups, [:status, :created_at], where: "scheduled = true", name: 'index_backups_scheduled_status'
-    add_index :backups, [:expires_at], where: "auto_delete = true AND expires_at < NOW()", name: 'index_backups_expired'
+    add_index :backups, [:expires_at], where: "auto_delete = true", name: 'index_backups_expired'
     add_index :backups, [:file_size, :completed_at], where: "status = 'completed'", name: 'index_backups_size_completed'
     
     # JSONB indexes

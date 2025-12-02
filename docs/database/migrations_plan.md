@@ -7,7 +7,7 @@
 
 ### Phase 1: 基盤テーブル（独立系）
 
-1. **001_create_users.rb**
+1. **001_create_admin_users.rb**
    - Devise導入後に自動生成されるものをカスタマイズ
    - 2FA、ロール、アクセス制御フィールド追加
 
@@ -87,18 +87,18 @@
 
 ### 1. Devise連携
 ```ruby
-# users テーブルはDevise導入時に生成されるため、追加カラムは別マイグレーションで
-class AddCustomFieldsToUsers < ActiveRecord::Migration[7.1]
+# admin_users テーブルはDevise導入時に生成されるため、追加カラムは別マイグレーションで
+class AddCustomFieldsToAdminUsers < ActiveRecord::Migration[7.1]
   def change
-    add_column :users, :name, :string, null: false
-    add_column :users, :avatar_url, :string
-    add_column :users, :role, :string, default: 'admin'
-    add_column :users, :otp_secret, :string
-    add_column :users, :otp_required_for_login, :boolean, default: false
-    add_column :users, :failed_attempts, :integer, default: 0
-    add_column :users, :locked_at, :datetime
+    add_column :admin_users, :name, :string, null: false
+    add_column :admin_users, :avatar_url, :string
+    add_column :admin_users, :role, :string, default: 'admin' # 権限: admin, editor, author, viewer
+    add_column :admin_users, :otp_secret, :string
+    add_column :admin_users, :otp_required_for_login, :boolean, default: false
+    add_column :admin_users, :failed_attempts, :integer, default: 0
+    add_column :admin_users, :locked_at, :datetime
     
-    add_index :users, :role
+    add_index :admin_users, :role
   end
 end
 ```
@@ -136,7 +136,7 @@ class CreateSectionContents < ActiveRecord::Migration[7.1]
       t.jsonb :content, null: false, default: {}
       t.integer :version, null: false, default: 1
       t.boolean :is_active, default: false
-      t.references :published_by, foreign_key: { to_table: :users }
+      t.references :published_by, foreign_key: { to_table: :admin_users }
       t.datetime :published_at
       
       t.timestamps
@@ -163,7 +163,7 @@ class CreateAccessLogs < ActiveRecord::Migration[7.1]
         user_agent TEXT,
         referrer VARCHAR(500),
         response_time INTEGER,
-        user_id BIGINT REFERENCES users(id),
+        admin_user_id BIGINT REFERENCES admin_users(id),
         session_id VARCHAR(255),
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         PRIMARY KEY (id, created_at)
@@ -183,7 +183,7 @@ class CreateAccessLogs < ActiveRecord::Migration[7.1]
     # インデックス作成
     add_index "access_logs_#{current_month.strftime('%Y_%m')}", :created_at
     add_index "access_logs_#{current_month.strftime('%Y_%m')}", :path
-    add_index "access_logs_#{current_month.strftime('%Y_%m')}", :user_id
+    add_index "access_logs_#{current_month.strftime('%Y_%m')}", :admin_user_id
   end
 end
 ```
@@ -230,7 +230,7 @@ end
 ### Article モデル
 ```ruby
 class Article < ApplicationRecord
-  belongs_to :user
+  belongs_to :admin_user
   has_many :article_categories, dependent: :destroy
   has_many :categories, through: :article_categories
   has_many :article_tags, dependent: :destroy
@@ -282,7 +282,7 @@ class Article < ApplicationRecord
   
   def update_revision
     revisions.create!(
-      user: user,
+      admin_user: admin_user,
       title: title,
       content: content,
       revision_number: revision_count + 1
@@ -338,7 +338,7 @@ end
 **結論**: API機能実装に**追加マイグレーション不要**
 
 #### API機能カバレッジ
-- **JWT認証**: users + settings テーブルで対応
+- **JWT認証**: admin_users + settings テーブルで対応
 - **API統計**: access_logs テーブル（パーティション対応）で完全対応
 - **AI API**: article_ai_analyses テーブルで完全対応
 - **メディアAPI**: media_files テーブルで完全対応

@@ -2,6 +2,10 @@
 # Phase 2A: 基本モデル定義（Phase 2BでDevise設定後に有効化）
 
 class AdminUser < ApplicationRecord
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable
   # Devise modules configuration
   # Phase 2Bで有効化予定:
   # devise :database_authenticatable, 
@@ -19,7 +23,7 @@ class AdminUser < ApplicationRecord
   validates :name, presence: true, length: { minimum: 2, maximum: 50 }
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :role, inclusion: { in: %w[super_admin admin editor viewer] }
+  validates :role, inclusion: { in: %w[admin editor author viewer] }
   validates :status, inclusion: { in: %w[active inactive suspended] }
   
   # パスワード強度の検証（Phase 2Bで有効化）
@@ -35,11 +39,11 @@ class AdminUser < ApplicationRecord
   # === Enums ===
   # Rails 7+ enum syntax
   enum :role, {
-    super_admin: 'super_admin',
-    admin: 'admin', 
-    editor: 'editor',
+    admin: 'admin',
+    editor: 'editor', 
+    author: 'author',
     viewer: 'viewer'
-  }, default: 'editor'
+  }, default: 'author'
   
   enum :status, {
     active: 'active',
@@ -71,7 +75,7 @@ class AdminUser < ApplicationRecord
       password: password,
       password_confirmation: password,
       name: name,
-      role: 'super_admin',
+      role: 'admin',
       status: 'active',
       confirmed_at: Time.current,
       settings: default_admin_settings
@@ -117,28 +121,40 @@ class AdminUser < ApplicationRecord
   end
   
   def can_manage_users?
-    super_admin? || admin?
+    admin?
   end
   
   def can_publish_articles?
+    admin? || editor?
+  end
+  
+  def can_create_articles?
     !viewer?
   end
   
   def can_manage_system?
-    super_admin?
+    admin?
   end
   
   def can_access_analytics?
-    super_admin? || admin?
+    admin? || editor?
   end
   
   def can_manage_backups?
-    super_admin? || admin?
+    admin?
   end
   
   def can_edit_article?(article)
-    return true if super_admin? || admin?
-    return true if editor? && article.admin_user_id == id
+    return true if admin?
+    return true if editor?
+    return true if author? && article.admin_user_id == id
+    false
+  end
+  
+  def can_delete_article?(article)
+    return true if admin?
+    return true if editor?
+    return true if author? && article.admin_user_id == id && article.status == 'draft'
     false
   end
   
@@ -286,21 +302,22 @@ end
 
 class AdminUserPermissions
   PERMISSIONS = {
-    super_admin: %w[
+    admin: %w[
       manage_users manage_system manage_backups
       manage_articles manage_comments manage_media
-      view_analytics access_audit_logs
-    ],
-    admin: %w[
-      manage_articles manage_comments manage_media
-      view_analytics moderate_comments
+      view_analytics access_audit_logs publish_articles
     ],
     editor: %w[
+      manage_articles manage_comments manage_media
+      view_analytics moderate_comments publish_articles
+      edit_all_articles
+    ],
+    author: %w[
       create_articles edit_own_articles manage_own_media
-      moderate_comments
+      view_own_analytics
     ],
     viewer: %w[
-      view_articles view_comments
+      view_articles view_comments view_dashboard
     ]
   }.freeze
   

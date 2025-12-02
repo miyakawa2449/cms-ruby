@@ -1,6 +1,6 @@
 erDiagram
     %% ユーザー管理
-    users {
+    admin_users {
         bigserial id PK
         varchar email UK
         varchar encrypted_password
@@ -18,7 +18,7 @@ erDiagram
     %% コンテンツ管理
     articles {
         bigserial id PK
-        bigint user_id FK
+        bigint admin_user_id FK
         varchar title
         varchar slug UK
         text content
@@ -103,7 +103,7 @@ erDiagram
     %% メディア管理
     media_files {
         bigserial id PK
-        bigint user_id FK
+        bigint admin_user_id FK
         varchar filename
         varchar original_filename
         varchar content_type
@@ -190,7 +190,7 @@ erDiagram
     article_revisions {
         bigserial id PK
         bigint article_id FK
-        bigint user_id FK
+        bigint admin_user_id FK
         varchar title
         text content
         integer revision_number
@@ -241,7 +241,7 @@ erDiagram
         text user_agent
         varchar referrer
         integer response_time
-        bigint user_id FK
+        bigint admin_user_id FK
         varchar session_id
         timestamp created_at
     }
@@ -262,13 +262,13 @@ erDiagram
     }
     
     %% リレーション定義
-    users ||--o{ articles : writes
-    users ||--o{ comments : moderates
-    users ||--o{ media_files : uploads
-    users ||--o{ section_contents : publishes
-    users ||--o{ article_revisions : creates
-    users ||--o{ access_logs : generates
-    users ||--o{ contacts : assigns_to
+    admin_users ||--o{ articles : writes
+    admin_users ||--o{ comments : moderates
+    admin_users ||--o{ media_files : uploads
+    admin_users ||--o{ section_contents : publishes
+    admin_users ||--o{ article_revisions : creates
+    admin_users ||--o{ access_logs : generates
+    admin_users ||--o{ contacts : assigns_to
     
     articles ||--o{ article_categories : has
     articles ||--o{ article_tags : has

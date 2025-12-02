@@ -7,9 +7,9 @@
 
 ```mermaid
 erDiagram
-    users ||--o{ articles : writes
-    users ||--o{ comments : moderates
-    users ||--o{ media_files : uploads
+    admin_users ||--o{ articles : writes
+    admin_users ||--o{ comments : moderates
+    admin_users ||--o{ media_files : uploads
     articles ||--o{ article_categories : has
     articles ||--o{ article_tags : has
     articles ||--o{ comments : receives
@@ -25,16 +25,16 @@ erDiagram
 
 ## テーブル定義
 
-### 1. users（管理ユーザー）
+### 1. admin_users（管理ユーザー）
 
 ```sql
-CREATE TABLE users (
+CREATE TABLE admin_users (
     id BIGSERIAL PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     encrypted_password VARCHAR(255) NOT NULL,
     name VARCHAR(100) NOT NULL,
     avatar_url VARCHAR(500),
-    role VARCHAR(50) DEFAULT 'admin', -- admin, editor, viewer
+    role VARCHAR(50) DEFAULT 'author', -- admin, editor, author, viewer
     
     -- 認証関連
     remember_created_at TIMESTAMP,
@@ -57,8 +57,8 @@ CREATE TABLE users (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     
     -- インデックス
-    INDEX idx_users_email (email),
-    INDEX idx_users_role (role)
+    INDEX idx_admin_users_email (email),
+    INDEX idx_admin_users_role (role)
 );
 ```
 
@@ -67,7 +67,7 @@ CREATE TABLE users (
 ```sql
 CREATE TABLE articles (
     id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL REFERENCES users(id),
+    admin_user_id BIGINT NOT NULL REFERENCES admin_users(id),
     title VARCHAR(255) NOT NULL,
     slug VARCHAR(255) NOT NULL UNIQUE,
     content TEXT NOT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE articles (
     search_vector tsvector,
     
     -- インデックス
-    INDEX idx_articles_user_id (user_id),
+    INDEX idx_articles_admin_user_id (admin_user_id),
     INDEX idx_articles_slug (slug),
     INDEX idx_articles_status (status),
     INDEX idx_articles_published_at (published_at),
@@ -219,7 +219,7 @@ CREATE TABLE comments (
     status VARCHAR(50) DEFAULT 'pending', -- pending, approved, spam, trash
     
     -- モデレーション
-    moderator_id BIGINT REFERENCES users(id),
+    moderator_id BIGINT REFERENCES admin_users(id),
     moderated_at TIMESTAMP,
     spam_score DECIMAL(3,2), -- 0.00-1.00
     
@@ -239,7 +239,7 @@ CREATE TABLE comments (
 ```sql
 CREATE TABLE media_files (
     id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL REFERENCES users(id),
+    admin_user_id BIGINT NOT NULL REFERENCES admin_users(id),
     
     -- ファイル情報
     filename VARCHAR(255) NOT NULL,
@@ -271,7 +271,7 @@ CREATE TABLE media_files (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     
     -- インデックス
-    INDEX idx_media_files_user_id (user_id),
+    INDEX idx_media_files_admin_user_id (admin_user_id),
     INDEX idx_media_files_content_type (content_type),
     INDEX idx_media_files_created_at (created_at)
 );
@@ -343,7 +343,7 @@ CREATE TABLE section_contents (
     -- バージョン管理
     version INTEGER NOT NULL DEFAULT 1,
     is_active BOOLEAN DEFAULT false,
-    published_by BIGINT REFERENCES users(id),
+    published_by BIGINT REFERENCES admin_users(id),
     published_at TIMESTAMP,
     
     -- タイムスタンプ
@@ -378,7 +378,7 @@ CREATE TABLE contacts (
     status VARCHAR(50) DEFAULT 'unread', -- unread, read, replied, archived
     
     -- 対応情報
-    assigned_to BIGINT REFERENCES users(id),
+    assigned_to BIGINT REFERENCES admin_users(id),
     replied_at TIMESTAMP,
     notes TEXT,
     
@@ -427,7 +427,7 @@ CREATE TABLE settings (
 CREATE TABLE article_revisions (
     id BIGSERIAL PRIMARY KEY,
     article_id BIGINT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
-    user_id BIGINT NOT NULL REFERENCES users(id),
+    admin_user_id BIGINT NOT NULL REFERENCES admin_users(id),
     
     -- リビジョンデータ
     title VARCHAR(255) NOT NULL,
@@ -500,7 +500,7 @@ CREATE TABLE access_logs (
     response_time INTEGER, -- ミリ秒
     
     -- ユーザー情報
-    user_id BIGINT REFERENCES users(id),
+    admin_user_id BIGINT REFERENCES admin_users(id),
     session_id VARCHAR(255),
     
     -- タイムスタンプ
@@ -509,7 +509,7 @@ CREATE TABLE access_logs (
     -- インデックス（パーティション対応）
     INDEX idx_access_logs_created_at (created_at),
     INDEX idx_access_logs_path (path),
-    INDEX idx_access_logs_user_id (user_id)
+    INDEX idx_access_logs_admin_user_id (admin_user_id)
 ) PARTITION BY RANGE (created_at);
 
 -- 月次パーティション例
@@ -617,8 +617,8 @@ ON access_logs(created_at, path, status_code);
 -- カスケード削除の設定
 ALTER TABLE articles 
 ADD CONSTRAINT fk_articles_user 
-FOREIGN KEY (user_id) 
-REFERENCES users(id) 
+FOREIGN KEY (admin_user_id) 
+REFERENCES admin_users(id) 
 ON DELETE RESTRICT;
 
 -- 記事削除時の関連データ削除

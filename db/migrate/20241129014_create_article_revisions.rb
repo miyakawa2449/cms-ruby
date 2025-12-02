@@ -34,7 +34,6 @@ class CreateArticleRevisions < ActiveRecord::Migration[8.0]
     end
 
     # Indexes
-    add_index :article_revisions, :article_id
     add_index :article_revisions, :admin_user_id
     add_index :article_revisions, :revision_number
     add_index :article_revisions, :revision_type

@@ -61,7 +61,6 @@ class CreateArticleAiAnalyses < ActiveRecord::Migration[8.0]
     add_index :article_ai_analyses, :seo_score
     add_index :article_ai_analyses, :quality_score
     add_index :article_ai_analyses, :suggestions_applied
-    add_index :article_ai_analyses, :applied_by_id
     add_index :article_ai_analyses, :created_at
     add_index :article_ai_analyses, :completed_at
     

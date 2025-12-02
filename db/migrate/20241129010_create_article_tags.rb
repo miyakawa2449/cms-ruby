@@ -14,7 +14,6 @@ class CreateArticleTags < ActiveRecord::Migration[8.0]
 
     # Indexes
     add_index :article_tags, [:article_id, :tag_id], unique: true, name: 'index_article_tags_unique'
-    add_index :article_tags, :tag_id
     add_index :article_tags, :auto_generated
     add_index :article_tags, :relevance_score
     add_index :article_tags, [:article_id, :sort_order], name: 'index_article_tags_sort'

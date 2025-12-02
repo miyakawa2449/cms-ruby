@@ -50,14 +50,13 @@ class CreateArticles < ActiveRecord::Migration[8.0]
       t.text :notes
       
       # Full-text search (PostgreSQL tsvector)
-      t.virtual :search_vector, type: :tsvector, as: "to_tsvector('japanese', coalesce(title, '') || ' ' || coalesce(excerpt, '') || ' ' || coalesce(content, ''))", stored: true
+      t.virtual :search_vector, type: :tsvector, as: "to_tsvector('english', coalesce(title, '') || ' ' || coalesce(excerpt, '') || ' ' || coalesce(content, ''))", stored: true
       
       t.timestamps null: false
     end
 
     # Indexes
     add_index :articles, :slug, unique: true
-    add_index :articles, :admin_user_id
     add_index :articles, :status
     add_index :articles, :published_at
     add_index :articles, :scheduled_for

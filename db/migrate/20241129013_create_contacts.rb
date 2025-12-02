@@ -57,7 +57,6 @@ class CreateContacts < ActiveRecord::Migration[8.0]
     add_index :contacts, :company
     add_index :contacts, :status
     add_index :contacts, :inquiry_type
-    add_index :contacts, :assigned_to_id
     add_index :contacts, :spam_score
     add_index :contacts, :verified
     add_index :contacts, :requires_followup

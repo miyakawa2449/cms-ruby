@@ -23,7 +23,6 @@ class CreateArticleMedia < ActiveRecord::Migration[8.0]
 
     # Indexes
     add_index :article_media, [:article_id, :media_file_id], unique: true, name: 'index_article_media_unique'
-    add_index :article_media, :media_file_id
     add_index :article_media, :usage_type
     add_index :article_media, :position
     add_index :article_media, [:article_id, :sort_order], name: 'index_article_media_sort'

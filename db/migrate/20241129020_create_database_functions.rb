@@ -282,7 +282,7 @@ class CreateDatabaseFunctions < ActiveRecord::Migration[8.0]
       CREATE OR REPLACE FUNCTION update_article_search_vector()
       RETURNS TRIGGER AS $$
       BEGIN
-        NEW.search_vector = to_tsvector('japanese', 
+        NEW.search_vector = to_tsvector('english', 
           coalesce(NEW.title, '') || ' ' || 
           coalesce(NEW.excerpt, '') || ' ' || 
           coalesce(NEW.content, '')

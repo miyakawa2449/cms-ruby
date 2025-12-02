@@ -22,8 +22,6 @@ default: &default
   # PostgreSQL specific settings for performance
   prepared_statements: true
   variables:
-    # 日本語全文検索設定
-    default_text_search_config: 'pg_catalog.japanese'
     # コネクションタイムアウト
     statement_timeout: 30000
     idle_in_transaction_session_timeout: 60000
@@ -91,8 +89,6 @@ production:
   
   # 本番環境セキュリティ・パフォーマンス設定
   variables:
-    # 日本語全文検索
-    default_text_search_config: 'pg_catalog.japanese'
     # パフォーマンス最適化
     shared_buffers: '256MB'
     effective_cache_size: '1GB'

@@ -42,12 +42,9 @@ class CreateComments < ActiveRecord::Migration[8.0]
     end
 
     # Indexes
-    add_index :comments, :article_id
-    add_index :comments, :parent_id
     add_index :comments, :status
     add_index :comments, :author_email
     add_index :comments, :author_ip
-    add_index :comments, :moderated_by_id
     add_index :comments, :spam_score
     add_index :comments, :auto_approved
     add_index :comments, :created_at

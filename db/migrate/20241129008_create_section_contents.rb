@@ -11,20 +11,20 @@ class CreateSectionContents < ActiveRecord::Migration[8.0]
       t.text :subtitle
       
       # Content data (JSONB for flexibility)
-      t.json :content_data, null: false, default: {}
-      t.json :settings, default: {}
+      t.jsonb :content_data, null: false, default: {}
+      t.jsonb :settings, default: {}
       
       # Ordering and visibility
       t.integer :sort_order, default: 0, null: false
       t.boolean :visible, default: true, null: false
       
       # Responsive design data
-      t.json :responsive_settings, default: {}
-      t.json :mobile_content, default: {}
+      t.jsonb :responsive_settings, default: {}
+      t.jsonb :mobile_content, default: {}
       
       # SEO and metadata
       t.string :anchor_id, limit: 50
-      t.json :schema_markup, default: {}
+      t.jsonb :schema_markup, default: {}
       
       # Versioning
       t.integer :version, default: 1, null: false
@@ -38,14 +38,12 @@ class CreateSectionContents < ActiveRecord::Migration[8.0]
     end
 
     # Indexes
-    add_index :section_contents, :portfolio_section_id
     add_index :section_contents, :content_type
     add_index :section_contents, :key
     add_index :section_contents, :sort_order
     add_index :section_contents, :visible
     add_index :section_contents, :anchor_id
     add_index :section_contents, :version
-    add_index :section_contents, :last_edited_by_id
     
     # Composite indexes
     add_index :section_contents, [:portfolio_section_id, :sort_order], name: 'index_section_contents_section_sort'

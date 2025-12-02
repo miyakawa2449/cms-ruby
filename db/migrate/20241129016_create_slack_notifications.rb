@@ -44,7 +44,6 @@ class CreateSlackNotifications < ActiveRecord::Migration[8.0]
     add_index :slack_notifications, :priority
     add_index :slack_notifications, :urgent
     add_index :slack_notifications, :retry_count
-    add_index :slack_notifications, :triggered_by_id
     add_index :slack_notifications, :scheduled_for
     add_index :slack_notifications, :sent_at
     add_index :slack_notifications, :created_at

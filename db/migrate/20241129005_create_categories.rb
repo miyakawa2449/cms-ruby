@@ -32,7 +32,6 @@ class CreateCategories < ActiveRecord::Migration[8.0]
     # Indexes
     add_index :categories, :name, unique: true
     add_index :categories, :slug, unique: true
-    add_index :categories, :parent_id
     add_index :categories, :depth
     add_index :categories, :path, using: :gin, opclass: :gin_trgm_ops
     add_index :categories, :articles_count
