@@ -24,7 +24,7 @@ gem "jbuilder"
 
 # Authentication & Authorization
 gem "devise", "~> 4.9"
-gem "jwt", "~> 2.7"
+gem "jwt", "~> 3.1"
 gem "pundit", "~> 2.3"
 
 # Background Processing
