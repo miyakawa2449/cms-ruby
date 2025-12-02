@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary Meta Tags -->
+  <title><%= content_for?(:title) ? yield(:title) : "宮川 剛 - Portfolio | シニアエンジニアの技術発信サイト" %></title>
+  <meta name="title" content="<%= content_for?(:title) ? yield(:title) : "宮川 剛 - Portfolio | シニアエンジニアの技術発信サイト" %>">
+  <meta name="description" content="<%= content_for?(:description) ? yield(:description) : "30年のキャリアを持つシニアエンジニア宮川剛のポートフォリオサイト。要件定義からプログラミングまで一貫対応。Ruby on Rails、AI活用、プロジェクト管理の実践的な技術情報を発信。" %>">
+  <meta name="keywords" content="<%= content_for?(:keywords) ? yield(:keywords) : "宮川剛,シニアエンジニア,Ruby on Rails,AI活用,ChatGPT,要件定義,プロジェクト管理,SE,PM,プログラミング" %>">
+  <meta name="author" content="宮川 剛">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="Japanese">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="<%= content_for?(:canonical_url) ? yield(:canonical_url) : request.original_url %>">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="<%= content_for?(:og_type) ? yield(:og_type) : "website" %>">
+  <meta property="og:url" content="<%= request.original_url %>">
+  <meta property="og:title" content="<%= content_for?(:og_title) ? yield(:og_title) : (content_for?(:title) ? yield(:title) : "宮川 剛 - Portfolio") %>">
+  <meta property="og:description" content="<%= content_for?(:og_description) ? yield(:og_description) : (content_for?(:description) ? yield(:description) : "30年のキャリアを持つシニアエンジニアの技術発信サイト") %>">
+  <meta property="og:image" content="<%= content_for?(:og_image) ? yield(:og_image) : asset_url('og-default.jpg') %>">
+  <meta property="og:site_name" content="Miyakawa Codes">
+  <meta property="og:locale" content="ja_JP">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="<%= content_for?(:twitter_card) ? yield(:twitter_card) : "summary_large_image" %>">
+  <meta property="twitter:url" content="<%= request.original_url %>">
+  <meta property="twitter:title" content="<%= content_for?(:og_title) ? yield(:og_title) : (content_for?(:title) ? yield(:title) : "宮川 剛 - Portfolio") %>">
+  <meta property="twitter:description" content="<%= content_for?(:og_description) ? yield(:og_description) : (content_for?(:description) ? yield(:description) : "30年のキャリアを持つシニアエンジニアの技術発信サイト") %>">
+  <meta property="twitter:image" content="<%= content_for?(:twitter_image) ? yield(:twitter_image) : (content_for?(:og_image) ? yield(:og_image) : asset_url('twitter-card.jpg')) %>">
+  
+  <!-- Structured Data / JSON-LD -->
+  <% if content_for?(:structured_data) %>
+    <%= yield(:structured_data) %>
+  <% else %>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "<%= request.base_url %>/#website",
+          "url": "<%= request.base_url %>",
+          "name": "Miyakawa Codes",
+          "description": "シニアエンジニア宮川剛の技術発信サイト",
+          "publisher": {
+            "@id": "<%= request.base_url %>/#person"
+          },
+          "inLanguage": "ja-JP"
+        },
+        {
+          "@type": "Person",
+          "@id": "<%= request.base_url %>/#person",
+          "name": "宮川 剛",
+          "alternateName": "Takeshi Miyakawa",
+          "description": "30年のIT業界経験を持つシニアエンジニア。要件定義からプログラミングまで一貫して対応可能。",
+          "url": "<%= request.base_url %>",
+          "image": {
+            "@type": "ImageObject",
+            "url": "<%= asset_url('miyakawa-profile.jpg') %>",
+            "width": 400,
+            "height": 400
+          },
+          "jobTitle": "Senior Software Engineer / Project Manager",
+          "worksFor": {
+            "@type": "Organization",
+            "name": "フリーランス"
+          },
+          "sameAs": [
+            "https://github.com/miyakawa-codes",
+            "https://www.linkedin.com/in/miyakawa-takeshi",
+            "https://twitter.com/miyakawa_codes"
+          ],
+          "knowsAbout": [
+            "Ruby on Rails",
+            "人工知能(AI)",
+            "ChatGPT API",
+            "要件定義",
+            "プロジェクト管理",
+            "ソフトウェアアーキテクチャ",
+            "システム設計"
+          ],
+          "hasCredential": [
+            {
+              "@type": "EducationalOccupationalCredential",
+              "name": "情報処理技術者",
+              "credentialCategory": "国家資格"
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+  <% end %>
+  
+  <!-- Additional Page-specific Structured Data -->
+  <%= yield(:additional_structured_data) if content_for?(:additional_structured_data) %>
+  
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  
+  <!-- Preconnect to external resources -->
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//fonts.gstatic.com">
+  <link rel="dns-prefetch" href="//www.google-analytics.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Critical Resources -->
+  <link rel="preload" as="style" href="<%= asset_path('application.css') %>">
+  <link rel="preload" as="font" href="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2" crossorigin>
+  <link rel="preload" as="font" href="https://fonts.gstatic.com/s/notosansjp/v42/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFBEi75vY0rw-oME.woff2" crossorigin>
+  
+  <!-- Google Fonts with display optimization -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  
+  <!-- Favicon and Touch Icons -->
+  <link rel="icon" type="image/x-icon" href="<%= asset_path('favicon.ico') %>">
+  <link rel="apple-touch-icon" sizes="180x180" href="<%= asset_path('apple-touch-icon.png') %>">
+  <link rel="icon" type="image/png" sizes="32x32" href="<%= asset_path('favicon-32x32.png') %>">
+  <link rel="icon" type="image/png" sizes="16x16" href="<%= asset_path('favicon-16x16.png') %>">
+  <link rel="manifest" href="<%= asset_path('site.webmanifest') %>">
+  
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#667eea">
+  
+  <!-- JavaScript -->
+  <%= javascript_importmap_tags %>
+  
+  <!-- Page-specific JavaScript -->
+  <%= yield :javascript %>
+  
+  <!-- Analytics (if enabled) -->
+  <% if Rails.env.production? && ENV['GOOGLE_ANALYTICS_ID'].present? %>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= ENV['GOOGLE_ANALYTICS_ID'] %>"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '<%= ENV['GOOGLE_ANALYTICS_ID'] %>');
+    </script>
+  <% end %>
+</head>
+
+<body class="<%= content_for?(:body_class) ? yield(:body_class) : '' %>">
+  <!-- Skip to main content for accessibility -->
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white p-2 rounded">
+    メインコンテンツへスキップ
+  </a>
+  
+  <%= yield %>
+  
+  <!-- Performance monitoring -->
+  <% if Rails.env.production? %>
+    <script>
+      // Core Web Vitals monitoring
+      if ('PerformanceObserver' in window) {
+        try {
+          // LCP
+          const po = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            const lastEntry = entries[entries.length - 1];
+            console.log('LCP:', lastEntry.startTime);
+          });
+          po.observe({ type: 'largest-contentful-paint', buffered: true });
+          
+          // CLS
+          let cls = 0;
+          new PerformanceObserver((list) => {
+            for (const entry of list.getEntries()) {
+              if (!entry.hadRecentInput) {
+                cls += entry.value;
+                console.log('CLS:', cls);
+              }
+            }
+          }).observe({ type: 'layout-shift', buffered: true });
+          
+          // FID
+          new PerformanceObserver((list) => {
+            for (const entry of list.getEntries()) {
+              console.log('FID:', entry.processingStart - entry.startTime);
+            }
+          }).observe({ type: 'first-input', buffered: true });
+        } catch (e) {
+          // Silently fail for browsers that don't support Performance Observer
+        }
+      }
+    </script>
+  <% end %>
+</body>
+</html>

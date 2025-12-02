@@ -15,20 +15,20 @@ body {
   color: #1F2937;
 }
 
-/* Custom styles from original HTML prototypes - preserving wireframes design */
+/* Custom styles from original HTML */
 .hero-bg {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
   background-size: cover;
   background-position: center;
 }
 
 .timeline-line {
-  background: linear-gradient(90deg, #3b82f6, #10b981, #8b5cf6);
+  background: linear-gradient(90deg, #1e40af, #059669, #1e293b);
   height: 4px;
 }
 
 .chapter-quote {
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid #1e40af;
   font-style: italic;
 }
 
@@ -138,7 +138,7 @@ body {
   left: 0;
   width: 0%;
   height: 3px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: linear-gradient(90deg, #1e40af, #334155);
   z-index: 100;
   transition: width 0.3s ease;
 }
@@ -160,7 +160,7 @@ body {
 }
 
 .category-hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
 }
 
 .article-card:hover {
@@ -174,7 +174,7 @@ body {
 }
 
 .filter-button.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
   color: white;
 }
 
@@ -196,26 +196,3 @@ body {
     transform: translateY(0);
   }
 }
-
-/* Portfolio specific styles */
-.portfolio-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-.skill-tag {
-  display: inline-block;
-  background-color: #f3f4f6;
-  color: #374151;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  margin: 0.125rem;
-}
-
-/* Color adjustments to match original prototypes */
-.text-blue-100 { color: #dbeafe !important; }
-.bg-blue-100 { background-color: #dbeafe !important; }
-.text-blue-800 { color: #1e40af !important; }
-.bg-blue-800 { background-color: #1e40af !important; }

@@ -1,0 +1,282 @@
+<% content_for :title, "宮川 剛 - ポートフォリオ" %>
+
+<div class="bg-gray-50">
+  <%= render 'shared/header', variant: 'portfolio', show_search: true %>
+
+  <!-- Hero Section -->
+  <section class="hero-bg text-white pt-20">
+    <div class="container mx-auto px-6 py-20 text-center">
+      <h1 class="text-4xl md:text-6xl font-bold mb-6">
+        <span class="text-yellow-300">パソコン講師→SE/PM→AIエンジニア</span><br>
+        要件定義から実装まで<br>
+        <span class="text-yellow-300">一人でできる</span>理由がある
+      </h1>
+      <p class="text-xl md:text-2xl mb-6 text-slate-200">
+        30年のキャリアで培った独自のスキルセット
+      </p>
+      <p class="text-lg mb-8 text-slate-300">
+        講師経験 × SE/PM 16年 × プログラミング × AI活用
+      </p>
+      <div class="space-x-4">
+        <%= link_to my_story_path, class: "inline-block bg-yellow-300 text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-yellow-400 transition-colors text-lg" do %>
+          💡 My Story を見る
+        <% end %>
+        <button class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-slate-900 transition-colors">
+          お問い合わせ
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-20 section-spacing">
+    <div class="container mx-auto px-6">
+      <h2 class="text-3xl font-bold text-center mb-16">About</h2>
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="text-center">
+          <div class="w-48 h-48 mx-auto mb-6 bg-gray-300 rounded-full"></div>
+          <h3 class="text-xl font-bold mb-4">Technical Stack</h3>
+          <div class="space-y-2">
+            <div class="text-left">
+              <p class="font-semibold">Frontend:</p>
+              <div class="flex flex-wrap gap-2 mt-1">
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">Ruby/Rails</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">Python</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">JavaScript</span>
+              </div>
+            </div>
+            <div class="text-left mt-4">
+              <p class="font-semibold">Backend:</p>
+              <div class="flex flex-wrap gap-2 mt-1">
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">PostgreSQL</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">AWS</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">Docker</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="space-y-8">
+            <div>
+              <h3 class="text-xl font-bold mb-4">Profile</h3>
+              <p class="text-gray-700 leading-relaxed">
+                システムエンジニア・プロジェクトマネージャとして20年以上の経験を持つ開発上流工程の専門家です。
+                要件定義からプログラミングまで一貫して対応できる希少なスキルセットを保有しています。
+              </p>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-4">Core Skills</h3>
+              <ul class="space-y-2 text-gray-700">
+                <li>• 要件定義・設計</li>
+                <li>• プロジェクト管理</li>
+                <li>• 技術選定</li>
+                <li>• チームリード</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-4">Experience</h3>
+              <p class="text-gray-700">
+                20+ years in IT industry<br>
+                Large-scale system development
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Service Section -->
+  <section id="service" class="py-20 bg-white section-spacing">
+    <div class="container mx-auto px-6">
+      <h2 class="text-3xl font-bold text-center mb-16">提供できるサービス</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="text-center p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-shadow">
+          <div class="w-16 h-16 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3">要件定義・設計</h3>
+          <p class="text-gray-600">
+            上流工程の専門性を活かした詳細な要件定義と設計書作成
+          </p>
+        </div>
+        <div class="text-center p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-shadow">
+          <div class="w-16 h-16 bg-green-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3">システム開発</h3>
+          <p class="text-gray-600">
+            フルスタック対応でのWebアプリケーション・システム開発
+          </p>
+        </div>
+        <div class="text-center p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-shadow">
+          <div class="w-16 h-16 bg-purple-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3">AI・DXコンサル</h3>
+          <p class="text-gray-600">
+            最新技術を活用したデジタルトランスフォーメーション支援
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- My Story Section -->
+  <section id="story" class="py-20 bg-gradient-to-r from-blue-50 to-purple-50 section-spacing">
+    <div class="container mx-auto px-6">
+      <div class="text-center mb-4">
+        <div class="inline-block bg-yellow-300 text-gray-900 px-4 py-2 rounded-full text-sm font-semibold mb-4">💡 他にはない希少価値</div>
+      </div>
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-6">なぜ一人でできるのか？</h2>
+      <p class="text-xl text-center text-gray-600 mb-16 max-w-3xl mx-auto">30年間で積み重ねた3つのフェーズが生み出す独自のスキルセット</p>
+      <div class="max-w-4xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-center items-center space-y-8 md:space-y-0 md:space-x-8 mb-12">
+          <div class="text-center">
+            <div class="w-20 h-20 bg-green-500 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold text-sm">1994</div>
+            <h3 class="font-bold text-lg mb-2">パソコン講師</h3>
+            <p class="text-gray-600 text-sm">PM基礎力形成</p>
+            <p class="text-xs text-gray-500 mt-1">1994-2005</p>
+          </div>
+          <div class="hidden md:block text-xl text-gray-400">→</div>
+          <div class="text-center">
+            <div class="w-20 h-20 bg-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold text-sm">2005</div>
+            <h3 class="font-bold text-lg mb-2">SE/PM</h3>
+            <p class="text-gray-600 text-sm">上流工程専門家</p>
+            <p class="text-xs text-gray-500 mt-1">2005-2021</p>
+          </div>
+          <div class="hidden md:block text-xl text-gray-400">→</div>
+          <div class="text-center">
+            <div class="w-20 h-20 bg-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold text-sm">2022</div>
+            <h3 class="font-bold text-lg mb-2">AIエンジニア</h3>
+            <p class="text-gray-600 text-sm">全スキル統合</p>
+            <p class="text-xs text-gray-500 mt-1">2022-現在</p>
+          </div>
+        </div>
+        <div class="text-center">
+          <%= link_to my_story_path, class: "inline-block bg-yellow-300 text-gray-900 px-10 py-4 rounded-lg font-bold hover:bg-yellow-400 transition-colors text-lg shadow-lg" do %>
+            🚀 詳細なストーリーを見る
+          <% end %>
+          <p class="text-gray-600 mt-4 text-sm">このキャリアパスがなぜ希少価値があるのか詳しく解説</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Works Section -->
+  <section id="works" class="py-20 bg-white section-spacing">
+    <div class="container mx-auto px-6">
+      <h2 class="text-3xl font-bold text-center mb-16">実績・作品</h2>
+      <div class="grid md:grid-cols-3 gap-8 mb-12">
+        <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+          <div class="h-48 bg-gray-300"></div>
+          <div class="p-6">
+            <h3 class="text-lg font-bold mb-2">プロジェクトA</h3>
+            <p class="text-gray-600 mb-4">大規模Webアプリケーションの要件定義から実装まで</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-sm">Rails</span>
+              <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded text-sm">AWS</span>
+            </div>
+          </div>
+        </div>
+        <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+          <div class="h-48 bg-gray-300"></div>
+          <div class="p-6">
+            <h3 class="text-lg font-bold mb-2">システムリニューアル</h3>
+            <p class="text-gray-600 mb-4">レガシーシステムのモダナイゼーション</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">Python</span>
+              <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm">Docker</span>
+            </div>
+          </div>
+        </div>
+        <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+          <div class="h-48 bg-gray-300"></div>
+          <div class="p-6">
+            <h3 class="text-lg font-bold mb-2">AIツール開発</h3>
+            <p class="text-gray-600 mb-4">業務効率化のための自動化ツール</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">AI</span>
+              <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">Python</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Section -->
+  <section id="blog" class="py-20 bg-gray-50 section-spacing">
+    <div class="container mx-auto px-6">
+      <h2 class="text-3xl font-bold text-center mb-16">技術ブログ</h2>
+      <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-8">
+        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+          <div class="h-40 bg-gray-300"></div>
+          <div class="p-6">
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">#AI</span>
+              <span class="text-gray-500 text-xs">2024.11.20</span>
+            </div>
+            <h3 class="font-bold mb-2 hover:text-blue-600 cursor-pointer">
+              ChatGPT APIとRailsで作る自動記事要約システム
+            </h3>
+            <p class="text-gray-600 text-sm">
+              SE/PM経験を活かした要件定義から、Rails実装、ChatGPT API連携まで...
+            </p>
+          </div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+          <div class="h-40 bg-gray-300"></div>
+          <div class="p-6">
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">#Rails</span>
+              <span class="text-gray-500 text-xs">2024.11.15</span>
+            </div>
+            <h3 class="font-bold mb-2 hover:text-blue-600 cursor-pointer">
+              Rails 8.0の新機能を実プロジェクトで検証
+            </h3>
+            <p class="text-gray-600 text-sm">
+              Rails 8.0の注目機能を実際のプロジェクトで検証した結果...
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="text-center">
+        <%= link_to blog_path, class: "inline-block bg-blue-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-800 transition-colors" do %>
+          ブログ一覧を見る
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 bg-white section-spacing">
+    <div class="container mx-auto px-6">
+      <h2 class="text-3xl font-bold text-center mb-16">お問い合わせ</h2>
+      <div class="max-w-2xl mx-auto">
+        <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-8 text-center">
+          <p class="text-lg mb-8">
+            プロジェクトのご相談、技術的な質問など<br>
+            お気軽にお問い合わせください
+          </p>
+          <div class="space-y-4">
+            <a href="mailto:contact@miyakawa.codes" class="block bg-blue-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-800 transition-colors">
+              📧 メールでお問い合わせ
+            </a>
+            <p class="text-sm text-gray-600">
+              通常24時間以内に返信いたします
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%= render 'shared/footer', variant: 'portfolio' %>
+</div>

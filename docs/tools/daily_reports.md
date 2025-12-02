@@ -19,7 +19,7 @@
 ./create_daily_report.sh
 
 # タイトル付きで報告書を作成
-./create_daily_report.sh "API設計完成報告"
+んbんbnんbんbん./create_daily_report.sh "API設計完成報告"
 ./create_daily_report.sh "Phase 2環境構築開始"
 ./create_daily_report.sh "バグ修正完了"
 ```

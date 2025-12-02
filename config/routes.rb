@@ -15,28 +15,21 @@ Rails.application.routes.draw do
   # ========================================
   
   # Root route - Portfolio top page (縦スクロール型ポートフォリオ)
-  root "portfolio#index"
+  root "pages#portfolio"
   
-  # Portfolio pages
-  get "my-story", to: "portfolio#my_story", as: :my_story
+  # Portfolio pages  
+  get "my-story", to: "pages#my_story", as: :my_story
   
   # Contact form (Slack integration)
   post "contact", to: "portfolio#contact", as: :contact
   
   # Blog routes (public)
-  scope :blog, module: :blog, as: :blog do
-    get "/", to: "articles#index", as: :root               # /blog
-    get "/:slug", to: "articles#show", as: :article        # /blog/article-slug
-    
-    # Category and tag filtering
-    get "/category/:slug", to: "categories#show", as: :category  # /blog/category/tech
-    get "/tag/:slug", to: "tags#show", as: :tag                  # /blog/tag/rails
-    
-    # Search functionality
-    get "/search", to: "search#index", as: :search              # /blog/search
-    post "/search", to: "search#create"
-    get "/search/suggestions", to: "search#suggestions", as: :search_suggestions
-  end
+  get "blog", to: "blog#index", as: :blog                    # /blog
+  get "blog/category/:slug", to: "blog#category", as: :blog_category  # /blog/category/ai-ml
+  get "blog/article/:slug", to: "blog#article", as: :blog_article     # /blog/article/chatgpt-rails
+  
+  # For future expansion - search functionality
+  get "blog/search", to: "blog#search", as: :blog_search
   
   # RSS and Sitemap (public)
   get "feed.rss", to: "feed#rss", as: :rss_feed, defaults: { format: "xml" }

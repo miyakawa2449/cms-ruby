@@ -1,4 +1,6 @@
 class BlogController < ApplicationController
+  include SeoHelper
+  
   # 技術ブログのメインコントローラー
   # 記事一覧、詳細、カテゴリ別表示、検索機能を提供
   
@@ -10,6 +12,17 @@ class BlogController < ApplicationController
     # ブログトップ（記事一覧）
     @page_title = '技術ブログ'
     @page_description = 'エンジニアとして学んだ技術や経験を記事として公開しています。'
+    
+    # SEOメタ情報を設定
+    page_title "技術ブログ - 宮川 剛"
+    meta_description "シニアエンジニア宮川剛の技術ブログ。Ruby on Rails、AI活用、ChatGPT API、要件定義、プロジェクト管理など、30年の経験を基にした実践的な技術情報を発信。"
+    meta_keywords ["技術ブログ", "Ruby on Rails", "AI活用", "ChatGPT", "要件定義", "プロジェクト管理"]
+    
+    set_og_tags(
+      title: "技術ブログ - 宮川 剛",
+      description: "30年の経験を基にした実践的な技術情報を発信",
+      type: 'website'
+    )
     
     # Phase 2Bで実装予定
     # @articles = Article.published

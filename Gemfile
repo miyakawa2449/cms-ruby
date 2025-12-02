@@ -125,7 +125,7 @@ group :development do
   gem "rubocop-rails", "~> 2.23"
   gem "rubocop-rspec", "~> 2.26"
   gem "annot8", "~> 1.0" # Rails 8.0 compatible alternative to annotate
-  gem "bullet", "~> 7.1"
+  # gem "bullet", "~> 7.1"  # Rails 8.0.4対応待ち
   gem "rails-erd", "~> 1.7"
   
   # Other Development Tools
