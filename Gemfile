@@ -99,7 +99,7 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   # Testing Framework
-  gem "rspec-rails", "~> 6.1"
+  gem "rspec-rails", "~> 8.0"
   gem "capybara"
   gem "selenium-webdriver"
   gem "factory_bot_rails", "~> 6.4"
