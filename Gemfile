@@ -29,7 +29,7 @@ gem "pundit", "~> 2.3"
 
 # Background Processing
 gem "sidekiq", "~> 7.2"
-gem "sidekiq-cron", "~> 1.12"
+gem "sidekiq-cron", "~> 2.3"
 gem "redis", ">= 4.0.1"
 # gem "redis-rails", "~> 5.0" # Rails 8.0 non-compatible
 
