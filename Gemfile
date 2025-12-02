@@ -28,7 +28,7 @@ gem "jwt", "~> 2.7"
 gem "pundit", "~> 2.3"
 
 # Background Processing
-gem "sidekiq", "~> 7.2"
+gem "sidekiq", "~> 8.0"
 gem "sidekiq-cron", "~> 1.12"
 gem "redis", ">= 4.0.1"
 # gem "redis-rails", "~> 5.0" # Rails 8.0 non-compatible
