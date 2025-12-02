@@ -123,7 +123,7 @@ group :development do
   # Code Quality
   gem "rubocop", "~> 1.60"
   gem "rubocop-rails", "~> 2.23"
-  gem "rubocop-rspec", "~> 2.26"
+  gem "rubocop-rspec", "~> 3.8"
   gem "annot8", "~> 1.0" # Rails 8.0 compatible alternative to annotate
   # gem "bullet", "~> 7.1"  # Rails 8.0.4対応待ち
   gem "rails-erd", "~> 1.7"
