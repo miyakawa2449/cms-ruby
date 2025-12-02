@@ -37,10 +37,10 @@ README.md の「プロジェクト完了度」セクションをチェック
 - AWS Lightsail（本番環境）
 
 ## 現在の状況
-- **フェーズ**: Phase 1完全完了 → Phase 2移行準備
+- **フェーズ**: Phase 2B完全完了 → Phase 2C認証・CMS基盤実装
 - **仕様書**: `/docs/specifications/spec.md`（全仕様書リスト含む）
 - **開発方針**: アジャイル開発（2週間スプリント・11スプリント構成）
-- **完成状況**: 16画面プロトタイプ・18テーブルDB設計・API設計完了
+- **完成状況**: 17画面プロトタイプ・18+2テーブルDB完全構築・フロントエンド統合完了
 
 ## 主要機能
 1. **ポートフォリオCMS**: 8セクション構成の縦スクロール型
@@ -57,16 +57,18 @@ README.md の「プロジェクト完了度」セクションをチェック
 - **SNS埋め込み**: oEmbed対応
 
 ## 次のタスク
-- [x] 画面モック作成（16画面完成済み）
-- [x] DB schema設計（18テーブル設計完了）
-- [x] Railsマイグレーション計画策定完了（20マイグレーション）
+- [x] 画面モック作成（17画面完成済み）
+- [x] DB schema設計（18+2テーブル完全構築済み）
+- [x] Railsマイグレーション完了（全20マイグレーション実行済み）
 - [x] API設計完了（公開API + 内部API）
 - [x] Phase 1: 仕様策定完全完了
-- [ ] **Phase 2開始**: Sprint 0環境構築
-  - [ ] Rails 8.0.1 + PostgreSQL + Docker環境構築
-  - [ ] 認証システム（Devise）導入
-  - [ ] Tailwind CSS導入・基本スタイリング
-  - [ ] 基本ルーティング・コントローラー作成
+- [x] **Phase 2A完了**: Rails 8.0.4環境構築・設定ファイル作成完了
+- [x] **Phase 2B完了**: Phase 1再設計・全マイグレーション・フロントエンド統合完了
+- [ ] **Phase 2C開始**: 認証・CMS基盤実装
+  - [ ] 認証システム（Devise）動作確認・ログイン機能
+  - [ ] ポートフォリオCMS基本機能（Section/SectionContent）
+  - [ ] ブログCMS基本機能（Article/Category）
+  - [ ] 実際の動作確認・テスト実行
 
 ## 開発ルール
 - テスト駆動開発（TDD）
@@ -82,11 +84,13 @@ README.md の「プロジェクト完了度」セクションをチェック
 ## 参考資料
 ### 主要仕様書
 - **総合仕様書**: `/docs/specifications/spec.md`
-- **データベース設計**: `/docs/database/schema_design.md`
+- **データベース設計v2**: `/docs/database/schema_design_v2.md`（最新・Rails 8.0対応）
+- **ER図v2**: `/docs/database/er_diagram_v2.mermaid`（最新関係図）
+- **マイグレーション計画v2**: `/docs/database/migrations_plan_v2.md`（実行済み）
 - **API設計**: `/docs/api/api_design.md`
 - **実装計画**: `/docs/development/api_implementation_plan.md`
 
-### プロトタイプ（16画面完成）
+### プロトタイプ（17画面完成）
 - **フロントエンド**: `/docs/wireframes/app/views/portfolio/`・`/blog/`
 - **管理画面**: `/docs/wireframes/app/views/admin/`
 
@@ -100,10 +104,12 @@ README.md の「プロジェクト完了度」セクションをチェック
 ### セッション開始時
 ユーザーが「**session-start**」と入力すると：
 1. 最新の仕様変更・プロジェクト状況を自動チェック
-2. 今日のタスクリストを確認・整理
-3. 作業開始の提案を実施
+2. 直近3日分のレポートを確認
+3. 今日のタスクリストを確認・整理
+4. 作業開始の提案を実施
 
 ### 重要なコマンド
 - `session-start` - セッション開始時の状況確認
 - `spec.md` の改訂履歴確認 - 最新仕様把握
+-　`reports` フォルダのレポート確認 - 最新3日分の把握
 - `TOMORROW_TASKS.md` 確認 - 当日タスク把握
