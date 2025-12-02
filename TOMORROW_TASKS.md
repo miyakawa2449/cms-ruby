@@ -1,10 +1,10 @@
-# Portfolio Site タスクリスト - Phase 2完了報告 & Phase 2B待ち
+# Portfolio Site タスクリスト - Phase 2B開始
 
 ## ✅ **Phase 2A: 完了報告（2024年11月29日）**
 
 ### 📅 実施状況
 - **Phase 2A**: 2024-11-29 **1日で全タスク完了** 🎉
-- **Phase 2B**: 2024-12-03〜（新ネットワーク機器到着後・ネットワーク必要作業）
+- **Phase 2B**: 2025-12-02 開始（bundle install問題解決・作業開始）
 
 ### ✅ **Phase 2A 完了タスク（2024-11-29 完了）**
 
@@ -48,9 +48,10 @@
 
 ### 🔥 Phase 2B 最優先タスク
 #### 1. gem インストール・環境完成
-- [ ] **bundle install実行（65 gems インストール）**
+- [x] **bundle install実行（65 gems インストール）** ✅ 2024-12-02完了
   - Rails 8.0.4 + 65 gems完全インストール
   - Gemfile.lock 生成・依存関係解決
+  - 注: Ruby 3.4.7のHappy Eyeballs問題を`RUBY_TCP_NO_FAST_FALLBACK=1`で解決
 
 #### 2. データベース・認証システム構築
 - [ ] **Devise設定・認証実装**

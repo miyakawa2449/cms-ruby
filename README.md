@@ -218,8 +218,8 @@ portfolio_rb/
 
 ### 開発環境構築
 
-#### Phase 2A: ネットワーク不要セットアップ（〜2024-12-02）
-現在Phase 2A実行中。ネットワーク機器交換前にgemインストール以外の設定を完了します。
+#### Phase 2A: ネットワーク不要セットアップ（2024-11-29 完了）
+Phase 2A完了。全タスク1日で完了しました。
 
 1. **リポジトリクローン**
    ```bash
@@ -238,12 +238,14 @@ portfolio_rb/
    docker-compose up -d
    ```
 
-#### Phase 2B: gemインストール・動作確認（2024-12-03〜）
-新ネットワーク機器到着後に実施予定。
+#### Phase 2B: gemインストール・動作確認（2025-12-02〜）
+Ruby 3.4.7のHappy Eyeballs問題を解決し、作業開始。
 
 4. **gemインストール**
    ```bash
-   bundle install  # 65 gems インストール
+   # Ruby 3.4.7でエラーが出る場合は環境変数を設定
+   export RUBY_TCP_NO_FAST_FALLBACK=1
+   bundle install  # 65 gems インストール ✅ 2025-12-02完了
    ```
 
 5. **データベース初期化**
@@ -348,20 +350,21 @@ docker-compose exec app rspec spec/models/article_spec.rb
 - [x] **Railsマイグレーション計画** - 20マイグレーションファイル策定
 - [x] **API設計完成** - 公開API + 内部API・RESTful設計
 
-### 🚀 Phase 2: 開発実装 - Phase 2A実行中
-#### ⚡ Phase 2A: ネットワーク不要作業（2024-11-29 〜 12-02）
+### 🚀 Phase 2: 開発実装 - Phase 2B実行中
+#### ✅ Phase 2A: ネットワーク不要作業（2024-11-29 完了）
 - [x] **Rails 8.0.4 環境構築完了** - PostgreSQL・Tailwind CSS・ESBuild・Docker
 - [x] **Gemfile統合完了** - 65 gems設定（Rails 8.0.4対応）
 - [x] **Phase 2計画見直し完了** - ネットワーク問題対応・Phase 2A/2B分割
-- [ ] **🎯 実行中**: config/database.yml PostgreSQL設定
-- [ ] 基本ルーティング設計（config/routes.rb）
-- [ ] 20個のマイグレーションファイル作成
-- [ ] 基本コントローラー・モデル設計
-- [ ] Devise設定ファイル準備
-- [ ] RSpec設定ファイル準備
+- [x] **config/database.yml PostgreSQL設定完了**
+- [x] **基本ルーティング設計完了**（config/routes.rb - 400+ lines）
+- [x] **20個のマイグレーションファイル作成完了**
+- [x] **基本コントローラー・モデル設計完了**
+- [x] **Devise設定ファイル準備完了**
+- [x] **RSpec設定ファイル準備完了**
 
-#### ⏳ Phase 2B: ネットワーク必要作業（2024-12-03〜）
-- [ ] bundle install実行（65 gems インストール）
+#### ⚡ Phase 2B: 実行中（2025-12-02〜）
+- [x] **bundle install実行（65 gems インストール）** ✅ 2025-12-02完了
+  - Ruby 3.4.7 Happy Eyeballs問題を`RUBY_TCP_NO_FAST_FALLBACK=1`で解決
 - [ ] Devise設定・認証実装
 - [ ] データベース初期化・シードデータ投入
 - [ ] Tailwind CSS導入・スタイリング
@@ -422,13 +425,19 @@ Private Project - All Rights Reserved
 
 ## 🔄 更新履歴
 
+- **2025-12-02**:
+  - ✅ **bundle install問題解決** - Ruby 3.4.7 Happy Eyeballs問題を環境変数で解決
+  - ✅ **Phase 2B開始** - Gemfile.lock生成・220 gems インストール完了
 - **2024-11-29**:
+  - ✅ **Phase 2A完全完了（1日で達成）** - ネットワーク不要作業全て完了
   - ✅ **Phase 2計画見直し完了** - ネットワーク問題対応・Phase 2A/2B分割計画策定
-  - ✅ **Phase 2A開始** - ネットワーク不要作業先行実施（〜12/2）
   - ✅ **管理画面ログインページプロトタイプ追加** - 17画面完成
   - ✅ **Rails 8.0.4環境構築完了** - PostgreSQL・Tailwind CSS・ESBuild・Docker
   - ✅ **Gemfile統合完了** - 65 gems設定（Rails 8.0.4対応・annot8採用）
   - ✅ **技術スタック確定** - Ruby 3.4.7・Rails 8.0.4・PostgreSQL 16・Redis 7
+  - ✅ **20マイグレーションファイル作成完了**
+  - ✅ **ルーティング設計完了** - 400+ lines
+  - ✅ **基本コントローラー・Devise・RSpec設定完了**
 
 - **2024-11-28**:
   - ✅ **データベーススキーマ設計完了** - 18テーブル完全設計
@@ -467,12 +476,19 @@ Private Project - All Rights Reserved
 - **API設計**: 100% 完了（公開API + 内部API）
 - **開発計画統合**: 100% 完了（11スプリント構成）
 
-### ⚡ Phase 2A実行中（ネットワーク不要作業）
+### ✅ Phase 2A完了（ネットワーク不要作業）
 - **Rails 8.0.4環境構築**: 100% 完了
 - **Gemfile統合**: 100% 完了（65 gems設定）
 - **Phase 2計画見直し**: 100% 完了
-- **config/database.yml設定**: 実行中
+- **config/database.yml設定**: 100% 完了
+- **全タスク1日で完了**: 2024-11-29
+
+### ⚡ Phase 2B実行中
+- **bundle install**: 100% 完了（2025-12-02）
+- **Devise設定・認証実装**: 次のタスク
+- **データベース初期化**: 待機中
 
 ### 🎯 次のマイルストーン
-**Phase 2A完了目標**: 2024-12-02  
-**Phase 2B開始予定**: 2024-12-03（新ネットワーク機器到着後）
+**Phase 2A完了**: ✅ 2024-11-29（1日で完了）  
+**Phase 2B開始**: ✅ 2025-12-02（bundle install完了・継続中）  
+**Sprint 1開始予定**: Phase 2B完了後
