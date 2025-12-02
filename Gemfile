@@ -34,7 +34,7 @@ gem "redis", ">= 4.0.1"
 # gem "redis-rails", "~> 5.0" # Rails 8.0 non-compatible
 
 # AI & External APIs
-gem "ruby-openai", "~> 6.3"
+gem "ruby-openai", "~> 8.3"
 gem "httparty", "~> 0.21"
 
 # Image Processing & File Management
