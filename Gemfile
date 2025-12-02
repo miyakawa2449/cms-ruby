@@ -130,5 +130,5 @@ group :development do
   
   # Other Development Tools
   gem "letter_opener", "~> 1.8"
-  gem "dotenv-rails", "~> 2.8"
+  gem "dotenv-rails", "~> 3.1"
 end
