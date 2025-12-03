@@ -1,0 +1,182 @@
+<%= form_with(model: [:admin, article]) do |form| %>
+  <% if article.errors.any? %>
+    <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded mb-6">
+      <h3 class="font-bold">エラーが発生しました:</h3>
+      <ul class="mt-2 list-disc list-inside text-sm">
+        <% article.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- メインコンテンツエリア -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- タイトル -->
+      <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">記事情報</h3>
+        
+        <div class="space-y-4">
+          <div>
+            <%= form.label :title, "タイトル", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :title, 
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+                placeholder: "記事のタイトルを入力してください" %>
+          </div>
+
+          <div>
+            <%= form.label :slug, "URL スラッグ", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :slug, 
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+                placeholder: "article-url-slug" %>
+            <p class="mt-1 text-sm text-gray-500">URLで使用される部分です。英数字とハイフンのみ使用可能。</p>
+          </div>
+
+          <div>
+            <%= form.label :excerpt, "抜粋", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_area :excerpt, 
+                rows: 3,
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+                placeholder: "記事の概要を簡潔に入力してください" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- メインコンテンツ -->
+      <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">本文</h3>
+        
+        <div>
+          <%= form.label :content, "本文（Markdown）", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.text_area :content, 
+              rows: 20,
+              class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm font-mono",
+              placeholder: "# 見出し
+
+記事の本文をMarkdownで記述してください。
+
+## サブ見出し
+
+- リストアイテム1
+- リストアイテム2
+
+```ruby
+# コードブロック例
+puts 'Hello, World!'
+```" %>
+          <p class="mt-1 text-sm text-gray-500">Markdownで記述してください。プレビュー機能は後日追加予定です。</p>
+        </div>
+      </div>
+
+      <!-- SEO設定 -->
+      <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">SEO設定</h3>
+        
+        <div class="space-y-4">
+          <div>
+            <%= form.label :meta_description, "メタディスクリプション", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_area :meta_description, 
+                rows: 2,
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+                placeholder: "検索結果に表示される説明文（160文字以内推奨）" %>
+          </div>
+
+          <div>
+            <%= form.label :meta_keywords, "メタキーワード", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :meta_keywords, 
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+                placeholder: "キーワード1, キーワード2, キーワード3" %>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <%= form.label :og_title, "OGタイトル", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.text_field :og_title, 
+                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+                  placeholder: "SNSシェア用タイトル" %>
+            </div>
+            
+            <div>
+              <%= form.label :og_description, "OG説明文", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.text_field :og_description, 
+                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+                  placeholder: "SNSシェア用説明文" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- サイドバー -->
+    <div class="space-y-6">
+      <!-- 公開設定 -->
+      <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">公開設定</h3>
+        
+        <div class="space-y-4">
+          <div>
+            <%= form.label :status, "ステータス", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.select :status, 
+                [["下書き", "draft"], ["公開", "published"], ["予約投稿", "scheduled"], ["アーカイブ", "archived"]],
+                {},
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- カテゴリ選択 -->
+      <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">カテゴリ</h3>
+        
+        <div class="space-y-2">
+          <% @categories.each do |category| %>
+            <label class="flex items-center">
+              <%= check_box_tag "article[category_ids][]", category.id, 
+                  article.categories.include?(category),
+                  class: "rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50",
+                  id: "article_category_#{category.id}" %>
+              <span class="ml-2 text-sm text-gray-700">
+                <%= category.full_name %>
+                <% if category.article_count > 0 %>
+                  <span class="text-gray-500">(<%= category.article_count %>)</span>
+                <% end %>
+              </span>
+            </label>
+          <% end %>
+          
+          <% if @categories.empty? %>
+            <p class="text-sm text-gray-500">カテゴリがありません。</p>
+            <%= link_to "カテゴリを作成", new_admin_category_path, 
+                class: "text-blue-600 hover:text-blue-500 text-sm" %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- タグ -->
+      <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">タグ</h3>
+        
+        <div>
+          <%= form.label :tag_names, "タグ（カンマ区切り）", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.text_field :tag_names, 
+              value: article.tag_names.join(", "),
+              class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+              placeholder: "Ruby, Rails, プログラミング" %>
+          <p class="mt-1 text-sm text-gray-500">タグをカンマ区切りで入力してください。存在しないタグは自動作成されます。</p>
+        </div>
+      </div>
+
+      <!-- 保存ボタン -->
+      <div class="bg-white shadow rounded-lg p-6">
+        <div class="space-y-3">
+          <%= form.submit article.persisted? ? "更新する" : "作成する", 
+                          class: "w-full bg-blue-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+          
+          <%= link_to "キャンセル", admin_articles_path, 
+                      class: "w-full bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-center block" %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

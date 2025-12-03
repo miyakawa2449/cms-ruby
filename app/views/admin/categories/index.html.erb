@@ -1,0 +1,120 @@
+<% content_for :page_title, "カテゴリ管理" %>
+
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900">カテゴリ管理</h1>
+    <p class="mt-1 text-sm text-gray-600">
+      総カテゴリ数: <%= @total_count %>件 / 親カテゴリ: <%= @root_count %>件
+    </p>
+  </div>
+  <%= link_to "新規カテゴリ", new_admin_category_path, 
+              class: "bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors" %>
+</div>
+
+<div class="bg-white shadow rounded-lg overflow-hidden">
+  <% if @root_categories.any? %>
+    <div class="divide-y divide-gray-200">
+      <% @root_categories.each do |category| %>
+        <!-- 親カテゴリ -->
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+              <!-- カテゴリ色 -->
+              <% if category.color.present? %>
+                <div class="w-4 h-4 rounded-full border" style="background-color: <%= category.color %>;"></div>
+              <% end %>
+              
+              <!-- カテゴリ情報 -->
+              <div>
+                <h3 class="text-lg font-medium text-gray-900 flex items-center">
+                  <%= category.name %>
+                  <% if category.icon.present? %>
+                    <span class="ml-2 text-xl"><%= category.icon %></span>
+                  <% end %>
+                </h3>
+                <% if category.description.present? %>
+                  <p class="text-sm text-gray-600"><%= category.description %></p>
+                <% end %>
+                <div class="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+                  <span>記事数: <%= category.article_count %></span>
+                  <span>表示順: <%= category.position %></span>
+                  <% if category.children.any? %>
+                    <span>子カテゴリ: <%= category.children.count %>個</span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 操作ボタン -->
+            <div class="flex items-center space-x-2">
+              <%= link_to "詳細", admin_category_path(category), 
+                          class: "text-blue-600 hover:text-blue-900 text-sm font-medium" %>
+              <%= link_to "編集", edit_admin_category_path(category), 
+                          class: "text-indigo-600 hover:text-indigo-900 text-sm font-medium" %>
+              <% if category.articles.empty? && category.children.empty? %>
+                <%= button_to "削除", admin_category_path(category), 
+                              method: :delete,
+                              onclick: "return confirm('本当に「#{j(category.name)}」を削除しますか？')",
+                              class: "text-red-600 hover:text-red-900 text-sm font-medium bg-transparent border-0 p-0 cursor-pointer" %>
+              <% end %>
+            </div>
+          </div>
+          
+          <!-- 子カテゴリ -->
+          <% if category.children.any? %>
+            <div class="mt-4 ml-8 space-y-3">
+              <% category.children.ordered.each do |child_category| %>
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                  <div class="flex items-center space-x-3">
+                    <!-- 子カテゴリ色 -->
+                    <% if child_category.color.present? %>
+                      <div class="w-3 h-3 rounded-full border" style="background-color: <%= child_category.color %>;"></div>
+                    <% end %>
+                    
+                    <div>
+                      <span class="font-medium text-gray-900">
+                        <%= child_category.name %>
+                        <% if child_category.icon.present? %>
+                          <span class="ml-1 text-sm"><%= child_category.icon %></span>
+                        <% end %>
+                      </span>
+                      <div class="text-xs text-gray-500">
+                        記事数: <%= child_category.article_count %> / 表示順: <%= child_category.position %>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="flex items-center space-x-2">
+                    <%= link_to "詳細", admin_category_path(child_category), 
+                                class: "text-blue-600 hover:text-blue-900 text-xs font-medium" %>
+                    <%= link_to "編集", edit_admin_category_path(child_category), 
+                                class: "text-indigo-600 hover:text-indigo-900 text-xs font-medium" %>
+                    <% if child_category.articles.empty? %>
+                      <%= button_to "削除", admin_category_path(child_category), 
+                                    method: :delete,
+                                    onclick: "return confirm('本当に「#{j(child_category.name)}」を削除しますか？')",
+                                    class: "text-red-600 hover:text-red-900 text-xs font-medium bg-transparent border-0 p-0 cursor-pointer" %>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-12">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">カテゴリがありません</h3>
+      <p class="mt-1 text-sm text-gray-500">新しいカテゴリを作成してください。</p>
+      <div class="mt-6">
+        <%= link_to "新規カテゴリ作成", new_admin_category_path, 
+                    class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" %>
+      </div>
+    </div>
+  <% end %>
+</div>

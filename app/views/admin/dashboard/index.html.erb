@@ -1,0 +1,124 @@
+<% content_for :page_title, "ダッシュボード" %>
+
+<!-- 統計カード -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <!-- 記事数 -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex items-center">
+      <div class="p-3 bg-blue-100 rounded-full">
+        <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-500">総記事数</p>
+        <p class="text-2xl font-semibold text-gray-900"><%= @articles_count %></p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 公開記事数 -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex items-center">
+      <div class="p-3 bg-green-100 rounded-full">
+        <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-500">公開記事</p>
+        <p class="text-2xl font-semibold text-gray-900"><%= @published_articles_count %></p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 下書き記事数 -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex items-center">
+      <div class="p-3 bg-yellow-100 rounded-full">
+        <svg class="h-8 w-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-500">下書き</p>
+        <p class="text-2xl font-semibold text-gray-900"><%= @draft_articles_count %></p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- カテゴリ数 -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex items-center">
+      <div class="p-3 bg-purple-100 rounded-full">
+        <svg class="h-8 w-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-500">カテゴリ数</p>
+        <p class="text-2xl font-semibold text-gray-900"><%= @categories_count %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 最近の記事 -->
+<div class="bg-white shadow rounded-lg">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <h2 class="text-lg font-medium text-gray-900">最近の記事</h2>
+  </div>
+  
+  <div class="divide-y divide-gray-200">
+    <% @recent_articles.each do |article| %>
+      <div class="px-6 py-4 hover:bg-gray-50">
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <%= link_to article.title, edit_admin_article_path(article), 
+                        class: "text-sm font-medium text-gray-900 hover:text-blue-600" %>
+            <div class="mt-1 flex items-center space-x-4 text-sm text-gray-500">
+              <span><%= article.admin_user.email %></span>
+              <span>・</span>
+              <span><%= article.created_at.strftime("%Y年%m月%d日") %></span>
+              <span>・</span>
+              <span class="<%= article.published? ? 'text-green-600' : 'text-yellow-600' %>">
+                <%= article.published? ? '公開中' : '下書き' %>
+              </span>
+              <% if article.categories.any? %>
+                <span>・</span>
+                <span class="text-purple-600"><%= article.categories.first.name %></span>
+              <% end %>
+            </div>
+          </div>
+          
+          <div class="ml-4 flex items-center space-x-2">
+            <%= link_to edit_admin_article_path(article), 
+                        class: "text-gray-400 hover:text-gray-600" do %>
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    
+    <% if @recent_articles.empty? %>
+      <div class="px-6 py-8 text-center text-gray-500">
+        まだ記事がありません
+      </div>
+    <% end %>
+  </div>
+  
+  <% if @articles_count > 0 %>
+    <div class="px-6 py-3 bg-gray-50 border-t border-gray-200">
+      <%= link_to "すべての記事を見る", admin_articles_path, 
+                  class: "text-sm font-medium text-blue-600 hover:text-blue-500" %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,169 @@
+<% content_for :page_title, "記事管理" %>
+
+<!-- ヘッダー -->
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900">記事管理</h1>
+    <p class="mt-1 text-sm text-gray-600">
+      総記事数: <%= @total_count %>件 / 公開中: <%= @published_count %>件 / 下書き: <%= @draft_count %>件
+    </p>
+  </div>
+  <%= link_to "新規記事", new_admin_article_path, 
+              class: "bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors" %>
+</div>
+
+<!-- フィルタ -->
+<div class="bg-white rounded-lg shadow mb-6 p-4">
+  <%= form_with url: admin_articles_path, method: :get, local: true, class: "flex flex-wrap items-center gap-4" do |form| %>
+    <div>
+      <%= form.select :status, 
+          options_for_select([
+            ["すべて", ""],
+            ["公開中", "published"],
+            ["下書き", "draft"],
+            ["予約投稿", "scheduled"],
+            ["アーカイブ", "archived"]
+          ], params[:status]),
+          {}, 
+          { class: "rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" } %>
+    </div>
+    
+    <div>
+      <%= form.select :category_id,
+          options_from_collection_for_select(@categories, :id, :name, params[:category_id]),
+          { prompt: "カテゴリを選択" },
+          { class: "rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" } %>
+    </div>
+    
+    <div>
+      <%= form.submit "絞り込み", class: "bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors" %>
+      <%= link_to "リセット", admin_articles_path, class: "text-gray-600 hover:text-gray-800 ml-2" %>
+    </div>
+  <% end %>
+</div>
+
+<!-- 記事一覧 -->
+<div class="bg-white shadow rounded-lg overflow-hidden">
+  <% if @articles.any? %>
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            タイトル
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            ステータス
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            カテゴリ
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            作成者
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            更新日
+          </th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            操作
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% @articles.each do |article| %>
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4">
+              <div class="flex flex-col">
+                <%= link_to article.title, admin_article_path(article), 
+                            class: "text-sm font-medium text-gray-900 hover:text-blue-600" %>
+                <% if article.excerpt.present? %>
+                  <p class="text-xs text-gray-500 mt-1">
+                    <%= truncate(article.excerpt, length: 100) %>
+                  </p>
+                <% end %>
+              </div>
+            </td>
+            
+            <td class="px-6 py-4 whitespace-nowrap">
+              <% case article.status %>
+              <% when 'published' %>
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                  公開中
+                </span>
+              <% when 'draft' %>
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                  下書き
+                </span>
+              <% when 'scheduled' %>
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                  予約投稿
+                </span>
+              <% when 'archived' %>
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                  アーカイブ
+                </span>
+              <% end %>
+            </td>
+            
+            <td class="px-6 py-4 whitespace-nowrap">
+              <% if article.categories.any? %>
+                <% article.categories.limit(2).each do |category| %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 mr-1">
+                    <%= category.name %>
+                  </span>
+                <% end %>
+                <% if article.categories.count > 2 %>
+                  <span class="text-xs text-gray-500">+<%= article.categories.count - 2 %>個</span>
+                <% end %>
+              <% else %>
+                <span class="text-xs text-gray-500">未分類</span>
+              <% end %>
+            </td>
+            
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <%= article.admin_user.email %>
+            </td>
+            
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <%= article.updated_at.strftime("%Y/%m/%d %H:%M") %>
+            </td>
+            
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <div class="flex justify-end space-x-2">
+                <%= link_to "編集", edit_admin_article_path(article), 
+                            class: "text-indigo-600 hover:text-indigo-900" %>
+                <% if article.draft? %>
+                  <%= link_to "公開", publish_admin_article_path(article),
+                              method: :patch,
+                              data: { turbo_method: :patch },
+                              class: "text-green-600 hover:text-green-900" %>
+                <% elsif article.published? %>
+                  <%= link_to "非公開", unpublish_admin_article_path(article),
+                              method: :patch,
+                              data: { turbo_method: :patch },
+                              class: "text-yellow-600 hover:text-yellow-900" %>
+                <% end %>
+                <%= button_to "削除", admin_article_path(article), 
+                              method: :delete,
+                              onclick: "return confirm('本当に「#{j(article.title)}」を削除しますか？')",
+                              class: "text-red-600 hover:text-red-900 bg-transparent border-0 p-0 font-medium text-sm cursor-pointer" %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="text-center py-12">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">記事がありません</h3>
+      <p class="mt-1 text-sm text-gray-500">新しい記事を作成してください。</p>
+      <div class="mt-6">
+        <%= link_to "新規記事作成", new_admin_article_path, 
+                    class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" %>
+      </div>
+    </div>
+  <% end %>
+</div>

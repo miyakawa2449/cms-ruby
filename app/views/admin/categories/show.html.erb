@@ -1,0 +1,194 @@
+<% content_for :page_title, @category.name %>
+
+<div class="mb-6">
+  <div class="flex items-center text-sm text-gray-500">
+    <%= link_to "カテゴリ管理", admin_categories_path, class: "hover:text-gray-700" %>
+    <svg class="h-5 w-5 text-gray-400 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+    </svg>
+    <span class="text-gray-900"><%= @category.name %></span>
+  </div>
+</div>
+
+<!-- アクションボタン -->
+<div class="mb-6 flex justify-between items-center">
+  <div class="flex space-x-3">
+    <%= link_to "編集", edit_admin_category_path(@category), 
+                class: "bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors" %>
+    
+    <% if @category.articles.empty? && @category.children.empty? %>
+      <%= button_to "削除", admin_category_path(@category), 
+                    method: :delete,
+                    onclick: "return confirm('本当に「#{j(@category.name)}」を削除しますか？')",
+                    class: "bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors border-0 cursor-pointer" %>
+    <% else %>
+      <button disabled class="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed">
+        削除不可
+      </button>
+    <% end %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <!-- メイン情報 -->
+  <div class="lg:col-span-2 space-y-6">
+    <!-- カテゴリ情報 -->
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center space-x-3">
+          <% if @category.color.present? %>
+            <div class="w-6 h-6 rounded-full border" style="background-color: <%= @category.color %>;"></div>
+          <% end %>
+          
+          <h2 class="text-xl font-semibold text-gray-900">
+            <%= @category.name %>
+            <% if @category.icon.present? %>
+              <span class="ml-2 text-2xl"><%= @category.icon %></span>
+            <% end %>
+          </h2>
+        </div>
+      </div>
+      
+      <div class="px-6 py-4">
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">カテゴリ名</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @category.name %></dd>
+          </div>
+          
+          <div>
+            <dt class="text-sm font-medium text-gray-500">URL スラッグ</dt>
+            <dd class="mt-1 text-sm text-gray-900 font-mono">/categories/<%= @category.slug %></dd>
+          </div>
+          
+          <% if @category.parent.present? %>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">親カテゴリ</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                <%= link_to @category.parent.name, admin_category_path(@category.parent), 
+                            class: "text-blue-600 hover:text-blue-800" %>
+              </dd>
+            </div>
+          <% end %>
+          
+          <div>
+            <dt class="text-sm font-medium text-gray-500">表示順</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @category.position %></dd>
+          </div>
+          
+          <div>
+            <dt class="text-sm font-medium text-gray-500">関連記事数</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @category.article_count %>件</dd>
+          </div>
+          
+          <% if @category.children.any? %>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">子カテゴリ数</dt>
+              <dd class="mt-1 text-sm text-gray-900"><%= @category.children.count %>個</dd>
+            </div>
+          <% end %>
+        </dl>
+        
+        <% if @category.description.present? %>
+          <div class="mt-6">
+            <dt class="text-sm font-medium text-gray-500">説明</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @category.description %></dd>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- 関連記事 -->
+    <% if @articles.any? %>
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">関連記事（最新10件）</h3>
+        </div>
+        <div class="divide-y divide-gray-200">
+          <% @articles.each do |article| %>
+            <div class="px-6 py-4 hover:bg-gray-50">
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <%= link_to article.title, admin_article_path(article), 
+                              class: "text-sm font-medium text-gray-900 hover:text-blue-600" %>
+                  <div class="mt-1 flex items-center space-x-4 text-xs text-gray-500">
+                    <span><%= article.admin_user.email %></span>
+                    <span>・</span>
+                    <span><%= article.created_at.strftime("%Y年%m月%d日") %></span>
+                    <span>・</span>
+                    <span class="<%= article.published? ? 'text-green-600' : 'text-yellow-600' %>">
+                      <%= article.published? ? '公開中' : '下書き' %>
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="ml-4">
+                  <%= link_to "編集", edit_admin_article_path(article), 
+                              class: "text-gray-400 hover:text-gray-600 text-sm" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        
+        <% if @category.articles.count > 10 %>
+          <div class="px-6 py-3 bg-gray-50 border-t border-gray-200">
+            <%= link_to "すべての記事を見る（#{@category.articles.count}件）", 
+                        admin_articles_path(category_id: @category.id), 
+                        class: "text-sm font-medium text-blue-600 hover:text-blue-500" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- サイドバー -->
+  <div class="space-y-6">
+    <!-- 子カテゴリ -->
+    <% if @category.children.any? %>
+      <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">子カテゴリ</h3>
+        <div class="space-y-3">
+          <% @category.children.ordered.each do |child_category| %>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <% if child_category.color.present? %>
+                  <div class="w-3 h-3 rounded-full border" style="background-color: <%= child_category.color %>;"></div>
+                <% end %>
+                <%= link_to child_category.name, admin_category_path(child_category), 
+                            class: "text-sm text-gray-900 hover:text-blue-600" %>
+                <% if child_category.icon.present? %>
+                  <span class="text-sm"><%= child_category.icon %></span>
+                <% end %>
+              </div>
+              <span class="text-xs text-gray-500"><%= child_category.article_count %>件</span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+    
+    <!-- デザイン情報 -->
+    <div class="bg-white shadow rounded-lg p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">デザイン設定</h3>
+      <div class="space-y-3">
+        <% if @category.color.present? %>
+          <div class="flex items-center space-x-3">
+            <span class="text-sm font-medium text-gray-500 w-16">カラー:</span>
+            <div class="flex items-center space-x-2">
+              <div class="w-4 h-4 rounded border" style="background-color: <%= @category.color %>;"></div>
+              <code class="text-xs text-gray-600"><%= @category.color %></code>
+            </div>
+          </div>
+        <% end %>
+        
+        <% if @category.icon.present? %>
+          <div class="flex items-center space-x-3">
+            <span class="text-sm font-medium text-gray-500 w-16">アイコン:</span>
+            <span class="text-lg"><%= @category.icon %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

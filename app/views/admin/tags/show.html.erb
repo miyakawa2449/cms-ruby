@@ -1,0 +1,192 @@
+<% content_for :page_title, @tag.name %>
+
+<div class="mb-6">
+  <div class="flex items-center text-sm text-gray-500">
+    <%= link_to "タグ管理", admin_tags_path, class: "hover:text-gray-700" %>
+    <svg class="h-5 w-5 text-gray-400 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+    </svg>
+    <span class="text-gray-900">#<%= @tag.name %></span>
+  </div>
+</div>
+
+<!-- アクションボタン -->
+<div class="mb-6 flex justify-between items-center">
+  <div class="flex space-x-3">
+    <%= link_to "編集", edit_admin_tag_path(@tag), 
+                class: "bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors" %>
+    
+    <% if @tag.articles.empty? %>
+      <%= button_to "削除", admin_tag_path(@tag), 
+                    method: :delete,
+                    onclick: "return confirm('本当に「#{j(@tag.name)}」を削除しますか？')",
+                    class: "bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors border-0 cursor-pointer" %>
+    <% else %>
+      <button disabled class="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed">
+        削除不可
+      </button>
+    <% end %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <!-- メイン情報 -->
+  <div class="lg:col-span-2 space-y-6">
+    <!-- タグ情報 -->
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center space-x-3">
+          <% if @tag.color.present? %>
+            <div class="w-6 h-6 rounded-full border" style="background-color: <%= @tag.color %>;"></div>
+          <% end %>
+          
+          <h2 class="text-xl font-semibold text-gray-900">
+            #<%= @tag.name %>
+            <% if @tag.icon.present? %>
+              <span class="ml-2 text-2xl"><%= @tag.icon %></span>
+            <% end %>
+          </h2>
+        </div>
+      </div>
+      
+      <div class="px-6 py-4">
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">タグ名</dt>
+            <dd class="mt-1 text-sm text-gray-900">#<%= @tag.name %></dd>
+          </div>
+          
+          <div>
+            <dt class="text-sm font-medium text-gray-500">URL スラッグ</dt>
+            <dd class="mt-1 text-sm text-gray-900 font-mono">/tags/<%= @tag.slug %></dd>
+          </div>
+          
+          <div>
+            <dt class="text-sm font-medium text-gray-500">関連記事数</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @tag.article_count %>件</dd>
+          </div>
+          
+          <div>
+            <dt class="text-sm font-medium text-gray-500">作成日</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @tag.created_at.strftime("%Y年%m月%d日") %></dd>
+          </div>
+        </dl>
+        
+        <% if @tag.description.present? %>
+          <div class="mt-6">
+            <dt class="text-sm font-medium text-gray-500">説明</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @tag.description %></dd>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- 関連記事 -->
+    <% if @articles.any? %>
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">関連記事（最新10件）</h3>
+        </div>
+        <div class="divide-y divide-gray-200">
+          <% @articles.each do |article| %>
+            <div class="px-6 py-4 hover:bg-gray-50">
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <%= link_to article.title, admin_article_path(article), 
+                              class: "text-sm font-medium text-gray-900 hover:text-blue-600" %>
+                  <div class="mt-1 flex items-center space-x-4 text-xs text-gray-500">
+                    <span><%= article.admin_user.email %></span>
+                    <span>・</span>
+                    <span><%= article.created_at.strftime("%Y年%m月%d日") %></span>
+                    <span>・</span>
+                    <span class="<%= article.published? ? 'text-green-600' : 'text-yellow-600' %>">
+                      <%= article.published? ? '公開中' : '下書き' %>
+                    </span>
+                    <% if article.categories.any? %>
+                      <span>・</span>
+                      <span class="text-blue-600">
+                        <%= article.categories.map(&:name).join(", ") %>
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+                
+                <div class="ml-4">
+                  <%= link_to "編集", edit_admin_article_path(article), 
+                              class: "text-gray-400 hover:text-gray-600 text-sm" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        
+        <% if @tag.articles.count > 10 %>
+          <div class="px-6 py-3 bg-gray-50 border-t border-gray-200">
+            <%= link_to "すべての記事を見る（#{@tag.articles.count}件）", 
+                        admin_articles_path(tag_id: @tag.id), 
+                        class: "text-sm font-medium text-blue-600 hover:text-blue-500" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- サイドバー -->
+  <div class="space-y-6">
+    <!-- デザイン情報 -->
+    <div class="bg-white shadow rounded-lg p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">デザイン設定</h3>
+      <div class="space-y-3">
+        <% if @tag.color.present? %>
+          <div class="flex items-center space-x-3">
+            <span class="text-sm font-medium text-gray-500 w-16">カラー:</span>
+            <div class="flex items-center space-x-2">
+              <div class="w-4 h-4 rounded border" style="background-color: <%= @tag.color %>;"></div>
+              <code class="text-xs text-gray-600"><%= @tag.color %></code>
+            </div>
+          </div>
+        <% end %>
+        
+        <% if @tag.icon.present? %>
+          <div class="flex items-center space-x-3">
+            <span class="text-sm font-medium text-gray-500 w-16">アイコン:</span>
+            <span class="text-lg"><%= @tag.icon %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- 統計情報 -->
+    <div class="bg-white shadow rounded-lg p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">統計情報</h3>
+      <div class="space-y-3">
+        <div class="flex justify-between">
+          <span class="text-sm text-gray-500">使用回数</span>
+          <span class="text-sm font-medium text-gray-900"><%= @tag.article_count %>回</span>
+        </div>
+        
+        <div class="flex justify-between">
+          <span class="text-sm text-gray-500">初回使用</span>
+          <span class="text-sm font-medium text-gray-900">
+            <% if @tag.articles.any? %>
+              <%= @tag.articles.order(:created_at).first.created_at.strftime("%Y年%m月%d日") %>
+            <% else %>
+              -
+            <% end %>
+          </span>
+        </div>
+        
+        <div class="flex justify-between">
+          <span class="text-sm text-gray-500">最新使用</span>
+          <span class="text-sm font-medium text-gray-900">
+            <% if @tag.articles.any? %>
+              <%= @tag.articles.order(:created_at).last.created_at.strftime("%Y年%m月%d日") %>
+            <% else %>
+              -
+            <% end %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
