@@ -7,17 +7,17 @@
 
 ### 1.2 技術スタック
 - **言語**: Ruby 3.4.7（Docker環境実装済み）
-- **フレームワーク**: Ruby on Rails 8.0.4（API機能含む）
+- **フレームワーク**: Ruby on Rails 8.1.1（API機能含む・最新版対応）
 - **API設計**: RESTful API（/api/v1、/api/internal）
-- **認証**: Devise（管理画面）+ JWT（API）
+- **認証**: Devise（管理画面）+ JWT 3.1.2（API・セキュリティ強化済み）
 - **CSSフレームワーク**: Tailwind CSS
 - **データベース**: PostgreSQL（全文検索・JSONB活用）
 - **キャッシュ**: Redis（API・セッション・Sidekiq）
 - **インフラ**: AWS Lightsail
 - **Webサーバー**: Nginx（構築済み）
 - **ドメイン**: https://miyakawa.code（SSL未設定）
-- **外部API**: OpenAI API（ChatGPT）・Slack Webhook・SNS API
-- **バックグラウンドジョブ**: Sidekiq（AI処理・メール送信）
+- **外部API**: OpenAI API（ChatGPT・ruby-openai 8.3.0使用）・Slack Webhook・SNS API
+- **バックグラウンドジョブ**: Sidekiq 8.0.10（AI処理・メール送信）
 - **API セキュリティ**: Rack::Attack（レート制限）・CORS・入力検証
 - **開発環境**: Docker Desktop（Mac環境）
 
@@ -940,6 +940,15 @@ DELETE /api/internal/media/:id                # メディア削除
   - ✅ **フロントエンド統合完了** - Rails Templates・SEO基盤・5ページ実装
   - ✅ **Phase 2B完全完了** - データベース基盤・開発環境100%完成
   - **Phase 2C開始準備完了**: 認証システム・CMS基盤実装待機
+- **2025-12-03**:
+  - ✅ **セキュリティアップデート実施** - Dependabot推奨パッケージ更新
+    - JWT 2.10.2 → 3.1.2（認証セキュリティ強化）
+    - ruby-openai 6.5.0 → 8.3.0（AI機能改善）
+    - actions/checkout v4 → v6（CI/CD更新）
+  - 🚀 **Rails 8.1.1再構築決定** - 最新版での全面再設計
+    - Rails 8.0.4 → 8.1.1（破壊的変更対応）
+    - Sidekiq 7.3.9 → 8.0.10（依存関係解決）
+    - Phase 1設計をRails 8.1前提で最適化
 
 ---
 
