@@ -24,7 +24,7 @@ gem "jbuilder"
 
 # Authentication & Authorization
 gem "devise", "~> 4.9"
-gem "jwt", "~> 2.7"
+gem "jwt", "~> 3.1"
 gem "pundit", "~> 2.3"
 
 # Background Processing
@@ -34,7 +34,7 @@ gem "redis", ">= 4.0.1"
 # gem "redis-rails", "~> 5.0" # Rails 8.0 non-compatible
 
 # AI & External APIs
-gem "ruby-openai", "~> 6.3"
+gem "ruby-openai", "~> 8.3"
 gem "httparty", "~> 0.21"
 
 # Image Processing & File Management
