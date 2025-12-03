@@ -43,8 +43,8 @@ gem "pg_search", "~> 2.3"
 
 # Security & Monitoring
 gem "rack-attack", "~> 6.6"
-gem "sentry-rails", "~> 5.15"
-gem "sentry-sidekiq", "~> 5.15"
+gem "sentry-rails", "~> 6.2"
+gem "sentry-sidekiq", "~> 6.2"
 
 # CSS Framework & Assets
 gem "tailwindcss-rails", "~> 3.0"
