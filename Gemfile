@@ -1,24 +1,19 @@
 source "https://rubygems.org"
-ruby "3.4.7"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 8.0.4"
+gem "rails", "~> 8.1.1"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
-# PostgreSQL full-text search
-gem "pg_search", "~> 2.3"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
-# Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
-gem "jsbundling-rails"
+# Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
+gem "importmap-rails"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem "stimulus-rails"
-# Bundle and process CSS [https://github.com/rails/cssbundling-rails]
-gem "cssbundling-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
@@ -28,48 +23,36 @@ gem "jwt", "~> 3.1"
 gem "pundit", "~> 2.3"
 
 # Background Processing
-gem "sidekiq", "~> 7.2"
-gem "sidekiq-cron", "~> 1.12"
+gem "sidekiq", "~> 8.0"
+gem "sidekiq-cron", "~> 2.3"
+
+# Caching & Redis
 gem "redis", ">= 4.0.1"
-# gem "redis-rails", "~> 5.0" # Rails 8.0 non-compatible
 
 # AI & External APIs
 gem "ruby-openai", "~> 8.3"
 gem "httparty", "~> 0.21"
 
-# Image Processing & File Management
-gem "image_processing", "~> 1.2"
-gem "carrierwave", "~> 3.0"
-gem "mini_magick", "~> 4.12"
-gem "fog-aws", "~> 3.21"
-
-# SEO & Metadata
-gem "meta-tags", "~> 2.20"
-gem "sitemap_generator", "~> 6.3"
+# SEO & Performance
+gem "meta-tags", "~> 2.19"
 gem "friendly_id", "~> 5.5"
-
-# Security
-gem "rack-attack", "~> 6.7"
-gem "rack-cors", "~> 2.0"
-
-# API Development
-gem "active_model_serializers", "~> 0.10.14"
 gem "kaminari", "~> 1.2"
-gem "api-pagination", "~> 5.0"
 
-# Content Processing
-gem "redcarpet", "~> 3.6"
-gem "rouge", "~> 4.2"
+# Search & Indexing
+gem "pg_search", "~> 2.3"
 
-# Monitoring & Logging
-gem "lograge", "~> 0.14"
+# Security & Monitoring
+gem "rack-attack", "~> 6.6"
 gem "sentry-rails", "~> 5.15"
 gem "sentry-sidekiq", "~> 5.15"
 
-# Other Utilities
-gem "whenever", "~> 1.0"
-gem "geocoder", "~> 1.8"
-gem "browser", "~> 5.3"
+# CSS Framework & Assets
+gem "tailwindcss-rails", "~> 3.0"
+gem "cssbundling-rails", "~> 1.4"
+gem "jsbundling-rails", "~> 1.3"
+
+# Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
+# gem "bcrypt", "~> 3.1.7"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
@@ -88,9 +71,15 @@ gem "kamal", require: false
 # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
 gem "thruster", require: false
 
+# Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
+gem "image_processing", "~> 1.2"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
+
+  # Audits gems for known security defects (use config/bundler-audit.yml to ignore issues)
+  gem "bundler-audit", require: false
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
@@ -100,8 +89,6 @@ group :development, :test do
 
   # Testing Framework
   gem "rspec-rails", "~> 6.1"
-  gem "capybara"
-  gem "selenium-webdriver"
   gem "factory_bot_rails", "~> 6.4"
   gem "faker", "~> 3.2"
   gem "shoulda-matchers", "~> 6.0"
@@ -118,17 +105,15 @@ group :development do
   # Development & Debugging Tools
   gem "better_errors", "~> 2.10"
   gem "binding_of_caller", "~> 1.0"
-  gem "rack-mini-profiler"
-  
-  # Code Quality
-  gem "rubocop", "~> 1.60"
-  gem "rubocop-rails", "~> 2.23"
-  gem "rubocop-rspec", "~> 2.26"
-  gem "annot8", "~> 1.0" # Rails 8.0 compatible alternative to annotate
-  # gem "bullet", "~> 7.1"  # Rails 8.0.4対応待ち
-  gem "rails-erd", "~> 1.7"
-  
-  # Other Development Tools
-  gem "letter_opener", "~> 1.8"
+  gem "letter_opener", "~> 1.10"
+  gem "listen", "~> 3.8"
+  gem "spring", "~> 4.1"
+  gem "spring-commands-rspec", "~> 1.0"
   gem "dotenv-rails", "~> 2.8"
+end
+
+group :test do
+  # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
+  gem "capybara"
+  gem "selenium-webdriver"
 end

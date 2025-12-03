@@ -40,3 +40,7 @@
 
 # Ignore all daily reports (personal work logs)
 /reports/
+
+# Ignore key files for decrypting credentials and more.
+/config/*.key
+
