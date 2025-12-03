@@ -47,7 +47,7 @@ gem "sentry-rails", "~> 5.15"
 gem "sentry-sidekiq", "~> 5.15"
 
 # CSS Framework & Assets
-gem "tailwindcss-rails", "~> 3.0"
+gem "tailwindcss-rails", "~> 4.4"
 gem "cssbundling-rails", "~> 1.4"
 gem "jsbundling-rails", "~> 1.3"
 
