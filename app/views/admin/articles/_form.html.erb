@@ -129,13 +129,14 @@ puts 'Hello, World!'
       <div class="bg-white shadow rounded-lg p-6">
         <h3 class="text-lg font-medium text-gray-900 mb-4">カテゴリ</h3>
         
+        <%= form.hidden_field :category_ids, value: '', multiple: true %>
         <div class="space-y-2">
           <% @categories.each do |category| %>
             <label class="flex items-center">
-              <%= check_box_tag "article[category_ids][]", category.id, 
-                  article.categories.include?(category),
-                  class: "rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50",
-                  id: "article_category_#{category.id}" %>
+              <%= form.check_box :category_ids, 
+                  { multiple: true, checked: article.category_ids.include?(category.id) }, 
+                  category.id, 
+                  "" %>
               <span class="ml-2 text-sm text-gray-700">
                 <%= category.full_name %>
                 <% if category.article_count > 0 %>
