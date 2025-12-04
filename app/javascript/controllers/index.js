@@ -1,4 +1,5 @@
-// Import and register all your controllers from the importmap via controllers/**/*_controller
-import { application } from "controllers/application"
-import { eagerLoadControllersFrom } from "@hotwired/stimulus-loading"
-eagerLoadControllersFrom("controllers", application)
+// Import and register all your controllers
+import { application } from "./application"
+import ConfirmDialogController from "./confirm_dialog_controller"
+
+application.register("confirm-dialog", ConfirmDialogController)
