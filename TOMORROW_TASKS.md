@@ -11,6 +11,20 @@
 
 ### 🚀 **Phase 3優先タスク（セクション管理・API実装）**
 
+#### 0. Docker環境更新（Rails 8.1.1対応） - 最優先
+- [ ] **docker-compose.yml更新（Webpacker→cssbundling-rails）**
+  - Webpackerサービス削除・cssbundling-rails対応
+  - Tailwind CSSビルドプロセス統合
+  - Rails 8.1.1標準アセット構成対応
+- [ ] **Docker開発環境動作確認**
+  - 開発環境Docker起動テスト
+  - Tailwind CSS Docker環境統合確認
+  - Stimulus・Turbo動作確認
+- [ ] **本番環境準備**
+  - Dockerfile最終確認・最適化
+  - AWS Lightsailデプロイ準備
+  - 環境変数・設定ファイル確認
+
 #### 1. セクション管理機能実装
 - [ ] **Section/SectionContentモデル実装**
   - セクション管理画面動作確認（既存コントローラー活用）

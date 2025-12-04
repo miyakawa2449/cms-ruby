@@ -5,6 +5,10 @@
     "build:css": "npx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify"
   },
   "dependencies": {
-    "@tailwindcss/forms": "^0.5.10"
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.19",
+    "tailwindcss": "^4.1.17"
   }
 }
