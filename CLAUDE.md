@@ -33,7 +33,7 @@ README.md の「プロジェクト完了度」セクションをチェック
 ## プロジェクト概要
 シニアエンジニアの技術発信・ポートフォリオサイト
 - Ruby on Rails 8.1.1 + Tailwind CSS（最新版対応）
-- PostgreSQL + Sidekiq 8.0.10 + OpenAI API（依存関係最適化済み）
+- PostgreSQL 17-alpine + Sidekiq 8.0.10 + OpenAI API（ICUロケール・依存関係最適化済み）
 - JWT 3.1.2（セキュリティ強化）・ruby-openai 8.3.0（AI機能改善）
 - AWS Lightsail（本番環境）
 
@@ -55,7 +55,7 @@ README.md の「プロジェクト完了度」セクションをチェック
 - **管理画面パス**: デフォルト `/admin` だが変更可能
 - **AI機能**: GPT APIで記事要約・キーワード抽出
 - **画像処理**: WebP自動変換 + 遅延読み込み
-- **検索**: PostgreSQL全文検索
+- **検索**: PostgreSQL 17全文検索（ICUロケール対応）
 - **SNS埋め込み**: oEmbed対応
 
 ## 次のタスク

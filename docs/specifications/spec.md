@@ -11,7 +11,7 @@
 - **API設計**: RESTful API（/api/v1、/api/internal）
 - **認証**: Devise（管理画面）+ JWT 3.1.2（API・セキュリティ強化済み）
 - **CSSフレームワーク**: Tailwind CSS
-- **データベース**: PostgreSQL（全文検索・JSONB活用）
+- **データベース**: PostgreSQL 17-alpine（全文検索・JSONB・ICUロケール活用）
 - **キャッシュ**: Redis（API・セッション・Sidekiq）
 - **インフラ**: AWS Lightsail
 - **Webサーバー**: Nginx（構築済み）
@@ -19,7 +19,7 @@
 - **外部API**: OpenAI API（ChatGPT・ruby-openai 8.3.0使用）・Slack Webhook・SNS API
 - **バックグラウンドジョブ**: Sidekiq 8.0.10（AI処理・メール送信）
 - **API セキュリティ**: Rack::Attack（レート制限）・CORS・入力検証
-- **開発環境**: Docker Desktop（Mac環境）
+- **開発環境**: Docker Desktop（Mac環境・PostgreSQL 17-alpine・cssbundling-rails対応）
 
 ### 1.3 サイトオーナー情報
 - システムエンジニア・プロジェクトマネージャとして20年以上の経験
@@ -958,6 +958,16 @@ DELETE /api/internal/media/:id                # メディア削除
     - モデル改善（slug重複解決・リアルタイム記事数更新）
     - 91ファイル変更・3,515行追加・全機能動作確認完了
   - **Phase 3開始準備完了**: セクション管理・公開API実装待機
+- **2025-12-04**:
+  - ✅ **Docker環境更新完了** - PostgreSQL 17-alpine最新版対応
+    - PostgreSQL 16 → 17-alpine（ICUロケールプロバイダ採用）
+    - docker-compose.yml更新（Webpacker削除・cssbundling-rails移行）
+    - Tailwind CSS 4.1.17統合・yarn依存関係解決
+    - データベース名統一: portfolio_rb_development
+  - ✅ **カテゴリ・記事関連機能修正完了** - 管理画面CRUD機能完成
+    - ArticleCategoryカウンタキャッシュ実装（after_create/after_destroy）
+    - 記事編集フォーム修正（check_box_tag → form.check_box）
+    - サンプルデータ投入完了（タグ8件・カテゴリ6件・記事5件・セクション8件）
 
 ---
 

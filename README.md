@@ -2,7 +2,7 @@
 
 [![Rails](https://img.shields.io/badge/Rails-8.1.1-red.svg)](https://rubyonrails.org/)
 [![Ruby](https://img.shields.io/badge/Ruby-3.4.7-red.svg)](https://www.ruby-lang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)](https://www.postgresql.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue.svg)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 シニアエンジニアの技術発信・ポートフォリオサイトをCMS化するプロジェクトです。
@@ -27,13 +27,13 @@
 ### バックエンド
 - **Ruby**: 3.4.7
 - **Rails**: 8.1.1（最新版・新機能活用）
-- **データベース**: PostgreSQL 16
+- **データベース**: PostgreSQL 17-alpine（ICUロケール・全文検索最適化）
 - **認証**: Devise 4.9.4 + JWT 3.1.2（セキュリティ強化済み）
 - **認可**: Pundit 2.5.2
 - **バックグラウンド**: Sidekiq 8.0.10 + sidekiq-cron 2.3.1
 
 ### フロントエンド
-- **CSS**: Tailwind CSS 3.3.2
+- **CSS**: Tailwind CSS 4.1.17（cssbundling-rails・最新版）
 - **JavaScript**: Stimulus + Turbo（Rails 8.1標準）
 - **アセット**: Propshaft（Rails 8.1標準）
 
@@ -83,7 +83,7 @@
 # 必要なソフトウェア
 - Ruby 3.4.7
 - Node.js 18+ 
-- PostgreSQL 16+
+- PostgreSQL 17+
 - Redis 7+（Sidekiq用）
 ```
 
@@ -101,6 +101,27 @@ rails db:create db:migrate db:seed
 
 # 4. 開発サーバー起動
 rails server
+```
+
+### 🐳 Docker開発環境（推奨）
+```bash
+# 1. Docker環境構築・起動
+docker-compose up -d
+
+# 2. データベースセットアップ
+docker-compose exec web rails db:create db:migrate db:seed
+
+# 3. サンプルデータ投入（オプション）
+docker-compose exec web rails runner "load 'db/seeds/sample_data.rb'"
+
+# 4. Railsサーバー起動（entrypoint問題回避）
+docker-compose exec -d web bundle exec rails server -b 0.0.0.0
+```
+
+**Docker環境仕様**:
+- **PostgreSQL**: 17-alpine（ICUロケール対応・日本語ソート改善）
+- **Redis**: 7-alpine（Sidekiq用）
+- **Tailwind CSS**: 4.1.17（cssbundling-rails・watch対応）
 ```
 
 ### 🔐 管理画面アクセス
