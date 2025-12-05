@@ -1,0 +1,196 @@
+<% content_for :title, "#{@article.title} | ブログ | 宮川 剛" %>
+<% content_for :description, @article.excerpt.present? ? @article.excerpt : truncate(strip_tags(@article.content), length: 160) %>
+
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="container mx-auto px-6 py-6">
+      <!-- パンくずリスト -->
+      <nav class="text-sm text-gray-500 mb-4">
+        <%= link_to "ホーム", root_path, class: "hover:text-blue-600" %> > 
+        <%= link_to "ブログ", blog_path, class: "hover:text-blue-600" %> > 
+        <% if @categories.any? %>
+          <%= link_to @categories.first.name, blog_path(category: @categories.first.slug), class: "hover:text-blue-600" %> > 
+        <% end %>
+        <span class="text-gray-900"><%= truncate(@article.title, length: 40) %></span>
+      </nav>
+      
+      <div class="max-w-4xl">
+        <!-- カテゴリ -->
+        <% if @article.categories.any? %>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <% @article.categories.each do |category| %>
+              <%= link_to blog_path(category: category.slug), 
+                          class: "bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full hover:bg-blue-200 transition-colors" do %>
+                <%= category.name %>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+        
+        <!-- タイトル -->
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+          <%= @article.title %>
+        </h1>
+        
+        <!-- 抜粋 -->
+        <% if @article.excerpt.present? %>
+          <p class="text-xl text-gray-600 mb-6 leading-relaxed">
+            <%= @article.excerpt %>
+          </p>
+        <% end %>
+        
+        <!-- メタ情報 -->
+        <div class="flex items-center space-x-6 text-sm text-gray-500 mb-6">
+          <time datetime="<%= @article.published_at&.iso8601 %>">
+            公開: <%= @article.published_at&.strftime('%Y年%m月%d日') %>
+          </time>
+          <span>読了時間: 約<%= (strip_tags(@article.content).length / 500).ceil %>分</span>
+          <% if @article.updated_at > @article.created_at + 1.day %>
+            <time datetime="<%= @article.updated_at.iso8601 %>">
+              更新: <%= @article.updated_at.strftime('%Y年%m月%d日') %>
+            </time>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container mx-auto px-6 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <!-- メインコンテンツ -->
+      <main class="lg:col-span-3">
+        <article class="bg-white rounded-xl p-8 shadow-sm">
+          <!-- 記事本文 -->
+          <div class="prose prose-lg max-w-none">
+            <%= simple_format(@article.content, {}, wrapper_tag: "div") %>
+          </div>
+          
+          <!-- タグ -->
+          <% if @article.tags.any? %>
+            <div class="mt-8 pt-8 border-t border-gray-200">
+              <h3 class="text-lg font-semibold text-gray-900 mb-3">タグ</h3>
+              <div class="flex flex-wrap gap-2">
+                <% @article.tags.each do |tag| %>
+                  <%= link_to blog_path(tag: tag.slug), 
+                              class: "bg-gray-200 text-gray-700 text-sm px-3 py-1 rounded-full hover:bg-blue-100 hover:text-blue-700 transition-colors" do %>
+                    #<%= tag.name %>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+          
+          <!-- SNSシェア -->
+          <div class="mt-8 pt-8 border-t border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">この記事をシェア</h3>
+            <div class="flex space-x-4">
+              <a href="https://twitter.com/intent/tweet?url=<%= request.original_url %>&text=<%= @article.title %>" 
+                 target="_blank" 
+                 class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                Twitter
+              </a>
+              <a href="https://www.facebook.com/sharer/sharer.php?u=<%= request.original_url %>" 
+                 target="_blank"
+                 class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors">
+                Facebook
+              </a>
+              <button onclick="navigator.clipboard.writeText('<%= request.original_url %>'); alert('URLをコピーしました！')"
+                      class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                URLコピー
+              </button>
+            </div>
+          </div>
+        </article>
+        
+        <!-- 関連記事 -->
+        <% if @related_articles.any? %>
+          <section class="mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">関連記事</h2>
+            <div class="grid grid-cols-1 md:grid-cols-<%= [@related_articles.count, 3].min %> gap-6">
+              <% @related_articles.each do |article| %>
+                <article class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                  <% if article.categories.any? %>
+                    <div class="flex gap-2 mb-3">
+                      <% article.categories.limit(1).each do |category| %>
+                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
+                          <%= category.name %>
+                        </span>
+                      <% end %>
+                    </div>
+                  <% end %>
+                  
+                  <h3 class="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
+                    <%= link_to article.title, blog_article_path(article.slug) %>
+                  </h3>
+                  
+                  <p class="text-gray-600 text-sm mb-3">
+                    <%= truncate(strip_tags(article.content), length: 100) %>
+                  </p>
+                  
+                  <time class="text-xs text-gray-500">
+                    <%= article.published_at&.strftime('%Y年%m月%d日') %>
+                  </time>
+                </article>
+              <% end %>
+            </div>
+          </section>
+        <% end %>
+        
+        <!-- ナビゲーション -->
+        <div class="mt-8 flex justify-between">
+          <%= link_to blog_path, class: "text-blue-600 hover:text-blue-700 font-medium" do %>
+            ← 記事一覧に戻る
+          <% end %>
+          
+          <%= link_to root_path, class: "text-blue-600 hover:text-blue-700 font-medium" do %>
+            ポートフォリオに戻る →
+          <% end %>
+        </div>
+      </main>
+      
+      <!-- サイドバー -->
+      <aside class="lg:col-span-1">
+        <!-- 目次 (簡易版) -->
+        <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">記事情報</h3>
+          <dl class="space-y-2 text-sm">
+            <dt class="font-medium text-gray-700">公開日</dt>
+            <dd class="text-gray-600"><%= @article.published_at&.strftime('%Y年%m月%d日') %></dd>
+            
+            <dt class="font-medium text-gray-700">読了時間</dt>
+            <dd class="text-gray-600">約<%= (strip_tags(@article.content).length / 500).ceil %>分</dd>
+            
+            <% if @article.categories.any? %>
+              <dt class="font-medium text-gray-700">カテゴリ</dt>
+              <dd class="text-gray-600">
+                <% @article.categories.each do |category| %>
+                  <%= link_to category.name, blog_path(category: category.slug), 
+                              class: "hover:text-blue-600" %>
+                <% end %>
+              </dd>
+            <% end %>
+          </dl>
+        </div>
+        
+        <!-- 著者情報 -->
+        <div class="bg-white rounded-xl p-6 shadow-sm">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">著者について</h3>
+          <div class="text-center">
+            <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-3">
+              <span class="text-xl font-bold text-blue-600">宮</span>
+            </div>
+            <h4 class="font-semibold text-gray-900">宮川 剛</h4>
+            <p class="text-sm text-gray-600 mt-2">
+              要件定義からプログラミングまで一人でできるエンジニア
+            </p>
+            <div class="mt-4">
+              <%= link_to "プロフィールを見る", root_path(anchor: "about"), 
+                          class: "text-blue-600 hover:text-blue-700 text-sm font-medium" %>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>

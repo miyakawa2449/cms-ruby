@@ -1,0 +1,177 @@
+<% content_for :title, "ブログ | 宮川 剛 - ポートフォリオ" %>
+<% content_for :description, "技術情報やプロジェクト進捗を発信するブログページです。最新の技術トレンドや開発ノウハウをお届けします。" %>
+
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="container mx-auto px-6 py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">ブログ</h1>
+          <p class="text-gray-600 mt-1">技術情報とプロジェクトの進捗をお届け</p>
+        </div>
+        <div>
+          <%= link_to "ポートフォリオに戻る", root_path, 
+                      class: "text-blue-600 hover:text-blue-700 font-medium" %>
+        </div>
+      </div>
+      
+      <!-- 検索バー -->
+      <div class="mt-6">
+        <%= form_with url: blog_path, method: :get, local: true, class: "flex gap-4" do |form| %>
+          <div class="flex-1 relative">
+            <%= form.text_field :search, 
+                                value: params[:search],
+                                placeholder: "記事を検索...", 
+                                class: "w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" %>
+            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+          <%= form.submit "検索", class: "bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors" %>
+        <% end %>
+      </div>
+    </div>
+  </header>
+
+  <div class="container mx-auto px-6 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <!-- メインコンテンツ -->
+      <main class="lg:col-span-3">
+        <% if params[:search].present? %>
+          <div class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-900">
+              「<%= params[:search] %>」の検索結果
+              <span class="text-sm font-normal text-gray-500">
+                (<%= @articles.count %>件)
+              </span>
+            </h2>
+          </div>
+        <% end %>
+        
+        <!-- 記事一覧 -->
+        <% if @articles.any? %>
+          <div class="space-y-8">
+            <% @articles.each do |article| %>
+              <article class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <!-- カテゴリ -->
+                <% if article.categories.any? %>
+                  <div class="flex flex-wrap gap-2 mb-3">
+                    <% article.categories.each do |category| %>
+                      <%= link_to blog_path(category: category.slug), 
+                                  class: "bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full hover:bg-blue-200 transition-colors" do %>
+                        <%= category.name %>
+                      <% end %>
+                    <% end %>
+                  </div>
+                <% end %>
+                
+                <!-- タイトル -->
+                <h2 class="text-2xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition-colors">
+                  <%= link_to article.title, blog_article_path(article.slug) %>
+                </h2>
+                
+                <!-- 抜粋 -->
+                <% if article.excerpt.present? %>
+                  <p class="text-gray-600 leading-relaxed mb-4">
+                    <%= article.excerpt %>
+                  </p>
+                <% else %>
+                  <p class="text-gray-600 leading-relaxed mb-4">
+                    <%= truncate(strip_tags(article.content), length: 200) %>
+                  </p>
+                <% end %>
+                
+                <!-- メタ情報 -->
+                <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                  <div class="flex items-center space-x-4">
+                    <time datetime="<%= article.published_at&.iso8601 %>">
+                      <%= article.published_at&.strftime('%Y年%m月%d日') %>
+                    </time>
+                    <span>読了時間: 約<%= (strip_tags(article.content).length / 500).ceil %>分</span>
+                  </div>
+                  <%= link_to "続きを読む →", blog_article_path(article.slug), 
+                              class: "text-blue-600 hover:text-blue-700 font-medium" %>
+                </div>
+                
+                <!-- タグ -->
+                <% if article.tags.any? %>
+                  <div class="flex flex-wrap gap-2">
+                    <% article.tags.each do |tag| %>
+                      <%= link_to blog_path(tag: tag.slug), 
+                                  class: "bg-gray-200 text-gray-600 text-sm px-2 py-1 rounded hover:bg-gray-300 transition-colors" do %>
+                        #<%= tag.name %>
+                      <% end %>
+                    <% end %>
+                  </div>
+                <% end %>
+              </article>
+            <% end %>
+          </div>
+          
+          <!-- ページネーション（簡易版） -->
+          <% if @articles.count >= 10 %>
+            <div class="mt-8 text-center">
+              <p class="text-gray-600">より多くの記事は管理画面から確認できます</p>
+            </div>
+          <% end %>
+          
+        <% else %>
+          <!-- 記事なしの場合 -->
+          <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <% if params[:search].present? %>
+              <h3 class="text-lg font-medium text-gray-900 mb-2">記事が見つかりませんでした</h3>
+              <p class="text-gray-600 mb-4">検索条件を変更してお試しください</p>
+              <%= link_to "すべての記事を見る", blog_path, class: "text-blue-600 hover:text-blue-700 font-medium" %>
+            <% else %>
+              <h3 class="text-lg font-medium text-gray-900 mb-2">記事はまだありません</h3>
+              <p class="text-gray-600">新しい記事をお待ちください</p>
+            <% end %>
+          </div>
+        <% end %>
+      </main>
+      
+      <!-- サイドバー -->
+      <aside class="lg:col-span-1">
+        <!-- カテゴリ一覧 -->
+        <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">カテゴリ</h3>
+          <ul class="space-y-2">
+            <li>
+              <%= link_to blog_path, 
+                          class: "flex items-center justify-between text-gray-600 hover:text-blue-600 transition-colors #{'font-semibold text-blue-600' if params[:category].blank?}" do %>
+                <span>すべての記事</span>
+                <span class="text-sm text-gray-400">(<%= Article.published.count %>)</span>
+              <% end %>
+            </li>
+            <% @categories.each do |category| %>
+              <li>
+                <%= link_to blog_path(category: category.slug), 
+                            class: "flex items-center justify-between text-gray-600 hover:text-blue-600 transition-colors #{'font-semibold text-blue-600' if params[:category] == category.slug}" do %>
+                  <span><%= category.name %></span>
+                  <span class="text-sm text-gray-400">(<%= category.articles.published.count %>)</span>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+        
+        <!-- 人気タグ -->
+        <div class="bg-white rounded-xl p-6 shadow-sm">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">人気タグ</h3>
+          <div class="flex flex-wrap gap-2">
+            <% @tags.limit(10).each do |tag| %>
+              <%= link_to blog_path(tag: tag.slug), 
+                          class: "bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full hover:bg-blue-100 hover:text-blue-700 transition-colors #{'bg-blue-100 text-blue-700' if params[:tag] == tag.slug}" do %>
+                #<%= tag.name %> (<%= tag.articles.published.count %>)
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>

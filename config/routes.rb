@@ -33,8 +33,15 @@ Rails.application.routes.draw do
     resources :tags
   end
   
-  # Public routes (to be implemented)
+  # Public routes
   root "portfolio#index"
+  
+  # Blog routes
+  get "blog", to: "blog#index", as: :blog
+  get "blog/:slug", to: "blog#show", as: :blog_article
+  
+  # My Story route
+  get "my-story", to: "my_story#index", as: :my_story
   
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check

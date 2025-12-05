@@ -1,0 +1,161 @@
+<div class="py-20 bg-white">
+  <div class="container mx-auto px-6">
+    <div class="max-w-6xl mx-auto">
+      <!-- ヘッダー -->
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <%= content['title'] || 'Blog' %>
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          <%= content['description'] || '技術情報やプロジェクトの進捗を発信しています。最新の技術トレンドや開発ノウハウをお届けします。' %>
+        </p>
+      </div>
+      
+      <!-- 最新記事 -->
+      <% posts_count = (content['posts_count'] || 3).to_i %>
+      <% if @recent_articles.present? %>
+        <div class="grid grid-cols-1 md:grid-cols-<%= posts_count == 2 ? '2' : (posts_count >= 3 ? '3' : '1') %> gap-8 mb-12">
+          <% @recent_articles.limit(posts_count).each do |article| %>
+            <article class="bg-gray-50 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <!-- 記事画像 -->
+              <div class="h-48 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                <svg class="w-16 h-16 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+              </div>
+              
+              <!-- 記事内容 -->
+              <div class="p-6">
+                <!-- カテゴリ -->
+                <% if article.categories.any? %>
+                  <div class="flex flex-wrap gap-2 mb-3">
+                    <% article.categories.each do |category| %>
+                      <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                        <%= category.name %>
+                      </span>
+                    <% end %>
+                  </div>
+                <% end %>
+                
+                <!-- タイトル -->
+                <h3 class="text-xl font-bold text-gray-900 mb-3">
+                  <a href="/blog/<%= article.slug %>" class="hover:text-blue-600 transition-colors">
+                    <%= truncate(article.title, length: 60) %>
+                  </a>
+                </h3>
+                
+                <!-- 抜粋 -->
+                <% if article.excerpt.present? %>
+                  <p class="text-gray-600 leading-relaxed mb-4">
+                    <%= truncate(article.excerpt, length: 120) %>
+                  </p>
+                <% else %>
+                  <p class="text-gray-600 leading-relaxed mb-4">
+                    <%= truncate(strip_tags(article.content), length: 120) %>
+                  </p>
+                <% end %>
+                
+                <!-- メタ情報 -->
+                <div class="flex items-center justify-between text-sm text-gray-500">
+                  <time datetime="<%= article.published_at&.iso8601 %>">
+                    <%= article.published_at&.strftime('%Y年%m月%d日') %>
+                  </time>
+                  <a href="/blog/<%= article.slug %>" class="text-blue-600 hover:text-blue-700 font-medium">
+                    続きを読む →
+                  </a>
+                </div>
+                
+                <!-- タグ -->
+                <% if article.tags.any? %>
+                  <div class="flex flex-wrap gap-1 mt-3">
+                    <% article.tags.limit(3).each do |tag| %>
+                      <span class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded">
+                        #<%= tag.name %>
+                      </span>
+                    <% end %>
+                    <% if article.tags.count > 3 %>
+                      <span class="text-gray-400 text-xs">+<%= article.tags.count - 3 %>more</span>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <!-- 記事がない場合のプレースホルダー -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <% 3.times do |i| %>
+            <article class="bg-gray-50 rounded-xl overflow-hidden">
+              <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+              </div>
+              <div class="p-6">
+                <div class="flex gap-2 mb-3">
+                  <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                    技術
+                  </span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">
+                  サンプル記事タイトル <%= i + 1 %>
+                </h3>
+                <p class="text-gray-600 leading-relaxed mb-4">
+                  ここに記事の抜粋が入ります。技術的な内容や開発ノウハウなどを発信していきます。
+                </p>
+                <div class="flex items-center justify-between text-sm text-gray-500">
+                  <time>2024年12月05日</time>
+                  <span class="text-blue-600 font-medium">続きを読む →</span>
+                </div>
+              </div>
+            </article>
+          <% end %>
+        </div>
+      <% end %>
+      
+      <!-- ブログの特徴 -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">技術記事</h3>
+          <p class="text-gray-600 text-sm">最新の技術トレンドや開発ノウハウを分かりやすく解説</p>
+        </div>
+        
+        <div class="text-center">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">プロジェクト事例</h3>
+          <p class="text-gray-600 text-sm">実際のプロジェクトから得た知見や課題解決のアプローチ</p>
+        </div>
+        
+        <div class="text-center">
+          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">学習記録</h3>
+          <p class="text-gray-600 text-sm">継続的な学習の記録と新しい技術への取り組み</p>
+        </div>
+      </div>
+      
+      <!-- CTA -->
+      <div class="text-center">
+        <p class="text-lg text-gray-600 mb-6">
+          すべての記事を見る
+        </p>
+        <a href="/blog" class="bg-blue-600 text-white font-semibold py-4 px-8 rounded-lg hover:bg-blue-700 transition-colors">
+          ブログページへ
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

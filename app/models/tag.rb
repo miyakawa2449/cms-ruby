@@ -7,6 +7,8 @@ class Tag < ApplicationRecord
   
   scope :popular, -> { where('article_count > 0').order(article_count: :desc) }
   scope :alphabetical, -> { order(:name) }
+  scope :with_published_articles, -> { joins(:articles).where(articles: { status: 'published' }).distinct }
+  scope :ordered_by_count, -> { order(article_count: :desc) }
   
   before_validation :generate_slug, if: -> { name_changed? && slug.blank? }
   

@@ -1,0 +1,120 @@
+<div class="py-20 bg-gray-50">
+  <div class="container mx-auto px-6">
+    <div class="max-w-6xl mx-auto">
+      <!-- ヘッダー -->
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <%= content['title'] || 'Skills' %>
+        </h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          20年以上の経験で培った技術スキルと、継続的な学習により最新技術をキャッチアップしています。
+        </p>
+      </div>
+      
+      <!-- スキル一覧 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <% if content['skills'].present? && content['skills'].is_a?(Array) %>
+          <% content['skills'].each do |skill| %>
+            <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">
+                  <%= skill['name'] %>
+                </h3>
+                <span class="text-sm font-medium text-blue-600">
+                  <%= skill['level'] %>%
+                </span>
+              </div>
+              
+              <!-- プログレスバー -->
+              <div class="w-full bg-gray-200 rounded-full h-3">
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-1000 ease-out" 
+                     style="width: <%= skill['level'] %>%"></div>
+              </div>
+              
+              <!-- スキルの説明があれば表示 -->
+              <% if skill['description'].present? %>
+                <p class="text-sm text-gray-600 mt-3">
+                  <%= skill['description'] %>
+                </p>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <!-- デフォルトスキル -->
+          <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-gray-900">Ruby on Rails</h3>
+              <span class="text-sm font-medium text-blue-600">95%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+              <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full" style="width: 95%"></div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-gray-900">JavaScript</h3>
+              <span class="text-sm font-medium text-blue-600">85%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+              <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full" style="width: 85%"></div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-gray-900">PostgreSQL</h3>
+              <span class="text-sm font-medium text-blue-600">90%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+              <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full" style="width: 90%"></div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-gray-900">プロジェクト管理</h3>
+              <span class="text-sm font-medium text-blue-600">95%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+              <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full" style="width: 95%"></div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      
+      <!-- カテゴリ別スキル -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">フロントエンド</h3>
+          <p class="text-gray-600 text-sm">HTML, CSS, JavaScript, React, Vue.js, Tailwind CSS</p>
+        </div>
+        
+        <div class="text-center">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">バックエンド</h3>
+          <p class="text-gray-600 text-sm">Ruby on Rails, Node.js, PHP, Python, PostgreSQL, Redis</p>
+        </div>
+        
+        <div class="text-center">
+          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">インフラ・ツール</h3>
+          <p class="text-gray-600 text-sm">AWS, Docker, Git, Linux, CI/CD, Monitoring</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

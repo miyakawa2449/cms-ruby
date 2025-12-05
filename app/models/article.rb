@@ -16,6 +16,7 @@ class Article < ApplicationRecord
   scope :recent, -> { order(published_at: :desc) }
   scope :by_category, ->(category) { joins(:categories).where(categories: { id: category }) }
   scope :by_tag, ->(tag) { joins(:tags).where(tags: { id: tag }) }
+  scope :search_by_content, ->(query) { where("title ILIKE ? OR content ILIKE ? OR excerpt ILIKE ?", "%#{query}%", "%#{query}%", "%#{query}%") }
   
   before_validation :generate_slug, if: -> { title_changed? && slug.blank? }
   before_save :set_published_at, if: -> { status_changed? && status == 'published' }

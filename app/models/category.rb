@@ -12,6 +12,7 @@ class Category < ApplicationRecord
   
   scope :root_categories, -> { where(parent_id: nil) }
   scope :ordered, -> { order(:position, :name) }
+  scope :with_published_articles, -> { joins(:articles).where(articles: { status: 'published' }).distinct }
   
   before_validation :generate_slug, if: -> { name_changed? && slug.blank? }
   after_commit :update_parent_article_count, if: :saved_change_to_article_count?
