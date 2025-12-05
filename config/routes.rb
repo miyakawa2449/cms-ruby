@@ -1,10 +1,13 @@
 Rails.application.routes.draw do
+  # Contact form submission
+  post "contacts", to: "contacts#create"
   devise_for :admin_users, controllers: {
     sessions: 'admin_users/sessions'
   }
   
   # Admin routes
   namespace :admin do
+    resources :contacts, only: [:index, :show, :edit, :update, :destroy]
     root to: "dashboard#index", as: :root
     get "dashboard", to: "dashboard#index", as: :dashboard
     
@@ -42,6 +45,38 @@ Rails.application.routes.draw do
   
   # My Story route
   get "my-story", to: "my_story#index", as: :my_story
+  
+  # Public API routes
+  namespace :api do
+    namespace :v1 do
+      # Articles API
+      resources :articles, only: [:index, :show], param: :slug do
+        collection do
+          get :search
+        end
+      end
+      
+      # Categories API
+      resources :categories, only: [:index, :show] do
+        member do
+          get :articles
+        end
+      end
+      
+      # Tags API
+      resources :tags, only: [:index, :show] do
+        member do
+          get :articles
+        end
+      end
+      
+      # Sections API (Portfolio content)
+      resources :sections, only: [:index, :show], param: :name
+      
+      # API info endpoint
+      get '', to: 'base#info'
+    end
+  end
   
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check

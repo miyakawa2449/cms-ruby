@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_05_012726) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_05_094022) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -85,6 +85,28 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_012726) do
     t.index ["slug"], name: "index_categories_on_slug", unique: true
   end
 
+  create_table "contacts", force: :cascade do |t|
+    t.bigint "assigned_to_id"
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.inet "ip_address"
+    t.boolean "is_spam", default: false
+    t.text "message"
+    t.string "name"
+    t.text "notes"
+    t.string "referrer"
+    t.datetime "replied_at", precision: nil
+    t.decimal "spam_score", precision: 3, scale: 2
+    t.string "status", default: "unread"
+    t.string "subject"
+    t.datetime "updated_at", null: false
+    t.text "user_agent"
+    t.index ["assigned_to_id"], name: "index_contacts_on_assigned_to_id"
+    t.index ["created_at"], name: "index_contacts_on_created_at"
+    t.index ["email"], name: "index_contacts_on_email"
+    t.index ["status"], name: "index_contacts_on_status"
+  end
+
   create_table "section_contents", force: :cascade do |t|
     t.jsonb "content", default: {}, null: false
     t.datetime "created_at", null: false
@@ -108,6 +130,24 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_012726) do
     t.index ["name"], name: "index_sections_on_name", unique: true
   end
 
+  create_table "slack_notifications", force: :cascade do |t|
+    t.string "channel"
+    t.datetime "created_at", null: false
+    t.text "error_message"
+    t.string "notification_type"
+    t.text "payload"
+    t.bigint "reference_id"
+    t.string "reference_type"
+    t.integer "retry_count", default: 0
+    t.datetime "sent_at", precision: nil
+    t.string "status", default: "pending"
+    t.datetime "updated_at", null: false
+    t.string "webhook_url"
+    t.index ["created_at"], name: "index_slack_notifications_on_created_at"
+    t.index ["notification_type"], name: "index_slack_notifications_on_notification_type"
+    t.index ["status"], name: "index_slack_notifications_on_status"
+  end
+
   create_table "tags", force: :cascade do |t|
     t.integer "article_count", default: 0
     t.datetime "created_at", null: false
@@ -124,5 +164,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_012726) do
   add_foreign_key "article_tags", "tags"
   add_foreign_key "articles", "admin_users"
   add_foreign_key "categories", "categories", column: "parent_id"
+  add_foreign_key "contacts", "admin_users", column: "assigned_to_id"
   add_foreign_key "section_contents", "sections"
 end
