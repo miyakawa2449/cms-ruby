@@ -51,6 +51,44 @@ class Admin::SectionContentsController < Admin::BaseController
   end
   
   def section_content_params
-    params.require(:section_content).permit(:content, :is_active)
+    # is_activeを許可
+    permitted_params = params.require(:section_content).permit(:is_active)
+    
+    # contentパラメータを処理
+    content_data = {}
+    
+    if params[:section_content][:content].present?
+      if params[:section_content][:content].is_a?(String)
+        # 汎用JSON文字列の場合
+        begin
+          content_data = JSON.parse(params[:section_content][:content])
+        rescue JSON::ParserError
+          content_data = {}
+        end
+      elsif params[:section_content][:content].is_a?(ActionController::Parameters)
+        # セクション固有のフィールドの場合
+        content_params = params[:section_content][:content]
+        
+        # 基本フィールドを許可
+        basic_fields = [:title, :subtitle, :description, :image_url, :cta_text, :cta_url, :email, :story, :posts_count]
+        basic_fields.each do |field|
+          content_data[field] = content_params[field] if content_params[field].present?
+        end
+        
+        # JSONフィールドの処理
+        json_fields = [:skills, :services, :works, :social_links]
+        json_fields.each do |field|
+          if content_params[field].present?
+            begin
+              content_data[field] = JSON.parse(content_params[field])
+            rescue JSON::ParserError
+              content_data[field] = []
+            end
+          end
+        end
+      end
+    end
+    
+    permitted_params.merge(content: content_data)
   end
 end

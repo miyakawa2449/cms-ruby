@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_03_055832) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_05_012726) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -86,7 +86,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_055832) do
   end
 
   create_table "section_contents", force: :cascade do |t|
-    t.text "content"
+    t.jsonb "content", default: {}, null: false
     t.datetime "created_at", null: false
     t.boolean "is_active"
     t.datetime "published_at"
@@ -94,6 +94,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_055832) do
     t.bigint "section_id", null: false
     t.datetime "updated_at", null: false
     t.integer "version"
+    t.index ["content"], name: "index_section_contents_on_content", using: :gin
     t.index ["section_id"], name: "index_section_contents_on_section_id"
   end
 

@@ -1,0 +1,257 @@
+<%= form_with(model: [:admin, @section, section_content], local: true) do |form| %>
+  <% if section_content.errors.any? %>
+    <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+      <h3 class="text-sm font-medium text-red-800 mb-2">エラーが発生しました:</h3>
+      <ul class="list-disc list-inside text-sm text-red-700">
+        <% section_content.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- コンテンツフィールド（セクションタイプに応じて動的に変更） -->
+  <div class="space-y-6">
+    <% case @section.name %>
+    <% when 'hero' %>
+      <!-- ヒーローセクション -->
+      <div>
+        <%= form.label :title, "タイトル", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_field_tag "section_content[content][title]", 
+            section_content.content&.dig('title'), 
+            class: "form-input", 
+            placeholder: "メインタイトル" %>
+      </div>
+      
+      <div>
+        <%= form.label :subtitle, "サブタイトル", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_field_tag "section_content[content][subtitle]", 
+            section_content.content&.dig('subtitle'), 
+            class: "form-input", 
+            placeholder: "サブタイトル" %>
+      </div>
+      
+      <div>
+        <%= form.label :cta_text, "CTAボタンテキスト", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_field_tag "section_content[content][cta_text]", 
+            section_content.content&.dig('cta_text'), 
+            class: "form-input", 
+            placeholder: "お問い合わせ" %>
+      </div>
+      
+      <div>
+        <%= form.label :cta_url, "CTAボタンURL", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_field_tag "section_content[content][cta_url]", 
+            section_content.content&.dig('cta_url'), 
+            class: "form-input", 
+            placeholder: "#contact" %>
+      </div>
+      
+    <% when 'about' %>
+      <!-- 自己紹介セクション -->
+      <div>
+        <%= form.label :title, "タイトル", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_field_tag "section_content[content][title]", 
+            section_content.content&.dig('title'), 
+            class: "form-input", 
+            placeholder: "自己紹介" %>
+      </div>
+      
+      <div>
+        <%= form.label :description, "説明文", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_area_tag "section_content[content][description]", 
+            section_content.content&.dig('description'), 
+            class: "form-input", 
+            rows: 6,
+            placeholder: "自己紹介文" %>
+      </div>
+      
+      <div>
+        <%= form.label :image_url, "画像URL", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_field_tag "section_content[content][image_url]", 
+            section_content.content&.dig('image_url'), 
+            class: "form-input", 
+            placeholder: "/images/profile.jpg" %>
+      </div>
+      
+    <% when 'skills' %>
+      <!-- スキルセクション -->
+      <div>
+        <%= form.label :title, "タイトル", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_field_tag "section_content[content][title]", 
+            section_content.content&.dig('title'), 
+            class: "form-input", 
+            placeholder: "スキル" %>
+      </div>
+      
+      <div>
+        <%= form.label :skills_json, "スキルリスト (JSON形式)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <p class="text-sm text-gray-500 mb-2">
+          例: [{"name": "Ruby on Rails", "level": 90}, {"name": "JavaScript", "level": 85}]
+        </p>
+        <%= text_area_tag "section_content[content][skills]", 
+            section_content.content&.dig('skills')&.to_json || '[]', 
+            class: "form-input font-mono", 
+            rows: 10 %>
+      </div>
+      
+    <% when 'services' %>
+      <!-- サービスセクション -->
+      <div>
+        <%= form.label :title, "タイトル", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_field_tag "section_content[content][title]", 
+            section_content.content&.dig('title'), 
+            class: "form-input", 
+            placeholder: "サービス" %>
+      </div>
+      
+      <div>
+        <%= form.label :services_json, "サービスリスト (JSON形式)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <p class="text-sm text-gray-500 mb-2">
+          例: [{"title": "要件定義", "description": "お客様の要望を具体化", "icon": "clipboard-list"}]
+        </p>
+        <%= text_area_tag "section_content[content][services]", 
+            section_content.content&.dig('services')&.to_json || '[]', 
+            class: "form-input font-mono", 
+            rows: 10 %>
+      </div>
+      
+    <% when 'my-story' %>
+      <!-- My Storyセクション -->
+      <div>
+        <%= form.label :title, "タイトル", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_field_tag "section_content[content][title]", 
+            section_content.content&.dig('title'), 
+            class: "form-input", 
+            placeholder: "My Story" %>
+      </div>
+      
+      <div>
+        <%= form.label :content, "ストーリー本文", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_area_tag "section_content[content][story]", 
+            section_content.content&.dig('story'), 
+            class: "form-input", 
+            rows: 15,
+            placeholder: "あなたのストーリーを記述" %>
+      </div>
+      
+    <% when 'works' %>
+      <!-- 実績セクション -->
+      <div>
+        <%= form.label :title, "タイトル", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_field_tag "section_content[content][title]", 
+            section_content.content&.dig('title'), 
+            class: "form-input", 
+            placeholder: "実績" %>
+      </div>
+      
+      <div>
+        <%= form.label :works_json, "実績リスト (JSON形式)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <p class="text-sm text-gray-500 mb-2">
+          例: [{"title": "ECサイト構築", "description": "大規模ECサイトの要件定義から実装まで", "tech": ["Rails", "React"], "url": "https://example.com"}]
+        </p>
+        <%= text_area_tag "section_content[content][works]", 
+            section_content.content&.dig('works')&.to_json || '[]', 
+            class: "form-input font-mono", 
+            rows: 10 %>
+      </div>
+      
+    <% when 'blog' %>
+      <!-- ブログセクション -->
+      <div>
+        <%= form.label :title, "タイトル", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_field_tag "section_content[content][title]", 
+            section_content.content&.dig('title'), 
+            class: "form-input", 
+            placeholder: "ブログ" %>
+      </div>
+      
+      <div>
+        <%= form.label :description, "説明文", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_area_tag "section_content[content][description]", 
+            section_content.content&.dig('description'), 
+            class: "form-input", 
+            rows: 3,
+            placeholder: "技術情報やプロジェクトの進捗を発信しています" %>
+      </div>
+      
+      <div>
+        <%= form.label :posts_count, "表示記事数", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= number_field_tag "section_content[content][posts_count]", 
+            section_content.content&.dig('posts_count') || 3, 
+            class: "form-input", 
+            min: 1, max: 10 %>
+      </div>
+      
+    <% when 'contact' %>
+      <!-- お問い合わせセクション -->
+      <div>
+        <%= form.label :title, "タイトル", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_field_tag "section_content[content][title]", 
+            section_content.content&.dig('title'), 
+            class: "form-input", 
+            placeholder: "お問い合わせ" %>
+      </div>
+      
+      <div>
+        <%= form.label :description, "説明文", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_area_tag "section_content[content][description]", 
+            section_content.content&.dig('description'), 
+            class: "form-input", 
+            rows: 3,
+            placeholder: "お気軽にお問い合わせください" %>
+      </div>
+      
+      <div>
+        <%= form.label :email, "メールアドレス", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= email_field_tag "section_content[content][email]", 
+            section_content.content&.dig('email'), 
+            class: "form-input", 
+            placeholder: "contact@example.com" %>
+      </div>
+      
+      <div>
+        <%= form.label :social_links_json, "ソーシャルリンク (JSON形式)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <p class="text-sm text-gray-500 mb-2">
+          例: [{"platform": "Twitter", "url": "https://twitter.com/example", "icon": "twitter"}]
+        </p>
+        <%= text_area_tag "section_content[content][social_links]", 
+            section_content.content&.dig('social_links')&.to_json || '[]', 
+            class: "form-input font-mono", 
+            rows: 5 %>
+      </div>
+      
+    <% else %>
+      <!-- 汎用フィールド -->
+      <div>
+        <%= form.label :content_json, "コンテンツ (JSON形式)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= text_area_tag "section_content[content]", 
+            section_content.content&.to_json || '{}', 
+            class: "form-input font-mono", 
+            rows: 15 %>
+      </div>
+    <% end %>
+    
+    <!-- 公開設定 -->
+    <div class="border-t border-gray-200 pt-6">
+      <div class="flex items-center">
+        <%= form.check_box :is_active, class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" %>
+        <%= form.label :is_active, "このコンテンツを公開する", class: "ml-2 block text-sm text-gray-900" %>
+      </div>
+      <p class="mt-1 text-sm text-gray-500">
+        チェックすると、このバージョンが公開されます（既存の公開バージョンは非公開になります）
+      </p>
+    </div>
+  </div>
+  
+  <!-- アクションボタン -->
+  <div class="mt-6 flex items-center justify-between">
+    <div>
+      <%= link_to "キャンセル", admin_section_path(@section), 
+                  class: "text-gray-700 hover:text-gray-900" %>
+    </div>
+    <div class="flex space-x-3">
+      <%= form.submit "保存", class: "btn-primary" %>
+    </div>
+  </div>
+<% end %>

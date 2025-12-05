@@ -1,0 +1,28 @@
+<% content_for :page_title, "新規コンテンツ作成 - #{@section.display_name}" %>
+
+<div class="mb-6">
+  <div class="flex items-center text-sm text-gray-500">
+    <%= link_to "セクション管理", admin_sections_path, class: "hover:text-gray-700" %>
+    <svg class="h-5 w-5 text-gray-400 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+    </svg>
+    <%= link_to @section.display_name, admin_section_path(@section), class: "hover:text-gray-700" %>
+    <svg class="h-5 w-5 text-gray-400 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+    </svg>
+    <span class="text-gray-900">新規コンテンツ</span>
+  </div>
+</div>
+
+<div class="bg-white shadow rounded-lg">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <h1 class="text-xl font-semibold text-gray-900">新規コンテンツ作成</h1>
+    <p class="mt-1 text-sm text-gray-500">
+      <%= @section.display_name %>セクションの新しいコンテンツを作成します
+    </p>
+  </div>
+  
+  <div class="p-6">
+    <%= render "form", section_content: @section_content %>
+  </div>
+</div>
