@@ -35,7 +35,7 @@ gem "httparty", "~> 0.21"
 
 # SEO & Performance
 gem "meta-tags", "~> 2.19"
-gem "friendly_id", "~> 5.5"
+gem "friendly_id", "~> 5.6"
 gem "kaminari", "~> 1.2"
 
 # Search & Indexing
