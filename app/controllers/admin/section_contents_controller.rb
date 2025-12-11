@@ -51,8 +51,18 @@ class Admin::SectionContentsController < Admin::BaseController
   end
   
   def section_content_params
-    # is_activeを許可
-    permitted_params = params.require(:section_content).permit(:is_active)
+    # 基本フィールドと画像を許可
+    permitted_params = params.require(:section_content).permit(
+      :is_active, :hero_image, :profile_image,
+      :main_message, :sub_message, :career_description,
+      :cta_primary_text, :cta_primary_url, :cta_secondary_text, :cta_secondary_url,
+      :profile_text, :frontend_skills, :backend_skills, :core_skills, :experience_text,
+      :badge_text, :main_title, :sub_title,
+      :phase1_year, :phase1_title, :phase1_description, :phase1_period,
+      :phase2_year, :phase2_title, :phase2_description, :phase2_period,
+      :phase3_year, :phase3_title, :phase3_description, :phase3_period,
+      :cta_button_text, :cta_description
+    )
     
     # contentパラメータを処理
     content_data = {}

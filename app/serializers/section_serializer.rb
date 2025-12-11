@@ -21,6 +21,14 @@ class SectionSerializer
     if @section.active_content.present?
       base_attributes[:content] = @section.active_content_data
       base_attributes[:published_at] = @section.active_content.published_at&.iso8601
+      
+      # Heroセクションの画像URLを追加
+      if @section.name == 'hero' && @section.active_content.hero_image.attached?
+        base_attributes[:hero_image_url] = Rails.application.routes.url_helpers.rails_blob_url(
+          @section.active_content.hero_image, 
+          only_path: true
+        )
+      end
     end
     
     if @detailed

@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Portfolio Rb" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title><%= content_for(:title) || "宮川 剛 - シニアエンジニアのポートフォリオ" %></title>
+    <% if content_for?(:meta_tags) %>
+      <%= yield(:meta_tags) %>
+    <% else %>
+      <%= page_meta_tags %>
+    <% end %>
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Portfolio Rb">
+    <meta name="application-name" content="宮川 剛 Portfolio">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>

@@ -70,6 +70,16 @@
         </div>
       <% end %>
       
+      <!-- サムネイル画像 -->
+      <% if @article.thumbnail_image.attached? %>
+        <div class="px-6 py-4 border-t border-gray-200">
+          <h3 class="text-sm font-medium text-gray-700 mb-2">サムネイル画像</h3>
+          <%= image_tag @article.thumbnail_image, 
+              class: "rounded-md shadow-sm max-w-full h-auto",
+              style: "max-height: 300px;" %>
+        </div>
+      <% end %>
+      
       <!-- 本文 -->
       <div class="px-6 py-4">
         <h3 class="text-sm font-medium text-gray-700 mb-4">本文</h3>

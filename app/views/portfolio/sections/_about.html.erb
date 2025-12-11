@@ -1,38 +1,43 @@
-<div class="py-20 bg-white">
+<div class="py-20 bg-gray-50">
   <div class="container mx-auto px-6">
     <div class="max-w-6xl mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <!-- 画像セクション -->
-        <div class="order-2 lg:order-1">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">About</h2>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+        <!-- プロフィール画像セクション -->
+        <div class="flex justify-center lg:justify-end">
           <div class="relative">
-            <div class="w-full h-96 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl overflow-hidden shadow-xl">
-              <% if content['image_url'].present? %>
-                <img src="<%= content['image_url'] %>" alt="宮川剛" class="w-full h-full object-cover">
-              <% else %>
-                <!-- プレースホルダー -->
+            <% if section.active_content&.profile_image&.attached? %>
+              <div class="w-80 h-80 rounded-full overflow-hidden shadow-xl bg-gradient-to-br from-blue-100 to-blue-200">
+                <%= image_tag section.active_content.profile_image, 
+                    class: "w-full h-full object-cover",
+                    alt: "宮川剛のプロフィール" %>
+              </div>
+            <% else %>
+              <!-- プレースホルダー -->
+              <div class="w-80 h-80 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full overflow-hidden shadow-xl">
                 <div class="w-full h-full flex items-center justify-center">
-                  <div class="text-6xl font-bold text-blue-400">宮</div>
+                  <div class="text-8xl font-bold text-blue-400">宮</div>
                 </div>
-              <% end %>
-            </div>
+              </div>
+            <% end %>
             <!-- 装飾要素 -->
             <div class="absolute -top-4 -right-4 w-24 h-24 bg-blue-500/20 rounded-full blur-xl"></div>
             <div class="absolute -bottom-4 -left-4 w-32 h-32 bg-purple-500/20 rounded-full blur-xl"></div>
           </div>
         </div>
         
-        <!-- テキストセクション -->
-        <div class="order-1 lg:order-2">
-          <div class="text-center lg:text-left">
-            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              <%= content['title'] || 'About Me' %>
-            </h2>
+        <!-- メインコンテンツ -->
+        <div class="lg:col-span-2 space-y-8">
+          <!-- プロフィールセクション -->
+          <div>
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">About Me</h2>
             
-            <div class="text-lg text-gray-600 leading-relaxed mb-8 space-y-4">
-              <% if content['description'].present? %>
-                <% content['description'].split("\n").each do |paragraph| %>
-                  <p><%= simple_format(paragraph) %></p>
-                <% end %>
+            <div class="text-lg text-gray-600 leading-relaxed mb-8">
+              <% if section.active_content&.profile_text.present? %>
+                <%= simple_format(section.active_content.profile_text) %>
               <% else %>
                 <p>
                   システムエンジニア・プロジェクトマネージャとして20年以上の経験を持つエンジニアです。
@@ -45,46 +50,97 @@
               <% end %>
             </div>
             
-            <!-- 特徴的なポイント -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div class="text-center">
-                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                  </svg>
-                </div>
-                <h3 class="font-semibold text-gray-900 mb-1">要件定義</h3>
-                <p class="text-sm text-gray-600">ビジネス要件の分析・整理</p>
-              </div>
-              
-              <div class="text-center">
-                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                  </svg>
-                </div>
-                <h3 class="font-semibold text-gray-900 mb-1">プロジェクト管理</h3>
-                <p class="text-sm text-gray-600">チーム統率・進捗管理</p>
-              </div>
-              
-              <div class="text-center">
-                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                  </svg>
-                </div>
-                <h3 class="font-semibold text-gray-900 mb-1">プログラミング</h3>
-                <p class="text-sm text-gray-600">フルスタック開発</p>
-              </div>
-            </div>
-            
-            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <div class="flex flex-col sm:flex-row gap-4">
               <a href="#my-story" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors text-center">
                 💡 My Storyを見る
               </a>
               <a href="#works" class="border border-blue-600 text-blue-600 font-semibold py-3 px-6 rounded-lg hover:bg-blue-50 transition-colors text-center">
                 実績を見る
               </a>
+            </div>
+          </div>
+          
+          <!-- スキルセクション -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Frontend Skills -->
+            <div class="bg-blue-50 rounded-xl p-6">
+              <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <span class="text-2xl mr-3">💻</span>
+                Frontend
+              </h3>
+              <div class="flex flex-wrap gap-2">
+                <% if section.active_content&.frontend_skills.present? %>
+                  <% section.active_content.frontend_skills.split(',').map(&:strip).reject(&:blank?).each do |skill| %>
+                    <span class="inline-block bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                      <%= skill %>
+                    </span>
+                  <% end %>
+                <% else %>
+                  <span class="inline-block bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">Ruby/Rails</span>
+                  <span class="inline-block bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">Python</span>
+                  <span class="inline-block bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">JavaScript</span>
+                <% end %>
+              </div>
+            </div>
+            
+            <!-- Backend Skills -->
+            <div class="bg-green-50 rounded-xl p-6">
+              <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <span class="text-2xl mr-3">⚙️</span>
+                Backend
+              </h3>
+              <div class="flex flex-wrap gap-2">
+                <% if section.active_content&.backend_skills.present? %>
+                  <% section.active_content.backend_skills.split(',').map(&:strip).reject(&:blank?).each do |skill| %>
+                    <span class="inline-block bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                      <%= skill %>
+                    </span>
+                  <% end %>
+                <% else %>
+                  <span class="inline-block bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm font-medium">PostgreSQL</span>
+                  <span class="inline-block bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm font-medium">AWS</span>
+                  <span class="inline-block bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm font-medium">Docker</span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Core Skills & Experience -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Core Skills -->
+            <div>
+              <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                <span class="text-2xl mr-3">🎯</span>
+                Core Skills
+              </h3>
+              <div class="text-gray-600">
+                <% if section.active_content&.core_skills.present? %>
+                  <%= simple_format(section.active_content.core_skills) %>
+                <% else %>
+                  <ul class="space-y-2">
+                    <li class="flex items-center"><span class="text-blue-500 mr-2">▪</span>要件定義・設計</li>
+                    <li class="flex items-center"><span class="text-blue-500 mr-2">▪</span>プロジェクト管理</li>
+                    <li class="flex items-center"><span class="text-blue-500 mr-2">▪</span>技術選定</li>
+                    <li class="flex items-center"><span class="text-blue-500 mr-2">▪</span>チームリード</li>
+                  </ul>
+                <% end %>
+              </div>
+            </div>
+            
+            <!-- Experience -->
+            <div>
+              <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                <span class="text-2xl mr-3">📈</span>
+                Experience
+              </h3>
+              <div class="text-gray-600">
+                <% if section.active_content&.experience_text.present? %>
+                  <%= simple_format(section.active_content.experience_text) %>
+                <% else %>
+                  <p class="mb-3"><strong>20+ years</strong> in IT industry</p>
+                  <p>Large-scale system development</p>
+                <% end %>
+              </div>
             </div>
           </div>
         </div>

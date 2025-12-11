@@ -6,10 +6,19 @@ class Article < ApplicationRecord
   has_many :article_tags, dependent: :destroy
   has_many :tags, through: :article_tags
   
+  has_one_attached :thumbnail_image
+  
   validates :title, presence: true, length: { maximum: 255 }
   validates :slug, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 255 }
   validates :content, presence: true
   validates :status, presence: true, inclusion: { in: %w[draft published scheduled archived] }
+  
+  enum :work_type, {
+    standard: nil,
+    github: 'github',
+    external_url: 'external_url', 
+    internal: 'internal'
+  }, suffix: true
   
   scope :published, -> { where(status: 'published', published_at: ..Time.current) }
   scope :draft, -> { where(status: 'draft') }
@@ -17,6 +26,8 @@ class Article < ApplicationRecord
   scope :by_category, ->(category) { joins(:categories).where(categories: { id: category }) }
   scope :by_tag, ->(tag) { joins(:tags).where(tags: { id: tag }) }
   scope :search_by_content, ->(query) { where("title ILIKE ? OR content ILIKE ? OR excerpt ILIKE ?", "%#{query}%", "%#{query}%", "%#{query}%") }
+  scope :works, -> { joins(:categories).where(categories: { slug: 'works' }) }
+  scope :standard_blog, -> { joins(:categories).where.not(categories: { slug: 'works' }) }
   
   before_validation :generate_slug, if: -> { title_changed? && slug.blank? }
   before_save :set_published_at, if: -> { status_changed? && status == 'published' }
@@ -50,6 +61,19 @@ class Article < ApplicationRecord
       existing_tag = Tag.find_by('LOWER(name) = ?', name.downcase)
       existing_tag || Tag.create!(name: name)
     end
+  end
+  
+  def is_work?
+    categories.exists?(slug: 'works')
+  end
+  
+  def tech_stack_list
+    return [] if tech_stack.blank?
+    tech_stack.split(',').map(&:strip).reject(&:blank?)
+  end
+  
+  def tech_stack_list=(list)
+    self.tech_stack = list.join(', ') if list.is_a?(Array)
   end
   
   private

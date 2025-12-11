@@ -1,5 +1,5 @@
-<% content_for :title, "#{@article.title} | ブログ | 宮川 剛" %>
-<% content_for :description, @article.excerpt.present? ? @article.excerpt : truncate(strip_tags(@article.content), length: 160) %>
+<% content_for :title, @article.title %>
+<% content_for :meta_tags, article_meta_tags(@article) %>
 
 <div class="min-h-screen bg-gray-50">
   <!-- Header -->

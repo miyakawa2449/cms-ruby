@@ -83,7 +83,8 @@ class Admin::ArticlesController < Admin::BaseController
     params.require(:article).permit(
       :title, :slug, :content, :excerpt, :status,
       :meta_description, :meta_keywords, :og_title, :og_description,
-      :tag_names, category_ids: []
+      :tag_names, :thumbnail_image, :work_type, :github_url, :demo_url, :tech_stack,
+      category_ids: []
     )
   end
 end

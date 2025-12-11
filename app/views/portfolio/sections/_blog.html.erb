@@ -12,101 +12,129 @@
       </div>
       
       <!-- 最新記事 -->
-      <% posts_count = (content['posts_count'] || 3).to_i %>
+      <% posts_count = (content['posts_count'] || 5).to_i %>
       <% if @recent_articles.present? %>
-        <div class="grid grid-cols-1 md:grid-cols-<%= posts_count == 2 ? '2' : (posts_count >= 3 ? '3' : '1') %> gap-8 mb-12">
+        <div class="max-w-4xl mx-auto space-y-8 mb-12">
           <% @recent_articles.limit(posts_count).each do |article| %>
-            <article class="bg-gray-50 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <!-- 記事画像 -->
-              <div class="h-48 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                <svg class="w-16 h-16 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-              </div>
-              
-              <!-- 記事内容 -->
-              <div class="p-6">
-                <!-- カテゴリ -->
-                <% if article.categories.any? %>
-                  <div class="flex flex-wrap gap-2 mb-3">
-                    <% article.categories.each do |category| %>
-                      <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                        <%= category.name %>
-                      </span>
+            <article class="bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden">
+              <div class="p-8">
+                <!-- ヘッダー情報 -->
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center space-x-4">
+                    <!-- 公開日 -->
+                    <time datetime="<%= article.published_at&.iso8601 %>" class="text-sm text-gray-500">
+                      <%= article.published_at&.strftime('%Y年%m月%d日') %>
+                    </time>
+                    
+                    <!-- カテゴリ -->
+                    <% if article.categories.any? %>
+                      <div class="flex flex-wrap gap-2">
+                        <% article.categories.each do |category| %>
+                          <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                            <%= category.name %>
+                          </span>
+                        <% end %>
+                      </div>
                     <% end %>
                   </div>
-                <% end %>
+                  
+                  <!-- 読了時間 -->
+                  <span class="text-sm text-gray-400">5分で読める</span>
+                </div>
                 
                 <!-- タイトル -->
-                <h3 class="text-xl font-bold text-gray-900 mb-3">
+                <h3 class="text-2xl font-bold text-gray-900 mb-4 leading-tight">
                   <a href="/blog/<%= article.slug %>" class="hover:text-blue-600 transition-colors">
-                    <%= truncate(article.title, length: 60) %>
+                    <%= article.title %>
                   </a>
                 </h3>
                 
                 <!-- 抜粋 -->
                 <% if article.excerpt.present? %>
-                  <p class="text-gray-600 leading-relaxed mb-4">
-                    <%= truncate(article.excerpt, length: 120) %>
+                  <p class="text-gray-700 leading-relaxed mb-6 text-lg">
+                    <%= truncate(article.excerpt, length: 200) %>
                   </p>
                 <% else %>
-                  <p class="text-gray-600 leading-relaxed mb-4">
-                    <%= truncate(strip_tags(article.content), length: 120) %>
+                  <p class="text-gray-700 leading-relaxed mb-6 text-lg">
+                    <%= truncate(strip_tags(article.content), length: 200) %>
                   </p>
                 <% end %>
                 
-                <!-- メタ情報 -->
-                <div class="flex items-center justify-between text-sm text-gray-500">
-                  <time datetime="<%= article.published_at&.iso8601 %>">
-                    <%= article.published_at&.strftime('%Y年%m月%d日') %>
-                  </time>
-                  <a href="/blog/<%= article.slug %>" class="text-blue-600 hover:text-blue-700 font-medium">
-                    続きを読む →
-                  </a>
-                </div>
-                
-                <!-- タグ -->
-                <% if article.tags.any? %>
-                  <div class="flex flex-wrap gap-1 mt-3">
-                    <% article.tags.limit(3).each do |tag| %>
-                      <span class="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded">
-                        #<%= tag.name %>
-                      </span>
-                    <% end %>
-                    <% if article.tags.count > 3 %>
-                      <span class="text-gray-400 text-xs">+<%= article.tags.count - 3 %>more</span>
+                <!-- フッター情報 -->
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <!-- タグ -->
+                  <div class="flex items-center">
+                    <% if article.tags.any? %>
+                      <div class="flex flex-wrap gap-2">
+                        <% article.tags.limit(4).each do |tag| %>
+                          <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-md">
+                            #<%= tag.name %>
+                          </span>
+                        <% end %>
+                        <% if article.tags.count > 4 %>
+                          <span class="text-gray-400 text-xs">+<%= article.tags.count - 4 %></span>
+                        <% end %>
+                      </div>
                     <% end %>
                   </div>
-                <% end %>
+                  
+                  <!-- 続きを読む -->
+                  <a href="/blog/<%= article.slug %>" 
+                     class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm group">
+                    続きを読む
+                    <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </a>
+                </div>
               </div>
             </article>
           <% end %>
         </div>
       <% else %>
         <!-- 記事がない場合のプレースホルダー -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div class="max-w-4xl mx-auto space-y-8 mb-12">
           <% 3.times do |i| %>
-            <article class="bg-gray-50 rounded-xl overflow-hidden">
-              <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-              </div>
-              <div class="p-6">
-                <div class="flex gap-2 mb-3">
-                  <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                    技術
-                  </span>
+            <article class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <div class="p-8">
+                <!-- ヘッダー情報 -->
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center space-x-4">
+                    <!-- 公開日 -->
+                    <time class="text-sm text-gray-500">2024年12月05日</time>
+                    <!-- カテゴリ -->
+                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                      技術ブログ
+                    </span>
+                  </div>
+                  <span class="text-sm text-gray-400">5分で読める</span>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-3">
-                  サンプル記事タイトル <%= i + 1 %>
+                
+                <!-- タイトル -->
+                <h3 class="text-2xl font-bold text-gray-900 mb-4 leading-tight">
+                  サンプル記事タイトル <%= i + 1 %> - 技術記事やプロジェクト事例をお届け
                 </h3>
-                <p class="text-gray-600 leading-relaxed mb-4">
-                  ここに記事の抜粋が入ります。技術的な内容や開発ノウハウなどを発信していきます。
+                
+                <!-- 抜粋 -->
+                <p class="text-gray-700 leading-relaxed mb-6 text-lg">
+                  ここに記事の抜粋が入ります。最新の技術トレンドや開発ノウハウ、実際のプロジェクトで得た知見や課題解決のアプローチなどを分かりやすく解説していきます。継続的な学習の記録も共有します。
                 </p>
-                <div class="flex items-center justify-between text-sm text-gray-500">
-                  <time>2024年12月05日</time>
-                  <span class="text-blue-600 font-medium">続きを読む →</span>
+                
+                <!-- フッター情報 -->
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <!-- タグ -->
+                  <div class="flex flex-wrap gap-2">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-md">#Rails</span>
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-md">#技術</span>
+                  </div>
+                  
+                  <!-- 続きを読む -->
+                  <span class="inline-flex items-center text-blue-600 font-medium text-sm">
+                    続きを読む
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </span>
                 </div>
               </div>
             </article>

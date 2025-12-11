@@ -13,6 +13,7 @@ class ArticleSerializer
       published_at: @article.published_at&.iso8601,
       reading_time: calculate_reading_time,
       view_count: 0,
+      thumbnail_image_url: thumbnail_url,
       categories: categories_data,
       tags: tags_data,
       urls: {
@@ -76,5 +77,11 @@ class ArticleSerializer
     word_count = @article.content.split.size
     
     (word_count.to_f / words_per_minute).ceil
+  end
+  
+  def thumbnail_url
+    return nil unless @article.thumbnail_image.attached?
+    
+    Rails.application.routes.url_helpers.rails_blob_url(@article.thumbnail_image, only_path: true)
   end
 end

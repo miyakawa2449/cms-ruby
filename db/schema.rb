@@ -10,9 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_05_094022) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_11_071452) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.string "content_type"
+    t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "admin_users", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -51,7 +79,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_094022) do
     t.text "content", null: false
     t.text "content_html"
     t.datetime "created_at", null: false
+    t.string "demo_url"
     t.text "excerpt"
+    t.string "github_url"
     t.string "meta_description", limit: 500
     t.string "meta_keywords", limit: 500
     t.string "og_description", limit: 500
@@ -59,8 +89,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_094022) do
     t.datetime "published_at"
     t.string "slug", limit: 255, null: false
     t.string "status", limit: 50, default: "draft"
+    t.text "tech_stack"
     t.string "title", limit: 255, null: false
     t.datetime "updated_at", null: false
+    t.string "work_type"
     t.index ["admin_user_id"], name: "index_articles_on_admin_user_id"
     t.index ["published_at"], name: "index_articles_on_published_at"
     t.index ["slug"], name: "index_articles_on_slug", unique: true
@@ -108,12 +140,41 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_094022) do
   end
 
   create_table "section_contents", force: :cascade do |t|
+    t.text "backend_skills"
+    t.string "badge_text"
+    t.text "career_description"
     t.jsonb "content", default: {}, null: false
+    t.text "core_skills"
     t.datetime "created_at", null: false
+    t.string "cta_button_text"
+    t.text "cta_description"
+    t.string "cta_primary_text"
+    t.string "cta_primary_url"
+    t.string "cta_secondary_text"
+    t.string "cta_secondary_url"
+    t.text "experience_text"
+    t.text "frontend_skills"
     t.boolean "is_active"
+    t.text "main_message"
+    t.text "main_title"
+    t.text "phase1_description"
+    t.string "phase1_period"
+    t.string "phase1_title"
+    t.string "phase1_year"
+    t.text "phase2_description"
+    t.string "phase2_period"
+    t.string "phase2_title"
+    t.string "phase2_year"
+    t.text "phase3_description"
+    t.string "phase3_period"
+    t.string "phase3_title"
+    t.string "phase3_year"
+    t.text "profile_text"
     t.datetime "published_at"
     t.bigint "published_by"
     t.bigint "section_id", null: false
+    t.text "sub_message"
+    t.text "sub_title"
     t.datetime "updated_at", null: false
     t.integer "version"
     t.index ["content"], name: "index_section_contents_on_content", using: :gin
@@ -158,6 +219,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_094022) do
     t.index ["slug"], name: "index_tags_on_slug", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "article_categories", "articles"
   add_foreign_key "article_categories", "categories"
   add_foreign_key "article_tags", "articles"
