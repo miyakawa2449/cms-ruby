@@ -51,13 +51,13 @@
                 
                 <!-- 抜粋 -->
                 <% if article.excerpt.present? %>
-                  <p class="text-gray-700 leading-relaxed mb-6 text-lg">
-                    <%= truncate(article.excerpt, length: 200) %>
-                  </p>
+                  <div class="text-gray-700 leading-relaxed mb-6 text-lg prose max-w-none">
+                    <%= truncate(strip_tags(safe_markdown(article.excerpt)), length: 200) %>
+                  </div>
                 <% else %>
-                  <p class="text-gray-700 leading-relaxed mb-6 text-lg">
-                    <%= truncate(strip_tags(article.content), length: 200) %>
-                  </p>
+                  <div class="text-gray-700 leading-relaxed mb-6 text-lg prose max-w-none">
+                    <%= truncate(strip_tags(safe_markdown(article.content)), length: 200) %>
+                  </div>
                 <% end %>
                 
                 <!-- フッター情報 -->

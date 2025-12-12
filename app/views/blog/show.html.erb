@@ -35,9 +35,20 @@
         
         <!-- 抜粋 -->
         <% if @article.excerpt.present? %>
-          <p class="text-xl text-gray-600 mb-6 leading-relaxed">
-            <%= @article.excerpt %>
-          </p>
+          <div class="text-xl text-gray-600 mb-6 leading-relaxed prose prose-xl max-w-none">
+            <%= safe_markdown(@article.excerpt) %>
+          </div>
+        <% end %>
+        
+        <!-- サムネイル画像 -->
+        <% if @article.thumbnail_image.attached? %>
+          <div class="mb-6">
+            <div class="relative rounded-lg overflow-hidden shadow-lg">
+              <%= image_tag @article.thumbnail_image, 
+                  alt: @article.title,
+                  class: "w-full h-64 md:h-80 object-cover" %>
+            </div>
+          </div>
         <% end %>
         
         <!-- メタ情報 -->
@@ -62,8 +73,8 @@
       <main class="lg:col-span-3">
         <article class="bg-white rounded-xl p-8 shadow-sm">
           <!-- 記事本文 -->
-          <div class="prose prose-lg max-w-none">
-            <%= simple_format(@article.content, {}, wrapper_tag: "div") %>
+          <div class="prose prose-lg max-w-none prose-headings:text-gray-900 prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:text-gray-700 prose-strong:text-gray-900 prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm prose-pre:bg-gray-100 prose-pre:p-4 prose-pre:rounded-lg prose-table:border prose-th:border prose-td:border prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:pl-4 prose-blockquote:italic">
+            <%= markdown_with_highlight(@article.content) %>
           </div>
           
           <!-- タグ -->
@@ -109,28 +120,50 @@
             <h2 class="text-2xl font-bold text-gray-900 mb-6">関連記事</h2>
             <div class="grid grid-cols-1 md:grid-cols-<%= [@related_articles.count, 3].min %> gap-6">
               <% @related_articles.each do |article| %>
-                <article class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                  <% if article.categories.any? %>
-                    <div class="flex gap-2 mb-3">
-                      <% article.categories.limit(1).each do |category| %>
-                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
-                          <%= category.name %>
-                        </span>
-                      <% end %>
-                    </div>
+                <article class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                  <!-- サムネイル画像 -->
+                  <% if article.thumbnail_image.attached? %>
+                    <%= link_to blog_article_path(article.slug), class: "block" do %>
+                      <div class="h-32 bg-gray-200 overflow-hidden">
+                        <%= image_tag article.thumbnail_image, 
+                            alt: article.title,
+                            class: "w-full h-full object-cover hover:scale-105 transition-transform duration-300" %>
+                      </div>
+                    <% end %>
+                  <% else %>
+                    <!-- プレースホルダー画像 -->
+                    <%= link_to blog_article_path(article.slug), class: "block" do %>
+                      <div class="h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                      </div>
+                    <% end %>
                   <% end %>
                   
-                  <h3 class="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
-                    <%= link_to article.title, blog_article_path(article.slug) %>
-                  </h3>
-                  
-                  <p class="text-gray-600 text-sm mb-3">
-                    <%= truncate(strip_tags(article.content), length: 100) %>
-                  </p>
-                  
-                  <time class="text-xs text-gray-500">
-                    <%= article.published_at&.strftime('%Y年%m月%d日') %>
-                  </time>
+                  <div class="p-6">
+                    <% if article.categories.any? %>
+                      <div class="flex gap-2 mb-3">
+                        <% article.categories.limit(1).each do |category| %>
+                          <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
+                            <%= category.name %>
+                          </span>
+                        <% end %>
+                      </div>
+                    <% end %>
+                    
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
+                      <%= link_to article.title, blog_article_path(article.slug) %>
+                    </h3>
+                    
+                    <div class="text-gray-600 text-sm mb-3">
+                      <%= truncate(strip_tags(safe_markdown(article.content)), length: 100) %>
+                    </div>
+                    
+                    <time class="text-xs text-gray-500">
+                      <%= article.published_at&.strftime('%Y年%m月%d日') %>
+                    </time>
+                  </div>
                 </article>
               <% end %>
             </div>
@@ -177,9 +210,17 @@
         <div class="bg-white rounded-xl p-6 shadow-sm">
           <h3 class="text-lg font-semibold text-gray-900 mb-4">著者について</h3>
           <div class="text-center">
-            <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-3">
-              <span class="text-xl font-bold text-blue-600">宮</span>
-            </div>
+            <% if about_section&.active_content&.profile_image&.attached? %>
+              <div class="w-16 h-16 rounded-full overflow-hidden shadow-lg mx-auto mb-3">
+                <%= image_tag about_section.active_content.profile_image, 
+                    alt: "宮川剛のプロフィール写真",
+                    class: "w-16 h-16 object-cover rounded-full" %>
+              </div>
+            <% else %>
+              <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-3">
+                <span class="text-xl font-bold text-blue-600">宮</span>
+              </div>
+            <% end %>
             <h4 class="font-semibold text-gray-900">宮川 剛</h4>
             <p class="text-sm text-gray-600 mt-2">
               要件定義からプログラミングまで一人でできるエンジニア

@@ -373,6 +373,7 @@ GEM
       erb
       psych (>= 4.0.0)
       tsort
+    redcarpet (3.6.1)
     redis (5.4.1)
       redis-client (>= 0.22.0)
     redis-client (0.26.1)
@@ -594,6 +595,7 @@ DEPENDENCIES
   pundit (~> 2.3)
   rack-attack (~> 6.6)
   rails (~> 8.1.1)
+  redcarpet (~> 3.6)
   redis (>= 4.0.1)
   rspec-rails (~> 6.1)
   rubocop-rails-omakase

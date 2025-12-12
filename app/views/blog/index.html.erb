@@ -53,58 +53,80 @@
         <% if @articles.any? %>
           <div class="space-y-8">
             <% @articles.each do |article| %>
-              <article class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                <!-- カテゴリ -->
-                <% if article.categories.any? %>
-                  <div class="flex flex-wrap gap-2 mb-3">
-                    <% article.categories.each do |category| %>
-                      <%= link_to blog_path(category: category.slug), 
-                                  class: "bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full hover:bg-blue-200 transition-colors" do %>
-                        <%= category.name %>
-                      <% end %>
-                    <% end %>
-                  </div>
-                <% end %>
-                
-                <!-- タイトル -->
-                <h2 class="text-2xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition-colors">
-                  <%= link_to article.title, blog_article_path(article.slug) %>
-                </h2>
-                
-                <!-- 抜粋 -->
-                <% if article.excerpt.present? %>
-                  <p class="text-gray-600 leading-relaxed mb-4">
-                    <%= article.excerpt %>
-                  </p>
+              <article class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <!-- サムネイル画像 -->
+                <% if article.thumbnail_image.attached? %>
+                  <%= link_to blog_article_path(article.slug), class: "block" do %>
+                    <div class="h-48 bg-gray-200 overflow-hidden">
+                      <%= image_tag article.thumbnail_image, 
+                          alt: article.title,
+                          class: "w-full h-full object-cover hover:scale-105 transition-transform duration-300" %>
+                    </div>
+                  <% end %>
                 <% else %>
-                  <p class="text-gray-600 leading-relaxed mb-4">
-                    <%= truncate(strip_tags(article.content), length: 200) %>
-                  </p>
+                  <!-- プレースホルダー画像 -->
+                  <%= link_to blog_article_path(article.slug), class: "block" do %>
+                    <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                      <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                      </svg>
+                    </div>
+                  <% end %>
                 <% end %>
                 
-                <!-- メタ情報 -->
-                <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
-                  <div class="flex items-center space-x-4">
-                    <time datetime="<%= article.published_at&.iso8601 %>">
-                      <%= article.published_at&.strftime('%Y年%m月%d日') %>
-                    </time>
-                    <span>読了時間: 約<%= (strip_tags(article.content).length / 500).ceil %>分</span>
-                  </div>
-                  <%= link_to "続きを読む →", blog_article_path(article.slug), 
-                              class: "text-blue-600 hover:text-blue-700 font-medium" %>
-                </div>
-                
-                <!-- タグ -->
-                <% if article.tags.any? %>
-                  <div class="flex flex-wrap gap-2">
-                    <% article.tags.each do |tag| %>
-                      <%= link_to blog_path(tag: tag.slug), 
-                                  class: "bg-gray-200 text-gray-600 text-sm px-2 py-1 rounded hover:bg-gray-300 transition-colors" do %>
-                        #<%= tag.name %>
+                <div class="p-6">
+                  <!-- カテゴリ -->
+                  <% if article.categories.any? %>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                      <% article.categories.each do |category| %>
+                        <%= link_to blog_path(category: category.slug), 
+                                    class: "bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full hover:bg-blue-200 transition-colors" do %>
+                          <%= category.name %>
+                        <% end %>
                       <% end %>
-                    <% end %>
+                    </div>
+                  <% end %>
+                  
+                  <!-- タイトル -->
+                  <h2 class="text-2xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition-colors">
+                    <%= link_to article.title, blog_article_path(article.slug) %>
+                  </h2>
+                
+                  <!-- 抜粋 -->
+                  <% if article.excerpt.present? %>
+                    <div class="text-gray-600 leading-relaxed mb-4 prose max-w-none">
+                      <%= safe_markdown(article.excerpt) %>
+                    </div>
+                  <% else %>
+                    <p class="text-gray-600 leading-relaxed mb-4">
+                      <%= truncate(strip_tags(safe_markdown(article.content)), length: 200) %>
+                    </p>
+                  <% end %>
+                  
+                  <!-- メタ情報 -->
+                  <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                    <div class="flex items-center space-x-4">
+                      <time datetime="<%= article.published_at&.iso8601 %>">
+                        <%= article.published_at&.strftime('%Y年%m月%d日') %>
+                      </time>
+                      <span>読了時間: 約<%= (strip_tags(article.content).length / 500).ceil %>分</span>
+                    </div>
+                    <%= link_to "続きを読む →", blog_article_path(article.slug), 
+                                class: "text-blue-600 hover:text-blue-700 font-medium" %>
                   </div>
-                <% end %>
+                  
+                  <!-- タグ -->
+                  <% if article.tags.any? %>
+                    <div class="flex flex-wrap gap-2">
+                      <% article.tags.each do |tag| %>
+                        <%= link_to blog_path(tag: tag.slug), 
+                                    class: "bg-gray-200 text-gray-600 text-sm px-2 py-1 rounded hover:bg-gray-300 transition-colors" do %>
+                          #<%= tag.name %>
+                        <% end %>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
               </article>
             <% end %>
           </div>
