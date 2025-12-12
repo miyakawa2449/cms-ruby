@@ -76,6 +76,10 @@ class Article < ApplicationRecord
     self.tech_stack = list.join(', ') if list.is_a?(Array)
   end
   
+  def to_param
+    slug
+  end
+  
   private
   
   def generate_slug

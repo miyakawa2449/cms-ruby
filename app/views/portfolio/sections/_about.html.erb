@@ -33,8 +33,6 @@
         <div class="lg:col-span-2 space-y-8">
           <!-- プロフィールセクション -->
           <div>
-            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">About Me</h2>
-            
             <div class="text-lg text-gray-600 leading-relaxed mb-8">
               <% if section.active_content&.profile_text.present? %>
                 <%= simple_format(section.active_content.profile_text) %>

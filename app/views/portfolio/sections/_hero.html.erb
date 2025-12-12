@@ -44,7 +44,7 @@
       </div>
       
       <!-- CTAボタン -->
-      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
         <% if section.active_content&.cta_primary_text.present? %>
           <a href="<%= section.active_content.cta_primary_url.presence || '/my-story' %>" 
              class="bg-yellow-400 text-blue-900 font-bold py-4 px-8 rounded-lg hover:bg-yellow-300 transition-all duration-300 transform hover:scale-105 shadow-lg">
@@ -66,7 +66,7 @@
       </div>
       
       <!-- スクロール促進アニメーション -->
-      <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <div class="flex justify-center animate-bounce">
         <a href="#about" class="text-white opacity-75 hover:opacity-100 transition-opacity">
           <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>

@@ -19,12 +19,8 @@ fi
 
 # データベースの準備ができるまで待機
 if [ -n "$DATABASE_URL" ]; then
-  # DATABASE_URLから情報を抽出
-  DB_HOST=$(echo $DATABASE_URL | sed -E 's/.*@([^:]+):.*/\1/')
-  DB_USER=$(echo $DATABASE_URL | sed -E 's/.*:\/\/([^:]+):.*/\1/')
-  DB_PASS=$(echo $DATABASE_URL | sed -E 's/.*:\/\/[^:]+:([^@]+)@.*/\1/')
-  
-  until PGPASSWORD=$DB_PASS psql -h "$DB_HOST" -U "$DB_USER" -c '\q' 2>/dev/null; do
+  # Railsを使ってデータベース接続を確認
+  until bundle exec rails runner "ActiveRecord::Base.connection.active?" 2>/dev/null; do
     >&2 echo "Postgres is unavailable - sleeping"
     sleep 1
   done
