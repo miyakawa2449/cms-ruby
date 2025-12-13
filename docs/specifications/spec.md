@@ -7,11 +7,11 @@
 
 ### 1.2 技術スタック
 - **言語**: Ruby 3.4.7（Docker環境実装済み）
-- **フレームワーク**: Ruby on Rails 8.1.1（API機能含む・最新版対応）
+- **フレームワーク**: Ruby on Rails 8.0.4（API機能含む・安定版・本番実績重視）
 - **API設計**: RESTful API（/api/v1、/api/internal）
 - **認証**: Devise（管理画面）+ JWT 3.1.2（API・セキュリティ強化済み）
 - **CSSフレームワーク**: Tailwind CSS
-- **データベース**: PostgreSQL 17-alpine（全文検索・JSONB・ICUロケール活用）
+- **データベース**: PostgreSQL 16-alpine（全文検索・JSONB・ICUロケール活用・安定性確保）
 - **キャッシュ**: Redis（API・セッション・Sidekiq）
 - **インフラ**: AWS Lightsail
 - **Webサーバー**: Nginx（構築済み）
@@ -19,7 +19,7 @@
 - **外部API**: OpenAI API（ChatGPT・ruby-openai 8.3.0使用）・Slack Webhook・SNS API
 - **バックグラウンドジョブ**: Sidekiq 8.0.10（AI処理・メール送信）
 - **API セキュリティ**: Rack::Attack（レート制限）・CORS・入力検証
-- **開発環境**: Docker Desktop（Mac環境・PostgreSQL 17-alpine・cssbundling-rails対応）
+- **開発環境**: Docker Desktop（Mac環境・PostgreSQL 16-alpine・cssbundling-rails対応・安定性重視）
 
 ### 1.3 サイトオーナー情報
 - システムエンジニア・プロジェクトマネージャとして20年以上の経験
@@ -977,6 +977,14 @@ DELETE /api/internal/media/:id                # メディア削除
     - CSS統合（Tailwind CSS + カスタムスタイル + Google Fonts）
     - 実装ファイル: 59 ERBビュー・12コントローラー・ルーティング整備完成
   - ✅ **仕様書・計画書適合性調査完了** - Phase 3実装要件明確化
+- **2025-12-12**:
+  - ✅ **技術スタック安定化完了** - Rails 8.0.4 + PostgreSQL 16-alpine採用
+    - Rails 8.1.1 → 8.0.4安定版ダウングレード（本番実績重視）
+    - PostgreSQL 17 → 16-alpine安定版ダウングレード（互換性問題解決）
+    - Docker環境完全再構築（docker-compose.yml・database.yml・puma.rb最適化）
+    - 仕様書更新（README.md・spec.md・phase計画書Rails 8.0.4対応）
+    - Webアプリケーション安定性優先・本番デプロイリスク最小化
+    - Rails console正常動作・基本マイグレーション・シード完了
 
 ---
 

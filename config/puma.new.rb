@@ -1,5 +1,5 @@
-# Puma configuration for Rails 8.0.4
-# Optimized for stability and compatibility
+# Puma configuration for Rails 8.1.1
+# Optimized for development environment
 
 # Threads configuration
 max_threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }
@@ -12,18 +12,19 @@ port ENV.fetch("PORT") { 3000 }
 # Environment
 environment ENV.fetch("RAILS_ENV") { "development" }
 
+# Restart capability
+plugin :tmp_restart
+
 # Development-specific optimizations
 if ENV["RAILS_ENV"] == "development"
   # Single mode for development to avoid connection issues
   workers 0
   
-  # Disable preload for development stability
+  # Preload application for faster startup in development
   preload_app! false
   
-  # Connection optimization for single mode (not worker mode)
-  before_fork do
-    ActiveRecord::Base.connection_pool.disconnect! if defined?(ActiveRecord::Base)
-  end
+  # Enable reloading
+  plugin :tmp_restart
 end
 
 # Production configuration

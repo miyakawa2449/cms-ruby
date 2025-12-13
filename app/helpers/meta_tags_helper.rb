@@ -90,20 +90,20 @@ module MetaTagsHelper
     )
   end
 
-  def my_story_meta_tags
+  def my_story_meta_tags(title = 'My Story - 30年間のエンジニア人生', description = 'パソコン講師からSE/PMを経て、50代でAIエンジニアへ。30年間の技術者としての成長と挑戦の軌跡。')
     page_meta_tags(
-      title: 'My Story - 30年間のエンジニア人生',
-      description: 'パソコン講師からSE/PMを経て、50代でAIエンジニアへ。30年間の技術者としての成長と挑戦の軌跡。',
+      title: title,
+      description: description,
       keywords: 'エンジニアキャリア,SE,PM,AIエンジニア,プログラミング学習,キャリアチェンジ',
       og: {
-        title: 'My Story - 30年間のエンジニア人生 | 宮川 剛',
-        description: 'パソコン講師からSE/PMを経て、50代でAIエンジニアへ。30年間の技術者としての成長と挑戦の軌跡。',
+        title: "#{title} | 宮川 剛",
+        description: description,
         type: 'article',
         image: default_og_image_url # 後でMy Story専用画像に変更可能
       },
       twitter: {
-        title: 'My Story - 30年間のエンジニア人生 | 宮川 剛',
-        description: 'パソコン講師からSE/PMを経て、50代でAIエンジニアへ。30年間の技術者としての成長と挑戦の軌跡。',
+        title: "#{title} | 宮川 剛",
+        description: description,
         image: default_og_image_url
       }
     )

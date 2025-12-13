@@ -60,4 +60,7 @@ sections.each do |section_data|
   puts "✅ Section created: #{section.display_name}"
 end
 
+# Load My Story sections
+load Rails.root.join('db', 'seeds', 'my_story_data.rb')
+
 puts "🚀 Seeding completed successfully!"

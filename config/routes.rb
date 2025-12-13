@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  # Simple test
+  get "test" => "simple_test#index"
+  
   # Contact form submission
   post "contacts", to: "contacts#create"
   devise_for :admin_users, controllers: {
@@ -34,6 +37,14 @@ Rails.application.routes.draw do
     end
     
     resources :tags
+    
+    resources :my_story_sections do
+      member do
+        patch :move_up
+        patch :move_down
+        patch :toggle_active
+      end
+    end
   end
   
   # Public routes

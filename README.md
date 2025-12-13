@@ -1,8 +1,8 @@
 # 🚀 Portfolio Site CMS - シニアエンジニア技術発信プラットフォーム
 
-[![Rails](https://img.shields.io/badge/Rails-8.1.1-red.svg)](https://rubyonrails.org/)
+[![Rails](https://img.shields.io/badge/Rails-8.0.4-red.svg)](https://rubyonrails.org/)
 [![Ruby](https://img.shields.io/badge/Ruby-3.4.7-red.svg)](https://www.ruby-lang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue.svg)](https://www.postgresql.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 シニアエンジニアの技術発信・ポートフォリオサイトをCMS化するプロジェクトです。
@@ -26,16 +26,16 @@
 
 ### バックエンド
 - **Ruby**: 3.4.7
-- **Rails**: 8.1.1（最新版・新機能活用）
-- **データベース**: PostgreSQL 17-alpine（ICUロケール・全文検索最適化）
+- **Rails**: 8.0.4（安定版・本番実績重視）
+- **データベース**: PostgreSQL 16-alpine（ICUロケール・全文検索最適化・安定性確保）
 - **認証**: Devise 4.9.4 + JWT 3.1.2（セキュリティ強化済み）
 - **認可**: Pundit 2.5.2
 - **バックグラウンド**: Sidekiq 8.0.10 + sidekiq-cron 2.3.1
 
 ### フロントエンド
 - **CSS**: Tailwind CSS 4.1.17（cssbundling-rails・最新版）
-- **JavaScript**: Stimulus + Turbo（Rails 8.1標準）
-- **アセット**: Propshaft（Rails 8.1標準）
+- **JavaScript**: Stimulus + Turbo（Rails 8.0標準）
+- **アセット**: Propshaft（Rails 8.0標準）
 
 ### AI・外部連携
 - **AI**: ruby-openai 8.3.0（GPT-4連携・記事分析・SEO最適化）
@@ -60,7 +60,7 @@
 - **Phase 1**: 100% 完了（仕様策定・17画面プロトタイプ・API設計）
 - **Phase 2A**: 100% 完了（Rails環境構築・設定ファイル）
 - **Phase 2B**: 100% 完了（データベース基盤・フロントエンド統合）
-- **Phase 2C-R**: 100% 完了（Rails 8.1.1再構築・セキュリティ問題全解決）
+- **Phase 2C-R**: 100% 完了（Rails 8.0.4安定化・セキュリティ問題全解決）
 - **Phase 2C**: 100% 完了（CMS基盤・認証システム・記事/カテゴリ/タグ管理）
 - **Phase 3.1**: 100% 完了（セクション管理CRUD実装）
 - **Phase 3.2**: 100% 完了（コンタクトフォーム実装）
@@ -88,7 +88,7 @@
 # 必要なソフトウェア
 - Ruby 3.4.7
 - Node.js 18+ 
-- PostgreSQL 17+
+- PostgreSQL 16+（安定性重視）
 - Redis 7+（Sidekiq用）
 ```
 
@@ -124,7 +124,7 @@ docker-compose exec -d web bundle exec rails server -b 0.0.0.0
 ```
 
 **Docker環境仕様**:
-- **PostgreSQL**: 17-alpine（ICUロケール対応・日本語ソート改善）
+- **PostgreSQL**: 16-alpine（ICUロケール対応・安定性確保）
 - **Redis**: 7-alpine（Sidekiq用）
 - **Tailwind CSS**: 4.1.17（cssbundling-rails・watch対応）
 ```
@@ -156,8 +156,8 @@ bin/ci
 
 ### 主要設計書
 - [総合仕様書](docs/specifications/spec.md) - プロジェクト全体仕様（999行）
-- [Phase計画書](docs/development/phase_plan_rails_8_1.md) - Rails 8.1.1版開発計画
-- [データベース設計v2](docs/database/schema_design_v2.md) - Rails 8.1対応版
+- [Phase計画書](docs/development/phase_plan_rails_8_0.md) - Rails 8.0.4版開発計画（安定版）
+- [データベース設計v2](docs/database/schema_design_v2.md) - Rails 8.0対応版
 - [API設計](docs/api/api_design.md) - 公開API + 内部API仕様
 
 ### プロトタイプ（17画面完成）

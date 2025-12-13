@@ -1,0 +1,344 @@
+<% content_for :title, "My Storyセクション詳細: #{@my_story_section.title}" %>
+
+<div class="bg-white shadow">
+  <div class="px-4 sm:px-6 lg:px-8 py-6">
+    <div class="sm:flex sm:items-center">
+      <div class="sm:flex-auto">
+        <h1 class="text-2xl font-semibold text-gray-900"><%= @my_story_section.title %></h1>
+        <p class="mt-2 text-sm text-gray-700">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+            <%= @my_story_section.section_type_label %>
+          </span>
+        </p>
+      </div>
+      <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none space-x-2">
+        <%= link_to edit_admin_my_story_section_path(@my_story_section), 
+            class: "inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" do %>
+          <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          編集
+        <% end %>
+        <%= link_to admin_my_story_sections_path, 
+            class: "inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" do %>
+          <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          一覧に戻る
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  
+  <!-- 基本情報 -->
+  <div class="bg-white shadow sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 mb-6">基本情報</h3>
+      
+      <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+        <div>
+          <dt class="text-sm font-medium text-gray-500">セクションタイプ</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              <%= @my_story_section.section_type_label %>
+            </span>
+            <span class="ml-2 text-gray-500">(<%= @my_story_section.section_type %>)</span>
+          </dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-500">表示順序</dt>
+          <dd class="mt-1 text-sm text-gray-900"><%= @my_story_section.position %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-500">ステータス</dt>
+          <dd class="mt-1">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= @my_story_section.is_active? ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
+              <%= @my_story_section.is_active? ? 'アクティブ' : '非アクティブ' %>
+            </span>
+          </dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-500">作成日時</dt>
+          <dd class="mt-1 text-sm text-gray-900"><%= @my_story_section.created_at.strftime('%Y年%m月%d日 %H:%M') %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-500">更新日時</dt>
+          <dd class="mt-1 text-sm text-gray-900"><%= @my_story_section.updated_at.strftime('%Y年%m月%d日 %H:%M') %></dd>
+        </div>
+      </dl>
+
+      <% if @my_story_section.subtitle.present? %>
+        <div class="mt-6">
+          <dt class="text-sm font-medium text-gray-500">サブタイトル</dt>
+          <dd class="mt-1 text-sm text-gray-900"><%= @my_story_section.subtitle %></dd>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- コンテンツ -->
+  <div class="bg-white shadow sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 mb-6">コンテンツ</h3>
+      
+      <% if @my_story_section.content.present? %>
+        <div class="prose max-w-none">
+          <%= simple_format(@my_story_section.content) %>
+        </div>
+      <% else %>
+        <p class="text-gray-500 italic">コンテンツが設定されていません。</p>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- 画像 -->
+  <% if @section_details[:has_background_image] || @section_details[:has_chapter_image] || @section_details[:has_gallery_images] %>
+    <div class="bg-white shadow sm:rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 mb-6">画像</h3>
+        
+        <div class="grid grid-cols-1 gap-6">
+          <!-- 背景画像 -->
+          <% if @section_details[:has_background_image] %>
+            <div>
+              <h4 class="text-sm font-medium text-gray-700 mb-3">背景画像</h4>
+              <div class="relative">
+                <%= image_tag @my_story_section.background_image, 
+                    class: "w-full h-64 object-cover rounded-lg shadow-lg" %>
+              </div>
+              <div class="mt-2 text-sm text-gray-500">
+                ファイル名: <%= @my_story_section.background_image.filename %>
+                (<%= number_to_human_size(@my_story_section.background_image.byte_size) %>)
+              </div>
+            </div>
+          <% end %>
+
+          <!-- 章画像 -->
+          <% if @section_details[:has_chapter_image] %>
+            <div>
+              <h4 class="text-sm font-medium text-gray-700 mb-3">章画像</h4>
+              <div class="relative">
+                <%= image_tag @my_story_section.chapter_image, 
+                    class: "w-full h-64 object-cover rounded-lg shadow-lg" %>
+              </div>
+              <div class="mt-2 text-sm text-gray-500">
+                ファイル名: <%= @my_story_section.chapter_image.filename %>
+                (<%= number_to_human_size(@my_story_section.chapter_image.byte_size) %>)
+              </div>
+            </div>
+          <% end %>
+
+          <!-- ギャラリー画像 -->
+          <% if @section_details[:has_gallery_images] %>
+            <div>
+              <h4 class="text-sm font-medium text-gray-700 mb-3">
+                ギャラリー画像 (<%= @my_story_section.gallery_images.count %>枚)
+              </h4>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <% @my_story_section.gallery_images.each do |image| %>
+                  <div class="relative">
+                    <%= image_tag image, class: "w-full h-32 object-cover rounded-lg shadow" %>
+                    <div class="mt-1 text-xs text-gray-500 truncate">
+                      <%= image.filename %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- 追加データ -->
+  <% if @my_story_section.additional_data.present? && @my_story_section.additional_data.any? %>
+    <div class="bg-white shadow sm:rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 mb-6">追加データ</h3>
+        
+        <!-- Timeline specific data -->
+        <% if @my_story_section.timeline_section? && @my_story_section.timeline_years.any? %>
+          <div class="mb-6">
+            <h4 class="text-sm font-medium text-gray-700 mb-2">タイムライン年代</h4>
+            <div class="flex flex-wrap gap-2">
+              <% @my_story_section.timeline_years.each do |year| %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <%= year %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Chapter specific data -->
+        <% if @my_story_section.chapter_section? %>
+          <% if @my_story_section.chapter_skills.any? %>
+            <div class="mb-6">
+              <h4 class="text-sm font-medium text-gray-700 mb-2">習得スキル</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm text-gray-600">
+                <% @my_story_section.chapter_skills.each do |skill| %>
+                  <li><%= skill %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <% if @my_story_section.chapter_achievements.any? %>
+            <div class="mb-6">
+              <h4 class="text-sm font-medium text-gray-700 mb-2">主な実績</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm text-gray-600">
+                <% @my_story_section.chapter_achievements.each do |achievement| %>
+                  <li><%= achievement %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <% if @my_story_section.chapter_quote.present? %>
+            <div class="mb-6">
+              <h4 class="text-sm font-medium text-gray-700 mb-2">章の引用文</h4>
+              <blockquote class="border-l-4 border-blue-500 pl-4 italic text-gray-700 bg-blue-50 p-4 rounded">
+                "<%= @my_story_section.chapter_quote %>"
+              </blockquote>
+            </div>
+          <% end %>
+        <% end %>
+
+        <!-- Projects specific data -->
+        <% if @my_story_section.projects_section? && @my_story_section.project_items.any? %>
+          <div class="mb-6">
+            <h4 class="text-sm font-medium text-gray-700 mb-2">プロジェクト一覧</h4>
+            <div class="space-y-4">
+              <% @my_story_section.project_items.each_with_index do |project, index| %>
+                <div class="border border-gray-200 rounded-lg p-4">
+                  <h5 class="font-medium text-gray-900"><%= project['title'] %></h5>
+                  <% if project['description'] %>
+                    <p class="mt-1 text-sm text-gray-600"><%= project['description'] %></p>
+                  <% end %>
+                  <div class="mt-2 text-xs text-gray-500 space-x-4">
+                    <% if project['period'] %>
+                      <span>期間: <%= project['period'] %></span>
+                    <% end %>
+                    <% if project['scale'] %>
+                      <span>規模: <%= project['scale'] %></span>
+                    <% end %>
+                  </div>
+                  <% if project['technologies']&.any? %>
+                    <div class="mt-2 flex flex-wrap gap-1">
+                      <% project['technologies'].each do |tech| %>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                          <%= tech %>
+                        </span>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- CTA specific data -->
+        <% if @my_story_section.cta_section? && @my_story_section.cta_buttons.any? %>
+          <div class="mb-6">
+            <h4 class="text-sm font-medium text-gray-700 mb-2">CTAボタン設定</h4>
+            <div class="space-y-2">
+              <% @my_story_section.cta_buttons.each do |button| %>
+                <div class="flex items-center justify-between bg-gray-50 p-3 rounded">
+                  <div>
+                    <span class="font-medium"><%= button['text'] %></span>
+                    <% if button['url'] %>
+                      <span class="ml-2 text-sm text-gray-500">→ <%= button['url'] %></span>
+                    <% end %>
+                  </div>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                               <%= button['style'] == 'primary' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' %>">
+                    <%= button['style'] %>
+                  </span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Raw JSON data -->
+        <div>
+          <h4 class="text-sm font-medium text-gray-700 mb-2">生データ（JSON）</h4>
+          <pre class="bg-gray-100 p-4 rounded text-xs overflow-x-auto"><%= JSON.pretty_generate(@my_story_section.additional_data) %></pre>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- アクション -->
+  <div class="bg-white shadow sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 mb-6">アクション</h3>
+      
+      <div class="flex flex-wrap gap-4">
+        <%= link_to edit_admin_my_story_section_path(@my_story_section), 
+            class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" do %>
+          <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          編集
+        <% end %>
+
+        <%= link_to toggle_active_admin_my_story_section_path(@my_story_section), 
+            method: :patch,
+            class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md #{@my_story_section.is_active? ? 'text-gray-700 bg-gray-200 hover:bg-gray-300' : 'text-white bg-green-600 hover:bg-green-700'}" do %>
+          <% if @my_story_section.is_active? %>
+            <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" />
+            </svg>
+            非アクティブにする
+          <% else %>
+            <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            アクティブにする
+          <% end %>
+        <% end %>
+
+        <%= link_to move_up_admin_my_story_section_path(@my_story_section), 
+            method: :patch,
+            class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" do %>
+          <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+          </svg>
+          上に移動
+        <% end %>
+
+        <%= link_to move_down_admin_my_story_section_path(@my_story_section), 
+            method: :patch,
+            class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" do %>
+          <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
+          下に移動
+        <% end %>
+
+        <%= link_to admin_my_story_section_path(@my_story_section), 
+            method: :delete,
+            data: { 
+              confirm: "セクション「#{@my_story_section.title}」を削除してもよろしいですか？この操作は取り消せません。",
+              turbo_method: :delete 
+            },
+            class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700" do %>
+          <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          削除
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

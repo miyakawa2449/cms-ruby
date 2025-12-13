@@ -1,232 +1,119 @@
-<% content_for :title, "My Story" %>
-<% content_for :meta_tags, my_story_meta_tags %>
+<% content_for :title, @page_title %>
+<% content_for :meta_tags, my_story_meta_tags(@page_title, @page_description) %>
 
 <div class="bg-gray-50">
   <%= render 'shared/header', variant: 'story' %>
 
   <!-- Hero Section -->
-  <section class="hero-bg text-white py-20" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-    <div class="container mx-auto px-6 text-center pt-20">
-      <h1 class="text-4xl md:text-6xl font-bold mb-6">
-        なぜ要件定義から実装まで<br>
-        <span class="text-yellow-300">一人でできる</span>のか？
-      </h1>
-      <p class="text-xl md:text-2xl mb-8 text-blue-100">
-        宮川 剛のキャリアストーリー
-      </p>
-      <div class="max-w-2xl mx-auto text-blue-100">
-        <p>パソコンスクール講師からSE/PM、そしてAIエンジニアへ。3つの転機がどのように組み合わさって、現在の独自のスキルセットを形成したかをご紹介します。</p>
+  <% if @hero_section %>
+    <section class="hero-bg text-white py-20" 
+             style="<%= @hero_section.has_background_image? ? 
+                      "background-image: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8)), url('#{url_for(@hero_section.background_image)}'); background-size: cover; background-position: center;" : 
+                      'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);' %>">
+      <div class="container mx-auto px-6 text-center pt-20">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+          <%= raw @hero_section.title %>
+        </h1>
+        <% if @hero_section.subtitle.present? %>
+          <p class="text-xl md:text-2xl mb-8 text-blue-100">
+            <%= @hero_section.subtitle %>
+          </p>
+        <% end %>
+        <% if @hero_section.content.present? %>
+          <div class="max-w-2xl mx-auto text-blue-100">
+            <%= simple_format(@hero_section.content) %>
+          </div>
+        <% end %>
       </div>
-    </div>
-  </section>
+    </section>
+  <% else %>
+    <!-- Fallback Hero Section -->
+    <section class="hero-bg text-white py-20" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+      <div class="container mx-auto px-6 text-center pt-20">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+          なぜ要件定義から実装まで<br>
+          <span class="text-yellow-300">一人でできる</span>のか？
+        </h1>
+        <p class="text-xl md:text-2xl mb-8 text-blue-100">
+          宮川 剛のキャリアストーリー
+        </p>
+        <div class="max-w-2xl mx-auto text-blue-100">
+          <p>パソコンスクール講師からSE/PM、そしてAIエンジニアへ。3つの転機がどのように組み合わさって、現在の独自のスキルセットを形成したかをご紹介します。</p>
+        </div>
+      </div>
+    </section>
+  <% end %>
 
   <!-- Timeline Overview -->
-  <section class="py-20 bg-white">
-    <div class="container mx-auto px-6">
-      <h2 class="text-3xl font-bold text-center mb-16">キャリアタイムライン</h2>
-      <div class="max-w-6xl mx-auto">
-        <div class="timeline-line mb-12" style="background: linear-gradient(90deg, #3b82f6, #10b981, #8b5cf6); height: 4px;"></div>
-        <div class="grid md:grid-cols-3 gap-8 -mt-8">
-          <div class="text-center scroll-reveal">
-            <div class="w-20 h-20 bg-green-500 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold text-lg">
-              1994
-            </div>
-            <h3 class="text-xl font-bold mb-2">パソコンスクール講師</h3>
-            <p class="text-gray-600 mb-4">20人近い受講生を取りまとめ、PM基礎力を形成</p>
-            <div class="text-sm text-green-600 font-semibold">人材育成・プロジェクト管理基礎</div>
-            <div class="text-xs text-gray-500 mt-2">1994-2005</div>
-          </div>
-          <div class="text-center scroll-reveal">
-            <div class="w-20 h-20 bg-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold text-lg">
-              2005
-            </div>
-            <h3 class="text-xl font-bold mb-2">SE/PM・ビジネス分析者</h3>
-            <p class="text-gray-600 mb-4">16年間、上流工程の専門家として大規模プロジェクトをリード</p>
-            <div class="text-sm text-blue-600 font-semibold">ビジネス理解力・プロジェクト推進力</div>
-            <div class="text-xs text-gray-500 mt-2">2005-2021</div>
-          </div>
-          <div class="text-center scroll-reveal">
-            <div class="w-20 h-20 bg-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold text-lg">
-              2022
-            </div>
-            <h3 class="text-xl font-bold mb-2">AI活用エンジニア</h3>
-            <p class="text-gray-600 mb-4">AI登場を機にプログラミングを習得、全スキルを統合</p>
-            <div class="text-sm text-purple-600 font-semibold">AI × プログラミング × PM経験</div>
-            <div class="text-xs text-gray-500 mt-2">2022-現在</div>
+  <% if @timeline_section %>
+    <section class="py-20 bg-white">
+      <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center mb-16"><%= @timeline_section.title %></h2>
+        <% if @timeline_section.subtitle.present? %>
+          <p class="text-center text-gray-600 mb-8"><%= @timeline_section.subtitle %></p>
+        <% end %>
+        <div class="max-w-6xl mx-auto">
+          <div class="timeline-line mb-12" style="background: linear-gradient(90deg, #3b82f6, #10b981, #8b5cf6); height: 4px;"></div>
+          <div class="grid md:grid-cols-3 gap-8 -mt-8">
+            <!-- Dynamic timeline content would be rendered here -->
+            <% if @timeline_section.content.present? %>
+              <div class="col-span-3 mb-8">
+                <%= simple_format(@timeline_section.content) %>
+              </div>
+            <% end %>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  <% else %>
+    <!-- Fallback Timeline -->
+    <section class="py-20 bg-white">
+      <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center mb-16">キャリアタイムライン</h2>
+        <div class="max-w-6xl mx-auto">
+          <div class="timeline-line mb-12" style="background: linear-gradient(90deg, #3b82f6, #10b981, #8b5cf6); height: 4px;"></div>
+          <div class="grid md:grid-cols-3 gap-8 -mt-8">
+            <div class="text-center scroll-reveal">
+              <div class="w-20 h-20 bg-green-500 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold text-lg">
+                1994
+              </div>
+              <h3 class="text-xl font-bold mb-2">パソコンスクール講師</h3>
+              <p class="text-gray-600 mb-4">20人近い受講生を取りまとめ、PM基礎力を形成</p>
+              <div class="text-sm text-green-600 font-semibold">人材育成・プロジェクト管理基礎</div>
+              <div class="text-xs text-gray-500 mt-2">1994-2005</div>
+            </div>
+            <div class="text-center scroll-reveal">
+              <div class="w-20 h-20 bg-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold text-lg">
+                2005
+              </div>
+              <h3 class="text-xl font-bold mb-2">SE/PM・ビジネス分析者</h3>
+              <p class="text-gray-600 mb-4">16年間、上流工程の専門家として大規模プロジェクトをリード</p>
+              <div class="text-sm text-blue-600 font-semibold">ビジネス理解力・プロジェクト推進力</div>
+              <div class="text-xs text-gray-500 mt-2">2005-2021</div>
+            </div>
+            <div class="text-center scroll-reveal">
+              <div class="w-20 h-20 bg-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-bold text-lg">
+                2022
+              </div>
+              <h3 class="text-xl font-bold mb-2">AI活用エンジニア</h3>
+              <p class="text-gray-600 mb-4">AI登場を機にプログラミングを習得、全スキルを統合</p>
+              <div class="text-sm text-purple-600 font-semibold">AI × プログラミング × PM経験</div>
+              <div class="text-xs text-gray-500 mt-2">2022-現在</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  <% end %>
 
-  <!-- Chapter 1: パソコンスクール講師時代 -->
-  <section class="py-20">
-    <div class="container mx-auto px-6">
-      <div class="max-w-6xl mx-auto">
-        <div class="text-center mb-16 scroll-reveal">
-          <div class="inline-block bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-semibold mb-4">第1章</div>
-          <h2 class="text-3xl font-bold mb-4">パソコンスクール講師時代</h2>
-          <p class="text-gray-600">1994-2005年 | PM基礎力を培った11年間</p>
-        </div>
-        
-        <div class="grid md:grid-cols-2 gap-12 items-center mb-12">
-          <div class="scroll-reveal">
-            <div class="bg-gray-200 rounded-lg h-80 flex items-center justify-center">
-              <span class="text-gray-500">パソコンスクール・教室のイメージ</span>
-            </div>
-          </div>
-          <div class="scroll-reveal">
-            <h3 class="text-2xl font-bold mb-6">人材育成・PM基礎力の形成</h3>
-            <p class="text-gray-700 mb-6 leading-relaxed">
-              全国ネットのパソコンスクール講師として11年間、20人近い受講生を前に教室を運営。
-              資格試験合格に向けた受講生の取りまとめを通じて、
-              後のプロジェクト管理に欠かせないスキルの基礎を培いました。
-            </p>
-            
-            <h3 class="text-xl font-bold mb-4">身につけたスキル</h3>
-            <ul class="space-y-2 text-gray-700 mb-6">
-              <li class="flex items-start space-x-2">
-                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></span>
-                <span>課題の明確化・分析</span>
-              </li>
-              <li class="flex items-start space-x-2">
-                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></span>
-                <span>モチベーション維持・管理</span>
-              </li>
-              <li class="flex items-start space-x-2">
-                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></span>
-                <span>レベル差のある人材の統率</span>
-              </li>
-              <li class="flex items-start space-x-2">
-                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></span>
-                <span>資格試験指導・目標管理</span>
-              </li>
-              <li class="flex items-start space-x-2">
-                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></span>
-                <span>情報処理国家試験指導</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-        
-        <div class="chapter-quote bg-green-50 p-6 rounded-lg scroll-reveal" style="border-left: 4px solid #3b82f6; font-style: italic;">
-          <p class="text-gray-700 text-lg">
-            「20人近い受講生を前に教室を運営し、資格試験合格に向けて取りまとめる経験は、後のプロジェクト管理に大いに役立つスキルの基礎となった」
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- Dynamic Chapter Sections -->
+  <% @chapter_sections.each do |section| %>
+    <% if section %>
+      <%= render 'chapter_section', section: section %>
+    <% end %>
+  <% end %>
 
-  <!-- Chapter 2: SE/PM時代 -->
-  <section class="py-20 bg-white">
-    <div class="container mx-auto px-6">
-      <div class="max-w-6xl mx-auto">
-        <div class="text-center mb-16 scroll-reveal">
-          <div class="inline-block bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold mb-4">第2章</div>
-          <h2 class="text-3xl font-bold mb-4">SE/PM・ビジネス分析者時代</h2>
-          <p class="text-gray-600">2005-2021年 | 上流工程専門家として16年間</p>
-        </div>
-        
-        <div class="grid md:grid-cols-2 gap-12 items-center mb-12">
-          <div class="scroll-reveal">
-            <h3 class="text-2xl font-bold mb-6">ビジネス理解力の深化</h3>
-            <p class="text-gray-700 mb-6 leading-relaxed">
-              SE/PMとして16年間、大規模プロジェクトの上流工程をリード。
-              ビジネス分析者としてクライアントの本質的な課題を見極め、
-              最適なソリューションを提案する力を磨きました。
-            </p>
-            
-            <h3 class="text-xl font-bold mb-4">主な実績</h3>
-            <ul class="space-y-2 text-gray-700">
-              <li class="flex items-start space-x-2">
-                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></span>
-                <span>大規模プロジェクトの要件定義・設計</span>
-              </li>
-              <li class="flex items-start space-x-2">
-                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></span>
-                <span>多様なステークホルダーとの調整</span>
-              </li>
-              <li class="flex items-start space-x-2">
-                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></span>
-                <span>業務プロセスの最適化提案</span>
-              </li>
-              <li class="flex items-start space-x-2">
-                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></span>
-                <span>技術選定とアーキテクチャ設計</span>
-              </li>
-            </ul>
-          </div>
-          <div class="scroll-reveal">
-            <div class="bg-gray-200 rounded-lg h-80 flex items-center justify-center">
-              <span class="text-gray-500">プロジェクト管理・会議のイメージ</span>
-            </div>
-          </div>
-        </div>
-        
-        <div class="chapter-quote bg-blue-50 p-6 rounded-lg scroll-reveal" style="border-left: 4px solid #3b82f6; font-style: italic;">
-          <p class="text-gray-700 text-lg">
-            「16年間のSE/PM経験で、ビジネス課題を技術で解決する力を徹底的に磨いた。この期間に培った上流工程のスキルが、現在の独自性の核となっている」
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Chapter 3: AIエンジニア時代 -->
-  <section class="py-20">
-    <div class="container mx-auto px-6">
-      <div class="max-w-6xl mx-auto">
-        <div class="text-center mb-16 scroll-reveal">
-          <div class="inline-block bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-semibold mb-4">第3章</div>
-          <h2 class="text-3xl font-bold mb-4">AI活用エンジニア時代</h2>
-          <p class="text-gray-600">2022年-現在 | 全スキルの統合</p>
-        </div>
-        
-        <div class="grid md:grid-cols-2 gap-12 items-center mb-12">
-          <div class="scroll-reveal">
-            <div class="bg-gray-200 rounded-lg h-80 flex items-center justify-center">
-              <span class="text-gray-500">AI開発・コーディングのイメージ</span>
-            </div>
-          </div>
-          <div class="scroll-reveal">
-            <h3 class="text-2xl font-bold mb-6">AIで全スキルが統合</h3>
-            <p class="text-gray-700 mb-6 leading-relaxed">
-              AI登場を機にプログラミングを本格的に習得。
-              講師時代の教育力、PM時代の課題解決力、そしてプログラミング技術が統合され、
-              要件定義から実装まで一人で完結できる希少なスキルセットが完成しました。
-            </p>
-            
-            <h3 class="text-xl font-bold mb-4">統合されたスキル</h3>
-            <ul class="space-y-2 text-gray-700">
-              <li class="flex items-start space-x-2">
-                <span class="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></span>
-                <span><strong>講師経験</strong> → 課題の明確化、わかりやすい説明</span>
-              </li>
-              <li class="flex items-start space-x-2">
-                <span class="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></span>
-                <span><strong>PM経験</strong> → 要件定義、ビジネス理解</span>
-              </li>
-              <li class="flex items-start space-x-2">
-                <span class="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></span>
-                <span><strong>プログラミング</strong> → 実装力、技術選定</span>
-              </li>
-              <li class="flex items-start space-x-2">
-                <span class="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></span>
-                <span><strong>AI活用</strong> → 最新技術、効率化</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-        
-        <div class="chapter-quote bg-purple-50 p-6 rounded-lg scroll-reveal" style="border-left: 4px solid #3b82f6; font-style: italic;">
-          <p class="text-gray-700 text-lg">
-            「30年のキャリアで積み重ねた3つのフェーズが、AI時代に最適な形で統合された。これこそが『一人でできる』理由である」
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- CTA Section -->
   <section class="py-20 bg-gradient-to-r from-blue-50 to-purple-50">

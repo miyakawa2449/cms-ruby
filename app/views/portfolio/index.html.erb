@@ -37,7 +37,7 @@
 <!-- Main Content -->
 <main class="pt-20">
   <% @sections.each do |section| %>
-    <% content_data = section.active_content_data %>
+    <% content_data = @section_data[section.name] || {} %>
     <% 
       # 個別フィールドを使用するセクションはcontent_dataが空でもOK
       individual_field_sections = ['hero', 'about', 'my-story', 'works']

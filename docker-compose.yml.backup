@@ -1,8 +1,6 @@
-version: '3.9'
-
 services:
   db:
-    image: postgres:17-alpine
+    image: postgres:16-alpine
     environment:
       POSTGRES_DB: portfolio_rb_development
       POSTGRES_USER: portfolio
@@ -36,22 +34,18 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev.simple
-    command: bundle exec rails server -b 0.0.0.0
+    command: bundle exec rails server -b 0.0.0.0 -p 3000
     environment:
-      DATABASE_URL: "postgresql://portfolio:portfolio_password@db:5432/portfolio_rb_development"
-      REDIS_URL: "redis://redis:6379/0"
       RAILS_ENV: development
       RAILS_LOG_TO_STDOUT: "true"
+      DATABASE_URL: "postgresql://portfolio:portfolio_password@db:5432/portfolio_rb_development"
+      REDIS_URL: "redis://redis:6379/0"
       BUNDLE_PATH: /bundle
-      HISTFILE: /app/.bash_history
-      EDITOR: vim
     volumes:
       - .:/app:cached
       - bundle_data:/bundle
       - node_modules:/app/node_modules
       - rails_cache:/app/tmp/cache
-      - ./log:/app/log
-      - bash_history:/app/.bash_history
     ports:
       - "3000:3000"
     depends_on:
@@ -61,19 +55,16 @@ services:
         condition: service_healthy
     stdin_open: true
     tty: true
-    tmpfs:
-      - /tmp
 
-  # Sidekiq（バックグラウンドジョブ）
   sidekiq:
     build:
       context: .
       dockerfile: Dockerfile.dev.simple
     command: bundle exec sidekiq
     environment:
+      RAILS_ENV: development
       DATABASE_URL: "postgresql://portfolio:portfolio_password@db:5432/portfolio_rb_development"
       REDIS_URL: "redis://redis:6379/0"
-      RAILS_ENV: development
       BUNDLE_PATH: /bundle
     volumes:
       - .:/app:cached
@@ -85,7 +76,6 @@ services:
       redis:
         condition: service_healthy
 
-  # Tailwind CSS Watch（cssbundling-rails）
   css:
     build:
       context: .
@@ -110,6 +100,4 @@ volumes:
   node_modules:
     driver: local
   rails_cache:
-    driver: local
-  bash_history:
     driver: local

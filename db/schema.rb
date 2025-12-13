@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_11_071452) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_13_033842) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -139,6 +139,26 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_11_071452) do
     t.index ["status"], name: "index_contacts_on_status"
   end
 
+  create_table "my_story_sections", force: :cascade do |t|
+    t.text "achievements"
+    t.jsonb "additional_data", default: {}
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.boolean "is_active", default: true, null: false
+    t.integer "position", default: 0, null: false
+    t.text "quote"
+    t.string "section_type", null: false
+    t.text "skills"
+    t.string "subtitle"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["additional_data"], name: "index_my_story_sections_on_additional_data", using: :gin
+    t.index ["is_active", "position"], name: "index_my_story_sections_on_is_active_and_position"
+    t.index ["is_active"], name: "index_my_story_sections_on_is_active"
+    t.index ["position"], name: "index_my_story_sections_on_position"
+    t.index ["section_type"], name: "index_my_story_sections_on_section_type", unique: true
+  end
+
   create_table "section_contents", force: :cascade do |t|
     t.text "backend_skills"
     t.string "badge_text"
@@ -154,7 +174,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_11_071452) do
     t.string "cta_secondary_url"
     t.text "experience_text"
     t.text "frontend_skills"
-    t.boolean "is_active"
+    t.boolean "is_active", default: false
     t.text "main_message"
     t.text "main_title"
     t.text "phase1_description"
@@ -176,19 +196,22 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_11_071452) do
     t.text "sub_message"
     t.text "sub_title"
     t.datetime "updated_at", null: false
-    t.integer "version"
+    t.integer "version", default: 1, null: false
     t.index ["content"], name: "index_section_contents_on_content", using: :gin
+    t.index ["published_by"], name: "index_section_contents_on_published_by"
+    t.index ["section_id", "version"], name: "index_section_contents_on_section_id_and_version", unique: true
     t.index ["section_id"], name: "index_section_contents_on_section_id"
   end
 
   create_table "sections", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "display_name"
-    t.boolean "is_visible"
-    t.string "name"
-    t.integer "position"
+    t.string "display_name", limit: 100, null: false
+    t.boolean "is_visible", default: true
+    t.string "name", limit: 100, null: false
+    t.integer "position", default: 0
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_sections_on_name", unique: true
+    t.index ["position"], name: "index_sections_on_position"
   end
 
   create_table "slack_notifications", force: :cascade do |t|
@@ -219,6 +242,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_11_071452) do
     t.index ["slug"], name: "index_tags_on_slug", unique: true
   end
 
+  create_table "test_items", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "article_categories", "articles"
@@ -228,5 +258,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_11_071452) do
   add_foreign_key "articles", "admin_users"
   add_foreign_key "categories", "categories", column: "parent_id"
   add_foreign_key "contacts", "admin_users", column: "assigned_to_id"
+  add_foreign_key "section_contents", "admin_users", column: "published_by", on_delete: :nullify
   add_foreign_key "section_contents", "sections"
 end
