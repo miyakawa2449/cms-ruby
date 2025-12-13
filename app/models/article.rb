@@ -29,80 +29,68 @@ class Article < ApplicationRecord
   scope :works, -> { joins(:categories).where(categories: { slug: 'works' }) }
   scope :standard_blog, -> { joins(:categories).where.not(categories: { slug: 'works' }) }
   
-  before_validation :generate_slug, if: -> { title_changed? && slug.blank? }
-  before_save :set_published_at, if: -> { status_changed? && status == 'published' }
-  after_save :update_tag_counts
-  after_destroy :update_tag_counts
+  before_validation :generate_slug_if_needed
+  before_save :set_published_at_if_needed
+  after_save :update_related_counts
+  after_destroy :update_related_counts
   
-  def published?
-    status == 'published' && published_at.present? && published_at <= Time.current
+  # Service delegation methods
+  def content_manager
+    @content_manager ||= ArticleContentManager.new(self)
   end
-  
-  def draft?
-    status == 'draft'
+
+  def meta_manager
+    @meta_manager ||= ArticleMetaManager.new(self)
   end
-  
-  def scheduled?
-    status == 'scheduled' && published_at.present? && published_at > Time.current
+
+  def publishing_manager
+    @publishing_manager ||= ArticlePublishingManager.new(self)
   end
-  
-  def category_names
-    categories.pluck(:name)
-  end
-  
-  def tag_names
-    tags.pluck(:name)
-  end
-  
+
+  # Content management delegation
+  delegate :tech_stack_list, :tech_stack_list=,
+           :category_names, :tag_names,
+           :is_work?, :content_word_count, :content_reading_time,
+           to: :content_manager
+
+  # Meta management delegation  
+  delegate :to_param, :url_path, :canonical_url,
+           :seo_title, :seo_description, :seo_keywords,
+           :og_title, :og_description, :structured_data,
+           to: :meta_manager
+
+  # Publishing management delegation
+  delegate :published?, :draft?, :scheduled?, :archived?,
+           :publishable?, :status_display,
+           to: :publishing_manager
+
+  # Legacy method support for backward compatibility
   def tag_names=(names)
-    tag_list = names.split(',').map(&:strip).reject(&:blank?)
-    self.tags = tag_list.map do |name|
-      # 大文字小文字を無視して既存タグを検索
-      existing_tag = Tag.find_by('LOWER(name) = ?', name.downcase)
-      existing_tag || Tag.create!(name: name)
-    end
-  end
-  
-  def is_work?
-    categories.exists?(slug: 'works')
-  end
-  
-  def tech_stack_list
-    return [] if tech_stack.blank?
-    tech_stack.split(',').map(&:strip).reject(&:blank?)
-  end
-  
-  def tech_stack_list=(list)
-    self.tech_stack = list.join(', ') if list.is_a?(Array)
-  end
-  
-  def to_param
-    slug
+    content_manager.assign_tag_names(names)
   end
   
   private
   
-  def generate_slug
-    base_slug = title.parameterize
-    self.slug = base_slug
-    
-    # 重複チェックして番号を付加
-    counter = 1
-    while Article.where(slug: self.slug).where.not(id: self.id).exists?
-      self.slug = "#{base_slug}-#{counter}"
-      counter += 1
+  def generate_slug_if_needed
+    meta_manager.generate_slug if title_changed? && slug.blank?
+  end
+  
+  def set_published_at_if_needed
+    if status_changed? && status == 'published'
+      self.published_at ||= Time.current
     end
   end
   
-  def set_published_at
-    self.published_at ||= Time.current
+  def update_related_counts
+    update_category_counts
+    update_tag_counts
   end
-  
+
   def update_category_counts
-    categories.find_each { |category| category.update_column(:article_count, category.articles.count) }
+    categories.find_each { |category| category.update_column(:article_count, category.articles.published.count) }
   end
   
   def update_tag_counts
-    tags.find_each { |tag| tag.update_column(:article_count, tag.articles.count) }
+    tags.find_each { |tag| tag.update_column(:article_count, tag.articles.published.count) }
   end
 end
