@@ -73,7 +73,7 @@
           <tr class="hover:bg-gray-50">
             <td class="px-6 py-4">
               <div class="flex flex-col">
-                <%= link_to article.title, admin_article_path(article), 
+                <%= link_to article.title, admin_article_path(article.id), 
                             class: "text-sm font-medium text-gray-900 hover:text-blue-600" %>
                 <% if article.excerpt.present? %>
                   <p class="text-xs text-gray-500 mt-1">
@@ -129,20 +129,20 @@
             
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <div class="flex justify-end space-x-2">
-                <%= link_to "編集", edit_admin_article_path(article), 
+                <%= link_to "編集", edit_admin_article_path(article.id), 
                             class: "text-indigo-600 hover:text-indigo-900" %>
                 <% if article.draft? %>
-                  <%= link_to "公開", publish_admin_article_path(article),
+                  <%= link_to "公開", publish_admin_article_path(article.id),
                               method: :patch,
                               data: { turbo_method: :patch },
                               class: "text-green-600 hover:text-green-900" %>
                 <% elsif article.published? %>
-                  <%= link_to "非公開", unpublish_admin_article_path(article),
+                  <%= link_to "非公開", unpublish_admin_article_path(article.id),
                               method: :patch,
                               data: { turbo_method: :patch },
                               class: "text-yellow-600 hover:text-yellow-900" %>
                 <% end %>
-                <%= button_to "削除", admin_article_path(article), 
+                <%= button_to "削除", admin_article_path(article.id), 
                               method: :delete,
                               onclick: "return confirm('本当に「#{j(article.title)}」を削除しますか？')",
                               class: "text-red-600 hover:text-red-900 bg-transparent border-0 p-0 font-medium text-sm cursor-pointer" %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_13_033842) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_13_074557) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -212,6 +212,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_13_033842) do
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_sections_on_name", unique: true
     t.index ["position"], name: "index_sections_on_position"
+  end
+
+  create_table "site_settings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "key", null: false
+    t.string "setting_type", default: "text"
+    t.datetime "updated_at", null: false
+    t.text "value"
+    t.index ["key"], name: "index_site_settings_on_key", unique: true
   end
 
   create_table "slack_notifications", force: :cascade do |t|

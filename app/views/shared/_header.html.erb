@@ -1,8 +1,4 @@
-<%# 
-  使用方法: <%= render 'shared/header', variant: 'portfolio', show_search: false %>
-  variant: 'portfolio' | 'blog' | 'story'
-  show_search: true | false
-%>
+<%# Header partial - supports different variants %>
 
 <% variant ||= 'portfolio' %>
 <% show_search ||= false %>
@@ -11,28 +7,11 @@
   <nav class="container mx-auto px-6 py-4">
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-8">
-        <% if variant == 'story' %>
-          <%= link_to root_path, class: "flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors" do %>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            <span>ポートフォリオに戻る</span>
-          <% end %>
-        <% elsif variant == 'blog' %>
-          <%= link_to root_path, class: "flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors" do %>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            <span>ポートフォリオ</span>
-          <% end %>
-        <% end %>
-        
         <div class="flex items-center space-x-3">
           <!-- Logo -->
           <% if variant == 'portfolio' %>
-            <div class="w-10 h-10 bg-gradient-to-br from-blue-900 to-slate-800 rounded-lg flex items-center justify-center shadow-md">
-              <span class="text-white font-bold text-xl">M</span>
-            </div>
+            <%= site_logo(class: 'h-10 w-auto max-w-40') %>
+            <!-- デバッグ用コメント: ロゴ設定 = <%= SiteSetting.logo.image_value.attached? ? '設定済み' : '未設定' %> -->
           <% end %>
           <!-- Site Name -->
           <div class="text-xl font-bold text-gray-900">
@@ -40,7 +19,7 @@
             <% when 'story' %>
               My Story
             <% when 'blog' %>
-              Technical Blog
+              Miyakawa Codes Blog
             <% else %>
               Miyakawa Codes
             <% end %>
@@ -57,13 +36,6 @@
           <a href="#works" class="text-gray-700 hover:text-blue-600 transition-colors">Works</a>
           <a href="#blog" class="text-gray-700 hover:text-blue-600 transition-colors">Blog</a>
           <a href="#contact" class="text-gray-700 hover:text-blue-600 transition-colors">Contact</a>
-        </div>
-      <% elsif variant == 'blog' %>
-        <div class="hidden md:flex items-center space-x-6">
-          <a href="#latest" class="text-gray-700 hover:text-blue-600 transition-colors">最新記事</a>
-          <a href="#categories" class="text-gray-700 hover:text-blue-600 transition-colors">カテゴリ</a>
-          <a href="#popular" class="text-gray-700 hover:text-blue-600 transition-colors">人気記事</a>
-          <a href="#about-blog" class="text-gray-700 hover:text-blue-600 transition-colors">About</a>
         </div>
       <% end %>
       

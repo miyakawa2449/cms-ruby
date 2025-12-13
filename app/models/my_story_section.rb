@@ -132,43 +132,71 @@ class MyStorySection < ApplicationRecord
 
   # Additional data accessors (JSONB fields)
   def timeline_years
-    additional_data.dig('timeline', 'years') || []
+    years = additional_data['years']
+    case years
+    when Array
+      years
+    when String
+      years.present? ? [years] : []
+    else
+      []
+    end
   end
 
   def timeline_years=(years)
-    additional_data['timeline'] ||= {}
-    additional_data['timeline']['years'] = years
+    additional_data['years'] = years
   end
 
   def chapter_skills
-    additional_data.dig('chapter', 'skills') || []
+    skills = additional_data['skills']
+    case skills
+    when Array
+      skills
+    when String
+      skills.present? ? [skills] : []
+    else
+      []
+    end
   end
 
   def chapter_skills=(skills)
-    additional_data['chapter'] ||= {}
-    additional_data['chapter']['skills'] = skills
+    additional_data['skills'] = skills
   end
 
   def chapter_achievements
-    additional_data.dig('chapter', 'achievements') || []
+    achievements = additional_data['achievements']
+    case achievements
+    when Array
+      achievements
+    when String
+      achievements.present? ? [achievements] : []
+    else
+      []
+    end
   end
 
   def chapter_achievements=(achievements)
-    additional_data['chapter'] ||= {}
-    additional_data['chapter']['achievements'] = achievements
+    additional_data['achievements'] = achievements
   end
 
   def chapter_quote
-    additional_data.dig('chapter', 'quote')
+    additional_data['quote']
   end
 
   def chapter_quote=(quote)
-    additional_data['chapter'] ||= {}
-    additional_data['chapter']['quote'] = quote
+    additional_data['quote'] = quote
   end
 
   def project_items
-    additional_data.dig('projects', 'items') || []
+    items = additional_data.dig('projects', 'items')
+    case items
+    when Array
+      items
+    when String
+      items.present? ? [items] : []
+    else
+      []
+    end
   end
 
   def project_items=(items)
@@ -177,7 +205,15 @@ class MyStorySection < ApplicationRecord
   end
 
   def cta_buttons
-    additional_data.dig('cta', 'buttons') || []
+    buttons = additional_data.dig('cta', 'buttons')
+    case buttons
+    when Array
+      buttons
+    when String
+      buttons.present? ? [buttons] : []
+    else
+      []
+    end
   end
 
   def cta_buttons=(buttons)
@@ -186,7 +222,15 @@ class MyStorySection < ApplicationRecord
   end
 
   def skills_list
-    additional_data.dig('skills', 'list') || []
+    skills = additional_data.dig('skills', 'list')
+    case skills
+    when Array
+      skills
+    when String
+      skills.present? ? [skills] : []
+    else
+      []
+    end
   end
 
   def skills_list=(skills)

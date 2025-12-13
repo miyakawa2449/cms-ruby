@@ -76,7 +76,12 @@ class Admin::ArticlesController < Admin::BaseController
   private
   
   def set_article
-    @article = Article.find(params[:id])
+    # IDが数値の場合はIDで検索、そうでなければslugで検索
+    if params[:id] =~ /\A\d+\z/
+      @article = Article.find(params[:id])
+    else
+      @article = Article.find_by!(slug: params[:id])
+    end
   end
   
   def article_params

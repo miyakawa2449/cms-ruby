@@ -1,12 +1,18 @@
 <% content_for :title, "宮川 剛 - ポートフォリオ" %>
 <% content_for :description, "要件定義からプログラミングまで一人でできるエンジニア、宮川剛のポートフォリオサイト" %>
+<% content_for :meta_tags, portfolio_meta_tags %>
 
 <!-- Header -->
 <header class="fixed top-0 w-full bg-white/90 backdrop-blur-sm border-b border-gray-200 z-50">
   <nav class="container mx-auto px-6 py-4">
     <div class="flex items-center justify-between">
-      <div class="text-xl font-bold text-gray-900">
-        Miyakawa Codes
+      <div class="flex items-center space-x-3">
+        <!-- Logo -->
+        <%= site_logo(class: 'h-10 w-auto max-w-40') %>
+        <!-- Site Name -->
+        <div class="text-xl font-bold text-gray-900">
+          Miyakawa Codes
+        </div>
       </div>
       <div class="hidden md:flex space-x-8">
         <a href="#hero" class="text-blue-600 font-semibold hover:text-blue-800 transition-colors">Home</a>

@@ -30,7 +30,8 @@
                     <% if article.categories.any? %>
                       <div class="flex flex-wrap gap-2">
                         <% article.categories.each do |category| %>
-                          <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                          <span class="text-xs font-medium px-2.5 py-0.5 rounded text-white"
+                                style="background-color: <%= category.color || '#3B82F6' %>;">
                             <%= category.name %>
                           </span>
                         <% end %>
@@ -59,6 +60,9 @@
                     <%= truncate(strip_tags(safe_markdown(article.content)), length: 200) %>
                   </div>
                 <% end %>
+                
+                <!-- 技術スタック -->
+                <%= render 'shared/tech_stack', article: article, tag_class: 'bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded', margin_class: 'mb-4' %>
                 
                 <!-- フッター情報 -->
                 <div class="flex items-center justify-between pt-4 border-t border-gray-100">

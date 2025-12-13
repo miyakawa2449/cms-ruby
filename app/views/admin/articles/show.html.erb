@@ -13,22 +13,22 @@
 <!-- アクションボタン -->
 <div class="mb-6 flex justify-between items-center">
   <div class="flex space-x-3">
-    <%= link_to "編集", edit_admin_article_path(@article), 
+    <%= link_to "編集", edit_admin_article_path(@article.id), 
                 class: "bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors" %>
     
     <% if @article.draft? %>
-      <%= link_to "公開", publish_admin_article_path(@article),
+      <%= link_to "公開", publish_admin_article_path(@article.id),
                   method: :patch,
                   data: { turbo_method: :patch },
                   class: "bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors" %>
     <% elsif @article.published? %>
-      <%= link_to "非公開", unpublish_admin_article_path(@article),
+      <%= link_to "非公開", unpublish_admin_article_path(@article.id),
                   method: :patch,
                   data: { turbo_method: :patch },
                   class: "bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 transition-colors" %>
     <% end %>
     
-    <%= button_to "削除", admin_article_path(@article), 
+    <%= button_to "削除", admin_article_path(@article.id), 
                   method: :delete,
                   onclick: "return confirm('本当に「#{j(@article.title)}」を削除しますか？')",
                   class: "bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors border-0 cursor-pointer" %>
@@ -211,6 +211,23 @@
         </div>
       <% else %>
         <p class="text-sm text-gray-500">タグが設定されていません</p>
+      <% end %>
+    </div>
+
+    <!-- 技術スタック -->
+    <div class="bg-white shadow rounded-lg p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">技術スタック</h3>
+      
+      <% if @article.tech_stack.present? %>
+        <div class="flex flex-wrap gap-2">
+          <% @article.tech_stack_list.each do |tech| %>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <%= tech %>
+            </span>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-500">技術スタックが設定されていません</p>
       <% end %>
     </div>
   </div>

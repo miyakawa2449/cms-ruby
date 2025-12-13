@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   
   # Admin routes
   namespace :admin do
+    resource :site_settings, only: [:show, :update]
     resources :contacts, only: [:index, :show, :edit, :update, :destroy]
     root to: "dashboard#index", as: :root
     get "dashboard", to: "dashboard#index", as: :dashboard

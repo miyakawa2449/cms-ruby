@@ -23,6 +23,14 @@ class MyStoryController < ApplicationController
     @projects_section = @sections_by_type['projects']
     @cta_section = @sections_by_type['cta']
     
+    # Load recent works for Projects section
+    works_category = Category.find_by(slug: 'works')
+    @recent_works = if works_category
+                      Article.published.joins(:categories).where(categories: { id: works_category.id }).limit(3)
+                    else
+                      Article.published.limit(3)
+                    end
+    
     # Meta data for SEO
     @page_title = @hero_section&.title || "My Story"
     @page_description = @hero_section&.subtitle || "宮川 剛のキャリアストーリー"
