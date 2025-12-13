@@ -94,10 +94,13 @@ class MetaTagsService
     description = category.description.presence || 
                  "#{category.name}に関する記事一覧です。技術情報やプロジェクト進捗をお届けします。"
     
+    # Categoryモデルにkeywordsフィールドがないため、name + デフォルトキーワードを使用
+    keywords = "#{category.name},ブログ,技術記事,#{category.name}記事"
+    
     build_meta_tags(
       title: title,
       description: description,
-      keywords: "#{category.name},#{category.keywords || 'ブログ,技術記事'}",
+      keywords: keywords,
       og: {
         title: title,
         description: description,

@@ -23,29 +23,7 @@
 #
 
 class MyStorySection < ApplicationRecord
-  # Active Storage attachments
-  has_one_attached :background_image
-  has_one_attached :chapter_image
-  has_many_attached :gallery_images
-
-  # Validations
-  validates :section_type, presence: true, 
-                          inclusion: { 
-                            in: %w[hero timeline chapter_1 chapter_2 chapter_3 skills_integration projects cta],
-                            message: "%{value} is not a valid section type" 
-                          },
-                          uniqueness: true
-  validates :title, presence: true, length: { maximum: 255 }
-  validates :subtitle, length: { maximum: 255 }
-  validates :position, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  
-  # Scopes
-  scope :active, -> { where(is_active: true) }
-  scope :inactive, -> { where(is_active: false) }
-  scope :by_position, -> { order(:position) }
-  scope :active_by_position, -> { active.by_position }
-
-  # Section type constants
+  # Section type constants (定義順序重要)
   SECTION_TYPES = %w[
     hero
     timeline
@@ -67,6 +45,29 @@ class MyStorySection < ApplicationRecord
     'projects' => '実績・事例セクション',
     'cta' => 'Call to Action'
   }.freeze
+
+  # Active Storage attachments
+  has_one_attached :background_image
+  has_one_attached :chapter_image
+  has_many_attached :gallery_images
+
+  # Validations
+  validates :section_type, presence: true, 
+                          inclusion: { 
+                            in: SECTION_TYPES,
+                            message: "%{value} is not a valid section type" 
+                          },
+                          uniqueness: true
+  validates :title, presence: true, length: { maximum: 255 }
+  validates :subtitle, length: { maximum: 255 }
+  validates :position, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validate :validate_with_custom_validator
+  
+  # Scopes
+  scope :active, -> { where(is_active: true) }
+  scope :inactive, -> { where(is_active: false) }
+  scope :by_position, -> { order(:position) }
+  scope :active_by_position, -> { active.by_position }
 
   # Class methods
   def self.section_type_options
@@ -101,6 +102,34 @@ class MyStorySection < ApplicationRecord
     find_by_section_type('cta')
   end
 
+  # Service delegation methods
+  def json_manager
+    @json_manager ||= MyStorySectionJsonManager.new(self)
+  end
+
+  def position_manager
+    @position_manager ||= MyStorySectionPositionManager.new(self)
+  end
+
+  def validator
+    @validator ||= MyStorySectionValidator.new(self)
+  end
+
+  # JSON data delegation
+  delegate :timeline_years, :timeline_years=,
+           :chapter_skills, :chapter_skills=,
+           :chapter_achievements, :chapter_achievements=,
+           :chapter_quote, :chapter_quote=,
+           :project_items, :project_items=,
+           :cta_buttons, :cta_buttons=,
+           :skills_list, :skills_list=,
+           to: :json_manager
+
+  # Position management delegation
+  delegate :move_up, :move_down, :move_to_position,
+           :move_to_last, :move_to_first,
+           to: :position_manager
+
   # Instance methods
   def section_type_label
     SECTION_TYPE_LABELS[section_type] || section_type.humanize
@@ -130,114 +159,6 @@ class MyStorySection < ApplicationRecord
     section_type == 'cta'
   end
 
-  # Additional data accessors (JSONB fields)
-  def timeline_years
-    years = additional_data['years']
-    case years
-    when Array
-      years
-    when String
-      years.present? ? [years] : []
-    else
-      []
-    end
-  end
-
-  def timeline_years=(years)
-    additional_data['years'] = years
-  end
-
-  def chapter_skills
-    skills = additional_data['skills']
-    case skills
-    when Array
-      skills
-    when String
-      skills.present? ? [skills] : []
-    else
-      []
-    end
-  end
-
-  def chapter_skills=(skills)
-    additional_data['skills'] = skills
-  end
-
-  def chapter_achievements
-    achievements = additional_data['achievements']
-    case achievements
-    when Array
-      achievements
-    when String
-      achievements.present? ? [achievements] : []
-    else
-      []
-    end
-  end
-
-  def chapter_achievements=(achievements)
-    additional_data['achievements'] = achievements
-  end
-
-  def chapter_quote
-    additional_data['quote']
-  end
-
-  def chapter_quote=(quote)
-    additional_data['quote'] = quote
-  end
-
-  def project_items
-    items = additional_data.dig('projects', 'items')
-    case items
-    when Array
-      items
-    when String
-      items.present? ? [items] : []
-    else
-      []
-    end
-  end
-
-  def project_items=(items)
-    additional_data['projects'] ||= {}
-    additional_data['projects']['items'] = items
-  end
-
-  def cta_buttons
-    buttons = additional_data.dig('cta', 'buttons')
-    case buttons
-    when Array
-      buttons
-    when String
-      buttons.present? ? [buttons] : []
-    else
-      []
-    end
-  end
-
-  def cta_buttons=(buttons)
-    additional_data['cta'] ||= {}
-    additional_data['cta']['buttons'] = buttons
-  end
-
-  def skills_list
-    skills = additional_data.dig('skills', 'list')
-    case skills
-    when Array
-      skills
-    when String
-      skills.present? ? [skills] : []
-    else
-      []
-    end
-  end
-
-  def skills_list=(skills)
-    additional_data['skills'] ||= {}
-    additional_data['skills']['list'] = skills
-  end
-
   # Image helpers
   def has_background_image?
     background_image.attached?
@@ -259,7 +180,14 @@ class MyStorySection < ApplicationRecord
   def set_default_position
     return if position.present?
     
-    last_position = MyStorySection.maximum(:position) || 0
-    self.position = last_position + 1
+    self.position = MyStorySectionPositionManager.next_position
+  end
+
+  def validate_with_custom_validator
+    return unless validator.validate_all
+
+    validator.errors.each do |field, messages|
+      messages.each { |message| errors.add(field, message) }
+    end
   end
 end
