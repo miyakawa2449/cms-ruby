@@ -22,40 +22,50 @@ class Admin::SiteSettingsController < ApplicationController
       # Faviconの更新
       if params[:site_setting][:favicon].present?
         begin
-          @favicon.image_value.attach(params[:site_setting][:favicon])
-          if @favicon.save
+          result = @favicon.value_manager.update_value(params[:site_setting][:favicon])
+          if result[:valid]
             updated_count += 1
-            Rails.logger.info "Favicon saved successfully"
+            Rails.logger.info "Favicon updated successfully"
           else
-            Rails.logger.error "Favicon save failed: #{@favicon.errors.full_messages.join(', ')}"
+            Rails.logger.error "Favicon update failed: #{result[:errors]}"
           end
         rescue => e
-          Rails.logger.error "Favicon attach error: #{e.message}"
+          Rails.logger.error "Favicon update error: #{e.message}"
         end
       end
       
       # ロゴの更新
       if params[:site_setting][:logo].present?
-        @logo.image_value.attach(params[:site_setting][:logo])
-        updated_count += 1 if @logo.save
+        result = @logo.value_manager.update_value(params[:site_setting][:logo])
+        updated_count += 1 if result[:valid]
       end
       
       # OG画像の更新
       if params[:site_setting][:og_image].present?
-        @og_image.image_value.attach(params[:site_setting][:og_image])
-        updated_count += 1 if @og_image.save
+        result = @og_image.value_manager.update_value(params[:site_setting][:og_image])
+        updated_count += 1 if result[:valid]
       end
       
       # サイトタイトルの更新
       if params[:site_setting][:site_title].present?
-        @site_title.value = params[:site_setting][:site_title]
-        updated_count += 1 if @site_title.save
+        result = @site_title.value_manager.update_value(params[:site_setting][:site_title])
+        if result[:valid]
+          updated_count += 1
+          Rails.logger.info "Site title updated successfully"
+        else
+          Rails.logger.error "Site title update failed: #{result[:errors]}"
+        end
       end
       
       # サイト説明文の更新
       if params[:site_setting][:site_description].present?
-        @site_description.value = params[:site_setting][:site_description]
-        updated_count += 1 if @site_description.save
+        result = @site_description.value_manager.update_value(params[:site_setting][:site_description])
+        if result[:valid]
+          updated_count += 1
+          Rails.logger.info "Site description updated successfully"
+        else
+          Rails.logger.error "Site description update failed: #{result[:errors]}"
+        end
       end
     end
 

@@ -120,136 +120,134 @@
     </section>
   <% end %>
 
-  <!-- Dynamic Chapter Sections -->
-  <% @chapter_sections.each do |section| %>
-    <% if section %>
+  <!-- Dynamic Sections in Position Order -->
+  <% @my_story_sections.each do |section| %>
+    <% next if %w[hero timeline].include?(section.section_type) %>
+    
+    <% if section.chapter_section? %>
       <%= render 'chapter_section', section: section %>
-    <% end %>
-  <% end %>
-
-  <!-- Skills Integration Section -->
-  <% if @skills_integration_section %>
-    <section class="py-20" style="background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);">
-      <div class="container mx-auto px-6">
-        <div class="text-center mb-16">
-          <h2 class="text-3xl font-bold text-white mb-6"><%= @skills_integration_section.title %></h2>
+    <% elsif section.skills_integration_section? %>
+      <!-- Skills Integration Section (positioned dynamically) -->
+      <section class="py-20" style="background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);">
+        <div class="container mx-auto px-6">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-white mb-6"><%= section.title %></h2>
+          </div>
+          
+          <div class="max-w-6xl mx-auto">
+            <!-- Skills Cards Grid -->
+            <div class="grid md:grid-cols-4 gap-6 mb-12">
+              <% section.additional_data['skill_cards']&.each do |card| %>
+                <div class="bg-gray-800 rounded-lg p-6 text-center scroll-reveal">
+                  <div class="text-4xl mb-4"><%= card['icon'] %></div>
+                  <h3 class="text-lg font-bold text-white mb-4"><%= card['title'] %></h3>
+                  <ul class="space-y-2 text-sm text-gray-300">
+                    <% card['skills'].each do |skill| %>
+                      <li>・<%= skill %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              <% end %>
+            </div>
+            
+            <!-- Summary -->
+            <% if section.additional_data['summary'].present? %>
+              <div class="bg-blue-600 rounded-lg p-8 text-center scroll-reveal">
+                <p class="text-xl text-white leading-relaxed">
+                  <%= section.additional_data['summary'] %>
+                </p>
+              </div>
+            <% end %>
+          </div>
         </div>
-        
-        <div class="max-w-6xl mx-auto">
-          <!-- Skills Cards Grid -->
-          <div class="grid md:grid-cols-4 gap-6 mb-12">
-            <% @skills_integration_section.additional_data['skill_cards']&.each do |card| %>
-              <div class="bg-gray-800 rounded-lg p-6 text-center scroll-reveal">
-                <div class="text-4xl mb-4"><%= card['icon'] %></div>
-                <h3 class="text-lg font-bold text-white mb-4"><%= card['title'] %></h3>
-                <ul class="space-y-2 text-sm text-gray-300">
-                  <% card['skills'].each do |skill| %>
-                    <li>・<%= skill %></li>
+      </section>
+    <% elsif section.projects_section? %>
+      <!-- Projects Section (positioned dynamically) -->
+      <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold mb-6"><%= section.title %></h2>
+          </div>
+          
+          <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <% @recent_works.limit(3).each do |work| %>
+              <div class="bg-white rounded-xl overflow-hidden shadow-lg scroll-reveal">
+                <% if work.thumbnail_image.attached? %>
+                  <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200">
+                    <%= image_tag work.thumbnail_image, 
+                        alt: work.title, 
+                        class: "w-full h-full object-cover" %>
+                  </div>
+                <% else %>
+                  <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                    <span class="text-gray-500">プロジェクト画像</span>
+                  </div>
+                <% end %>
+                
+                <div class="p-6">
+                  <h3 class="text-xl font-bold mb-3"><%= work.title %></h3>
+                  <div class="text-gray-600 leading-relaxed mb-4">
+                    <%= truncate(strip_tags(safe_markdown(work.excerpt.presence || work.content)), length: 120) %>
+                  </div>
+                  
+                  <div class="flex justify-between items-center text-sm text-gray-500">
+                    <span>期間: 6ヶ月</span>
+                    <span>規模: 中規模</span>
+                  </div>
+                  
+                  <% if work.tech_stack.present? %>
+                    <div class="mt-4">
+                      <div class="flex flex-wrap gap-2">
+                        <% work.tech_stack_list.each do |tech| %>
+                          <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                            <%= tech %>
+                          </span>
+                        <% end %>
+                      </div>
+                    </div>
                   <% end %>
-                </ul>
+                </div>
               </div>
             <% end %>
           </div>
           
-          <!-- Summary -->
-          <% if @skills_integration_section.additional_data['summary'].present? %>
-            <div class="bg-blue-600 rounded-lg p-8 text-center scroll-reveal">
-              <p class="text-xl text-white leading-relaxed">
-                <%= @skills_integration_section.additional_data['summary'] %>
-              </p>
-            </div>
-          <% end %>
-        </div>
-      </div>
-    </section>
-  <% end %>
-
-  <!-- Projects Section -->
-  <% if @projects_section %>
-    <section class="py-20 bg-gray-50">
-      <div class="container mx-auto px-6">
-        <div class="text-center mb-16">
-          <h2 class="text-3xl font-bold mb-6"><%= @projects_section.title %></h2>
-        </div>
-        
-        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <% @recent_works.limit(3).each do |work| %>
-            <div class="bg-white rounded-xl overflow-hidden shadow-lg scroll-reveal">
-              <% if work.thumbnail_image.attached? %>
-                <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200">
-                  <%= image_tag work.thumbnail_image, 
-                      alt: work.title, 
-                      class: "w-full h-full object-cover" %>
-                </div>
-              <% else %>
-                <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                  <span class="text-gray-500">プロジェクト画像</span>
-                </div>
-              <% end %>
-              
-              <div class="p-6">
-                <h3 class="text-xl font-bold mb-3"><%= work.title %></h3>
-                <div class="text-gray-600 leading-relaxed mb-4">
-                  <%= truncate(strip_tags(safe_markdown(work.excerpt.presence || work.content)), length: 120) %>
-                </div>
-                
-                <div class="flex justify-between items-center text-sm text-gray-500">
-                  <span>期間: 6ヶ月</span>
-                  <span>規模: 中規模</span>
-                </div>
-                
-                <% if work.tech_stack.present? %>
-                  <div class="mt-4">
-                    <div class="flex flex-wrap gap-2">
-                      <% work.tech_stack_list.each do |tech| %>
-                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                          <%= tech %>
-                        </span>
-                      <% end %>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-        </div>
-        
-        <div class="text-center mt-8">
-          <%= link_to "/blog?category=works", 
-                      class: "bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors" do %>
-            詳細な事例を見る
-          <% end %>
-        </div>
-      </div>
-    </section>
-  <% end %>
-
-  <!-- CTA Section -->
-  <% if @cta_section %>
-    <section class="py-20" style="background: linear-gradient(90deg, #2563eb 0%, #9333ea 100%);">
-      <div class="container mx-auto px-6 text-center">
-        <h2 class="text-3xl font-bold text-white mb-6"><%= @cta_section.title %></h2>
-        <% if @cta_section.subtitle.present? %>
-          <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            <%= @cta_section.subtitle %>
-          </p>
-        <% end %>
-        <div class="space-x-4">
-          <% @cta_section.additional_data['buttons']&.each do |button| %>
-            <%= link_to button['url'], 
-                        class: "inline-block #{
-                          button['style'] == 'primary' ? 
-                            'bg-white text-blue-600 hover:bg-gray-100' : 
-                            'border-2 border-white text-white hover:bg-white hover:text-blue-600'
-                        } px-8 py-3 rounded-lg font-semibold transition-colors" do %>
-              <%= button['text'] %>
+          <div class="text-center mt-8">
+            <%= link_to "/blog?category=works", 
+                        class: "bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors" do %>
+              詳細な事例を見る
             <% end %>
-          <% end %>
+          </div>
         </div>
-      </div>
-    </section>
-  <% else %>
-    <!-- Fallback CTA Section -->
+      </section>
+    <% elsif section.cta_section? %>
+      <!-- CTA Section (positioned dynamically) -->
+      <section class="py-20" style="background: linear-gradient(90deg, #2563eb 0%, #9333ea 100%);">
+        <div class="container mx-auto px-6 text-center">
+          <h2 class="text-3xl font-bold text-white mb-6"><%= section.title %></h2>
+          <% if section.subtitle.present? %>
+            <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+              <%= section.subtitle %>
+            </p>
+          <% end %>
+          <div class="space-x-4">
+            <% section.additional_data['buttons']&.each do |button| %>
+              <%= link_to button['url'], 
+                          class: "inline-block #{
+                            button['style'] == 'primary' ? 
+                              'bg-white text-blue-600 hover:bg-gray-100' : 
+                              'border-2 border-white text-white hover:bg-white hover:text-blue-600'
+                          } px-8 py-3 rounded-lg font-semibold transition-colors" do %>
+                <%= button['text'] %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </section>
+    <% end %>
+  <% end %>
+
+  <!-- Fallback CTA Section (only if no CTA section found in dynamic sections) -->
+  <% unless @my_story_sections.any?(&:cta_section?) %>
     <section class="py-20" style="background: linear-gradient(90deg, #eff6ff 0%, #faf5ff 100%);">
       <div class="container mx-auto px-6 text-center">
         <h2 class="text-3xl font-bold mb-6">この希少なスキルセットで<br>あなたのプロジェクトをサポートします</h2>

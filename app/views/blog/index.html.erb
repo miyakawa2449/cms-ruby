@@ -1,10 +1,10 @@
 <% if params[:category].present? %>
   <% current_category = Category.find_by(slug: params[:category]) %>
-  <% content_for :title, current_category&.name ? "#{current_category.name} | Miyakawa Codes Blog" : "Miyakawa Codes Blog | 宮川 剛" %>
+  <% content_for :title, current_category&.name ? "#{current_category.name} - Miyakawa Codes Blog" : "Miyakawa Codes Blog" %>
   <% content_for :description, current_category&.description.presence || "技術情報やプロジェクト進捗を発信するブログページです。" %>
   <% content_for :meta_tags, category_meta_tags(current_category) %>
 <% else %>
-  <% content_for :title, "Miyakawa Codes Blog | 宮川 剛 - ポートフォリオ" %>
+  <% content_for :title, "Miyakawa Codes Blog" %>
   <% content_for :description, "技術情報やプロジェクト進捗を発信するブログページです。最新の技術トレンドや開発ノウハウをお届けします。" %>
   <% content_for :meta_tags, blog_top_meta_tags %>
 <% end %>

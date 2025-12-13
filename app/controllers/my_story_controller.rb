@@ -1,7 +1,7 @@
 class MyStoryController < ApplicationController
   # GET /my-story
   def index
-    # My Story page logic - load dynamic sections
+    # My Story page logic - load dynamic sections in position order
     @my_story_sections = MyStorySection.active_by_position.includes(
       background_image_attachment: :blob,
       chapter_image_attachment: :blob,
@@ -14,11 +14,10 @@ class MyStoryController < ApplicationController
     # Extract specific sections for easier view access
     @hero_section = @sections_by_type['hero']
     @timeline_section = @sections_by_type['timeline']
-    @chapter_sections = [
-      @sections_by_type['chapter_1'],
-      @sections_by_type['chapter_2'], 
-      @sections_by_type['chapter_3']
-    ].compact
+    
+    # Chapter sections in position order (not fixed order)
+    @chapter_sections = @my_story_sections.select(&:chapter_section?)
+    
     @skills_integration_section = @sections_by_type['skills_integration']
     @projects_section = @sections_by_type['projects']
     @cta_section = @sections_by_type['cta']
