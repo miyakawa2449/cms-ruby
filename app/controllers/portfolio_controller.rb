@@ -23,6 +23,12 @@ class PortfolioController < ApplicationController
                                 .where('categories.slug IS NULL OR categories.slug != ?', 'works')
                                 .recent
                                 .limit(3)
+      
+      # 検索機能追加
+      if params[:search].present?
+        @recent_articles = @recent_articles.search_by_content(params[:search])
+        @search_query = params[:search]
+      end
     rescue ActiveRecord::ConnectionNotEstablished => e
       Rails.logger.error "DB Connection Error in PortfolioController#index: #{e.message}"
       # 再接続を試行

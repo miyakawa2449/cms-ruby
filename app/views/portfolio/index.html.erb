@@ -24,12 +24,16 @@
         <a href="#contact" class="text-gray-700 hover:text-blue-600 transition-colors">Contact</a>
       </div>
       <div class="flex items-center space-x-4">
-        <div class="relative">
-          <input type="search" placeholder="検索..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-          <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <%= form_with url: root_path, method: :get, local: true, class: "relative" do |form| %>
+          <%= form.text_field :search, 
+              value: params[:search],
+              placeholder: "検索...", 
+              class: "pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+              onkeydown: "if(event.key==='Enter'){this.form.submit();}" %>
+          <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
-        </div>
+        <% end %>
         <button class="md:hidden">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>

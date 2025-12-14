@@ -2,18 +2,15 @@ class Admin::ArticlesController < Admin::BaseController
   before_action :set_article, only: [:show, :edit, :update, :destroy, :publish, :unpublish]
   
   def index
-    @articles = Article.includes(:admin_user, :categories, :tags)
-                      .order(created_at: :desc)
-                      .page(params[:page])
+    # フィルタリングをサービスに委譲
+    filter_service = ArticleFilterService.new
+    @articles = filter_service.filter(params)
     
-    # フィルタリング
-    @articles = @articles.where(status: params[:status]) if params[:status].present?
-    @articles = @articles.joins(:categories).where(categories: { id: params[:category_id] }) if params[:category_id].present?
-    
-    # 統計情報
-    @total_count = Article.count
-    @published_count = Article.published.count
-    @draft_count = Article.draft.count
+    # 統計情報をサービスに委譲
+    stats = ArticleStatisticsService.new.index_stats
+    @total_count = stats[:total_count]
+    @published_count = stats[:published_count]
+    @draft_count = stats[:draft_count]
     
     # フィルタ用データ
     @categories = Category.ordered
@@ -24,12 +21,11 @@ class Admin::ArticlesController < Admin::BaseController
   
   def new
     @article = current_admin_user.articles.build
-    @categories = Category.ordered
-    @article.categories.build if @article.categories.empty?
+    setup_form_data
   end
   
   def edit
-    @categories = Category.ordered
+    setup_form_data
   end
   
   def create
@@ -38,7 +34,7 @@ class Admin::ArticlesController < Admin::BaseController
     if @article.save
       redirect_to admin_article_path(@article), notice: "記事を作成しました。"
     else
-      @categories = Category.ordered
+      setup_form_data
       render :new, status: :unprocessable_entity
     end
   end
@@ -47,7 +43,7 @@ class Admin::ArticlesController < Admin::BaseController
     if @article.update(article_params)
       redirect_to admin_article_path(@article), notice: "記事を更新しました。"
     else
-      @categories = Category.ordered
+      setup_form_data
       render :edit, status: :unprocessable_entity
     end
   end
@@ -58,18 +54,24 @@ class Admin::ArticlesController < Admin::BaseController
   end
   
   def publish
-    if @article.update(status: 'published', published_at: Time.current)
-      redirect_to admin_articles_path, notice: "記事を公開しました。"
+    publishing_service = ArticlePublishingService.new(@article)
+    result = publishing_service.publish
+    
+    if result[:success]
+      redirect_to admin_articles_path, notice: result[:message]
     else
-      redirect_to admin_articles_path, alert: "公開に失敗しました。"
+      redirect_to admin_articles_path, alert: result[:message]
     end
   end
   
   def unpublish
-    if @article.update(status: 'draft', published_at: nil)
-      redirect_to admin_articles_path, notice: "記事を非公開にしました。"
+    publishing_service = ArticlePublishingService.new(@article)
+    result = publishing_service.unpublish
+    
+    if result[:success]
+      redirect_to admin_articles_path, notice: result[:message]
     else
-      redirect_to admin_articles_path, alert: "非公開化に失敗しました。"
+      redirect_to admin_articles_path, alert: result[:message]
     end
   end
   
@@ -82,6 +84,12 @@ class Admin::ArticlesController < Admin::BaseController
     else
       @article = Article.find_by!(slug: params[:id])
     end
+  end
+
+  def setup_form_data
+    association_service = ArticleAssociationService.new(@article)
+    form_data = association_service.setup_for_form
+    @categories = form_data[:categories]
   end
   
   def article_params
