@@ -1,4 +1,6 @@
 class Category < ApplicationRecord
+  include Positionable
+  
   belongs_to :parent, class_name: "Category", optional: true
   has_many :children, class_name: "Category", foreign_key: :parent_id, dependent: :destroy
   
@@ -8,10 +10,8 @@ class Category < ApplicationRecord
   validates :name, presence: true, uniqueness: true, length: { maximum: 100 }
   validates :slug, presence: true, uniqueness: true, length: { maximum: 100 }
   validates :color, format: { with: /\A#[0-9A-Fa-f]{6}\z/ }, allow_blank: true
-  validates :position, numericality: { greater_than_or_equal_to: 0 }
   
   scope :root_categories, -> { where(parent_id: nil) }
-  scope :ordered, -> { order(:position, :name) }
   scope :with_published_articles, -> { joins(:articles).where(articles: { status: 'published' }).distinct }
   
   before_validation :generate_slug, if: -> { name_changed? && slug.blank? }

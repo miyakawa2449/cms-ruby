@@ -23,6 +23,9 @@
 #
 
 class MyStorySection < ApplicationRecord
+  include Positionable
+  include JsonStorable
+  
   # Section type constants (定義順序重要)
   SECTION_TYPES = %w[
     hero
@@ -60,7 +63,6 @@ class MyStorySection < ApplicationRecord
                           uniqueness: true
   validates :title, presence: true, length: { maximum: 255 }
   validates :subtitle, length: { maximum: 255 }
-  validates :position, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validate :validate_with_custom_validator
   
   # Scopes
@@ -180,7 +182,7 @@ class MyStorySection < ApplicationRecord
   def set_default_position
     return if position.present?
     
-    self.position = MyStorySectionPositionManager.next_position
+    self.position = self.class.next_position
   end
 
   def validate_with_custom_validator

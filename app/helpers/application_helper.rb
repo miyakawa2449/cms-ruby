@@ -1,99 +1,34 @@
-require 'redcarpet'
-require 'cgi'
-
 module ApplicationHelper
-  # カスタムレンダラーをモジュール外で定義
-  class HTMLwithPygments < Redcarpet::Render::HTML
-    def block_code(code, language)
-      if language.present?
-        # 言語が指定されている場合
-        "<pre class=\"language-#{CGI.escapeHTML(language)} bg-gray-100 p-4 rounded-lg overflow-x-auto\"><code class=\"language-#{CGI.escapeHTML(language)}\">#{CGI.escapeHTML(code)}</code></pre>"
-      else
-        # 言語が指定されていない場合
-        "<pre class=\"bg-gray-100 p-4 rounded-lg overflow-x-auto\"><code>#{CGI.escapeHTML(code)}</code></pre>"
-      end
-    end
-  end
+  # 他のヘルパーモジュールをインクルード
+  include MarkdownHelper
+  include SectionHelper
+  include TimeHelper
+  include NavigationHelper
 
-  # Markdownテキストを安全なHTMLに変換
-  def markdown(text)
-    return '' if text.blank?
-    
-    # エスケープされた改行文字を実際の改行に変換
-    text = text.gsub('\\n', "\n")
-    
-    renderer = Redcarpet::Render::HTML.new(
-      filter_html: false,
-      no_images: false,
-      no_links: false,
-      no_styles: true,
-      safe_links_only: true,
-      with_toc_data: false,
-      hard_wrap: true
-    )
-    
-    markdown_processor = Redcarpet::Markdown.new(renderer,
-      autolink: true,
-      tables: true,
-      fenced_code_blocks: true,
-      strikethrough: true,
-      space_after_headers: true,
-      superscript: true,
-      underline: true,
-      highlight: true,
-      quote: true
-    )
-    
-    markdown_processor.render(text).html_safe
-  end
+  # アプリケーション全体で使用する基本的なヘルパーメソッド
   
-  # コードシンタックスハイライト対応版（将来拡張用）
-  def markdown_with_highlight(text)
-    return '' if text.blank?
-    
-    # エスケープされた改行文字を実際の改行に変換
-    text = text.gsub('\\n', "\n")
-    
-    renderer = HTMLwithPygments.new(
-      filter_html: false,
-      no_images: false,
-      no_links: false,
-      no_styles: true,
-      safe_links_only: true,
-      with_toc_data: false,
-      hard_wrap: true
-    )
-    
-    markdown_processor = Redcarpet::Markdown.new(renderer,
-      autolink: true,
-      tables: true,
-      fenced_code_blocks: true,
-      strikethrough: true,
-      space_after_headers: true,
-      superscript: true,
-      underline: true,
-      highlight: true,
-      quote: true
-    )
-    
-    markdown_processor.render(text).html_safe
-  end
-  
-  # 安全なMarkdown処理（エラーハンドリング付き）
-  def safe_markdown(text)
-    return '' if text.blank?
-    
-    begin
-      markdown(text)
-    rescue StandardError => e
-      Rails.logger.error "Markdown processing error: #{e.message}"
-      simple_format(text)
+  # フラッシュメッセージのCSSクラス
+  def flash_class(type)
+    case type.to_sym
+    when :notice
+      'bg-green-100 border-green-500 text-green-700'
+    when :alert
+      'bg-red-100 border-red-500 text-red-700'
+    when :error
+      'bg-red-100 border-red-500 text-red-700'
+    when :warning
+      'bg-yellow-100 border-yellow-500 text-yellow-700'
+    else
+      'bg-blue-100 border-blue-500 text-blue-700'
     end
   end
   
-  # Aboutセクションの情報を取得
-  def about_section
-    @about_section ||= Section.find_by(name: 'about')
+  # 環境表示用ヘルパー
+  def environment_badge
+    return unless Rails.env.development? || Rails.env.staging?
+    
+    content_tag :div, 
+                Rails.env.upcase, 
+                class: "fixed top-0 right-0 z-50 bg-#{Rails.env.development? ? 'green' : 'yellow'}-500 text-white px-2 py-1 text-xs"
   end
-  
 end

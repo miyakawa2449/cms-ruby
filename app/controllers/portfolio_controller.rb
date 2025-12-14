@@ -16,11 +16,13 @@ class PortfolioController < ApplicationController
       end
       
       # ブログの最新記事を取得（Works記事除外）
+      works_article_ids = Article.joins(:categories)
+                                 .where(categories: { slug: 'works' })
+                                 .pluck(:id)
+      
       @recent_articles = Article.published
                                 .includes(:categories, :tags)
-                                .joins('LEFT JOIN article_categories ON articles.id = article_categories.article_id')
-                                .joins('LEFT JOIN categories ON article_categories.category_id = categories.id')
-                                .where('categories.slug IS NULL OR categories.slug != ?', 'works')
+                                .where.not(id: works_article_ids)
                                 .recent
                                 .limit(3)
       

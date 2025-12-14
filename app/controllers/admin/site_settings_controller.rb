@@ -1,5 +1,4 @@
-class Admin::SiteSettingsController < ApplicationController
-  before_action :authenticate_admin_user!
+class Admin::SiteSettingsController < Admin::BaseController
   before_action :set_site_settings
 
   def show

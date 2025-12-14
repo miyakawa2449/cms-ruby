@@ -92,3 +92,57 @@ ja:
       required: "を入力してください"
 
   hello: "こんにちは"
+  
+  devise:
+    sessions:
+      signed_in: "ログインしました"
+      signed_out: "ログアウトしました"
+      already_signed_out: "既にログアウトしています"
+      admin_user:
+        signed_in: "管理者としてログインしました"
+        signed_out: "管理者としてログアウトしました"
+    passwords:
+      send_instructions: "パスワードリセット手順を含むメールを送信しました"
+      updated: "パスワードが正常に変更されました"
+      updated_not_active: "パスワードが正常に変更されました"
+      send_paranoid_instructions: "メールアドレスが登録されている場合、パスワードリセット手順を含むメールを送信します"
+      no_token: "このページにはパスワードリセットメールからのみアクセスできます"
+    confirmations:
+      send_instructions: "確認手順を含むメールを送信しました"
+      send_paranoid_instructions: "メールアドレスが登録されている場合、確認手順を含むメールを送信します"
+      confirmed: "アカウントが確認されました"
+    registrations:
+      destroyed: "アカウントが削除されました"
+      signed_up: "アカウントが作成されました"
+      signed_up_but_inactive: "アカウントが作成されましたが、アクティベーションが必要です"
+      signed_up_but_locked: "アカウントが作成されましたが、ロックされています"
+      signed_up_but_unconfirmed: "確認メールを送信しました"
+      update_needs_confirmation: "アカウントが更新されましたが、確認が必要です"
+      updated: "アカウントが更新されました"
+      updated_but_not_signed_in: "アカウントが更新されました。再度ログインしてください"
+    unlocks:
+      send_instructions: "アカウントのロック解除手順を含むメールを送信しました"
+      send_paranoid_instructions: "アカウントが存在する場合、ロック解除手順を含むメールを送信します"
+      unlocked: "アカウントのロックが解除されました"
+    omniauth:
+      success: "認証されました"
+      failure: "認証に失敗しました: %{reason}"
+    mailer:
+      confirmation_instructions:
+        subject: "確認手順"
+      reset_password_instructions:
+        subject: "パスワードリセット手順"
+      unlock_instructions:
+        subject: "アカウントのロック解除手順"
+      password_change:
+        subject: "パスワードが変更されました"
+    failure:
+      already_authenticated: "既にログインしています"
+      inactive: "アカウントがアクティベートされていません"
+      invalid: "メールアドレスまたはパスワードが正しくありません"
+      locked: "アカウントがロックされています"
+      last_attempt: "あなたのアカウントがロックされる前にもう1度お試しください"
+      not_found_in_database: "メールアドレスまたはパスワードが正しくありません"
+      timeout: "セッションがタイムアウトしました。続行するには再度ログインしてください"
+      unauthenticated: "続行するにはログインまたは登録が必要です"
+      unconfirmed: "続行する前にアカウントを確認してください"

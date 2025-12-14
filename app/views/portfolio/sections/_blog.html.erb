@@ -12,10 +12,9 @@
       </div>
       
       <!-- 最新記事 -->
-      <% posts_count = (content['posts_count'] || 5).to_i %>
       <% if @recent_articles.present? %>
         <div class="max-w-4xl mx-auto space-y-8 mb-12">
-          <% @recent_articles.limit(posts_count).each do |article| %>
+          <% @recent_articles.each do |article| %>
             <article class="bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden">
               <div class="p-8">
                 <!-- ヘッダー情報 -->

@@ -156,9 +156,10 @@ bin/ci
 
 ### 主要設計書
 - [総合仕様書](docs/specifications/spec.md) - プロジェクト全体仕様（999行）
-- [Phase計画書](docs/development/phase_plan_rails_8_0.md) - Rails 8.0.4版開発計画（安定版）
-- [データベース設計v2](docs/database/schema_design_v2.md) - Rails 8.0対応版
+- [Phase計画書](docs/development/phase_plan_rails_8_1_1.md) - Rails 8.1.1版開発計画（最新版）
+- [データベース設計v2](docs/database/schema_design_v2.md) - Rails 8.1対応版
 - [API設計](docs/api/api_design.md) - 公開API + 内部API仕様
+- [デプロイ前検討事項](docs/development/TODO_DEPLOY.md) - 本番リリース前の確認項目
 
 ### プロトタイプ（17画面完成）
 - [フロントエンド画面](docs/wireframes/app/views/) - ポートフォリオ・ブログUI

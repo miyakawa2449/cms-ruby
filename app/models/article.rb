@@ -1,4 +1,6 @@
 class Article < ApplicationRecord
+  include Publishable
+  
   belongs_to :admin_user
   
   has_many :article_categories, dependent: :destroy
