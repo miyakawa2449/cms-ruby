@@ -8,33 +8,32 @@ class Admin::MyStorySectionsController < Admin::BaseController
       gallery_images_attachments: :blob
     )
     
-    # セクション統計
-    @total_sections = @my_story_sections.count
-    @active_sections = @my_story_sections.select(&:is_active).count
-    @inactive_sections = @total_sections - @active_sections
+    # 統計情報をサービスに委譲
+    stats_service = MyStorySectionStatisticsService.new(@my_story_sections)
+    stats = stats_service.section_index_stats
+    @total_sections = stats[:total_sections]
+    @active_sections = stats[:active_sections]
+    @inactive_sections = stats[:inactive_sections]
   end
 
   def show
-    @section_details = {
-      has_background_image: @my_story_section.has_background_image?,
-      has_chapter_image: @my_story_section.has_chapter_image?,
-      has_gallery_images: @my_story_section.has_gallery_images?,
-      additional_data_keys: @my_story_section.additional_data.keys
-    }
+    # 詳細情報をサービスに委譲
+    state_service = MyStorySectionStateService.new(@my_story_section)
+    @section_details = state_service.section_details
   end
 
   def new
     @my_story_section = MyStorySection.new
-    @available_section_types = available_section_types
+    @available_section_types = MyStorySectionTypeService.available_types_for(@my_story_section)
   end
 
   def edit
-    @available_section_types = available_section_types
+    @available_section_types = MyStorySectionTypeService.available_types_for(@my_story_section)
   end
 
   def create
     @my_story_section = MyStorySection.new(my_story_section_params)
-    @available_section_types = available_section_types
+    @available_section_types = MyStorySectionTypeService.available_types_for(@my_story_section)
 
     if @my_story_section.save
       redirect_to admin_my_story_section_path(@my_story_section), 
@@ -45,7 +44,7 @@ class Admin::MyStorySectionsController < Admin::BaseController
   end
 
   def update
-    @available_section_types = available_section_types
+    @available_section_types = MyStorySectionTypeService.available_types_for(@my_story_section)
 
     if @my_story_section.update(my_story_section_params)
       redirect_to admin_my_story_section_path(@my_story_section),
@@ -63,50 +62,34 @@ class Admin::MyStorySectionsController < Admin::BaseController
   end
 
   def move_up
-    current_position = @my_story_section.position
-    previous_section = MyStorySection.where('position < ?', current_position)
-                                   .order(position: :desc)
-                                   .first
-
-    if previous_section
-      MyStorySection.transaction do
-        @my_story_section.update!(position: previous_section.position)
-        previous_section.update!(position: current_position)
-      end
+    ordering_service = MyStorySectionOrderingService.new(@my_story_section)
+    
+    if ordering_service.move_up
       redirect_to admin_my_story_sections_path, notice: "セクションの順序を上に移動しました。"
     else
-      redirect_to admin_my_story_sections_path, alert: "これより上に移動できません。"
+      redirect_to admin_my_story_sections_path, alert: ordering_service.error_messages
     end
-  rescue ActiveRecord::RecordInvalid => e
-    redirect_to admin_my_story_sections_path, alert: "移動に失敗しました: #{e.message}"
   end
 
   def move_down
-    current_position = @my_story_section.position
-    next_section = MyStorySection.where('position > ?', current_position)
-                                .order(position: :asc)
-                                .first
-
-    if next_section
-      MyStorySection.transaction do
-        @my_story_section.update!(position: next_section.position)
-        next_section.update!(position: current_position)
-      end
+    ordering_service = MyStorySectionOrderingService.new(@my_story_section)
+    
+    if ordering_service.move_down
       redirect_to admin_my_story_sections_path, notice: "セクションの順序を下に移動しました。"
     else
-      redirect_to admin_my_story_sections_path, alert: "これより下に移動できません。"
+      redirect_to admin_my_story_sections_path, alert: ordering_service.error_messages
     end
-  rescue ActiveRecord::RecordInvalid => e
-    redirect_to admin_my_story_sections_path, alert: "移動に失敗しました: #{e.message}"
   end
 
   def toggle_active
-    @my_story_section.update!(is_active: !@my_story_section.is_active?)
-    status_text = @my_story_section.is_active? ? "アクティブ" : "非アクティブ"
-    redirect_to admin_my_story_sections_path, 
-                notice: "セクション「#{@my_story_section.title}」を#{status_text}にしました。"
-  rescue ActiveRecord::RecordInvalid => e
-    redirect_to admin_my_story_sections_path, alert: "更新に失敗しました: #{e.message}"
+    state_service = MyStorySectionStateService.new(@my_story_section)
+    result = state_service.toggle_active
+
+    if result[:success]
+      redirect_to admin_my_story_sections_path, notice: result[:message]
+    else
+      redirect_to admin_my_story_sections_path, alert: result[:errors].join(", ")
+    end
   end
 
   private
@@ -148,20 +131,5 @@ class Admin::MyStorySectionsController < Admin::BaseController
         ]
       ]
     )
-  end
-
-  def available_section_types
-    existing_types = MyStorySection.pluck(:section_type)
-    all_types = MyStorySection::SECTION_TYPES
-    
-    if @my_story_section&.persisted?
-      # 編集時は現在のセクションタイプを含める
-      available_types = all_types - existing_types + [@my_story_section.section_type]
-    else
-      # 新規作成時は既存のタイプを除外
-      available_types = all_types - existing_types
-    end
-    
-    available_types.map { |type| [MyStorySection::SECTION_TYPE_LABELS[type], type] }
   end
 end
