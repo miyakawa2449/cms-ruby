@@ -1,0 +1,94 @@
+ja:
+  activerecord:
+    models:
+      section_content: "セクションコンテンツ"
+      section: "セクション"
+      article: "記事"
+      category: "カテゴリ"
+      tag: "タグ"
+      admin_user: "管理者"
+      my_story_section: "My Storyセクション"
+      contact: "お問い合わせ"
+      site_setting: "サイト設定"
+    
+    attributes:
+      section_content:
+        content: "コンテンツ"
+        version: "バージョン"
+        is_active: "公開状態"
+        section_id: "セクション"
+        main_message: "メインメッセージ"
+        sub_message: "サブメッセージ"
+        career_description: "キャリア説明"
+        profile_text: "プロフィール文"
+        cta_primary_text: "プライマリCTAテキスト"
+        cta_secondary_text: "セカンダリCTAテキスト"
+      
+      section:
+        name: "名前"
+        identifier: "識別子"
+        position: "位置"
+        is_active: "公開状態"
+        description: "説明"
+      
+      article:
+        title: "タイトル"
+        content: "内容"
+        excerpt: "抜粋"
+        slug: "スラッグ"
+        status: "ステータス"
+        published_at: "公開日時"
+        meta_title: "メタタイトル"
+        meta_description: "メタ説明"
+      
+      my_story_section:
+        title: "タイトル"
+        subtitle: "サブタイトル"
+        content: "内容"
+        position: "位置"
+        is_active: "公開状態"
+        section_type: "セクションタイプ"
+    
+    errors:
+      models:
+        section_content:
+          attributes:
+            content:
+              blank: "を入力してください"
+            version:
+              taken: "は既に使用されています"
+              blank: "を入力してください"
+            section_id:
+              blank: "を選択してください"
+        
+        article:
+          attributes:
+            title:
+              blank: "タイトルを入力してください"
+            content:
+              blank: "内容を入力してください"
+        
+        my_story_section:
+          attributes:
+            title:
+              blank: "タイトルを入力してください"
+            position:
+              taken: "この位置は既に使用されています"
+
+  errors:
+    format: "%{attribute}%{message}"
+    messages:
+      blank: "を入力してください"
+      taken: "は既に使用されています"
+      invalid: "は不正な値です"
+      too_short: "は%{count}文字以上で入力してください"
+      too_long: "は%{count}文字以内で入力してください"
+      inclusion: "は一覧にありません"
+      exclusion: "は予約されています"
+      confirmation: "と%{attribute}の入力が一致しません"
+      accepted: "を受諾してください"
+      empty: "を入力してください"
+      present: "は入力しないでください"
+      required: "を入力してください"
+
+  hello: "こんにちは"

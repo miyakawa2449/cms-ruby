@@ -22,6 +22,11 @@ module PortfolioRb
     # in config/environments, which are processed later.
     #
     config.time_zone = "Asia/Tokyo"
+    
+    # Locale settings
+    config.i18n.default_locale = :ja
+    config.i18n.available_locales = [:ja, :en]
+    
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end

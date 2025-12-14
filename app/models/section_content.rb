@@ -12,7 +12,7 @@ class SectionContent < ApplicationRecord
   scope :active, -> { where(is_active: true) }
   scope :by_version, -> { order(:version) }
   
-  before_validation :set_next_version, if: :new_record?
+  before_validation :set_next_version, if: -> { new_record? && should_auto_set_version? }
   before_validation :set_empty_content_if_individual_fields
   before_save :deactivate_other_versions, if: :is_active_changed?
   
@@ -49,8 +49,13 @@ class SectionContent < ApplicationRecord
     end
   end
   
+  def should_auto_set_version?
+    # データベースのデフォルト値（1）が設定されている場合は自動設定する
+    version.nil? || version == 1
+  end
+  
   def set_next_version
-    return if version.present?
+    return if version.present? && version != 1
     
     max_version = section.section_contents.maximum(:version) || 0
     self.version = max_version + 1
