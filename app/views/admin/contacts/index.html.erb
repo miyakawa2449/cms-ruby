@@ -1,0 +1,141 @@
+<% content_for :page_title, "お問い合わせ管理" %>
+
+<!-- ヘッダー -->
+<div class="flex justify-between items-center mb-8">
+  <div>
+    <p class="text-gray-600 mt-2">受信したお問い合わせを管理・対応できます</p>
+  </div>
+  
+  <!-- 統計情報 -->
+  <div class="flex space-x-4">
+    <div class="bg-white rounded-lg p-4 shadow-sm border">
+      <p class="text-sm text-gray-500">未読</p>
+      <p class="text-2xl font-bold text-red-600"><%= @contacts.unread.count %></p>
+    </div>
+    <div class="bg-white rounded-lg p-4 shadow-sm border">
+      <p class="text-sm text-gray-500">総数</p>
+      <p class="text-2xl font-bold text-gray-900"><%= @contacts.count %></p>
+    </div>
+  </div>
+</div>
+
+<!-- フィルター -->
+<div class="bg-white rounded-lg shadow-sm border mb-6">
+  <div class="p-4">
+    <%= form_with url: admin_contacts_path, method: :get, local: true, class: "flex flex-wrap gap-4 items-end" do |form| %>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">ステータス</label>
+        <%= form.select :status, options_for_select([
+          ['すべて', ''],
+          ['未読', 'unread'],
+          ['既読', 'read'],
+          ['返信済み', 'replied'],
+          ['アーカイブ', 'archived']
+        ], params[:status]), {}, { class: "border border-gray-300 rounded-md px-3 py-2" } %>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">件名</label>
+        <%= form.select :subject, options_for_select([
+          ['すべて', ''],
+          ['新規開発', '新規開発'],
+          ['既存改修', '既存改修'],
+          ['要件定義', '要件定義'],
+          ['プロジェクト管理', 'プロジェクト管理'],
+          ['技術相談', '技術相談'],
+          ['その他', 'その他']
+        ], params[:subject]), {}, { class: "border border-gray-300 rounded-md px-3 py-2" } %>
+      </div>
+      
+      <div>
+        <%= form.submit "フィルター", class: "bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" %>
+        <%= link_to "リセット", admin_contacts_path, class: "bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- お問い合わせ一覧 -->
+<div class="bg-white rounded-lg shadow-sm border">
+  <% if @contacts.any? %>
+    <div class="overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ステータス</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">お名前</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">件名</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">受信日</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @contacts.order(created_at: :desc).each do |contact| %>
+            <tr class="<%= contact.unread? ? 'bg-blue-50' : '' %> hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
+                  <%= case contact.status
+                      when 'unread' then 'bg-red-100 text-red-800'
+                      when 'read' then 'bg-yellow-100 text-yellow-800'
+                      when 'replied' then 'bg-green-100 text-green-800'
+                      when 'archived' then 'bg-gray-100 text-gray-800'
+                      end %>">
+                  <%= case contact.status
+                      when 'unread' then '未読'
+                      when 'read' then '既読'
+                      when 'replied' then '返信済み'
+                      when 'archived' then 'アーカイブ'
+                      end %>
+                </span>
+              </td>
+              
+              <td class="px-6 py-4">
+                <div class="text-sm">
+                  <div class="font-medium text-gray-900"><%= contact.name %></div>
+                  <div class="text-gray-500"><%= contact.email %></div>
+                </div>
+              </td>
+              
+              <td class="px-6 py-4">
+                <div class="text-sm text-gray-900"><%= contact.subject %></div>
+                <div class="text-sm text-gray-500">
+                  <%= truncate(contact.message, length: 60) %>
+                </div>
+              </td>
+              
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= contact.created_at.strftime('%Y/%m/%d %H:%M') %>
+              </td>
+              
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                <%= link_to "詳細", admin_contact_path(contact), class: "text-blue-600 hover:text-blue-900" %>
+                <% if contact.unread? %>
+                  <%= link_to "既読", admin_contact_path(contact, contact: { status: 'read' }),
+                      class: "text-green-600 hover:text-green-900",
+                      data: { 
+                        turbo_method: :patch,
+                        turbo_confirm: "既読にしますか？" 
+                      } %>
+                <% end %>
+                <%= link_to "削除", admin_contact_path(contact),
+                    class: "text-red-600 hover:text-red-900",
+                    data: { 
+                      turbo_method: :delete,
+                      turbo_confirm: "本当に削除しますか？" 
+                    } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="text-center py-12">
+      <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+      </svg>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">お問い合わせがありません</h3>
+      <p class="text-gray-600">お問い合わせが送信されると、ここに表示されます。</p>
+    </div>
+  <% end %>
+</div>

@@ -4,12 +4,12 @@ Rails.application.routes.draw do
   
   # Contact form submission
   post "contacts", to: "contacts#create"
-  devise_for :admin_users, controllers: {
+  devise_for :admin_users, path: 'admin-secure-panel-miyakawa2449', controllers: {
     sessions: 'admin_users/sessions'
   }
   
-  # Admin routes
-  namespace :admin do
+  # Admin routes (セキュリティのため長いURL使用)
+  namespace :admin, path: 'admin-secure-panel-miyakawa2449' do
     resource :site_settings, only: [:show, :update]
     resources :contacts, only: [:index, :show, :edit, :update, :destroy]
     root to: "dashboard#index", as: :root

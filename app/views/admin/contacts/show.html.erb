@@ -1,0 +1,203 @@
+<% content_for :page_title, "お問い合わせ詳細" %>
+
+<!-- ヘッダー -->
+<div class="flex justify-between items-center mb-8">
+  <div>
+    <%= link_to "← 一覧に戻る", admin_contacts_path, class: "text-blue-600 hover:text-blue-700 mb-2 inline-block" %>
+  </div>
+  
+  <!-- ステータス更新 -->
+  <div class="flex space-x-2">
+    <% unless @contact.status == 'read' %>
+      <%= link_to "既読にする", admin_contact_path(@contact, contact: { status: 'read' }),
+          class: "bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700",
+          data: { 
+            turbo_method: :patch,
+            turbo_confirm: "既読にしますか？" 
+          } %>
+    <% end %>
+    
+    <% unless @contact.status == 'replied' %>
+      <%= link_to "返信済みにする", admin_contact_path(@contact, contact: { status: 'replied' }),
+          class: "bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700",
+          data: { 
+            turbo_method: :patch,
+            turbo_confirm: "返信済みにしますか？" 
+          } %>
+    <% end %>
+    
+    <% unless @contact.status == 'archived' %>
+      <%= link_to "アーカイブ", admin_contact_path(@contact, contact: { status: 'archived' }),
+          class: "bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700",
+          data: { 
+            turbo_method: :patch,
+            turbo_confirm: "アーカイブしますか？" 
+          } %>
+    <% end %>
+  </div>
+</div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- メイン情報 -->
+      <div class="lg:col-span-2">
+        <!-- 基本情報 -->
+        <div class="bg-white rounded-lg shadow-sm border mb-6">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">基本情報</h2>
+          </div>
+          <div class="p-6">
+            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <dt class="text-sm font-medium text-gray-500">お名前</dt>
+                <dd class="mt-1 text-sm text-gray-900"><%= @contact.name %></dd>
+              </div>
+              
+              <div>
+                <dt class="text-sm font-medium text-gray-500">メールアドレス</dt>
+                <dd class="mt-1">
+                  <a href="mailto:<%= @contact.email %>" class="text-sm text-blue-600 hover:text-blue-700">
+                    <%= @contact.email %>
+                  </a>
+                </dd>
+              </div>
+              
+              <div>
+                <dt class="text-sm font-medium text-gray-500">件名</dt>
+                <dd class="mt-1 text-sm text-gray-900"><%= @contact.subject %></dd>
+              </div>
+              
+              <div>
+                <dt class="text-sm font-medium text-gray-500">ステータス</dt>
+                <dd class="mt-1">
+                  <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
+                    <%= case @contact.status
+                        when 'unread' then 'bg-red-100 text-red-800'
+                        when 'read' then 'bg-yellow-100 text-yellow-800'
+                        when 'replied' then 'bg-green-100 text-green-800'
+                        when 'archived' then 'bg-gray-100 text-gray-800'
+                        end %>">
+                    <%= case @contact.status
+                        when 'unread' then '未読'
+                        when 'read' then '既読'
+                        when 'replied' then '返信済み'
+                        when 'archived' then 'アーカイブ'
+                        end %>
+                  </span>
+                </dd>
+              </div>
+              
+              <div>
+                <dt class="text-sm font-medium text-gray-500">受信日時</dt>
+                <dd class="mt-1 text-sm text-gray-900"><%= @contact.created_at.strftime('%Y年%m月%d日 %H:%M') %></dd>
+              </div>
+              
+              <% if @contact.replied_at %>
+              <div>
+                <dt class="text-sm font-medium text-gray-500">返信日時</dt>
+                <dd class="mt-1 text-sm text-gray-900"><%= @contact.replied_at.strftime('%Y年%m月%d日 %H:%M') %></dd>
+              </div>
+              <% end %>
+            </dl>
+          </div>
+        </div>
+
+        <!-- メッセージ内容 -->
+        <div class="bg-white rounded-lg shadow-sm border">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">メッセージ内容</h2>
+          </div>
+          <div class="p-6">
+            <div class="text-gray-900 whitespace-pre-line leading-relaxed">
+              <%= @contact.message %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- サイドバー -->
+      <div class="lg:col-span-1">
+        <!-- 技術情報 -->
+        <div class="bg-white rounded-lg shadow-sm border mb-6">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">技術情報</h2>
+          </div>
+          <div class="p-6">
+            <dl class="space-y-4">
+              <% if @contact.ip_address.present? %>
+              <div>
+                <dt class="text-sm font-medium text-gray-500">IPアドレス</dt>
+                <dd class="mt-1 text-sm text-gray-900"><%= @contact.ip_address %></dd>
+              </div>
+              <% end %>
+              
+              <% if @contact.user_agent.present? %>
+              <div>
+                <dt class="text-sm font-medium text-gray-500">User Agent</dt>
+                <dd class="mt-1 text-xs text-gray-600 break-all"><%= @contact.user_agent %></dd>
+              </div>
+              <% end %>
+              
+              <% if @contact.referrer.present? %>
+              <div>
+                <dt class="text-sm font-medium text-gray-500">参照元</dt>
+                <dd class="mt-1 text-xs text-gray-600 break-all"><%= @contact.referrer %></dd>
+              </div>
+              <% end %>
+            </dl>
+          </div>
+        </div>
+
+        <!-- 対応履歴 -->
+        <div class="bg-white rounded-lg shadow-sm border">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">対応履歴</h2>
+          </div>
+          <div class="p-6">
+            <div class="space-y-3 text-sm">
+              <div class="flex items-center">
+                <div class="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                <div>
+                  <p class="text-gray-900">お問い合わせ受信</p>
+                  <p class="text-gray-500"><%= @contact.created_at.strftime('%m/%d %H:%M') %></p>
+                </div>
+              </div>
+              
+              <% if @contact.read? %>
+              <div class="flex items-center">
+                <div class="w-2 h-2 bg-yellow-500 rounded-full mr-3"></div>
+                <div>
+                  <p class="text-gray-900">確認済み</p>
+                  <p class="text-gray-500">ステータス: <%= @contact.status %></p>
+                </div>
+              </div>
+              <% end %>
+              
+              <% if @contact.replied_at %>
+              <div class="flex items-center">
+                <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                <div>
+                  <p class="text-gray-900">返信完了</p>
+                  <p class="text-gray-500"><%= @contact.replied_at.strftime('%m/%d %H:%M') %></p>
+                </div>
+              </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <!-- 危険操作 -->
+        <div class="bg-white rounded-lg shadow-sm border border-red-200">
+          <div class="px-6 py-4 border-b border-red-200">
+            <h2 class="text-lg font-semibold text-red-900">危険操作</h2>
+          </div>
+          <div class="p-6">
+            <%= link_to "削除", admin_contact_path(@contact),
+                class: "block w-full text-center bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700",
+                data: { 
+                  turbo_method: :delete,
+                  turbo_confirm: "本当にこのお問い合わせを削除しますか？この操作は元に戻せません。" 
+                } %>
+          </div>
+        </div>
+      </div>
+    </div>

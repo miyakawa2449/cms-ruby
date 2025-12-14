@@ -41,6 +41,40 @@
 # Ignore all daily reports (personal work logs)
 /reports/
 
+# Ignore development documentation and planning files
+/docs/
+
+# Ignore development and test backup files
+*.backup
+*.old
+*.new
+backup_*.sql
+backup_*.json
+test_data_backup.json
+TOMORROW_*.md
+RESTORE_INSTRUCTIONS.md
+
+# Ignore development templates and documentation
+/rails_templates/
+README.md
+CLAUDE.md
+
+# Ignore development config backups
+/config/*.backup
+/config/*.old
+/config/*.new
+/docker-compose*.backup
+/docker-compose*.old
+/docker-compose*.prod.yml
+/entrypoint.sh.backup
+
+# Ignore gem and dependency backups
+gem_list_*.txt
+Gemfile.lock.*.backup
+
+# Ignore development log files in root
+*.log
+
 # Ignore key files for decrypting credentials and more.
 /config/*.key
 
