@@ -10,7 +10,30 @@ class ApplicationController < ActionController::Base
   # ApplicationHelperを明示的にinclude
   helper ApplicationHelper
   
+  # Content Security Policy
+  before_action :set_csp_header
+  
   private
+  
+  def set_csp_header
+    # Skip CSP for admin pages to avoid issues with third-party libraries
+    return if request.path.start_with?('/admin')
+    
+    response.headers['Content-Security-Policy'] = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net",
+      "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com",
+      "img-src 'self' data: https: blob:",
+      "font-src 'self' https: data:",
+      "connect-src 'self' https://api.openai.com",
+      "media-src 'self'",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'none'",
+      "upgrade-insecure-requests"
+    ].join('; ')
+  end
   
   def after_sign_in_path_for(resource)
     if resource.is_a?(AdminUser)

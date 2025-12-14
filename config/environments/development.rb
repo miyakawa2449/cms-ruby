@@ -63,6 +63,13 @@ Rails.application.configure do
   
   # Force serving from app/assets/builds in development
   config.public_file_server.enabled = true
+  
+  # URL設定統合（Active Storage・Mailer・Routes共通）
+  url_options = { host: 'localhost', port: 3000 }
+  config.action_controller.default_url_options = url_options
+  config.action_mailer.default_url_options = url_options
+  Rails.application.routes.default_url_options = url_options
+  config.action_controller.asset_host = 'http://localhost:3000'
 
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true

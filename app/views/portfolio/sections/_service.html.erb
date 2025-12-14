@@ -1,14 +1,13 @@
-<div class="py-20 bg-white">
+<div class="py-20 bg-gray-50">
   <div class="container mx-auto px-6">
     <div class="max-w-6xl mx-auto">
       <!-- ヘッダー -->
       <div class="text-center mb-16">
-        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-          <%= content['title'] || 'Services' %>
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <%= content['title'] || 'Service' %>
         </h2>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-          要件定義からプログラミングまで一人で完結できる強みを活かし、
-          お客様のビジネス課題に最適なソリューションを提供します。
+        <p class="text-2xl text-gray-700 font-medium">
+          提供できるサービス
         </p>
       </div>
       
@@ -50,100 +49,40 @@
           <% end %>
         <% else %>
           <!-- デフォルトサービス -->
-          <div class="bg-gray-50 rounded-xl p-8 hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-blue-200">
-            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 text-center">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
               </svg>
             </div>
             <h3 class="text-xl font-bold text-gray-900 mb-4">要件定義・設計</h3>
-            <p class="text-gray-600 leading-relaxed mb-6">
-              お客様のビジネス要件を正確に把握し、技術的な要件に落とし込みます。上流工程の専門家として最適なソリューションを設計します。
+            <p class="text-gray-600 leading-relaxed">
+              上流工程の専門性を活かした詳細な要件定義と設計書作成
             </p>
-            <ul class="space-y-2">
-              <li class="flex items-center text-sm text-gray-600">
-                <svg class="w-4 h-4 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                ビジネス要件分析
-              </li>
-              <li class="flex items-center text-sm text-gray-600">
-                <svg class="w-4 h-4 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                システム設計書作成
-              </li>
-              <li class="flex items-center text-sm text-gray-600">
-                <svg class="w-4 h-4 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                技術選定・アーキテクチャ設計
-              </li>
-            </ul>
           </div>
           
-          <div class="bg-gray-50 rounded-xl p-8 hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-blue-200">
-            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-6">
-              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
               </svg>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-4">フルスタック開発</h3>
-            <p class="text-gray-600 leading-relaxed mb-6">
-              フロントエンドからバックエンドまで一人で開発できます。Ruby on Railsを中心とした現代的な技術スタックで高品質なアプリケーションを構築します。
+            <h3 class="text-xl font-bold text-gray-900 mb-4">システム開発</h3>
+            <p class="text-gray-600 leading-relaxed">
+              フルスタック対応でのWebアプリケーション・システム開発
             </p>
-            <ul class="space-y-2">
-              <li class="flex items-center text-sm text-gray-600">
-                <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                Ruby on Rails開発
-              </li>
-              <li class="flex items-center text-sm text-gray-600">
-                <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                データベース設計・最適化
-              </li>
-              <li class="flex items-center text-sm text-gray-600">
-                <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                API設計・実装
-              </li>
-            </ul>
           </div>
           
-          <div class="bg-gray-50 rounded-xl p-8 hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-blue-200">
-            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
-              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+          <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 text-center">
+            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
               </svg>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-4">プロジェクト管理</h3>
-            <p class="text-gray-600 leading-relaxed mb-6">
-              20年以上のプロジェクト管理経験を活かし、チーム統率から進捗管理まで包括的にサポートします。
+            <h3 class="text-xl font-bold text-gray-900 mb-4">AI・DXコンサル</h3>
+            <p class="text-gray-600 leading-relaxed">
+              最新技術を活用したデジタルトランスフォーメーション支援
             </p>
-            <ul class="space-y-2">
-              <li class="flex items-center text-sm text-gray-600">
-                <svg class="w-4 h-4 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                アジャイル開発支援
-              </li>
-              <li class="flex items-center text-sm text-gray-600">
-                <svg class="w-4 h-4 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                チーム統率・コーチング
-              </li>
-              <li class="flex items-center text-sm text-gray-600">
-                <svg class="w-4 h-4 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                リスク管理・品質保証
-              </li>
-            </ul>
           </div>
         <% end %>
       </div>

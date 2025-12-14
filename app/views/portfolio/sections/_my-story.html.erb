@@ -1,5 +1,14 @@
-<div class="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
-  <div class="container mx-auto px-6">
+<div class="py-20 relative overflow-hidden <% unless section.active_content&.background_image&.attached? %>bg-gradient-to-br from-blue-50 to-indigo-100<% end %>">
+  <% if section.active_content&.background_image&.attached? %>
+    <!-- 背景画像 -->
+    <div class="absolute inset-0">
+      <%= image_tag section.active_content.background_image, 
+          class: "w-full h-full object-cover",
+          alt: "My Story background" %>
+    </div>
+    <div class="absolute inset-0 bg-black opacity-40"></div>
+  <% end %>
+  <div class="container mx-auto px-6 relative z-10">
     <div class="max-w-4xl mx-auto">
       <!-- ヘッダー -->
       <div class="text-center mb-16">
@@ -9,11 +18,11 @@
           </div>
         <% end %>
         
-        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+        <h2 class="text-4xl md:text-5xl font-bold <% if section.active_content&.background_image&.attached? %>text-white<% else %>text-gray-900<% end %> mb-6">
           <%= section.active_content&.main_title.presence || 'My Story' %>
         </h2>
         
-        <p class="text-xl text-gray-600">
+        <p class="text-xl <% if section.active_content&.background_image&.attached? %>text-gray-200<% else %>text-gray-600<% end %>">
           <%= section.active_content&.sub_title.presence || 'なぜ要件定義から実装まで一人でできるのか' %>
         </p>
       </div>

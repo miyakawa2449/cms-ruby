@@ -2,3 +2,4 @@
 import "@hotwired/turbo-rails"
 import "./controllers"
 import "./smooth_scroll"
+import "./scroll_animations"

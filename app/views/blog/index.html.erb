@@ -15,15 +15,33 @@
   <!-- Blog Header -->
   <header class="bg-white shadow-sm border-b border-gray-200 pt-20">
     <div class="container mx-auto px-6 py-8">
-      <!-- パンくずナビゲーション -->
-      <nav class="text-sm text-gray-500 mb-6">
-        <%= link_to "ホーム", root_path, class: "hover:text-blue-600" %> > 
-        <span class="text-gray-900">Miyakawa Codes Blog</span>
-      </nav>
+      <!-- ナビゲーション -->
+      <div class="flex justify-between mb-6">
+        <%= link_to root_path, class: "text-blue-600 hover:text-blue-700 font-medium" do %>
+          ← ポートフォリオに戻る
+        <% end %>
+        <% if params[:category].present? && current_category %>
+          <%= link_to blog_path, class: "text-blue-600 hover:text-blue-700 font-medium" do %>
+            全記事を見る →
+          <% end %>
+        <% end %>
+      </div>
       
       <div class="text-center">
-        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Miyakawa Codes Blog</h1>
-        <p class="text-xl text-gray-600">技術情報とプロジェクトの進捗をお届け</p>
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <% if params[:category].present? && current_category %>
+            <%= current_category.name %> 記事一覧
+          <% else %>
+            Miyakawa Codes Blog
+          <% end %>
+        </h1>
+        <p class="text-xl text-gray-600">
+          <% if params[:category].present? && current_category %>
+            <%= current_category.description.presence || "#{current_category.name}に関する記事をお届け" %>
+          <% else %>
+            技術情報とプロジェクトの進捗をお届け
+          <% end %>
+        </p>
       </div>
       
       <!-- 検索バー -->

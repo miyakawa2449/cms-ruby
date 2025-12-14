@@ -14,7 +14,7 @@ class SiteAssetsService
         alt_text = options[:alt] || 'サイトロゴ'
         
         ApplicationController.helpers.image_tag(
-          safe_url_for(logo_setting.image_value), 
+          logo_setting.image_value, 
           class: css_class, 
           alt: alt_text
         )
@@ -32,7 +32,11 @@ class SiteAssetsService
       favicon_setting = SiteSetting.favicon
       
       if favicon_setting&.image_value&.attached?
-        favicon_url = safe_url_for(favicon_setting.image_value)
+        favicon_url = if Rails.env.production? && @request&.host
+          Rails.application.routes.url_helpers.url_for(favicon_setting.image_value)
+        else
+          Rails.application.routes.url_helpers.rails_blob_path(favicon_setting.image_value, only_path: true)
+        end
         
         tags = []
         tags << favicon_link_tag(favicon_url, type: 'image/png')
@@ -54,7 +58,12 @@ class SiteAssetsService
   def og_image_url
     og_image_setting = SiteSetting.og_image
     if og_image_setting&.image_value&.attached?
-      safe_url_for(og_image_setting.image_value)
+      # 開発環境では相対パスを使用、本番環境ではフルURLを生成
+      if Rails.env.production? && @request&.host
+        Rails.application.routes.url_helpers.url_for(og_image_setting.image_value)
+      else
+        Rails.application.routes.url_helpers.rails_blob_path(og_image_setting.image_value, only_path: true)
+      end
     else
       default_og_image_url
     end
@@ -63,9 +72,27 @@ class SiteAssetsService
   def favicon_icon_tags
     favicon_setting = SiteSetting.favicon
     if favicon_setting&.image_value&.attached?
-      [{ href: safe_url_for(favicon_setting.image_value), type: 'image/png' }]
+      favicon_url = if Rails.env.production? && @request&.host
+        Rails.application.routes.url_helpers.url_for(favicon_setting.image_value)
+      else
+        Rails.application.routes.url_helpers.rails_blob_path(favicon_setting.image_value, only_path: true)
+      end
+      [{ href: favicon_url, type: 'image/png' }]
     else
       [{ href: '/favicon.ico' }]
+    end
+  end
+
+  def safe_url_for(attachment)
+    return nil unless attachment&.attached?
+
+    begin
+      # 標準的なurl_forを使用
+      Rails.application.routes.url_helpers.url_for(attachment)
+    rescue => e
+      Rails.logger.error "URL generation error: #{e.message}"
+      # 最終フォールバック
+      "/images/default.jpg"
     end
   end
 
@@ -83,29 +110,6 @@ class SiteAssetsService
 
   def default_favicon_tags
     ApplicationController.helpers.favicon_link_tag('/favicon.ico')
-  end
-
-  def safe_url_for(attachment)
-    return nil unless attachment&.attached?
-
-    begin
-      if @request&.host
-        # リクエストがある場合はフルURLを生成
-        Rails.application.routes.url_helpers.rails_blob_url(
-          attachment, 
-          host: @request.host, 
-          protocol: @request.protocol,
-          port: @request.port != 80 && @request.port != 443 ? @request.port : nil
-        )
-      else
-        # リクエストがない場合は相対パスを使用
-        Rails.application.routes.url_helpers.rails_blob_path(attachment, only_path: true)
-      end
-    rescue => e
-      Rails.logger.error "URL generation error: #{e.message}"
-      # 最終フォールバック
-      Rails.application.routes.url_helpers.rails_blob_path(attachment, only_path: true) rescue "/images/default.jpg"
-    end
   end
 
   def default_og_image_url

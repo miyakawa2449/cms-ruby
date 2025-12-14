@@ -4,6 +4,7 @@ class SectionContent < ApplicationRecord
   
   has_one_attached :hero_image
   has_one_attached :profile_image
+  has_one_attached :background_image
   
   validates :content, presence: true, unless: :has_individual_fields?
   validates :version, presence: true, uniqueness: { scope: :section_id }

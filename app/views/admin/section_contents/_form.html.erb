@@ -186,6 +186,33 @@
     <% when 'my-story' %>
       <!-- My Storyセクション -->
       <div class="space-y-6">
+        <!-- 背景画像 -->
+        <div class="border-b border-gray-200 pb-6">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">背景画像</h3>
+          
+          <div>
+            <%= form.label :background_image, "背景画像", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= form.file_field :background_image, 
+                class: "mt-1 block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-md file:border-0
+                file:text-sm file:font-medium
+                file:bg-blue-50 file:text-blue-700
+                hover:file:bg-blue-100",
+                accept: "image/*" %>
+            <p class="mt-1 text-sm text-gray-500">推奨: 1920x1080px以上の背景画像（My Storyセクション用）</p>
+            
+            <% if section_content.persisted? && section_content.background_image.attached? %>
+              <div class="mt-4">
+                <p class="text-sm font-medium text-gray-700 mb-2">現在の背景画像:</p>
+                <%= image_tag section_content.background_image, 
+                    class: "rounded-md shadow-sm max-w-full h-auto",
+                    style: "max-height: 200px;" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        
         <!-- ヘッダー情報 -->
         <div class="border-b border-gray-200 pb-6">
           <h3 class="text-lg font-medium text-gray-900 mb-4">ヘッダー情報</h3>

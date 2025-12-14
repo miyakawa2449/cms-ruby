@@ -13,7 +13,7 @@ class SectionContentParamsService
   def process
     # 基本フィールドと画像を許可
     permitted_params = @params.require(:section_content).permit(
-      :is_active, :hero_image, :profile_image,
+      :is_active, :hero_image, :profile_image, :background_image,
       :main_message, :sub_message, :career_description,
       :cta_primary_text, :cta_primary_url, :cta_secondary_text, :cta_secondary_url,
       :profile_text, :frontend_skills, :backend_skills, :core_skills, :experience_text,

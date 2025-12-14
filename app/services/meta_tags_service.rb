@@ -204,28 +204,19 @@ class MetaTagsService
     }
   end
 
-  def safe_url_for(attachment)
-    return nil unless attachment&.attached?
+  private
 
-    begin
-      if @request&.host
-        Rails.application.routes.url_helpers.rails_blob_url(
-          attachment, 
-          host: @request.host, 
-          protocol: @request.protocol,
-          port: @request.port != 80 && @request.port != 443 ? @request.port : nil
-        )
-      else
-        Rails.application.routes.url_helpers.rails_blob_path(attachment, only_path: true)
-      end
-    rescue => e
-      Rails.logger.error "URL generation error: #{e.message}"
-      Rails.application.routes.url_helpers.rails_blob_path(attachment, only_path: true) rescue "/images/default.jpg"
-    end
+  # SiteAssetsServiceへの委譲メソッド
+  def safe_url_for(attachment)
+    site_assets_service.safe_url_for(attachment)
   end
 
   def default_og_image_url
-    SiteAssetsService.new(@request).og_image_url
+    site_assets_service.og_image_url
+  end
+
+  def site_assets_service
+    @site_assets_service ||= SiteAssetsService.new(@request)
   end
 
   # ActionViewヘルパーメソッドにアクセスするため

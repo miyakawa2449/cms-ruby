@@ -27,6 +27,16 @@ module PortfolioRb
     config.i18n.default_locale = :ja
     config.i18n.available_locales = [:ja, :en]
     
+    # Security headers
+    config.action_dispatch.default_headers = {
+      'X-Frame-Options' => 'SAMEORIGIN',
+      'X-XSS-Protection' => '0', # Deprecated but kept for compatibility
+      'X-Content-Type-Options' => 'nosniff',
+      'X-Download-Options' => 'noopen',
+      'X-Permitted-Cross-Domain-Policies' => 'none',
+      'Referrer-Policy' => 'strict-origin-when-cross-origin'
+    }
+    
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end
