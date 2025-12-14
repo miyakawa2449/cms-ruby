@@ -44,6 +44,10 @@
 # Ignore development documentation and planning files
 /docs/
 
+# Ignore test files and directories for production deployment
+/spec/
+/test/
+
 # Ignore development and test backup files
 *.backup
 *.old
