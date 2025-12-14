@@ -71,6 +71,11 @@ Rails.application.configure do
   Rails.application.routes.default_url_options = url_options
   config.action_controller.asset_host = 'http://localhost:3000'
 
+  # メール設定（開発環境：ログ出力のみ）
+  config.action_mailer.delivery_method = :test
+  config.action_mailer.perform_deliveries = false
+  config.action_mailer.raise_delivery_errors = true
+
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 

@@ -79,6 +79,19 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
+  # AWS SES メール設定
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.delivery_method = :aws_ses
+  config.action_mailer.aws_ses_settings = {
+    region: ENV['AWS_SES_REGION'] || 'us-east-1',
+    access_key_id: ENV['AWS_SES_ACCESS_KEY_ID'],
+    secret_access_key: ENV['AWS_SES_SECRET_ACCESS_KEY']
+  }
+  config.action_mailer.default_url_options = {
+    host: ENV['MAILER_HOST'] || 'miyakawa.codes',
+    protocol: 'https'
+  }
+
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
   #   "example.com",     # Allow requests from example.com

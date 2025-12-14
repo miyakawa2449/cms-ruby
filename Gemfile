@@ -77,6 +77,9 @@ gem "image_processing", "~> 1.2"
 # Markdown processing
 gem "redcarpet", "~> 3.6"
 
+# AWS SES for email delivery
+gem "aws-sdk-sesv2", "~> 1.35"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
