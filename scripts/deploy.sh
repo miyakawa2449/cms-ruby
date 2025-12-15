@@ -1,82 +1,186 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -Eeuo pipefail
 
-# デプロイスクリプト - 本番環境への完全デプロイ
+# ==========================================
+# Portfolio Rails App - Production Deploy
+# Usage:
+# ./scripts/deploy.sh         # 通常デプロイ（ボリューム維持）
+# ./scripts/deploy.sh --reset # 破壊的：down -v（DB含むボリューム削除）→再構築
+# ==========================================
+
+ENV_FILE=".env.production"
+PROJECT="portfolio-prod"
+COMPOSE=(docker compose --env-file "$ENV_FILE" -p "$PROJECT" -f docker-compose.production.yml)
+
+RESET=false
+for arg in "$@"; do
+case "$arg" in
+--reset) RESET=true ;;
+-h|--help)
+echo "Usage: $0 [--reset]"
+exit 0
+;;
+*)
+echo "Unknown argument: $arg"
+echo "Usage: $0 [--reset]"
+exit 1
+;;
+esac
+done
 
 echo "=========================================="
 echo "Portfolio Rails App - Production Deploy"
+echo "Project: $PROJECT"
+echo "Env: $ENV_FILE"
+echo "Reset volumes: $RESET"
 echo "=========================================="
 
-# 1. 環境変数チェック
-echo "1. Checking environment variables..."
-if [ ! -f .env.production ]; then
-    echo "ERROR: .env.production file not found!"
-    echo "Please create .env.production with:"
-    echo "  POSTGRES_PASSWORD=your_password"
-    echo "  RAILS_MASTER_KEY=your_master_key"
-    exit 1
+# ----- helpers -----
+
+dump_status_and_logs() {
+echo ""
+echo "=== docker compose ps -a ==="
+"${COMPOSE[@]}" ps -a || true
+
+echo ""
+echo "=== logs (tail=200) portfolio-web ==="
+"${COMPOSE[@]}" logs --tail=200 --no-color portfolio-web || true
+
+echo ""
+echo "=== logs (tail=200) portfolio-db ==="
+"${COMPOSE[@]}" logs --tail=200 --no-color portfolio-db || true
+
+echo ""
+echo "=== logs (tail=200) nginx ==="
+"${COMPOSE[@]}" logs --tail=200 --no-color nginx || true
+}
+
+on_error() {
+local exit_code=$?
+echo ""
+echo "❌ ERROR: deploy failed (exit code: $exit_code)"
+dump_status_and_logs
+exit "$exit_code"
+}
+trap on_error ERR
+
+require_env_key() {
+local key="$1"
+
+# コメント/空行除外しつつ key= を探す。値が空もNG。
+local line
+line="$(grep -E "^[[:space:]]*$key=" "$ENV_FILE" | tail -n 1 || true)"
+if [[ -z "$line" ]]; then
+echo "ERROR: $key is missing in $ENV_FILE"
+exit 1
 fi
 
-# 2. 環境変数を読み込み
-echo "2. Loading environment variables..."
-set -a
-source .env.production
-set +a
+# key= の後ろが空ならNG
+if [[ "$line" =~ ^[[:space:]]*$key=$ ]]; then
+echo "ERROR: $key is empty in $ENV_FILE"
+exit 1
+fi
+}
 
-# 3. Dockerビルド
+wait_for_web_up() {
+local retries="${1:-12}"  # 12 * 5s = 60s
+local interval="${2:-5}"
+
+echo "Waiting for portfolio-web to be Up... (max ${retries} tries)"
+for ((i=1; i<=retries; i++)); do
+if "${COMPOSE[@]}" ps | grep -qE 'portfolio-web.*\bUp\b'; then
+echo "✅ portfolio-web is Up"
+return 0
+fi
+echo "  ...not ready yet (${i}/${retries}). sleeping ${interval}s"
+sleep "$interval"
+done
+
+echo "ERROR: portfolio-web did not become Up in time."
+dump_status_and_logs
+exit 1
+}
+
+check_db_connection() {
+echo "Checking DB connectivity from Rails..."
+
+# true が出ればOK。例外なら trap で落ちる。
+"${COMPOSE[@]}" exec -T portfolio-web bundle exec rails runner "puts ActiveRecord::Base.connection.active?"
+}
+
+# ----- 1. env checks -----
+
+echo "1. Checking environment file..."
+if [[ ! -f "$ENV_FILE" ]]; then
+echo "ERROR: $ENV_FILE file not found!"
+echo "Please create $ENV_FILE with at least:"
+echo "  POSTGRES_PASSWORD=your_password"
+echo "  RAILS_MASTER_KEY=your_master_key"
+exit 1
+fi
+
+echo "2. Validating required keys in $ENV_FILE..."
+require_env_key "POSTGRES_PASSWORD"
+require_env_key "RAILS_MASTER_KEY"
+
+# ----- 3. build -----
+
 echo "3. Building Docker image..."
-docker compose --env-file .env.production -p portfolio-prod -f docker-compose.production.yml build
+"${COMPOSE[@]}" build
 
-# 4. 既存コンテナ停止（存在する場合）
+# ----- 4. stop existing -----
+
 echo "4. Stopping existing containers..."
-docker compose --env-file .env.production -p portfolio-prod -f docker-compose.production.yml down || true
+"${COMPOSE[@]}" down || true
 
-# 5. ボリュームクリーンアップ（オプション）
-read -p "Clean up existing volumes? (y/N): " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    docker compose --env-file .env.production -p portfolio-prod -f docker-compose.production.yml down -v
+# ----- 5. optional reset -----
+
+if [[ "$RESET" == "true" ]]; then
+echo "5. Reset requested: removing volumes (DESTRUCTIVE)..."
+"${COMPOSE[@]}" down -v || true
+else
+echo "5. Keeping existing volumes (normal deploy)."
 fi
 
-# 6. コンテナ起動
+# ----- 6. up -----
+
 echo "6. Starting containers..."
-docker compose --env-file .env.production -p portfolio-prod -f docker-compose.production.yml up -d
+"${COMPOSE[@]}" up -d
 
-# 7. コンテナ起動確認（安全策）
+# ----- 7. verify -----
+
 echo "7. Verifying container startup..."
-sleep 5
+"${COMPOSE[@]}" ps -a
+wait_for_web_up 12 5
 
-# コンテナ状態確認
-docker compose --env-file .env.production -p portfolio-prod -f docker-compose.production.yml ps -a
+# ----- 8. DB check -----
 
-# Webコンテナが起動していない場合は終了
-if ! docker compose --env-file .env.production -p portfolio-prod -f docker-compose.production.yml ps | grep -q "portfolio-web.*Up"; then
-    echo "ERROR: portfolio-web container is not running!"
-    echo "Container logs:"
-    docker compose --env-file .env.production -p portfolio-prod -f docker-compose.production.yml logs --tail=100 portfolio-web
-    exit 1
-fi
+echo "8. Checking database connection..."
+check_db_connection
 
-echo "✅ All containers are running successfully!"
+# ----- 9. migrate (recommended for normal ops) -----
 
-# 8. データベース状態確認
-echo "8. Checking database status..."
-docker compose --env-file .env.production -p portfolio-prod -f docker-compose.production.yml exec portfolio-web bundle exec rails db:status
+echo "9. Running migrations..."
+"${COMPOSE[@]}" exec -T portfolio-web bundle exec rails db:migrate
 
-# 9. 初期データ確認
-echo "9. Checking initial data..."
-docker compose --env-file .env.production -p portfolio-prod -f docker-compose.production.yml exec portfolio-web bundle exec rails runner "
-  puts 'AdminUsers: ' + AdminUser.count.to_s
-  puts 'Sections: ' + Section.count.to_s
-  puts 'Articles: ' + Article.count.to_s
+# ----- 10. initial data check (optional) -----
+
+echo "10. Checking initial data..."
+"${COMPOSE[@]}" exec -T portfolio-web bundle exec rails runner "
+puts 'AdminUsers: ' + AdminUser.count.to_s
+puts 'Sections: ' + Section.count.to_s
+puts 'Articles: ' + Article.count.to_s
 "
 
-# 10. ログ表示
-echo "10. Showing recent logs..."
-docker compose --env-file .env.production -p portfolio-prod -f docker-compose.production.yml logs --tail=50
+# ----- 11. logs -----
+
+echo "11. Showing recent logs..."
+"${COMPOSE[@]}" logs --tail=80 --no-color
 
 echo "=========================================="
-echo "Deployment completed!"
-echo "Access the site at: http://localhost"
-echo "Admin panel: http://localhost/admin-secure-panel-miyakawa2449"
+echo "✅ Deployment completed!"
+echo "Access the site via nginx:"
+echo "  http://<server-ip-or-domain>/"
+echo "Admin panel:"
+echo "  http://<server-ip-or-domain>/admin-secure-panel-miyakawa2449"
 echo "=========================================="
