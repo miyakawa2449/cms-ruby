@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+# If running the rails server then create or migrate existing database
+if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
+  echo "Preparing database..."
+  ./bin/rails db:prepare
+  
+  # Run seeds only if AdminUser doesn't exist
+  if ! ./bin/rails runner "exit AdminUser.any? ? 0 : 1" 2>/dev/null; then
+    echo "Running database seeds..."
+    ./bin/rails db:seed
+  fi
+  
+  # Create initial sections if they don't exist
+  if ! ./bin/rails runner "exit Section.any? ? 0 : 1" 2>/dev/null; then
+    echo "Creating initial sections..."
+    ./bin/rails runner /rails/scripts/init_sections.rb
+  fi
+fi
+
+exec "${@}"
