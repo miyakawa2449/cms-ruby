@@ -45,6 +45,20 @@ services:
       - ./nginx.production.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
       - app-network
+    # portsを削除：https-portal経由のみでアクセス
+
+  https-portal:
+    image: steveltn/https-portal:1
+    restart: unless-stopped
+    depends_on:
+      - nginx
+    environment:
+      DOMAINS: "miyakawa.codes -> http://nginx:80"
+      STAGE: "production"
+    volumes:
+      - https_portal_data:/var/lib/https-portal
+    networks:
+      - app-network
     ports:
       - "80:80"
       - "443:443"
@@ -54,7 +68,16 @@ volumes:
   storage_data:
   log_data:
   tmp_data:
+  https_portal_data:
 
 networks:
   app-network:
     driver: bridge
+
+# 動作確認コマンド:
+# docker compose -p portfolio-prod -f docker-compose.production.yml down
+# docker compose -p portfolio-prod -f docker-compose.production.yml up -d
+# docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Ports}}"
+# curl -I http://127.0.0.1/
+# curl -vk --max-time 20 https://127.0.0.1/
+# docker logs --tail 200 portfolio-prod-https-portal-1
