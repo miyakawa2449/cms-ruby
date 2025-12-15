@@ -34,8 +34,7 @@ services:
       - tmp_data:/rails/tmp
     networks:
       - app-network
-    ports:
-      - "3000:80"
+    # portsを削除：nginx経由のみでアクセス（セキュリティ向上）
 
   nginx:
     image: nginx:alpine
