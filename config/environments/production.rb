@@ -59,6 +59,12 @@ Rails.application.configure do
 
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "example.com" }
+  
+  # Set host for URL helpers (OGP画像等のURL生成で必要)
+  config.action_controller.default_url_options = {
+    host: ENV.fetch("APP_HOST", "miyakawa.codes"),
+    protocol: "https"
+  }
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
   # config.action_mailer.smtp_settings = {
