@@ -36,6 +36,27 @@ services:
       - app-network
     # portsを削除：nginx経由のみでアクセス（セキュリティ向上）
 
+  portfolio-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    restart: unless-stopped
+    depends_on:
+      - portfolio-db
+    env_file:
+      - .env.production
+    environment:
+      RAILS_ENV: production
+      DATABASE_URL: postgresql://portfolio:${POSTGRES_PASSWORD}@portfolio-db:5432/portfolio_production
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+    command: bundle exec rails solid_queue:start
+    volumes:
+      - storage_data:/rails/storage
+      - log_data:/rails/log
+      - tmp_data:/rails/tmp
+    networks:
+      - app-network
+
   nginx:
     image: nginx:alpine
     restart: unless-stopped

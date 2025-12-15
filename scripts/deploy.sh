@@ -47,6 +47,10 @@ echo "=== logs (tail=200) portfolio-web ==="
 "${COMPOSE[@]}" logs --tail=200 --no-color portfolio-web || true
 
 echo ""
+echo "=== logs (tail=200) portfolio-worker ==="
+"${COMPOSE[@]}" logs --tail=200 --no-color portfolio-worker || true
+
+echo ""
 echo "=== logs (tail=200) portfolio-db ==="
 "${COMPOSE[@]}" logs --tail=200 --no-color portfolio-db || true
 
@@ -97,6 +101,25 @@ sleep "$interval"
 done
 
 echo "ERROR: portfolio-web did not become Up in time."
+dump_status_and_logs
+exit 1
+}
+
+wait_for_worker_up() {
+local retries="${1:-12}"  # 12 * 5s = 60s
+local interval="${2:-5}"
+
+echo "Waiting for portfolio-worker to be Up... (max ${retries} tries)"
+for ((i=1; i<=retries; i++)); do
+if "${COMPOSE[@]}" ps | grep -qE 'portfolio-worker.*\bUp\b'; then
+echo "✅ portfolio-worker is Up"
+return 0
+fi
+echo "  ...worker not ready yet (${i}/${retries}). sleeping ${interval}s"
+sleep "$interval"
+done
+
+echo "ERROR: portfolio-worker did not become Up in time."
 dump_status_and_logs
 exit 1
 }
@@ -152,6 +175,7 @@ echo "6. Starting containers..."
 echo "7. Verifying container startup..."
 "${COMPOSE[@]}" ps -a
 wait_for_web_up 12 5
+wait_for_worker_up 12 5
 
 # ----- 8. DB check -----
 
