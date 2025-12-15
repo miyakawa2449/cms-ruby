@@ -65,6 +65,11 @@ Rails.application.configure do
   Rails.application.routes.default_url_options[:protocol] = "https"
   
   config.action_controller.default_url_options = Rails.application.routes.default_url_options
+  
+  # ActiveStorage の redirect/disk URL生成に確実に効かせる
+  config.after_initialize do
+    ActiveStorage::Current.url_options = Rails.application.routes.default_url_options
+  end
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
   # config.action_mailer.smtp_settings = {
