@@ -1,0 +1,19 @@
+# ==========================================
+# 緊急HTTP復旧用差分ファイル
+# 
+# 使用方法（https-portal障害時のみ）:
+# docker compose --env-file .env.production -p portfolio-prod \
+#   -f docker-compose.production.yml \
+#   -f docker-compose.production.http.yml \
+#   up -d --build
+# ==========================================
+
+services:
+  # https-portalを無効化（起動対象から外す）
+  https-portal:
+    profiles: ["disabled"]
+
+  # nginxで直接80番ポートを公開（HTTPのみ）
+  nginx:
+    ports:
+      - "80:80"
