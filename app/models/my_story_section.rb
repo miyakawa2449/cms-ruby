@@ -192,7 +192,7 @@ class MyStorySection < ApplicationRecord
 
   # Load virtual attributes from additional_data when record is loaded
   def load_chapter_fields_from_additional_data
-    return unless chapter_section?
+    return unless section_type.present? && chapter_section?
     
     @skills = chapter_skills.join("\n") if chapter_skills.any?
     @achievements = chapter_achievements.join("\n") if chapter_achievements.any?
@@ -201,7 +201,7 @@ class MyStorySection < ApplicationRecord
 
   # Sync virtual attributes to additional_data before save
   def sync_chapter_fields_to_additional_data
-    return unless chapter_section?
+    return unless section_type.present? && chapter_section?
     
     self.additional_data ||= {}
     
