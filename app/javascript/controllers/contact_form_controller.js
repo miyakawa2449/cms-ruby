@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["form", "button", "name", "email", "subject", "message"]
+  static targets = ["form", "button", "messageArea"]
   
   async submit(event) {
     event.preventDefault()
@@ -30,8 +30,8 @@ export default class extends Controller {
         // 成功時
         this.showMessage(result.message, 'success')
         this.formTarget.reset()
-        // フォーム上部へスクロール
-        this.scrollToForm()
+        // contactセクション上部へスクロール
+        this.scrollToSection()
       } else {
         // エラー時
         this.showMessage(result.message, 'error')
@@ -58,33 +58,54 @@ export default class extends Controller {
     
     // 新しいメッセージを作成
     const messageDiv = document.createElement('div')
-    messageDiv.className = `contact-message p-4 rounded-lg mb-4 ${
+    messageDiv.className = `contact-message p-4 rounded-lg mb-6 text-center ${
       type === 'success' 
-        ? 'bg-green-100 text-green-800 border border-green-200' 
-        : 'bg-red-100 text-red-800 border border-red-200'
+        ? 'bg-green-500/20 text-green-300 border border-green-500/30' 
+        : 'bg-red-500/20 text-red-300 border border-red-500/30'
     }`
-    messageDiv.textContent = message
     
-    // フォームの上に挿入
-    this.formTarget.parentNode.insertBefore(messageDiv, this.formTarget)
+    // アイコン付きメッセージ
+    const icon = type === 'success' 
+      ? '<svg class="w-6 h-6 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
+      : '<svg class="w-6 h-6 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
     
-    // 5秒後にフェードアウト
-    setTimeout(() => {
-      messageDiv.style.transition = 'opacity 0.5s'
-      messageDiv.style.opacity = '0'
+    messageDiv.innerHTML = `${icon}<span class="font-medium">${message}</span>`
+    
+    // メッセージエリアに挿入
+    if (this.hasMessageAreaTarget) {
+      this.messageAreaTarget.innerHTML = ''
+      this.messageAreaTarget.appendChild(messageDiv)
+    } else {
+      this.formTarget.parentNode.insertBefore(messageDiv, this.formTarget)
+    }
+    
+    // 成功時は10秒後にフェードアウト
+    if (type === 'success') {
       setTimeout(() => {
-        if (messageDiv.parentNode) {
-          messageDiv.remove()
-        }
-      }, 500)
-    }, 5000)
+        messageDiv.style.transition = 'opacity 0.5s'
+        messageDiv.style.opacity = '0'
+        setTimeout(() => {
+          if (messageDiv.parentNode) {
+            messageDiv.remove()
+          }
+        }, 500)
+      }, 10000)
+    }
   }
   
-  scrollToForm() {
-    // フォーム上部へスムーズにスクロール
-    this.formTarget.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    })
+  scrollToSection() {
+    // contactセクション全体を取得してスクロール
+    const contactSection = document.getElementById('contact')
+    if (contactSection) {
+      // セクションの上部にスクロール（ヘッダー分のオフセットを考慮）
+      const headerOffset = 100
+      const elementPosition = contactSection.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+    }
   }
 }
