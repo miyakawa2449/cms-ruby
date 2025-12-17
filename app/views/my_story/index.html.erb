@@ -162,63 +162,8 @@
         </div>
       </section>
     <% elsif section.projects_section? %>
-      <!-- Projects Section (positioned dynamically) -->
-      <section class="py-20 bg-gray-50">
-        <div class="container mx-auto px-6">
-          <div class="text-center mb-16">
-            <h2 class="text-3xl font-bold mb-6"><%= section.title %></h2>
-          </div>
-          
-          <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <% @recent_works.limit(3).each do |work| %>
-              <div class="bg-white rounded-xl overflow-hidden shadow-lg scroll-reveal">
-                <% if work.thumbnail_image.attached? %>
-                  <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200">
-                    <%= image_tag work.thumbnail_image, 
-                        alt: work.title, 
-                        class: "w-full h-full object-cover" %>
-                  </div>
-                <% else %>
-                  <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                    <span class="text-gray-500">プロジェクト画像</span>
-                  </div>
-                <% end %>
-                
-                <div class="p-6">
-                  <h3 class="text-xl font-bold mb-3"><%= work.title %></h3>
-                  <div class="text-gray-600 leading-relaxed mb-4">
-                    <%= truncate(strip_tags(safe_markdown(work.excerpt.presence || work.content)), length: 120) %>
-                  </div>
-                  
-                  <div class="flex justify-between items-center text-sm text-gray-500">
-                    <span>期間: 6ヶ月</span>
-                    <span>規模: 中規模</span>
-                  </div>
-                  
-                  <% if work.tech_stack.present? %>
-                    <div class="mt-4">
-                      <div class="flex flex-wrap gap-2">
-                        <% work.tech_stack_list.each do |tech| %>
-                          <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                            <%= tech %>
-                          </span>
-                        <% end %>
-                      </div>
-                    </div>
-                  <% end %>
-                </div>
-              </div>
-            <% end %>
-          </div>
-          
-          <div class="text-center mt-8">
-            <%= link_to "/blog?category=works", 
-                        class: "bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors" do %>
-              詳細な事例を見る
-            <% end %>
-          </div>
-        </div>
-      </section>
+      <!-- Projects Section - Render Works partial -->
+      <%= render 'portfolio/sections/works' %>
     <% elsif section.cta_section? %>
       <!-- CTA Section (positioned dynamically) -->
       <section class="py-20" style="background: linear-gradient(90deg, #2563eb 0%, #9333ea 100%);">
@@ -258,7 +203,7 @@
           <%= link_to root_path, class: "inline-block bg-blue-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-800 transition-colors" do %>
             ポートフォリオを見る
           <% end %>
-          <a href="#contact" class="inline-block border-2 border-blue-900 text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-blue-900 hover:text-white transition-colors">
+          <a href="https://miyakawa.codes/#contact" class="inline-block border-2 border-blue-900 text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-blue-900 hover:text-white transition-colors">
             お問い合わせ
           </a>
         </div>
@@ -266,14 +211,6 @@
     </section>
   <% end %>
 
-  <!-- Navigation -->
-  <div class="bg-white py-6 border-t border-gray-200">
-    <div class="container mx-auto px-6 text-center">
-      <%= link_to root_path, class: "text-blue-600 hover:text-blue-700 font-medium" do %>
-        ← ポートフォリオに戻る
-      <% end %>
-    </div>
-  </div>
 
   <%= render 'shared/footer', variant: 'story' %>
 </div>
