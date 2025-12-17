@@ -1,11 +1,13 @@
 namespace :my_story do
-  desc "Fix timeline and skills_integration additional_data structure (create if not exists)"
+  desc "Fix and create My Story sections (timeline, skills_integration, projects)"
   task fix_data: :environment do
     puts "Starting My Story data fix..."
+    puts ""
 
     # ========================================
     # Fix Timeline Section
     # ========================================
+    puts "=== Timeline Section ==="
     timeline = MyStorySection.find_by(section_type: 'timeline')
     if timeline
       years = timeline.additional_data['years']
@@ -19,14 +21,18 @@ namespace :my_story do
         timeline.additional_data['years'] = years
         timeline.save!
         puts "✓ Fixed timeline section: #{timeline.title}"
+      else
+        puts "⚠ Timeline section exists but has no years data"
       end
     else
-      puts "✗ Timeline section not found (create via admin or run db:seed)"
+      puts "✗ Timeline section not found (will use fallback display)"
     end
+    puts ""
 
     # ========================================
     # Fix or Create Skills Integration Section
     # ========================================
+    puts "=== Skills Integration Section ==="
     skills_section = MyStorySection.find_by(section_type: 'skills_integration')
     
     skill_cards_data = {
@@ -40,11 +46,9 @@ namespace :my_story do
     }
     
     if skills_section
-      # レコードが存在する場合は更新
       old_skills = skills_section.additional_data.dig('skills', 'list')
       
       if old_skills.present?
-        # 古い形式から変換
         skill_cards = old_skills.map do |skill|
           {
             'icon' => skill['icon'],
@@ -59,7 +63,6 @@ namespace :my_story do
         skills_section.save!
         puts "✓ Converted skills integration from old format"
       elsif skills_section.additional_data['skill_cards'].blank?
-        # データが空の場合はデフォルトを設定
         skills_section.additional_data = skill_cards_data
         skills_section.save!
         puts "✓ Set default data for skills integration"
@@ -68,20 +71,63 @@ namespace :my_story do
       end
     else
       # レコードが存在しない場合は新規作成
-      max_position = MyStorySection.maximum(:position) || 0
+      # chapter_3の後、projectsの前に配置
+      chapter3 = MyStorySection.find_by(section_type: 'chapter_3')
+      position = chapter3 ? chapter3.position + 1 : 6
       
       skills_section = MyStorySection.create!(
         section_type: 'skills_integration',
-        position: max_position + 1,
+        position: position,
         title: 'まとめ: 統合されたスキルセット',
         subtitle: 'これらのスキルが組み合わさることで',
         content: '「一人で要件定義から実装まで対応できる」という希少価値のあるエンジニアになることができました',
         additional_data: skill_cards_data,
         is_active: true
       )
-      puts "✓ Created skills integration section: #{skills_section.title}"
+      puts "✓ Created skills integration section: #{skills_section.title} (position: #{position})"
     end
+    puts ""
 
+    # ========================================
+    # Fix or Create Projects Section
+    # ========================================
+    puts "=== Projects Section ==="
+    projects_section = MyStorySection.find_by(section_type: 'projects')
+    
+    if projects_section
+      puts "✓ Projects section already exists: #{projects_section.title}"
+      # is_activeがfalseならtrueに
+      unless projects_section.is_active
+        projects_section.update!(is_active: true)
+        puts "✓ Activated projects section"
+      end
+    else
+      # skills_integrationの後に配置
+      skills_section = MyStorySection.find_by(section_type: 'skills_integration')
+      position = skills_section ? skills_section.position + 1 : 7
+      
+      projects_section = MyStorySection.create!(
+        section_type: 'projects',
+        position: position,
+        title: '実績・事例',
+        subtitle: '統合されたスキルセットによる実績',
+        content: '要件定義から実装まで一貫した対応により、様々なプロジェクトを成功に導いています',
+        additional_data: {},
+        is_active: true
+      )
+      puts "✓ Created projects section: #{projects_section.title} (position: #{position})"
+    end
+    puts ""
+
+    # ========================================
+    # Summary
+    # ========================================
+    puts "=== Summary ==="
+    puts "Active My Story Sections:"
+    MyStorySection.active_by_position.each do |section|
+      puts "  #{section.position}. #{section.section_type}: #{section.title}"
+    end
+    
     puts ""
     puts "Data fix completed!"
     puts "Please visit /my-story to verify the changes."
