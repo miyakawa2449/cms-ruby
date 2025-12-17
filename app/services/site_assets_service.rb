@@ -13,8 +13,14 @@ class SiteAssetsService
         css_class = options[:class] || 'h-8 w-auto'
         alt_text = options[:alt] || 'サイトロゴ'
         
-        ApplicationController.helpers.image_tag(
+        # 明示的にURLを生成（polymorphic_url問題を回避）
+        logo_url = Rails.application.routes.url_helpers.rails_storage_proxy_path(
           logo_setting.image_value, 
+          only_path: true
+        )
+        
+        ApplicationController.helpers.image_tag(
+          logo_url, 
           class: css_class, 
           alt: alt_text
         )
