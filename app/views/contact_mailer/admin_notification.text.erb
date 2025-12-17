@@ -1,0 +1,16 @@
+新しいお問い合わせが届きました
+
+========================================
+お名前: <%= @contact.name %>
+メールアドレス: <%= @contact.email %>
+件名: <%= @contact.subject %>
+送信日時: <%= @contact.created_at.strftime('%Y年%m月%d日 %H:%M') %>
+========================================
+
+お問い合わせ内容:
+<%= @contact.message %>
+
+========================================
+
+このメールは Miyakawa Codes のお問い合わせフォームから自動送信されています。
+管理画面: https://miyakawa.codes/admin-secure-panel-miyakawa2449

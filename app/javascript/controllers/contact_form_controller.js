@@ -30,6 +30,8 @@ export default class extends Controller {
         // 成功時
         this.showMessage(result.message, 'success')
         this.formTarget.reset()
+        // フォーム上部へスクロール
+        this.scrollToForm()
       } else {
         // エラー時
         this.showMessage(result.message, 'error')
@@ -66,7 +68,7 @@ export default class extends Controller {
     // フォームの上に挿入
     this.formTarget.parentNode.insertBefore(messageDiv, this.formTarget)
     
-    // 3秒後にフェードアウト
+    // 5秒後にフェードアウト
     setTimeout(() => {
       messageDiv.style.transition = 'opacity 0.5s'
       messageDiv.style.opacity = '0'
@@ -75,6 +77,14 @@ export default class extends Controller {
           messageDiv.remove()
         }
       }, 500)
-    }, 3000)
+    }, 5000)
+  }
+  
+  scrollToForm() {
+    // フォーム上部へスムーズにスクロール
+    this.formTarget.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    })
   }
 }
