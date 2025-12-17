@@ -24,6 +24,11 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
+  # プロキシモードを使用してリダイレクト時のホスト問題を回避
+  # これにより、ブラウザが直接ディスクサービスURLにアクセスする代わりに
+  # Railsがファイルをプロキシして配信する
+  config.active_storage.resolve_model_to_route = :rails_storage_proxy
+
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
 
