@@ -24,9 +24,7 @@ def create_my_story_sections
     subtitle: '30年のキャリアで培った独自のスキルセット',
     content: '3つの時代を経て形成された、技術とビジネスを橋渡しする力',
     additional_data: {
-      timeline: {
-        years: ['1994', '2005', '2022']
-      }
+      years: ['1994', '2005', '2022']
     },
     is_active: true
   )
@@ -40,22 +38,20 @@ def create_my_story_sections
     subtitle: '1994-2005年 | PM基礎力を培った11年間',
     content: '全国ネットのパソコンスクール講師として11年間、20人近い受講生を前に教室を運営。資格試験合格に向けた受講生の取りまとめを通じて、後のプロジェクト管理に欠かせないスキルの基礎を培いました。',
     additional_data: {
-      chapter: {
-        skills: [
-          '課題の明確化・分析',
-          'モチベーション維持・管理', 
-          'レベル差のある人材の統率',
-          '資格試験指導・目標管理',
-          '情報処理国家試験指導'
-        ],
-        achievements: [
-          '全国ネット・パソコンスクール講師として11年間従事',
-          '20人規模の教室運営・受講生管理',
-          '情報処理国家試験・各種資格試験の指導実績',
-          '受講生の合格率向上・モチベーション管理'
-        ],
-        quote: '20人近い受講生を前に教室を運営し、資格試験合格に向けて取りまとめる経験は、後のプロジェクト管理に大いに役立つスキルの基礎となった'
-      }
+      skills: [
+        '課題の明確化・分析',
+        'モチベーション維持・管理', 
+        'レベル差のある人材の統率',
+        '資格試験指導・目標管理',
+        '情報処理国家試験指導'
+      ],
+      achievements: [
+        '全国ネット・パソコンスクール講師として11年間従事',
+        '20人規模の教室運営・受講生管理',
+        '情報処理国家試験・各種資格試験の指導実績',
+        '受講生の合格率向上・モチベーション管理'
+      ],
+      quote: '20人近い受講生を前に教室を運営し、資格試験合格に向けて取りまとめる経験は、後のプロジェクト管理に大いに役立つスキルの基礎となった'
     },
     is_active: true
   )
@@ -69,23 +65,21 @@ def create_my_story_sections
     subtitle: '2005-2021年 | 上流工程専門家として16年間',
     content: 'SE/PMとして16年間、大規模プロジェクトの上流工程をリード。ビジネス分析者としてクライアントの本質的な課題を見極め、最適なソリューションを提案する力を磨きました。',
     additional_data: {
-      chapter: {
-        skills: [
-          'ビジネス要件の分析・文書化',
-          '大規模プロジェクトの推進力',
-          '多様なステークホルダーとの調整',
-          'チームビルディング・リーダーシップ',
-          '業務プロセスの最適化・提案'
-        ],
-        achievements: [
-          '大規模プロジェクトの要件定義・設計',
-          '多様なステークホルダーとの調整',
-          '業務プロセスの最適化提案',
-          '技術選定とアーキテクチャ設計',
-          'DX・業務効率化による顧客価値創造'
-        ],
-        quote: '16年間のSE/PM経験で、ビジネス課題を技術で解決する力を徹底的に磨いた。この期間に培った上流工程のスキルが、現在の独自性の核となっている'
-      }
+      skills: [
+        'ビジネス要件の分析・文書化',
+        '大規模プロジェクトの推進力',
+        '多様なステークホルダーとの調整',
+        'チームビルディング・リーダーシップ',
+        '業務プロセスの最適化・提案'
+      ],
+      achievements: [
+        '大規模プロジェクトの要件定義・設計',
+        '多様なステークホルダーとの調整',
+        '業務プロセスの最適化提案',
+        '技術選定とアーキテクチャ設計',
+        'DX・業務効率化による顧客価値創造'
+      ],
+      quote: '16年間のSE/PM経験で、ビジネス課題を技術で解決する力を徹底的に磨いた。この期間に培った上流工程のスキルが、現在の独自性の核となっている'
     },
     is_active: true
   )
@@ -99,22 +93,20 @@ def create_my_story_sections
     subtitle: '2022年-現在 | 全スキルの統合',
     content: 'AI登場を機にプログラミングを本格的に習得。講師時代の教育力、PM時代の課題解決力、そしてプログラミング技術が統合され、要件定義から実装まで一人で完結できる希少なスキルセットが完成しました。',
     additional_data: {
-      chapter: {
-        skills: [
-          'ChatGPT APIの活用方法習得',
-          'Ruby/Rails でAI連携アプリ開発',
-          'SE経験を活かした要件定義→実装',
-          'AI効率化ツールの開発・提案',
-          'DXコンサルティング・技術選定'
-        ],
-        achievements: [
-          '講師経験 → 課題の明確化、わかりやすい説明',
-          'PM経験 → 要件定義、ビジネス理解',
-          'プログラミング → 実装力、技術選定',
-          'AI活用 → 最新技術、効率化'
-        ],
-        quote: '30年のキャリアで積み重ねた3つのフェーズが、AI時代に最適な形で統合された。これこそが『一人でできる』理由である'
-      }
+      skills: [
+        'ChatGPT APIの活用方法習得',
+        'Ruby/Rails でAI連携アプリ開発',
+        'SE経験を活かした要件定義→実装',
+        'AI効率化ツールの開発・提案',
+        'DXコンサルティング・技術選定'
+      ],
+      achievements: [
+        '講師経験 → 課題の明確化、わかりやすい説明',
+        'PM経験 → 要件定義、ビジネス理解',
+        'プログラミング → 実装力、技術選定',
+        'AI活用 → 最新技術、効率化'
+      ],
+      quote: '30年のキャリアで積み重ねた3つのフェーズが、AI時代に最適な形で統合された。これこそが『一人でできる』理由である'
     },
     is_active: true
   )
@@ -128,30 +120,28 @@ def create_my_story_sections
     subtitle: 'これらのスキルが組み合わさることで',
     content: '「一人で要件定義から実装まで対応できる」という希少価値のあるエンジニアになることができました',
     additional_data: {
-      skills: {
-        list: [
-          {
-            icon: '👨‍🏫',
-            title: '講師経験',
-            items: ['人材育成・管理', '課題分析力', 'PM基礎力']
-          },
-          {
-            icon: '🎯', 
-            title: 'SE/PM経験',
-            items: ['要件定義・業務分析', 'プロジェクト推進力', 'ステークホルダー調整']
-          },
-          {
-            icon: '💻',
-            title: 'プログラミング',
-            items: ['Ruby/Rails開発', 'Webアプリケーション構築', 'アーキテクチャ設計']
-          },
-          {
-            icon: '🤖',
-            title: 'AI活用',
-            items: ['ChatGPT API連携', 'AI効率化ツール開発', 'DXコンサルティング']
-          }
-        ]
-      }
+      list: [
+        {
+          icon: '👨‍🏫',
+          title: '講師経験',
+          items: ['人材育成・管理', '課題分析力', 'PM基礎力']
+        },
+        {
+          icon: '🎯', 
+          title: 'SE/PM経験',
+          items: ['要件定義・業務分析', 'プロジェクト推進力', 'ステークホルダー調整']
+        },
+        {
+          icon: '💻',
+          title: 'プログラミング',
+          items: ['Ruby/Rails開発', 'Webアプリケーション構築', 'アーキテクチャ設計']
+        },
+        {
+          icon: '🤖',
+          title: 'AI活用',
+          items: ['ChatGPT API連携', 'AI効率化ツール開発', 'DXコンサルティング']
+        }
+      ]
     },
     is_active: true
   )
@@ -165,31 +155,29 @@ def create_my_story_sections
     subtitle: '統合されたスキルセットによる実績',
     content: '要件定義から実装まで一貫した対応により、様々なプロジェクトを成功に導いています',
     additional_data: {
-      projects: {
-        items: [
-          {
-            title: '要件定義〜システム構築',
-            description: 'お客様のビジネス課題を分析し、最適なシステムを一貫して構築',
-            period: '6ヶ月',
-            scale: '中規模',
-            technologies: ['Ruby/Rails', 'PostgreSQL', 'Docker', 'AWS']
-          },
-          {
-            title: 'レガシーシステム モダン化',
-            description: '古いシステムを現代的な技術スタックで再構築',
-            period: '8ヶ月',
-            scale: '大規模', 
-            technologies: ['Python', 'Docker', 'AWS', 'Microservices']
-          },
-          {
-            title: 'AI活用ツール開発',
-            description: 'ChatGPT APIを活用した業務効率化ツールの開発',
-            period: '3ヶ月',
-            scale: '小規模',
-            technologies: ['ChatGPT API', 'React', 'Node.js', 'TypeScript']
-          }
-        ]
-      }
+      items: [
+        {
+          title: '要件定義〜システム構築',
+          description: 'お客様のビジネス課題を分析し、最適なシステムを一貫して構築',
+          period: '6ヶ月',
+          scale: '中規模',
+          technologies: ['Ruby/Rails', 'PostgreSQL', 'Docker', 'AWS']
+        },
+        {
+          title: 'レガシーシステム モダン化',
+          description: '古いシステムを現代的な技術スタックで再構築',
+          period: '8ヶ月',
+          scale: '大規模', 
+          technologies: ['Python', 'Docker', 'AWS', 'Microservices']
+        },
+        {
+          title: 'AI活用ツール開発',
+          description: 'ChatGPT APIを活用した業務効率化ツールの開発',
+          period: '3ヶ月',
+          scale: '小規模',
+          technologies: ['ChatGPT API', 'React', 'Node.js', 'TypeScript']
+        }
+      ]
     },
     is_active: true
   )
@@ -203,20 +191,18 @@ def create_my_story_sections
     subtitle: '上流から下流まで一貫したサポートでプロジェクト成功をお手伝いします',
     content: '要件定義から実装まで一貫した対応により、プロジェクト成功を実現します',
     additional_data: {
-      cta: {
-        buttons: [
-          {
-            text: 'ポートフォリオを見る',
-            url: '/',
-            style: 'primary'
-          },
-          {
-            text: 'お問い合わせ',
-            url: '#contact',
-            style: 'secondary'
-          }
-        ]
-      }
+      buttons: [
+        {
+          text: 'ポートフォリオを見る',
+          url: '/',
+          style: 'primary'
+        },
+        {
+          text: 'お問い合わせ',
+          url: '#contact',
+          style: 'secondary'
+        }
+      ]
     },
     is_active: true
   )

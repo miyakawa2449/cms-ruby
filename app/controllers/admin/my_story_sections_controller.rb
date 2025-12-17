@@ -110,6 +110,9 @@ class Admin::MyStorySectionsController < Admin::BaseController
       :is_active,
       :background_image,
       :chapter_image,
+      :skills,        # 追加
+      :achievements,  # 追加
+      :quote,         # 追加
       gallery_images: [],
       additional_data: [
         timeline: [

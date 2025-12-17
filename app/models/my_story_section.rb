@@ -49,6 +49,9 @@ class MyStorySection < ApplicationRecord
     'cta' => 'Call to Action'
   }.freeze
 
+  # Virtual attributes for form input (chapter sections)
+  attr_accessor :skills, :achievements, :quote
+
   # Active Storage attachments
   has_one_attached :background_image
   has_one_attached :chapter_image
@@ -176,6 +179,8 @@ class MyStorySection < ApplicationRecord
 
   # Callbacks
   before_validation :set_default_position, if: :new_record?
+  before_save :sync_chapter_fields_to_additional_data
+  after_initialize :load_chapter_fields_from_additional_data
 
   private
 
@@ -183,6 +188,37 @@ class MyStorySection < ApplicationRecord
     return if position.present?
     
     self.position = self.class.next_position
+  end
+
+  # Load virtual attributes from additional_data when record is loaded
+  def load_chapter_fields_from_additional_data
+    return unless chapter_section?
+    
+    @skills = chapter_skills.join("\n") if chapter_skills.any?
+    @achievements = chapter_achievements.join("\n") if chapter_achievements.any?
+    @quote = chapter_quote
+  end
+
+  # Sync virtual attributes to additional_data before save
+  def sync_chapter_fields_to_additional_data
+    return unless chapter_section?
+    
+    self.additional_data ||= {}
+    
+    # Parse skills from textarea (newline-separated)
+    if @skills.present?
+      self.additional_data['skills'] = @skills.to_s.split(/[\r\n]+/).map(&:strip).reject(&:blank?)
+    end
+    
+    # Parse achievements from textarea (newline-separated)
+    if @achievements.present?
+      self.additional_data['achievements'] = @achievements.to_s.split(/[\r\n]+/).map(&:strip).reject(&:blank?)
+    end
+    
+    # Set quote directly
+    if @quote.present?
+      self.additional_data['quote'] = @quote.to_s.strip
+    end
   end
 
   def validate_with_custom_validator
