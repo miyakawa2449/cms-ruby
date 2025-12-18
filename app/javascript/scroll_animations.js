@@ -1,30 +1,26 @@
 // Scroll-triggered animations for sections
 document.addEventListener('DOMContentLoaded', () => {
-  // Add animation classes to sections
+  // ========================================
+  // 1. Section animations (既存のTailwindベース)
+  // ========================================
   const animateSections = document.querySelectorAll('section');
   
   animateSections.forEach(section => {
-    // Skip hero section
     if (section.id === 'hero') return;
-    
-    // Add initial hidden state
     section.classList.add('opacity-0', 'translate-y-10', 'transition-all', 'duration-700');
   });
   
-  // Intersection Observer for scroll animations
-  const observerOptions = {
+  const sectionObserverOptions = {
     threshold: 0.1,
     rootMargin: '-50px 0px'
   };
   
-  const observer = new IntersectionObserver((entries) => {
+  const sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        // Animate in
         entry.target.classList.remove('opacity-0', 'translate-y-10');
         entry.target.classList.add('opacity-100', 'translate-y-0');
         
-        // Stagger animations for child elements
         const animateElements = entry.target.querySelectorAll('.animate-fade-in');
         animateElements.forEach((el, index) => {
           setTimeout(() => {
@@ -34,18 +30,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     });
-  }, observerOptions);
+  }, sectionObserverOptions);
   
-  // Observe all sections
   animateSections.forEach(section => {
     if (section.id !== 'hero') {
-      observer.observe(section);
+      sectionObserver.observe(section);
     }
   });
   
-  // Add animation classes to specific elements
   const fadeInElements = document.querySelectorAll('.section-title, .section-description, article, .feature-card');
   fadeInElements.forEach(el => {
     el.classList.add('animate-fade-in', 'opacity-0', 'translate-y-4', 'transition-all', 'duration-500');
   });
+
+  // ========================================
+  // 2. scroll-reveal animations (CSSクラスベース)
+  // ========================================
+  function revealScrollElements() {
+    const reveals = document.querySelectorAll('.scroll-reveal');
+    
+    reveals.forEach(element => {
+      const windowHeight = window.innerHeight;
+      const elementTop = element.getBoundingClientRect().top;
+      const elementVisible = 150;
+      
+      if (elementTop < windowHeight - elementVisible) {
+        element.classList.add('revealed');
+      }
+    });
+  }
+
+  // 初期表示時にチェック
+  revealScrollElements();
+  
+  // スクロール時にチェック
+  window.addEventListener('scroll', revealScrollElements);
 });

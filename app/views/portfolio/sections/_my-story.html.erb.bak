@@ -27,65 +27,72 @@
         </p>
       </div>
       
-      <!-- ストーリータイムライン（グリッドレイアウト） -->
+      <!-- ストーリータイムライン -->
       <div class="relative">
-        <!-- タイムライン線（PC表示時のみ） -->
-        <div class="hidden md:block absolute top-10 left-0 right-0 h-1 bg-gradient-to-r from-green-400 via-blue-400 to-purple-400"></div>
+        <!-- タイムライン線 -->
+        <div class="absolute left-1/2 transform -translate-x-px h-full w-0.5 bg-blue-300"></div>
         
-        <div class="grid md:grid-cols-3 gap-8">
-          <!-- Phase 1 -->
-          <div class="text-center scroll-reveal">
-            <div class="w-20 h-20 bg-green-500 rounded-full mx-auto mb-6 flex items-center justify-center text-white font-bold text-xl shadow-lg relative z-10">
-              <%= section.active_content&.phase1_year.presence || '1' %>
-            </div>
-            <div class="bg-white rounded-xl p-6 shadow-lg border-t-4 border-green-500">
-              <h3 class="text-lg font-bold text-gray-900 mb-2">
+        <!-- Phase 1 -->
+        <div class="relative flex items-center mb-16">
+          <div class="flex-1 pr-8 text-right">
+            <div class="bg-white rounded-xl p-8 shadow-lg mr-4 border-l-4 border-green-500">
+              <h3 class="text-xl font-bold text-gray-900 mb-2">
                 第1フェーズ: <%= section.active_content&.phase1_title.presence || 'パソコンスクール講師時代' %>
               </h3>
-              <p class="text-green-600 font-medium text-sm mb-3">
+              <p class="text-green-600 font-medium mb-3">
                 <%= section.active_content&.phase1_period.presence || '1994-2005年（11年間）' %>
               </p>
-              <p class="text-gray-600 text-sm leading-relaxed">
-                <%= section.active_content&.phase1_description.presence || '人材育成・プロジェクト管理基礎力の形成。20名規模クラス運営による統率力・課題解決力習得。' %>
+              <p class="text-gray-600 leading-relaxed">
+                <%= section.active_content&.phase1_description.presence || '人材育成・プロジェクト管理基礎力の形成。20名規模クラス運営による統率力・課題解決力習得。情報処理国家試験指導経験で技術的な理解力を深める。' %>
               </p>
             </div>
           </div>
-          
-          <!-- Phase 2 -->
-          <div class="text-center scroll-reveal">
-            <div class="w-20 h-20 bg-blue-500 rounded-full mx-auto mb-6 flex items-center justify-center text-white font-bold text-xl shadow-lg relative z-10">
-              <%= section.active_content&.phase2_year.presence || '2' %>
-            </div>
-            <div class="bg-white rounded-xl p-6 shadow-lg border-t-4 border-blue-500">
-              <h3 class="text-lg font-bold text-gray-900 mb-2">
+          <div class="flex items-center justify-center w-12 h-12 bg-green-500 text-white rounded-full font-bold text-lg z-10">
+            <%= section.active_content&.phase1_year.presence || '1' %>
+          </div>
+          <div class="flex-1 pl-8"></div>
+        </div>
+        
+        <!-- Phase 2 -->
+        <div class="relative flex items-center mb-16">
+          <div class="flex-1 pr-8"></div>
+          <div class="flex items-center justify-center w-12 h-12 bg-blue-500 text-white rounded-full font-bold text-lg z-10">
+            <%= section.active_content&.phase2_year.presence || '2' %>
+          </div>
+          <div class="flex-1 pl-8">
+            <div class="bg-white rounded-xl p-8 shadow-lg ml-4 border-l-4 border-blue-500">
+              <h3 class="text-xl font-bold text-gray-900 mb-2">
                 第2フェーズ: <%= section.active_content&.phase2_title.presence || 'SE/PM・ビジネス分析者時代' %>
               </h3>
-              <p class="text-blue-600 font-medium text-sm mb-3">
+              <p class="text-blue-600 font-medium mb-3">
                 <%= section.active_content&.phase2_period.presence || '2005-2021年（16年間）' %>
               </p>
-              <p class="text-gray-600 text-sm leading-relaxed">
-                <%= section.active_content&.phase2_description.presence || '上流工程専門家として大規模プロジェクトリード。ビジネス要件分析・設計文書化・チーム管理。' %>
+              <p class="text-gray-600 leading-relaxed">
+                <%= section.active_content&.phase2_description.presence || '上流工程専門家として大規模プロジェクトリード。ビジネス要件分析・設計文書化・チーム管理。多様なステークホルダー調整・プロジェクト推進力を習得。' %>
               </p>
             </div>
           </div>
-          
-          <!-- Phase 3 -->
-          <div class="text-center scroll-reveal">
-            <div class="w-20 h-20 bg-purple-500 rounded-full mx-auto mb-6 flex items-center justify-center text-white font-bold text-xl shadow-lg relative z-10">
-              <%= section.active_content&.phase3_year.presence || '3' %>
-            </div>
-            <div class="bg-white rounded-xl p-6 shadow-lg border-t-4 border-purple-500">
-              <h3 class="text-lg font-bold text-gray-900 mb-2">
+        </div>
+        
+        <!-- Phase 3 -->
+        <div class="relative flex items-center">
+          <div class="flex-1 pr-8 text-right">
+            <div class="bg-white rounded-xl p-8 shadow-lg mr-4 border-l-4 border-purple-500">
+              <h3 class="text-xl font-bold text-gray-900 mb-2">
                 第3フェーズ: <%= section.active_content&.phase3_title.presence || 'AI活用エンジニア時代' %>
               </h3>
-              <p class="text-purple-600 font-medium text-sm mb-3">
+              <p class="text-purple-600 font-medium mb-3">
                 <%= section.active_content&.phase3_period.presence || '2022年-現在' %>
               </p>
-              <p class="text-gray-600 text-sm leading-relaxed">
-                <%= section.active_content&.phase3_description.presence || 'ChatGPT登場を機に50代でプログラミング本格開始。SE/PM経験 × AI技術 × プログラミングスキルの統合。' %>
+              <p class="text-gray-600 leading-relaxed">
+                <%= section.active_content&.phase3_description.presence || 'ChatGPT登場を機に50代でプログラミング本格開始。SE/PM経験 × AI技術 × プログラミングスキルの統合。全スキルセット統合による一人完結型エンジニアへ進化。' %>
               </p>
             </div>
           </div>
+          <div class="flex items-center justify-center w-12 h-12 bg-purple-500 text-white rounded-full font-bold text-lg z-10">
+            <%= section.active_content&.phase3_year.presence || '3' %>
+          </div>
+          <div class="flex-1 pl-8"></div>
         </div>
       </div>
       
