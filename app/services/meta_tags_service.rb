@@ -159,6 +159,9 @@ class MetaTagsService
     tags << content_tag(:meta, nil, property: 'og:type', content: meta_tags[:og][:type])
     tags << content_tag(:meta, nil, property: 'og:url', content: meta_tags[:og][:url])
     tags << content_tag(:meta, nil, property: 'og:image', content: meta_tags[:og][:image])
+    # TODO: トリミング機能実装時は1200x628を維持すること
+    tags << content_tag(:meta, nil, property: 'og:image:width', content: '1200')
+    tags << content_tag(:meta, nil, property: 'og:image:height', content: '628')
     tags << content_tag(:meta, nil, property: 'og:locale', content: meta_tags[:og][:locale])
     
     # Twitter Card tags
@@ -168,7 +171,9 @@ class MetaTagsService
     tags << content_tag(:meta, nil, name: 'twitter:title', content: meta_tags[:twitter][:title])
     tags << content_tag(:meta, nil, name: 'twitter:description', content: meta_tags[:twitter][:description])
     tags << content_tag(:meta, nil, name: 'twitter:image', content: meta_tags[:twitter][:image])
-    
+    tags << content_tag(:meta, nil, name: 'twitter:image:width', content: '1200')
+    tags << content_tag(:meta, nil, name: 'twitter:image:height', content: '628')
+
     tags.join("\n    ").html_safe
   end
 
@@ -196,7 +201,7 @@ class MetaTagsService
       },
       twitter: {
         card: 'summary_large_image',
-        site: '@miyakawa_dev',
+        site: '@miyakawa2449',  # TODO: 管理画面から設定可能にする
         title: '宮川 剛 - シニアエンジニアのポートフォリオ',
         description: 'シニアエンジニアの技術発信・ポートフォリオサイト。20年以上の経験を活かしたシステム設計・開発を提供します。',
         image: default_og_image_url
