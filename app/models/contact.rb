@@ -1,6 +1,11 @@
 class Contact < ApplicationRecord
   belongs_to :admin_user, foreign_key: :assigned_to, optional: true
-  
+
+  # 個人情報の暗号化（Active Record Encryption）
+  encrypts :email, deterministic: true  # 検索可能にするためdeterministic
+  encrypts :name
+  encrypts :message
+
   validates :name, presence: true, length: { maximum: 100 }
   validates :email, presence: true, 
                    format: { with: URI::MailTo::EMAIL_REGEXP }, 

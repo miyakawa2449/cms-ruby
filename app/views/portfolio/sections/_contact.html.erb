@@ -23,7 +23,13 @@
                 data-action="submit->contact-form#submit"
                 action="/contacts" method="post" class="space-y-6">
             <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-            
+
+            <%# Honeypot field - ボット対策（人間には見えない） %>
+            <div style="position: absolute; left: -9999px;" aria-hidden="true">
+              <label for="contact_website">Website</label>
+              <input type="text" id="contact_website" name="contact[website]" tabindex="-1" autocomplete="off">
+            </div>
+
             <div>
               <label for="contact_name" class="block text-sm font-medium text-gray-300 mb-2">お名前 *</label>
               <input type="text" id="contact_name" name="contact[name]" required
