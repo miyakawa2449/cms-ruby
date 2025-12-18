@@ -21,16 +21,31 @@ class ApplicationController < ActionController::Base
     
     response.headers['Content-Security-Policy'] = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net",
-      "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com",
-      "img-src 'self' data: https: blob:",
-      "font-src 'self' https: data:",
-      "connect-src 'self' https://api.openai.com",
+      # スクリプト: GTM, GA4, Clarity
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://www.googletagmanager.com https://googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com https://www.clarity.ms https://*.clarity.ms",
+      # スタイル: Google Fonts
+      "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://www.googletagmanager.com",
+      # 画像: Google系, Clarity
+      "img-src 'self' data: https: blob: https://www.googletagmanager.com https://www.google-analytics.com https://*.clarity.ms https://c.bing.com",
+      # フォント: Google Fonts
+      "font-src 'self' https: data: https://fonts.gstatic.com",
+      # 接続先: GA4, Clarity
+      "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://*.clarity.ms https://www.clarity.ms https://c.bing.com",
+      # メディア
       "media-src 'self'",
+      # オブジェクト: 無効化
       "object-src 'none'",
+      # ベースURI
       "base-uri 'self'",
+      # フォームアクション
       "form-action 'self'",
+      # フレーム: GTMプレビュー用
+      "frame-src 'self' https://www.googletagmanager.com",
+      # 親フレーム
       "frame-ancestors 'none'",
+      # Worker: Clarity用
+      "worker-src 'self' blob:",
+      # HTTPSアップグレード
       "upgrade-insecure-requests"
     ].join('; ')
   end
