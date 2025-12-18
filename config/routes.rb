@@ -4,9 +4,11 @@ Rails.application.routes.draw do
   
   # Contact form submission
   post "contacts", to: "contacts#create"
-  devise_for :admin_users, path: 'admin-secure-panel-miyakawa2449', controllers: {
-    sessions: 'admin_users/sessions'
-  }
+  # NOTE: registrations skipped for security (single-user CMS)
+  # Future: Remove skip when implementing multi-tenant CMS sales version
+  devise_for :admin_users, path: 'admin-secure-panel-miyakawa2449',
+    skip: [:registrations],
+    controllers: { sessions: 'admin_users/sessions' }
   
   # Admin routes (セキュリティのため長いURL使用)
   namespace :admin, path: 'admin-secure-panel-miyakawa2449' do

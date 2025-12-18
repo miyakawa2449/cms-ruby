@@ -6,15 +6,17 @@ class Rack::Attack
   Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
 
   # Throttle login attempts by IP
+  # Matches any Devise sign_in path (e.g., /admin-secure-panel-miyakawa2449/sign_in)
   throttle('logins/ip', limit: 5, period: 20.seconds) do |req|
-    if req.path == '/admin/login' && req.post?
+    if req.path.end_with?('/sign_in') && req.post?
       req.ip
     end
   end
 
   # Throttle password reset attempts by IP
+  # Matches Devise password reset path
   throttle('password_resets/ip', limit: 5, period: 1.hour) do |req|
-    if req.path == '/admin_users/password' && req.post?
+    if req.path.end_with?('/password') && req.post?
       req.ip
     end
   end
