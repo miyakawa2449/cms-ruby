@@ -7,6 +7,7 @@ class Admin::SiteSettingsController < Admin::BaseController
     @site_title = SiteSetting.site_title
     @site_description = SiteSetting.site_description
     @og_image = SiteSetting.og_image
+    @gtm_id = SiteSetting.gtm_id
     render :index
   end
 
@@ -66,6 +67,17 @@ class Admin::SiteSettingsController < Admin::BaseController
           Rails.logger.error "Site description update failed: #{result[:errors]}"
         end
       end
+      
+      # Google Tag Manager IDの更新
+      if params[:site_setting].has_key?(:gtm_id)
+        result = @gtm_id.value_manager.update_value(params[:site_setting][:gtm_id])
+        if result[:valid]
+          updated_count += 1
+          Rails.logger.info "GTM ID updated successfully"
+        else
+          Rails.logger.error "GTM ID update failed: #{result[:errors]}"
+        end
+      end
     end
 
     if updated_count > 0
@@ -83,9 +95,10 @@ class Admin::SiteSettingsController < Admin::BaseController
     @site_title = SiteSetting.site_title
     @site_description = SiteSetting.site_description
     @og_image = SiteSetting.og_image
+    @gtm_id = SiteSetting.gtm_id
   end
   
   def site_setting_params
-    params.require(:site_setting).permit(:favicon, :logo, :og_image, :site_title, :site_description)
+    params.require(:site_setting).permit(:favicon, :logo, :og_image, :site_title, :site_description, :gtm_id)
   end
 end

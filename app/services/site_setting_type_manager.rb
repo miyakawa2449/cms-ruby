@@ -5,7 +5,8 @@ class SiteSettingTypeManager
     logo: { key: 'logo', type: 'image', description: 'サイトのロゴ画像（ヘッダー・フッター用、横長推奨）' },
     og_image: { key: 'og_image', type: 'image', description: 'デフォルトOG画像（1200x630px推奨）' },
     site_title: { key: 'site_title', type: 'text', description: 'サイトのタイトル', default: 'Miyakawa Codes - ポートフォリオ' },
-    site_description: { key: 'site_description', type: 'text', description: 'サイトの説明文', default: '要件定義からプログラミングまで一人でできるエンジニアのポートフォリオサイト' }
+    site_description: { key: 'site_description', type: 'text', description: 'サイトの説明文', default: '要件定義からプログラミングまで一人でできるエンジニアのポートフォリオサイト' },
+    gtm_id: { key: 'gtm_id', type: 'text', description: 'Google Tag Manager ID（例: GTM-XXXXXXX）', default: '' }
   }.freeze
 
   VALID_TYPES = %w[text image file].freeze

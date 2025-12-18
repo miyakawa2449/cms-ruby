@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- Google Tag Manager -->
+    <%= gtm_head_tag %>
+    
     <title><%= content_for(:title) || "宮川 剛 - シニアエンジニアのポートフォリオ" %></title>
     <% if content_for?(:meta_tags) %>
       <%= yield(:meta_tags) %>
@@ -28,6 +31,9 @@
   </head>
 
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <%= gtm_body_tag %>
+    
     <%= yield %>
   </body>
 </html>

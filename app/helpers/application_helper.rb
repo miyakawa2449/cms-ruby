@@ -4,6 +4,7 @@ module ApplicationHelper
   include SectionHelper
   include TimeHelper
   include NavigationHelper
+  include GtmHelper
 
   # アプリケーション全体で使用する基本的なヘルパーメソッド
   
