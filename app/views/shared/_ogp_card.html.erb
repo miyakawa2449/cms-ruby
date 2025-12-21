@@ -1,7 +1,7 @@
 <%# OGPカード表示用パーシャル（縦型） %>
 <%# 引数: ogp_data (OgpFetcherService::OgpData) %>
 
-<div class="ogp-card-wrapper" style="margin: 1.5rem 0;">
+<div class="ogp-card-wrapper not-prose" style="margin: 1.5rem 0;">
   <a href="<%= ogp_data.url %>"
      target="_blank"
      rel="noopener noreferrer"
@@ -15,7 +15,7 @@
         <div style="width: 100%; overflow: hidden; line-height: 0;">
           <img src="<%= ogp_data.image %>"
                alt="<%= ogp_data.title %>"
-               style="display: block; width: 100%; height: auto;"
+               style="display: block; width: 100%; height: auto; margin: 0; border-radius: 0; box-shadow: none;"
                loading="lazy"
                onerror="this.parentElement.style.display='none'">
         </div>
@@ -28,7 +28,7 @@
           <% if ogp_data.favicon.present? %>
             <img src="<%= ogp_data.favicon %>"
                  alt=""
-                 style="width: 1rem; height: 1rem; flex-shrink: 0;"
+                 style="width: 1rem; height: 1rem; flex-shrink: 0; margin: 0; border-radius: 0; box-shadow: none;"
                  loading="lazy"
                  onerror="this.style.display='none'">
           <% end %>

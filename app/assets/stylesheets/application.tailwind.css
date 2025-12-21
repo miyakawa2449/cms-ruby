@@ -225,23 +225,9 @@
     scroll-margin-top: 80px;
   }
 
-  /* OGPカードスタイル */
-  .ogp-card {
-    text-decoration: none !important;
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .ogp-card:hover {
-    text-decoration: none !important;
-  }
-
-  .ogp-card h4 {
-    margin: 0;
-  }
-
-  .ogp-card p {
-    margin: 0;
+  /* OGPカードスタイル - インラインスタイルで実装（proseクラスの影響回避のため） */
+  .ogp-card-wrapper {
+    /* スタイルはインラインで定義 */
   }
 
   /* line-clamp utility */
