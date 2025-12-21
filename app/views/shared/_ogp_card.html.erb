@@ -1,52 +1,59 @@
-<%# OGPカード表示用パーシャル（縦型・サムネイル大きく表示） %>
+<%# OGPカード表示用パーシャル（縦型） %>
 <%# 引数: ogp_data (OgpFetcherService::OgpData) %>
 
-<a href="<%= ogp_data.url %>"
-   target="_blank"
-   rel="noopener noreferrer"
-   class="ogp-card block no-underline not-prose">
-  <div class="border border-gray-200 rounded-lg overflow-hidden bg-white hover:shadow-lg transition-shadow duration-200 max-w-2xl">
-    <%# サムネイル画像（大きく表示） %>
-    <% if ogp_data.image.present? %>
-      <div class="w-full overflow-hidden">
-        <img src="<%= ogp_data.image %>"
-             alt="<%= ogp_data.title %>"
-             class="block w-full h-auto"
-             loading="lazy"
-             onerror="this.parentElement.style.display='none'">
-      </div>
-    <% end %>
+<div class="ogp-card-wrapper" style="margin: 1.5rem 0;">
+  <a href="<%= ogp_data.url %>"
+     target="_blank"
+     rel="noopener noreferrer"
+     style="display: block; text-decoration: none; color: inherit;">
+    <div style="border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; background: #fff; max-width: 42rem; transition: box-shadow 0.2s;"
+         onmouseover="this.style.boxShadow='0 10px 15px -3px rgba(0,0,0,0.1)'"
+         onmouseout="this.style.boxShadow='none'">
 
-    <%# コンテンツ部分 %>
-    <div class="p-4">
-      <%# サイト情報 %>
-      <div class="flex items-center gap-2 mb-2">
-        <% if ogp_data.favicon.present? %>
-          <img src="<%= ogp_data.favicon %>"
-               alt=""
-               class="w-4 h-4 flex-shrink-0"
+      <%# サムネイル画像 %>
+      <% if ogp_data.image.present? %>
+        <div style="width: 100%; overflow: hidden; line-height: 0;">
+          <img src="<%= ogp_data.image %>"
+               alt="<%= ogp_data.title %>"
+               style="display: block; width: 100%; height: auto;"
                loading="lazy"
-               onerror="this.style.display='none'">
-        <% end %>
-        <span class="text-xs text-gray-500 truncate"><%= ogp_data.site_name %></span>
-      </div>
-
-      <%# タイトル %>
-      <h4 class="text-base font-semibold text-gray-900 mb-2 line-clamp-2">
-        <%= ogp_data.title %>
-      </h4>
-
-      <%# 説明文 %>
-      <% if ogp_data.description.present? %>
-        <p class="text-sm text-gray-600 line-clamp-2 mb-0">
-          <%= ogp_data.description %>
-        </p>
+               onerror="this.parentElement.style.display='none'">
+        </div>
       <% end %>
 
-      <%# URL %>
-      <div class="mt-2 text-xs text-gray-400 truncate">
-        <%= URI.parse(ogp_data.url).host rescue ogp_data.url %>
+      <%# コンテンツ部分 %>
+      <div style="padding: 1rem;">
+        <%# サイト情報 %>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <% if ogp_data.favicon.present? %>
+            <img src="<%= ogp_data.favicon %>"
+                 alt=""
+                 style="width: 1rem; height: 1rem; flex-shrink: 0;"
+                 loading="lazy"
+                 onerror="this.style.display='none'">
+          <% end %>
+          <span style="font-size: 0.75rem; color: #6b7280; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            <%= ogp_data.site_name %>
+          </span>
+        </div>
+
+        <%# タイトル %>
+        <div style="font-size: 1rem; font-weight: 600; color: #111827; margin-bottom: 0.5rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+          <%= ogp_data.title %>
+        </div>
+
+        <%# 説明文 %>
+        <% if ogp_data.description.present? %>
+          <div style="font-size: 0.875rem; color: #4b5563; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0;">
+            <%= ogp_data.description %>
+          </div>
+        <% end %>
+
+        <%# URL %>
+        <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #9ca3af; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+          <%= URI.parse(ogp_data.url).host rescue ogp_data.url %>
+        </div>
       </div>
     </div>
-  </div>
-</a>
+  </a>
+</div>
