@@ -38,7 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   
-  const fadeInElements = document.querySelectorAll('.section-title, .section-description, article, .feature-card');
+  // ブログ記事ページではarticleタグのアニメーションを除外
+  // （articleはIntersectionObserverで監視されていないため透明のまま残る問題を回避）
+  const fadeInElements = document.querySelectorAll('.section-title, .section-description, .feature-card');
   fadeInElements.forEach(el => {
     el.classList.add('animate-fade-in', 'opacity-0', 'translate-y-4', 'transition-all', 'duration-500');
   });
