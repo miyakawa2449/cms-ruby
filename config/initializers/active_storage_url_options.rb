@@ -18,14 +18,26 @@ Rails.application.config.after_initialize do
       host: ENV.fetch("APP_HOST", "miyakawa.codes"),
       protocol: "https"
     }
-    
+
     # Routes のデフォルトURLオプションを設定
     Rails.application.routes.default_url_options = url_options
-    
+
     # ActiveStorage::Current のURLオプションを設定
     ActiveStorage::Current.url_options = url_options
-    
+
     Rails.logger.info "Active Storage URL options configured: #{url_options}"
+  else
+    # 開発・テスト環境ではHTTPを使用
+    url_options = {
+      host: "localhost",
+      port: 3000,
+      protocol: "http"
+    }
+
+    Rails.application.routes.default_url_options = url_options
+    ActiveStorage::Current.url_options = url_options
+
+    Rails.logger.info "Active Storage URL options configured for development: #{url_options}"
   end
 end
 
@@ -41,20 +53,27 @@ class ActiveStorageUrlOptionsMiddleware
       # 明示的にホストを設定（X-Forwarded-Host があればそちらを優先）
       forwarded_host = env['HTTP_X_FORWARDED_HOST']
       original_host = env['HTTP_HOST']
-      
+
       # X-Forwarded-Proto または HTTPS 環境変数からプロトコルを決定
       forwarded_proto = env['HTTP_X_FORWARDED_PROTO']
       is_https = forwarded_proto == 'https' || env['HTTPS'] == 'on'
-      
+
       # 信頼できるホスト名を使用（環境変数で指定されたものを優先）
       trusted_host = ENV.fetch("APP_HOST", "miyakawa.codes")
-      
+
       ActiveStorage::Current.url_options = {
         host: trusted_host,
         protocol: "https"
       }
+    else
+      # 開発・テスト環境ではHTTPを使用
+      ActiveStorage::Current.url_options = {
+        host: "localhost",
+        port: 3000,
+        protocol: "http"
+      }
     end
-    
+
     @app.call(env)
   end
 end
