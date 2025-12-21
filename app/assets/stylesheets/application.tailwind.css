@@ -128,6 +128,61 @@ body {
   width: 100%;
 }
 
+/* リンクスタイル */
+.article-content a,
+.prose a {
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
+
+.article-content a:hover,
+.prose a:hover {
+  color: #1d4ed8;
+  text-decoration-color: #1d4ed8;
+}
+
+.article-content a:visited,
+.prose a:visited {
+  color: #7c3aed;
+}
+
+/* 外部リンクアイコン */
+.article-content a[href^="http"]:not([href*="miyakawa.codes"]):not(.ogp-card)::after,
+.prose a[href^="http"]:not([href*="miyakawa.codes"]):not(.ogp-card)::after {
+  content: " ↗";
+  font-size: 0.75em;
+  vertical-align: super;
+}
+
+/* OGPカードスタイル */
+.ogp-card {
+  text-decoration: none !important;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.ogp-card:hover {
+  text-decoration: none !important;
+}
+
+.ogp-card h4 {
+  margin: 0;
+}
+
+.ogp-card p {
+  margin: 0;
+}
+
+/* line-clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .toc {
   background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
 }

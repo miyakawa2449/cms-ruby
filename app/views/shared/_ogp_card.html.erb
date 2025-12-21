@@ -1,0 +1,52 @@
+<%# OGPカード表示用パーシャル（縦型・サムネイル大きく表示） %>
+<%# 引数: ogp_data (OgpFetcherService::OgpData) %>
+
+<a href="<%= ogp_data.url %>"
+   target="_blank"
+   rel="noopener noreferrer"
+   class="ogp-card block no-underline">
+  <div class="border border-gray-200 rounded-lg overflow-hidden bg-white hover:shadow-lg transition-shadow duration-200 max-w-2xl">
+    <%# サムネイル画像（大きく表示） %>
+    <% if ogp_data.image.present? %>
+      <div class="w-full aspect-video bg-gray-100">
+        <img src="<%= ogp_data.image %>"
+             alt="<%= ogp_data.title %>"
+             class="w-full h-full object-cover"
+             loading="lazy"
+             onerror="this.parentElement.style.display='none'">
+      </div>
+    <% end %>
+
+    <%# コンテンツ部分 %>
+    <div class="p-4">
+      <%# サイト情報 %>
+      <div class="flex items-center gap-2 mb-2">
+        <% if ogp_data.favicon.present? %>
+          <img src="<%= ogp_data.favicon %>"
+               alt=""
+               class="w-4 h-4 flex-shrink-0"
+               loading="lazy"
+               onerror="this.style.display='none'">
+        <% end %>
+        <span class="text-xs text-gray-500 truncate"><%= ogp_data.site_name %></span>
+      </div>
+
+      <%# タイトル %>
+      <h4 class="text-base font-semibold text-gray-900 mb-2 line-clamp-2">
+        <%= ogp_data.title %>
+      </h4>
+
+      <%# 説明文 %>
+      <% if ogp_data.description.present? %>
+        <p class="text-sm text-gray-600 line-clamp-2 mb-0">
+          <%= ogp_data.description %>
+        </p>
+      <% end %>
+
+      <%# URL %>
+      <div class="mt-2 text-xs text-gray-400 truncate">
+        <%= URI.parse(ogp_data.url).host rescue ogp_data.url %>
+      </div>
+    </div>
+  </div>
+</a>
