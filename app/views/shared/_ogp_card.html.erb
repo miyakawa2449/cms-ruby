@@ -8,10 +8,10 @@
   <div class="border border-gray-200 rounded-lg overflow-hidden bg-white hover:shadow-lg transition-shadow duration-200 max-w-2xl">
     <%# サムネイル画像（大きく表示） %>
     <% if ogp_data.image.present? %>
-      <div class="w-full aspect-video bg-gray-100">
+      <div class="w-full overflow-hidden">
         <img src="<%= ogp_data.image %>"
              alt="<%= ogp_data.title %>"
-             class="w-full h-full object-cover"
+             class="w-full h-auto"
              loading="lazy"
              onerror="this.parentElement.style.display='none'">
       </div>

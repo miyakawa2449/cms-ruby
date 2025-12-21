@@ -15,6 +15,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <% if Rails.env.development? %>
+      <meta name="turbo-cache-control" content="no-cache">
+    <% end %>
 
     <%= yield :head %>
     

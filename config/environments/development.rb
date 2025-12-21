@@ -31,6 +31,11 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
+  # Active StorageのProxyモードを有効化
+  # これによりディスクサービスの直接URLへのリダイレクトではなく、
+  # Rails経由でファイルを配信する（開発環境でのHTTPS問題を回避）
+  config.active_storage.resolve_model_to_route = :rails_storage_proxy
+
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 
