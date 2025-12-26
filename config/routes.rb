@@ -30,6 +30,8 @@ Rails.application.routes.draw do
         patch :publish
         patch :unpublish
       end
+      # 本文内画像アップロード用
+      resources :images, only: [:create], controller: 'article_images'
     end
     
     resources :categories do

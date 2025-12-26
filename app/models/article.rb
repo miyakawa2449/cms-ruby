@@ -9,6 +9,7 @@ class Article < ApplicationRecord
   has_many :tags, through: :article_tags
   
   has_one_attached :thumbnail_image
+  has_many_attached :content_images  # 本文内画像用
   
   validates :title, presence: true, length: { maximum: 255 }
   validates :slug, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 255 }

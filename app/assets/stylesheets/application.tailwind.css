@@ -190,6 +190,46 @@
     font-size: 0.75em;
     vertical-align: super;
   }
+
+  /* 記事内画像のスタイリング（figureタグ付き） */
+  .article-content .article-image,
+  .prose .article-image {
+    margin: 2rem auto;
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .article-content .article-image img,
+  .prose .article-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin: 0 auto;
+  }
+
+  .article-content .article-image figcaption,
+  .prose .article-image figcaption {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-style: italic;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  /* レスポンシブ対応 */
+  @media (max-width: 640px) {
+    .article-content .article-image,
+    .prose .article-image {
+      margin: 1.5rem auto;
+    }
+
+    .article-content .article-image figcaption,
+    .prose .article-image figcaption {
+      font-size: 0.8125rem;
+    }
+  }
 }
 
 @layer components {
