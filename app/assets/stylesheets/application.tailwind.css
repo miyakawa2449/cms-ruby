@@ -163,6 +163,14 @@
     font-style: italic;
   }
 
+  /* 検索ハイライト */
+  mark {
+    background-color: #fef08a;
+    color: inherit;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.125rem;
+  }
+
   /* リンクスタイル */
   .article-content a,
   .prose a {

@@ -1,0 +1,76 @@
+<% unless params[:q].present? %>
+  <!-- 検索ボックス（通常時のみ表示） -->
+  <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+    <%= form_with url: blog_path, method: :get, local: true do |f| %>
+      <div class="flex flex-col gap-2">
+        <%= f.text_field :q,
+            placeholder: "記事を検索...",
+            class: "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" %>
+        <%= f.submit "検索", class: "w-full px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer transition-colors lg:hidden" %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<!-- カテゴリ一覧 -->
+<div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+  <h3 class="font-bold text-lg mb-4">カテゴリ</h3>
+
+  <div class="space-y-1">
+    <%= link_to blog_path,
+        class: "block px-4 py-2 rounded-lg transition #{params[:category_id].blank? && params[:q].blank? && params[:tag_id].blank? ? 'bg-blue-50 border-l-4 border-blue-500 text-blue-700 font-medium' : 'hover:bg-gray-50 text-gray-700'}" do %>
+      <div class="flex items-center justify-between">
+        <span>すべての記事</span>
+        <span class="text-sm text-gray-500">(<%= Article.published.count %>)</span>
+      </div>
+    <% end %>
+
+    <% @categories.each do |category| %>
+      <%= link_to blog_path(category_id: category.id),
+          class: "block px-4 py-2 rounded-lg transition #{params[:category_id] == category.id.to_s && params[:q].blank? && params[:tag_id].blank? ? 'bg-blue-50 border-l-4 border-blue-500 text-blue-700 font-medium' : 'hover:bg-gray-50 text-gray-700'}" do %>
+        <div class="flex items-center justify-between">
+          <span><%= category.name %></span>
+          <span class="text-sm text-gray-500">(<%= category.article_count || category.articles.published.count %>)</span>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if params[:category_id].present? && params[:q].blank? && params[:tag_id].blank? %>
+    <div class="mt-4 pt-4 border-t">
+      <%= link_to blog_path,
+          class: "block text-center px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg text-sm font-medium transition-colors" do %>
+        ✕ カテゴリをクリア
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if params[:q].present? || params[:tag_id].present? %>
+    <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-800">
+      <p class="font-medium mb-1">ℹ️ 検索中</p>
+      <p>カテゴリをクリックすると検索条件がクリアされます</p>
+    </div>
+  <% end %>
+</div>
+
+<!-- 人気タグ -->
+<div class="bg-white rounded-lg shadow-sm p-6">
+  <h3 class="font-bold text-lg mb-4">人気タグ</h3>
+  <div class="flex flex-wrap gap-2">
+    <% @tags.limit(15).each do |tag| %>
+      <%= link_to blog_path(tag_id: tag.id),
+          class: "bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full hover:bg-blue-100 hover:text-blue-700 transition-colors #{params[:tag_id] == tag.id.to_s && params[:q].blank? && params[:category_id].blank? ? 'bg-blue-100 text-blue-700 font-medium' : ''}" do %>
+        #<%= tag.name %> (<%= tag.article_count || tag.articles.published.count %>)
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if params[:tag_id].present? && params[:q].blank? && params[:category_id].blank? %>
+    <div class="mt-4 pt-4 border-t">
+      <%= link_to blog_path,
+          class: "block text-center px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg text-sm font-medium transition-colors" do %>
+        ✕ タグをクリア
+      <% end %>
+    </div>
+  <% end %>
+</div>
