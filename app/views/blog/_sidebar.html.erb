@@ -53,6 +53,33 @@
   <% end %>
 </div>
 
+<!-- RSS購読 -->
+<div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+  <h3 class="font-bold text-lg mb-4">購読する</h3>
+  <div class="space-y-2">
+    <%= link_to feed_rss_path(format: :rss),
+        class: "flex items-center gap-3 px-4 py-3 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors group",
+        target: "_blank",
+        rel: "noopener" do %>
+      <svg class="w-5 h-5 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M5 3a1 1 0 000 2c5.523 0 10 4.477 10 10a1 1 0 102 0C17 8.373 11.627 3 5 3z"/>
+        <path d="M4 9a1 1 0 011-1 7 7 0 017 7 1 1 0 11-2 0 5 5 0 00-5-5 1 1 0 01-1-1z"/>
+        <circle cx="5" cy="15" r="2"/>
+      </svg>
+      <span class="text-gray-700 group-hover:text-orange-700 font-medium">RSS Feed</span>
+    <% end %>
+    <%= link_to feed_atom_path(format: :atom),
+        class: "flex items-center gap-3 px-4 py-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors group",
+        target: "_blank",
+        rel: "noopener" do %>
+      <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/>
+      </svg>
+      <span class="text-gray-700 group-hover:text-blue-700 font-medium">Atom Feed</span>
+    <% end %>
+  </div>
+</div>
+
 <!-- 人気タグ -->
 <div class="bg-white rounded-lg shadow-sm p-6">
   <h3 class="font-bold text-lg mb-4">人気タグ</h3>

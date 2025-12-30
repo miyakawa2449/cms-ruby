@@ -1,5 +1,9 @@
 <% content_for :title, "Miyakawa Codes Blog" %>
 <% content_for :description, "技術情報やプロジェクト進捗を発信するブログページです。最新の技術トレンドや開発ノウハウをお届けします。" %>
+<% content_for :head do %>
+  <%= tag.link rel: "alternate", type: "application/rss+xml", title: "RSS Feed", href: feed_rss_url(format: :rss) %>
+  <%= tag.link rel: "alternate", type: "application/atom+xml", title: "Atom Feed", href: feed_atom_url(format: :atom) %>
+<% end %>
 
 <div class="min-h-screen bg-gray-50">
   <%= render 'shared/header', variant: 'blog' %>

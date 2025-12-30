@@ -1,1 +1,21 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+# robots.txt - Phase 4.4 基本SEO機能実装
+# See https://www.robotstxt.org/robotstxt.html for documentation
+
+# すべてのクローラーに対する設定
+User-agent: *
+
+# 公開ページへのクロールを許可
+Allow: /
+
+# 管理画面へのクロールを禁止
+Disallow: /admin-secure-panel-miyakawa2449
+Disallow: /admin-secure-panel-miyakawa2449/
+
+# APIエンドポイントはクロール不要（検索エンジン向けではない）
+Disallow: /api/
+
+# Active Storageの直接アクセスを制限（画像は記事ページ経由で取得）
+Disallow: /rails/active_storage/
+
+# サイトマップの場所
+Sitemap: https://miyakawa.codes/sitemap.xml

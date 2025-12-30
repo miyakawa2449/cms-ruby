@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  # SEO関連
+  get "/sitemap.xml", to: "sitemaps#index", defaults: { format: "xml" }
+  get "/feed.rss", to: "feeds#rss", defaults: { format: "rss" }, as: :feed_rss
+  get "/feed.atom", to: "feeds#atom", defaults: { format: "atom" }, as: :feed_atom
+
   # Simple test
   get "test" => "simple_test#index"
   
