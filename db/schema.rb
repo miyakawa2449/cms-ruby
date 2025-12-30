@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_18_123410) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_30_123023) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
@@ -98,10 +99,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_18_123410) do
     t.datetime "updated_at", null: false
     t.string "work_type"
     t.index ["admin_user_id"], name: "index_articles_on_admin_user_id"
+    t.index ["content"], name: "index_articles_on_content_gin_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["excerpt"], name: "index_articles_on_excerpt_gin_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["published_at"], name: "index_articles_on_published_at"
     t.index ["slug"], name: "index_articles_on_slug", unique: true
     t.index ["status", "published_at"], name: "index_articles_on_status_and_published_at"
     t.index ["status"], name: "index_articles_on_status"
+    t.index ["title"], name: "index_articles_on_title_gin_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "categories", force: :cascade do |t|

@@ -174,7 +174,9 @@ class MetaTagsService
     tags << content_tag(:meta, nil, name: 'twitter:image:width', content: '1200')
     tags << content_tag(:meta, nil, name: 'twitter:image:height', content: '628')
 
-    tags.join("\n    ").html_safe
+    # Ensure all tags are UTF-8 encoded before joining
+    tags.map { |tag| tag.to_s.encode('UTF-8', invalid: :replace, undef: :replace) }
+        .join("\n    ").html_safe
   end
 
   def default_meta_tags

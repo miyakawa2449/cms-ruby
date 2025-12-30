@@ -1,6 +1,23 @@
 class Article < ApplicationRecord
+  include PgSearch::Model
   include Publishable
-  
+
+  # pg_search full-text search configuration
+  # Uses trigram for Japanese text support
+  pg_search_scope :full_text_search,
+    against: {
+      title: 'A',    # Highest priority
+      excerpt: 'B',  # Medium priority
+      content: 'C'   # Lower priority
+    },
+    using: {
+      trigram: {
+        threshold: 0.1,  # Lower threshold for better recall
+        word_similarity: true
+      }
+    },
+    order_within_rank: "articles.published_at DESC"
+
   belongs_to :admin_user
   
   has_many :article_categories, dependent: :destroy
@@ -35,8 +52,16 @@ class Article < ApplicationRecord
   scope :works, -> { joins(:categories).where(categories: { slug: 'works' }) }
   scope :standard_blog, -> { joins(:categories).where.not(categories: { slug: 'works' }) }
 
-  # 検索機能用スコープ（Phase 4.3）
+  # 検索機能用スコープ（Phase 4.5 - pg_search full-text search）
+  # Uses trigram-based search for Japanese text support
   scope :search, ->(query) {
+    return all if query.blank?
+
+    full_text_search(query.to_s.strip)
+  }
+
+  # Fallback ILIKE search (kept for backward compatibility)
+  scope :search_ilike, ->(query) {
     return all if query.blank?
 
     sanitized_query = sanitize_sql_like(query.to_s.strip)
