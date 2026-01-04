@@ -1,0 +1,121 @@
+<% content_for :page_title, "メディア詳細" %>
+
+<div class="max-w-4xl mx-auto" data-controller="media-editor" data-media-editor-edit-url-value="<%= edit_image_admin_medium_path(@media) %>">
+  <!-- 戻るリンク -->
+  <div class="mb-6">
+    <%= link_to admin_media_path, class: "inline-flex items-center text-gray-600 hover:text-gray-900" do %>
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      メディアライブラリに戻る
+    <% end %>
+  </div>
+
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="md:flex">
+      <!-- プレビュー -->
+      <div class="md:w-1/2 p-6 bg-gray-50">
+        <% if @media.blob&.image? %>
+          <%= image_tag url_for(@media.blob),
+                        class: "w-full rounded-lg shadow-sm",
+                        alt: @media.alt_text || @media.filename %>
+        <% end %>
+      </div>
+
+      <!-- 情報 -->
+      <div class="md:w-1/2 p-6">
+        <h2 class="text-xl font-semibold text-gray-900 break-all"><%= @media.filename %></h2>
+
+        <dl class="mt-6 space-y-4">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">サイズ</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @media.dimensions %></dd>
+          </div>
+
+          <div>
+            <dt class="text-sm font-medium text-gray-500">容量</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @media.human_file_size %></dd>
+          </div>
+
+          <div>
+            <dt class="text-sm font-medium text-gray-500">形式</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @media.mime_type %></dd>
+          </div>
+
+          <div>
+            <dt class="text-sm font-medium text-gray-500">アップロード日時</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @media.created_at.strftime('%Y-%m-%d %H:%M') %></dd>
+          </div>
+
+          <div>
+            <dt class="text-sm font-medium text-gray-500">使用状況</dt>
+            <dd class="mt-1">
+              <% if @media.used? %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  <%= @media.usage_count %>件の記事で使用中
+                </span>
+              <% else %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                  未使用
+                </span>
+              <% end %>
+            </dd>
+          </div>
+        </dl>
+
+        <!-- alt属性編集 -->
+        <div class="mt-6">
+          <%= form_with url: admin_medium_path(@media), method: :patch, scope: :media_metadata, local: true do |f| %>
+            <label class="block text-sm font-medium text-gray-700">alt属性</label>
+            <div class="mt-1 flex gap-2">
+              <%= f.text_field :alt_text, value: @media.alt_text, class: "flex-1 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500", placeholder: "画像の説明を入力" %>
+              <%= f.submit "保存", class: "px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 cursor-pointer" %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- URL -->
+        <div class="mt-6">
+          <label class="block text-sm font-medium text-gray-700">URL</label>
+          <div class="mt-1 flex gap-2">
+            <input type="text" readonly value="<%= url_for(@media.blob) %>" class="flex-1 bg-gray-50 border-gray-300 rounded-lg text-sm" id="mediaUrl">
+            <button type="button" onclick="navigator.clipboard.writeText(document.getElementById('mediaUrl').value); alert('URLをコピーしました')" class="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200">
+              コピー
+            </button>
+          </div>
+        </div>
+
+        <!-- アクション -->
+        <div class="mt-8 flex flex-wrap gap-3">
+          <% if @media.blob&.image? %>
+            <button type="button"
+                    data-action="click->media-editor#open"
+                    data-image-url="<%= url_for(@media.blob) %>"
+                    data-media-id="<%= @media.id %>"
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              画像を編集
+            </button>
+          <% end %>
+
+          <% unless @media.used? %>
+            <%= button_to admin_medium_path(@media),
+                          method: :delete,
+                          data: { turbo_confirm: "この画像を削除しますか？" },
+                          class: "inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700" do %>
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              削除
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 画像編集モーダル -->
+  <%= render 'editor_modal' %>
+</div>

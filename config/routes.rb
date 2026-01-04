@@ -47,7 +47,18 @@ Rails.application.routes.draw do
     end
     
     resources :tags
-    
+
+    # Media library
+    resources :media, only: [:index, :show, :create, :update, :destroy] do
+      member do
+        post :edit_image
+        get :usage
+      end
+      collection do
+        delete :bulk_destroy
+      end
+    end
+
     resources :my_story_sections do
       member do
         patch :move_up

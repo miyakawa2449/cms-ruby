@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_30_123023) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_30_130154) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -145,6 +145,23 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_30_123023) do
     t.index ["created_at"], name: "index_contacts_on_created_at"
     t.index ["email"], name: "index_contacts_on_email"
     t.index ["status"], name: "index_contacts_on_status"
+  end
+
+  create_table "media_metadata", force: :cascade do |t|
+    t.string "alt_text"
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "file_size"
+    t.integer "height"
+    t.string "mime_type"
+    t.datetime "updated_at", null: false
+    t.integer "usage_count", default: 0
+    t.jsonb "variants", default: {}
+    t.integer "width"
+    t.index ["blob_id"], name: "index_media_metadata_on_blob_id", unique: true
+    t.index ["created_at"], name: "index_media_metadata_on_created_at"
+    t.index ["mime_type"], name: "index_media_metadata_on_mime_type"
+    t.index ["usage_count"], name: "index_media_metadata_on_usage_count"
   end
 
   create_table "my_story_sections", force: :cascade do |t|
@@ -408,6 +425,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_30_123023) do
   add_foreign_key "articles", "admin_users"
   add_foreign_key "categories", "categories", column: "parent_id"
   add_foreign_key "contacts", "admin_users", column: "assigned_to_id"
+  add_foreign_key "media_metadata", "active_storage_blobs", column: "blob_id"
   add_foreign_key "section_contents", "admin_users", column: "published_by", on_delete: :nullify
   add_foreign_key "section_contents", "sections"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

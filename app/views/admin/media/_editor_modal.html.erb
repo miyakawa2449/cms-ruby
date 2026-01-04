@@ -1,0 +1,149 @@
+<div id="editorModal" class="hidden fixed inset-0 z-50 overflow-y-auto" data-media-editor-target="modal">
+  <div class="flex items-center justify-center min-h-screen px-4">
+    <div class="fixed inset-0 bg-black bg-opacity-75" data-action="click->media-editor#close"></div>
+
+    <div class="relative bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+      <!-- ヘッダー -->
+      <div class="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
+        <h3 class="text-lg font-semibold text-gray-900">画像編集</h3>
+        <button type="button"
+                data-action="click->media-editor#close"
+                class="text-gray-400 hover:text-gray-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- 編集エリア -->
+      <div class="p-4">
+        <!-- Cropper.js v2 コンテナ -->
+        <div class="bg-gray-100 rounded-lg overflow-hidden" style="height: 60vh;" data-media-editor-target="cropperContainer">
+          <!-- Cropper.js v2 will inject its Web Components here -->
+        </div>
+
+        <!-- ツールバー -->
+        <div class="mt-4 space-y-4">
+          <!-- アスペクト比 -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">アスペクト比</label>
+            <div class="flex flex-wrap gap-2">
+              <button type="button"
+                      data-media-editor-target="aspectRatio"
+                      data-action="click->media-editor#setAspectRatio"
+                      data-ratio="free"
+                      class="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white">
+                自由
+              </button>
+              <button type="button"
+                      data-media-editor-target="aspectRatio"
+                      data-action="click->media-editor#setAspectRatio"
+                      data-ratio="1:1"
+                      class="px-3 py-1.5 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300">
+                1:1
+              </button>
+              <button type="button"
+                      data-media-editor-target="aspectRatio"
+                      data-action="click->media-editor#setAspectRatio"
+                      data-ratio="4:3"
+                      class="px-3 py-1.5 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300">
+                4:3
+              </button>
+              <button type="button"
+                      data-media-editor-target="aspectRatio"
+                      data-action="click->media-editor#setAspectRatio"
+                      data-ratio="16:9"
+                      class="px-3 py-1.5 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300">
+                16:9
+              </button>
+              <button type="button"
+                      data-media-editor-target="aspectRatio"
+                      data-action="click->media-editor#setAspectRatio"
+                      data-ratio="3:2"
+                      class="px-3 py-1.5 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300">
+                3:2
+              </button>
+            </div>
+          </div>
+
+          <!-- 回転・反転 -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">回転・反転</label>
+            <div class="flex flex-wrap gap-2">
+              <button type="button"
+                      data-action="click->media-editor#rotateLeft"
+                      class="inline-flex items-center px-3 py-1.5 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      title="左に90度回転">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                </svg>
+                左回転
+              </button>
+              <button type="button"
+                      data-action="click->media-editor#rotateRight"
+                      class="inline-flex items-center px-3 py-1.5 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      title="右に90度回転">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6" />
+                </svg>
+                右回転
+              </button>
+              <button type="button"
+                      data-action="click->media-editor#flipHorizontal"
+                      class="inline-flex items-center px-3 py-1.5 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      title="左右反転">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+                左右反転
+              </button>
+              <button type="button"
+                      data-action="click->media-editor#flipVertical"
+                      class="inline-flex items-center px-3 py-1.5 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      title="上下反転">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                </svg>
+                上下反転
+              </button>
+              <button type="button"
+                      data-action="click->media-editor#reset"
+                      class="inline-flex items-center px-3 py-1.5 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      title="リセット">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                リセット
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- フッター -->
+      <div class="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
+        <button type="button"
+                data-action="click->media-editor#close"
+                class="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+          キャンセル
+        </button>
+        <div class="flex gap-2">
+          <button type="button"
+                  data-action="click->media-editor#save"
+                  data-save-as-new="true"
+                  data-media-editor-target="saveBtn"
+                  class="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+            新規保存
+          </button>
+          <button type="button"
+                  data-action="click->media-editor#save"
+                  data-save-as-new="false"
+                  data-media-editor-target="saveBtn"
+                  class="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+            上書き保存
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

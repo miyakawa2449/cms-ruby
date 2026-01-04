@@ -3,3 +3,7 @@ import "@hotwired/turbo-rails"
 import "./controllers"
 import "./smooth_scroll"
 import "./scroll_animations"
+
+// Cropper.js - グローバルに公開
+import Cropper from "cropperjs"
+window.Cropper = Cropper

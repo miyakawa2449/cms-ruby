@@ -1,0 +1,85 @@
+<div id="uploadModal" class="hidden fixed inset-0 z-50 overflow-y-auto" data-media-library-target="uploadModal">
+  <div class="flex items-center justify-center min-h-screen px-4">
+    <div class="fixed inset-0 bg-black bg-opacity-50" data-action="click->media-library#closeUploadModal"></div>
+
+    <div class="relative bg-white rounded-lg shadow-xl max-w-lg w-full">
+      <!-- ヘッダー -->
+      <div class="flex items-center justify-between px-6 py-4 border-b">
+        <h3 class="text-lg font-semibold text-gray-900">画像アップロード</h3>
+        <button type="button"
+                data-action="click->media-library#closeUploadModal"
+                class="text-gray-400 hover:text-gray-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- コンテンツ -->
+      <div class="p-6">
+        <%= form_with url: admin_media_path, method: :post, multipart: true, local: true, data: { controller: "media-upload", action: "submit->media-upload#upload" } do |f| %>
+          <!-- ドロップゾーン -->
+          <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors"
+               data-media-upload-target="dropzone"
+               data-action="dragover->media-upload#dragover dragenter->media-upload#dragenter dragleave->media-upload#dragleave drop->media-upload#drop">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            <p class="mt-4 text-sm text-gray-600">
+              ここにファイルをドロップ<br>
+              または
+            </p>
+            <label class="mt-2 inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+              <span class="text-sm text-gray-700">ファイルを選択</span>
+              <%= f.file_field :images, multiple: true, accept: "image/*", class: "sr-only", data: { media_upload_target: "input", action: "change->media-upload#handleFiles" } %>
+            </label>
+            <p class="mt-2 text-xs text-gray-500">
+              対応形式: JPEG, PNG, GIF, WebP | 最大サイズ: 10MB
+            </p>
+          </div>
+
+          <!-- プレビューエリア -->
+          <div class="mt-4 hidden" data-media-upload-target="previewArea">
+            <h4 class="text-sm font-medium text-gray-900 mb-2">アップロードするファイル</h4>
+            <div class="space-y-2 max-h-48 overflow-y-auto" data-media-upload-target="previews">
+              <!-- プレビューがここに追加される -->
+            </div>
+          </div>
+
+          <!-- オプション -->
+          <div class="mt-4 space-y-2">
+            <label class="flex items-center">
+              <input type="checkbox" name="generate_thumbnails" value="true" checked class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+              <span class="ml-2 text-sm text-gray-700">サムネイル自動生成</span>
+            </label>
+          </div>
+
+          <!-- 進捗表示 -->
+          <div class="mt-4 hidden" data-media-upload-target="progressArea">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm text-gray-700">アップロード中...</span>
+              <span class="text-sm text-gray-500" data-media-upload-target="progressText">0%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full transition-all" style="width: 0%" data-media-upload-target="progressBar"></div>
+            </div>
+          </div>
+
+          <!-- アクション -->
+          <div class="mt-6 flex justify-end gap-3">
+            <button type="button"
+                    data-action="click->media-library#closeUploadModal"
+                    class="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+              キャンセル
+            </button>
+            <button type="submit"
+                    class="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                    data-media-upload-target="submitBtn">
+              アップロード
+            </button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
