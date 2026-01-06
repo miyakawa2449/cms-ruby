@@ -1,6 +1,7 @@
 class Article < ApplicationRecord
   include PgSearch::Model
   include Publishable
+  include TrackableAttachment
 
   # pg_search full-text search configuration
   # Uses trigram for Japanese text support

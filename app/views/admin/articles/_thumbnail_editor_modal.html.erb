@@ -1,0 +1,113 @@
+<div id="thumbnailEditorModal" class="hidden fixed inset-0 z-50 overflow-y-auto" data-thumbnail-editor-target="modal">
+  <div class="flex items-center justify-center min-h-screen px-4">
+    <div class="fixed inset-0 bg-black bg-opacity-75" data-action="click->thumbnail-editor#close"></div>
+
+    <div class="relative bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
+      <!-- ヘッダー -->
+      <div class="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
+        <h3 class="text-lg font-semibold text-gray-900">サムネイル画像のトリミング</h3>
+        <button type="button"
+                data-action="click->thumbnail-editor#close"
+                class="text-gray-400 hover:text-gray-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- コンテンツ -->
+      <div class="p-6 overflow-y-auto" style="max-height: calc(90vh - 140px);">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- 左側: 編集エリア -->
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-3">編集エリア</h4>
+            <div class="bg-gray-100 rounded-lg overflow-hidden" style="height: 400px;" data-thumbnail-editor-target="cropperContainer">
+              <!-- Cropper.js will inject here -->
+            </div>
+
+            <!-- アスペクト比選択 -->
+            <div class="mt-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">アスペクト比</label>
+              <div class="flex gap-2">
+                <button type="button"
+                        data-action="click->thumbnail-editor#changeAspectRatio"
+                        data-ratio="4:3"
+                        class="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white">
+                  4:3（推奨）
+                </button>
+                <button type="button"
+                        data-action="click->thumbnail-editor#changeAspectRatio"
+                        data-ratio="3:2"
+                        class="px-3 py-1.5 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300">
+                  3:2
+                </button>
+                <button type="button"
+                        data-action="click->thumbnail-editor#changeAspectRatio"
+                        data-ratio="16:9"
+                        class="px-3 py-1.5 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300">
+                  16:9
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右側: プレビュー -->
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-3">プレビュー</h4>
+            <div class="space-y-4">
+              <!-- 記事表示用プレビュー -->
+              <div>
+                <p class="text-xs text-gray-600 mb-2">📄 記事表示用 (1200x900)</p>
+                <div class="bg-gray-100 rounded-lg overflow-hidden border border-gray-300">
+                  <img data-thumbnail-editor-target="previewArticle" 
+                       class="w-full h-auto"
+                       alt="記事表示用プレビュー">
+                </div>
+              </div>
+
+              <!-- OGP用プレビュー -->
+              <div>
+                <p class="text-xs text-gray-600 mb-2">🔗 OGP用 (1200x630)</p>
+                <div class="bg-gray-100 rounded-lg overflow-hidden border border-gray-300">
+                  <img data-thumbnail-editor-target="previewOgp" 
+                       class="w-full h-auto"
+                       alt="OGP用プレビュー">
+                </div>
+              </div>
+
+              <!-- サムネイル用プレビュー -->
+              <div>
+                <p class="text-xs text-gray-600 mb-2">🖼️ サムネイル用 (600x450)</p>
+                <div class="bg-gray-100 rounded-lg overflow-hidden border border-gray-300">
+                  <img data-thumbnail-editor-target="previewThumbnail" 
+                       class="w-full h-auto"
+                       alt="サムネイル用プレビュー">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- フッター -->
+      <div class="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
+        <p class="text-sm text-gray-600">
+          選択範囲から3つのサイズが自動生成されます
+        </p>
+        <div class="flex gap-2">
+          <button type="button"
+                  data-action="click->thumbnail-editor#close"
+                  class="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+            キャンセル
+          </button>
+          <button type="button"
+                  data-action="click->thumbnail-editor#save"
+                  data-thumbnail-editor-target="saveBtn"
+                  class="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+            保存
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -11,9 +11,23 @@ class Admin::ArticleImagesController < Admin::BaseController
       image = @article.content_images.last
 
       if image.present?
+        # MediaMetadataにalt_textを保存
+        metadata = MediaMetadata.find_or_create_by(blob: image.blob) do |m|
+          m.mime_type = image.blob.content_type
+          m.file_size = image.blob.byte_size
+          m.width = image.blob.metadata[:width]
+          m.height = image.blob.metadata[:height]
+        end
+        
+        # alt_textを更新
+        alt_text = params[:alt_text].presence || image.filename.to_s
+        metadata.update(alt_text: alt_text) if alt_text.present?
+        
+        # 使用状況を追跡
+        metadata.track_usage
+
         # 画像URLを生成
         image_url = url_for(image)
-        alt_text = params[:alt_text].presence || image.filename.to_s
         caption = params[:caption].presence
 
         # キャプションの有無で生成するコードを分岐
