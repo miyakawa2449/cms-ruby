@@ -42,6 +42,8 @@ Rails.application.configure do
     policy.style_src   :self,
                        :unsafe_inline,
                        "https://fonts.googleapis.com",
+                       # CDN (Cropper.js等)
+                       "https://cdn.jsdelivr.net",
                        # X (Twitter) 埋め込み用
                        "https://platform.twitter.com",
                        "https://platform.x.com"

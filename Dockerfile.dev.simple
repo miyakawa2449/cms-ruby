@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     postgresql-client \
     git \
     curl \
+    libvips42 \
     && rm -rf /var/lib/apt/lists/*
 
 # Node.js をインストール（公式の方法）

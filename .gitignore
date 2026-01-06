@@ -83,3 +83,8 @@ Gemfile.lock.*.backup
 /config/*.key
 
 .env.production
+
+# ClaudeOnRails
+.claude-on-rails/sessions/
+.claude-swarm/
+claude-swarm.log

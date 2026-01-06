@@ -108,7 +108,10 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
-  
+
+  # Claude Code MCP Server for Rails
+  gem "claude-on-rails"
+
   # Development & Debugging Tools
   gem "better_errors", "~> 2.10"
   gem "binding_of_caller", "~> 1.0"
