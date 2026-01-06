@@ -11,13 +11,15 @@ WORKDIR /rails
 # Fix for macOS Docker hash mismatch issue
 RUN echo "Acquire::http::Pipeline-Depth 0; Acquire::http::No-Cache true; Acquire::BrokenProxy true;" > /etc/apt/apt.conf.d/90fix-hashsum-mismatch
 
-# Install base packages including Node.js
+# Install base packages including Node.js and Yarn
 RUN apt-get clean && apt-get update && \
     apt-get install --no-install-recommends -y curl libjemalloc2 libvips postgresql-client ca-certificates && \
     ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \
     # Install Node.js from NodeSource
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
+    # Install Yarn
+    npm install -g yarn && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -42,9 +44,9 @@ RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile -j 1 --gemfile
 
-# Install Node dependencies
-COPY package.json package-lock.json ./
-RUN npm install
+# Install Node dependencies with Yarn
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
 # Copy application code
 COPY . .
@@ -53,7 +55,10 @@ COPY . .
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
 
 # Build CSS with Tailwind
-RUN npm run build:css
+RUN yarn build:css
+
+# Build JavaScript with esbuild
+RUN yarn build
 
 # Precompiling assets for production
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
