@@ -85,6 +85,21 @@ Gemfile.lock.*.backup
 .env.production
 
 # ClaudeOnRails
-.claude-on-rails/sessions/
+.claude-on-rails/
+.claude/
 .claude-swarm/
 claude-swarm.log
+claude-swarm.yml
+
+# Kiro and development tools
+.mcp.json
+KIRO.md
+
+# Backups
+/backups/
+
+# Personal blog drafts
+blog_*.md
+
+# macOS
+.DS_Store
