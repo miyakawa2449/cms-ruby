@@ -37,6 +37,19 @@ Rails.application.routes.draw do
       end
       # 本文内画像アップロード用
       resources :images, only: [:create], controller: 'article_images'
+      # AI支援機能
+      namespace :ai do
+        post 'generate_summary', action: :generate_summary, controller: '/admin/ai'
+        post 'suggest_tags', action: :suggest_tags, controller: '/admin/ai'
+        post 'generate_slug', action: :generate_slug, controller: '/admin/ai'
+        post 'generate_seo_meta', action: :generate_seo_meta, controller: '/admin/ai'
+      end
+    end
+
+    # AI機能（記事に紐づかないもの）
+    scope 'ai', as: 'ai' do
+      post 'suggest_structure', to: 'ai#suggest_structure'
+      get 'usage_stats', to: 'ai#usage_stats'
     end
     
     resources :categories do
