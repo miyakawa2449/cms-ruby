@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_30_130154) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_14_081607) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -57,6 +57,39 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_30_130154) do
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_admin_users_on_unlock_token", unique: true
+  end
+
+  create_table "ai_generations", force: :cascade do |t|
+    t.bigint "admin_user_id"
+    t.bigint "article_id"
+    t.decimal "cost", precision: 10, scale: 6, default: "0.0"
+    t.datetime "created_at", null: false
+    t.text "error_message"
+    t.string "generation_type", null: false
+    t.text "input_content"
+    t.string "model_used"
+    t.jsonb "output_data", default: {}
+    t.string "status", default: "pending"
+    t.integer "tokens_used", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["admin_user_id"], name: "index_ai_generations_on_admin_user_id"
+    t.index ["article_id"], name: "index_ai_generations_on_article_id"
+    t.index ["created_at"], name: "index_ai_generations_on_created_at"
+    t.index ["generation_type"], name: "index_ai_generations_on_generation_type"
+    t.index ["status"], name: "index_ai_generations_on_status"
+  end
+
+  create_table "ai_usage_stats", force: :cascade do |t|
+    t.string "ai_model", null: false
+    t.jsonb "breakdown", default: {}
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.decimal "total_cost", precision: 10, scale: 2, default: "0.0"
+    t.integer "total_requests", default: 0
+    t.integer "total_tokens", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["date", "ai_model"], name: "index_ai_usage_stats_on_date_and_ai_model", unique: true
+    t.index ["date"], name: "index_ai_usage_stats_on_date"
   end
 
   create_table "article_categories", force: :cascade do |t|
@@ -418,6 +451,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_30_130154) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "ai_generations", "admin_users"
+  add_foreign_key "ai_generations", "articles"
   add_foreign_key "article_categories", "articles"
   add_foreign_key "article_categories", "categories"
   add_foreign_key "article_tags", "articles"
