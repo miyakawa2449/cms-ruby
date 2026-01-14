@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技術ブログ - 宮川 剛</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+        .hero-bg { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .category-card:hover {
+            transform: translateY(-2px);
+            transition: transform 0.3s ease;
+        }
+        .article-card:hover {
+            transform: translateY(-1px);
+            transition: transform 0.3s ease;
+        }
+        .search-container {
+            z-index: 60;
+        }
+        .search-fade-in {
+            animation: fadeIn 0.2s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+<!-- Header -->
+<header class="fixed top-0 w-full bg-white/90 backdrop-blur-sm border-b border-gray-200 z-50">
+    <nav class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-8">
+                <a href="portfolio_prototype.html" class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    <span>ポートフォリオ</span>
+                </a>
+                <div class="text-xl font-bold text-gray-900">
+                    Technical Blog
+                </div>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#latest" class="text-gray-700 hover:text-blue-600 transition-colors">最新記事</a>
+                <a href="#categories" class="text-gray-700 hover:text-blue-600 transition-colors">カテゴリ</a>
+                <a href="#popular" class="text-gray-700 hover:text-blue-600 transition-colors">人気記事</a>
+                <a href="#about-blog" class="text-gray-700 hover:text-blue-600 transition-colors">About</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <!-- Advanced Search Component -->
+                <div class="relative search-container">
+                    <input type="search" 
+                           id="search-input"
+                           placeholder="記事を検索..." 
+                           class="pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80"
+                           autocomplete="off">
+                    
+                    <!-- Search Icon -->
+                    <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    
+                    <!-- Search History Toggle -->
+                    <button class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600" id="search-history-toggle">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </button>
+                    
+                    <!-- Search Dropdown -->
+                    <div class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 hidden" id="search-dropdown">
+                        
+                        <!-- Real-time Results -->
+                        <div class="search-results hidden" id="search-results">
+                            <div class="px-4 py-2 text-xs font-semibold text-gray-500 bg-gray-50 border-b">検索結果</div>
+                            <div class="max-h-64 overflow-y-auto">
+                                <a href="#" class="flex items-start space-x-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-100">
+                                    <svg class="w-4 h-4 text-gray-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <div>
+                                        <div class="font-medium text-sm text-gray-900">React × TypeScript で学ぶモダンフロントエンド開発</div>
+                                        <div class="text-xs text-gray-500">React.js・フロントエンド</div>
+                                    </div>
+                                </a>
+                                <a href="#" class="flex items-start space-x-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-100">
+                                    <svg class="w-4 h-4 text-gray-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <div>
+                                        <div class="font-medium text-sm text-gray-900">TypeScript入門：JavaScript開発者のための型安全プログラミング</div>
+                                        <div class="text-xs text-gray-500">TypeScript・プログラミング</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Search Suggestions -->
+                        <div class="search-suggestions" id="search-suggestions">
+                            <div class="px-4 py-2 text-xs font-semibold text-gray-500 bg-gray-50 border-b">候補キーワード</div>
+                            <div class="p-2">
+                                <button class="inline-block m-1 px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full hover:bg-blue-100">React</button>
+                                <button class="inline-block m-1 px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full hover:bg-blue-100">TypeScript</button>
+                                <button class="inline-block m-1 px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full hover:bg-blue-100">Next.js</button>
+                                <button class="inline-block m-1 px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full hover:bg-blue-100">Node.js</button>
+                                <button class="inline-block m-1 px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full hover:bg-blue-100">AI</button>
+                                <button class="inline-block m-1 px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full hover:bg-blue-100">Rails</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Search History -->
+                        <div class="search-history hidden" id="search-history">
+                            <div class="px-4 py-2 text-xs font-semibold text-gray-500 bg-gray-50 border-b flex justify-between items-center">
+                                <span>検索履歴</span>
+                                <button class="text-blue-600 hover:text-blue-800">クリア</button>
+                            </div>
+                            <div class="max-h-48 overflow-y-auto">
+                                <button class="flex items-center space-x-3 w-full px-4 py-2 hover:bg-gray-50 text-left border-b border-gray-100">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span class="text-sm text-gray-700">React hooks</span>
+                                    <div class="flex-1"></div>
+                                    <span class="text-xs text-gray-400">昨日</span>
+                                </button>
+                                <button class="flex items-center space-x-3 w-full px-4 py-2 hover:bg-gray-50 text-left border-b border-gray-100">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span class="text-sm text-gray-700">TypeScript 型定義</span>
+                                    <div class="flex-1"></div>
+                                    <span class="text-xs text-gray-400">3日前</span>
+                                </button>
+                                <button class="flex items-center space-x-3 w-full px-4 py-2 hover:bg-gray-50 text-left border-b border-gray-100">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span class="text-sm text-gray-700">Next.js API Routes</span>
+                                    <div class="flex-1"></div>
+                                    <span class="text-xs text-gray-400">1週間前</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Search Options -->
+                        <div class="border-t border-gray-200 p-3 bg-gray-50">
+                            <div class="flex items-center justify-between text-xs">
+                                <div class="flex items-center space-x-4">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-3 h-3 text-blue-600 rounded mr-2">
+                                        <span class="text-gray-600">タイトルのみ</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-3 h-3 text-blue-600 rounded mr-2" checked>
+                                        <span class="text-gray-600">内容も検索</span>
+                                    </label>
+                                </div>
+                                <button class="text-blue-600 hover:text-blue-800 font-medium">詳細検索</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!-- Hero Section -->
+<section class="hero-bg text-white pt-20">
+    <div class="container mx-auto px-6 py-16 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">
+            Technical Blog
+        </h1>
+        <p class="text-xl md:text-2xl mb-6 text-blue-100">
+            SE/PM × プログラミング × AI活用の技術発信
+        </p>
+        <p class="text-lg text-blue-200 max-w-3xl mx-auto">
+            30年のキャリアで培った実践的な技術知識とノウハウを共有。
+            要件定義からAI活用まで、現場で使える情報をお届けします。
+        </p>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section id="categories" class="py-16 bg-white">
+    <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center mb-12">カテゴリ</h2>
+        <div class="grid md:grid-cols-4 gap-6">
+            <div class="category-card bg-red-50 border border-red-200 rounded-lg p-6 text-center cursor-pointer">
+                <div class="text-3xl mb-4">⚙️</div>
+                <h3 class="text-xl font-bold mb-2 text-red-800">Ruby/Rails</h3>
+                <p class="text-red-600 text-sm mb-3">Web開発・フレームワーク</p>
+                <div class="text-red-700 font-semibold">24記事</div>
+            </div>
+            <div class="category-card bg-purple-50 border border-purple-200 rounded-lg p-6 text-center cursor-pointer">
+                <div class="text-3xl mb-4">🤖</div>
+                <h3 class="text-xl font-bold mb-2 text-purple-800">AI・機械学習</h3>
+                <p class="text-purple-600 text-sm mb-3">ChatGPT・開発効率化</p>
+                <div class="text-purple-700 font-semibold">18記事</div>
+            </div>
+            <div class="category-card bg-blue-50 border border-blue-200 rounded-lg p-6 text-center cursor-pointer">
+                <div class="text-3xl mb-4">🏗️</div>
+                <h3 class="text-xl font-bold mb-2 text-blue-800">要件定義・設計</h3>
+                <p class="text-blue-600 text-sm mb-3">上流工程・PM</p>
+                <div class="text-blue-700 font-semibold">15記事</div>
+            </div>
+            <div class="category-card bg-green-50 border border-green-200 rounded-lg p-6 text-center cursor-pointer">
+                <div class="text-3xl mb-4">🚀</div>
+                <h3 class="text-xl font-bold mb-2 text-green-800">インフラ・デプロイ</h3>
+                <p class="text-green-600 text-sm mb-3">AWS・Docker・CI/CD</p>
+                <div class="text-green-700 font-semibold">12記事</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Article -->
+<section class="py-16 bg-gradient-to-r from-blue-50 to-purple-50">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-12">
+            <div class="inline-block bg-yellow-300 text-gray-900 px-4 py-2 rounded-full text-sm font-semibold mb-4">⭐ 注目記事</div>
+            <h2 class="text-3xl font-bold">今週のピックアップ</h2>
+        </div>
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="md:flex">
+                <div class="md:w-1/2">
+                    <div class="h-64 bg-gray-200 flex items-center justify-center">
+                        <span class="text-gray-500">アイキャッチ画像</span>
+                    </div>
+                </div>
+                <div class="md:w-1/2 p-8">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm">#AI</span>
+                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-sm">#Rails</span>
+                        <span class="text-gray-500 text-sm">2024.11.20</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 hover:text-blue-600 cursor-pointer">
+                        ChatGPT APIとRailsで作る自動記事要約システム
+                    </h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        SE/PM経験を活かした要件定義から、Rails実装、ChatGPT API連携まで。
+                        実際の業務で使える記事要約システムの構築手順を詳しく解説します。
+                        コード例付きで初心者にも分かりやすく説明。
+                    </p>
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-500">読了時間: 約12分</div>
+                        <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            続きを読む
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Latest Articles -->
+<section id="latest" class="py-16 bg-white">
+    <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center mb-12">最新記事</h2>
+        <div class="max-w-4xl mx-auto space-y-8">
+            
+            <!-- Article 1 -->
+            <article class="article-card border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                <div class="flex items-start space-x-4">
+                    <div class="w-32 h-32 bg-gray-200 rounded flex-shrink-0 flex items-center justify-center">
+                        <span class="text-gray-500 text-xs">サムネイル</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2 mb-3">
+                            <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-sm">#Rails</span>
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">#パフォーマンス</span>
+                            <span class="text-gray-500 text-sm">2024.11.18</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 hover:text-blue-600 cursor-pointer">
+                            Rails 8.0の新機能解説とパフォーマンス改善手法
+                        </h3>
+                        <p class="text-gray-600 mb-4 leading-relaxed">
+                            Rails 8.0の注目機能を実際のプロジェクトで検証。
+                            パフォーマンス改善の実測値とベストプラクティスをSE経験を交えて解説...
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-500">読了時間: 約8分</div>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm text-gray-500">👍 24</span>
+                                <span class="text-sm text-gray-500">💬 5</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Article 2 -->
+            <article class="article-card border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                <div class="flex items-start space-x-4">
+                    <div class="w-32 h-32 bg-gray-200 rounded flex-shrink-0 flex items-center justify-center">
+                        <span class="text-gray-500 text-xs">サムネイル</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2 mb-3">
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">#要件定義</span>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">#PM</span>
+                            <span class="text-gray-500 text-sm">2024.11.15</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 hover:text-blue-600 cursor-pointer">
+                            要件定義書の書き方：16年のPM経験から学んだベストプラクティス
+                        </h3>
+                        <p class="text-gray-600 mb-4 leading-relaxed">
+                            失敗プロジェクトを減らすための要件定義のコツ。
+                            ステークホルダーとの合意形成から技術選定まで、実例を交えて詳しく解説...
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-500">読了時間: 約15分</div>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm text-gray-500">👍 38</span>
+                                <span class="text-sm text-gray-500">💬 12</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Article 3 -->
+            <article class="article-card border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                <div class="flex items-start space-x-4">
+                    <div class="w-32 h-32 bg-gray-200 rounded flex-shrink-0 flex items-center justify-center">
+                        <span class="text-gray-500 text-xs">サムネイル</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2 mb-3">
+                            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm">#AI</span>
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">#効率化</span>
+                            <span class="text-gray-500 text-sm">2024.11.12</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 hover:text-blue-600 cursor-pointer">
+                            開発チームでのChatGPT活用法：生産性を2倍にする実践テクニック
+                        </h3>
+                        <p class="text-gray-600 mb-4 leading-relaxed">
+                            チーム全体でAIツールを導入した結果と課題。
+                            コードレビュー、ドキュメント作成、バグ調査での活用事例を公開...
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-500">読了時間: 約10分</div>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm text-gray-500">👍 52</span>
+                                <span class="text-sm text-gray-500">💬 18</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Article 4 -->
+            <article class="article-card border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                <div class="flex items-start space-x-4">
+                    <div class="w-32 h-32 bg-gray-200 rounded flex-shrink-0 flex items-center justify-center">
+                        <span class="text-gray-500 text-xs">サムネイル</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2 mb-3">
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">#Docker</span>
+                            <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded text-sm">#AWS</span>
+                            <span class="text-gray-500 text-sm">2024.11.10</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 hover:text-blue-600 cursor-pointer">
+                            Rails×Docker×AWS Lightsailでの本番環境構築ガイド
+                        </h3>
+                        <p class="text-gray-600 mb-4 leading-relaxed">
+                            小〜中規模アプリに最適な構成での本番環境構築手順。
+                            SSL設定、自動デプロイ、監視まで一通りカバー...
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-500">読了時間: 約20分</div>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm text-gray-500">👍 31</span>
+                                <span class="text-sm text-gray-500">💬 8</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <div class="text-center mt-12">
+            <button class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                もっと見る
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Articles -->
+<section id="popular" class="py-16 bg-gray-50">
+    <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center mb-12">人気記事</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="h-48 bg-gray-200 flex items-center justify-center">
+                    <span class="text-gray-500">記事画像</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">#要件定義</span>
+                        <span class="text-gray-500 text-xs">2024.10.15</span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 hover:text-blue-600 cursor-pointer">
+                        失敗しない要件定義の進め方
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                        PMとして多くのプロジェクトを見てきた経験から...
+                    </p>
+                    <div class="flex items-center justify-between text-xs text-gray-500">
+                        <span>👍 127</span>
+                        <span>💬 23</span>
+                        <span>15分</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="h-48 bg-gray-200 flex items-center justify-center">
+                    <span class="text-gray-500">記事画像</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">#AI</span>
+                        <span class="text-gray-500 text-xs">2024.09.20</span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 hover:text-blue-600 cursor-pointer">
+                        ChatGPT APIで業務効率化
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                        実際に業務で使っているAI活用のコツと注意点...
+                    </p>
+                    <div class="flex items-center justify-between text-xs text-gray-500">
+                        <span>👍 98</span>
+                        <span>💬 31</span>
+                        <span>12分</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="h-48 bg-gray-200 flex items-center justify-center">
+                    <span class="text-gray-500">記事画像</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">#Rails</span>
+                        <span class="text-gray-500 text-xs">2024.08.30</span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 hover:text-blue-600 cursor-pointer">
+                        Rails初心者が陥りがちな罠
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                        よくある失敗パターンと対策を実例付きで解説...
+                    </p>
+                    <div class="flex items-center justify-between text-xs text-gray-500">
+                        <span>👍 85</span>
+                        <span>💬 19</span>
+                        <span>18分</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Blog Section -->
+<section id="about-blog" class="py-16 bg-white">
+    <div class="container mx-auto px-6">
+        <div class="max-w-3xl mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-8">このブログについて</h2>
+            <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-8">
+                <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                    30年のキャリアで培った<strong>実践的な技術知識</strong>を共有しています。<br>
+                    パソコンスクール講師 → SE/PM → AIエンジニアという独自の経験を活かし、
+                    <strong>要件定義から実装まで一貫した視点</strong>で技術情報をお届け。
+                </p>
+                <div class="grid md:grid-cols-3 gap-6 text-center">
+                    <div>
+                        <div class="text-2xl font-bold text-blue-600">60+</div>
+                        <div class="text-gray-600">記事数</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-purple-600">15k+</div>
+                        <div class="text-gray-600">月間PV</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-green-600">4.8</div>
+                        <div class="text-gray-600">読者評価</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Signup -->
+<section class="py-16 bg-blue-600 text-white">
+    <div class="container mx-auto px-6 text-center">
+        <h2 class="text-3xl font-bold mb-6">最新記事をメールでお届け</h2>
+        <p class="text-xl text-blue-100 mb-8">
+            週1回、厳選した技術情報をお送りします
+        </p>
+        <div class="max-w-md mx-auto flex space-x-4">
+            <input type="email" placeholder="メールアドレス" class="flex-1 px-4 py-3 rounded-lg text-gray-900">
+            <button class="bg-yellow-300 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
+                購読する
+            </button>
+        </div>
+        <p class="text-sm text-blue-200 mt-4">
+            いつでも購読解除できます。スパムは送信しません。
+        </p>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-white py-12">
+    <div class="container mx-auto px-6">
+        <div class="grid md:grid-cols-4 gap-8 mb-8">
+            <div>
+                <h3 class="text-xl font-bold mb-4">Technical Blog</h3>
+                <p class="text-gray-300">
+                    SE/PM × プログラミング × AI<br>
+                    実践的な技術情報を発信
+                </p>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-4">カテゴリ</h3>
+                <ul class="space-y-2 text-gray-300">
+                    <li><a href="#" class="hover:text-white transition-colors">Ruby/Rails</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">AI・機械学習</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">要件定義・設計</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">インフラ・デプロイ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-4">人気記事</h3>
+                <ul class="space-y-2 text-gray-300 text-sm">
+                    <li><a href="#" class="hover:text-white transition-colors">失敗しない要件定義の進め方</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">ChatGPT APIで業務効率化</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Rails初心者が陥りがちな罠</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-4">リンク</h3>
+                <ul class="space-y-2 text-gray-300">
+                    <li><a href="portfolio_prototype.html" class="hover:text-white transition-colors">ポートフォリオ</a></li>
+                    <li><a href="my_story_prototype.html" class="hover:text-white transition-colors">My Story</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">お問い合わせ</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">RSS</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-gray-700 pt-8 text-center text-gray-300">
+            <p>&copy; 2024 Miyakawa Codes. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+// Advanced Search Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const searchDropdown = document.getElementById('search-dropdown');
+    const searchResults = document.getElementById('search-results');
+    const searchSuggestions = document.getElementById('search-suggestions');
+    const searchHistory = document.getElementById('search-history');
+    const searchHistoryToggle = document.getElementById('search-history-toggle');
+
+    let searchTimeout;
+    let isSearchActive = false;
+
+    // Show dropdown on focus
+    searchInput.addEventListener('focus', function() {
+        showDropdown();
+        if (searchInput.value.length === 0) {
+            showSuggestions();
+        }
+    });
+
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.search-container')) {
+            hideDropdown();
+        }
+    });
+
+    // Real-time search
+    searchInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        
+        clearTimeout(searchTimeout);
+        
+        if (query.length === 0) {
+            showSuggestions();
+            return;
+        }
+
+        // Simulate search delay
+        searchTimeout = setTimeout(() => {
+            if (query.length >= 2) {
+                performSearch(query);
+            }
+        }, 300);
+    });
+
+    // Search history toggle
+    searchHistoryToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (searchHistory.classList.contains('hidden')) {
+            showHistory();
+        } else {
+            showSuggestions();
+        }
+    });
+
+    // Suggestion tag clicks
+    document.querySelectorAll('#search-suggestions button').forEach(button => {
+        button.addEventListener('click', function() {
+            searchInput.value = this.textContent;
+            performSearch(this.textContent);
+        });
+    });
+
+    // History item clicks
+    document.querySelectorAll('#search-history button').forEach(button => {
+        button.addEventListener('click', function() {
+            const query = this.querySelector('span').textContent;
+            searchInput.value = query;
+            performSearch(query);
+        });
+    });
+
+    // Keyboard navigation
+    searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            hideDropdown();
+        }
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (this.value.trim()) {
+                performSearch(this.value.trim());
+                addToHistory(this.value.trim());
+            }
+        }
+    });
+
+    function showDropdown() {
+        searchDropdown.classList.remove('hidden');
+        searchDropdown.classList.add('search-fade-in');
+        isSearchActive = true;
+    }
+
+    function hideDropdown() {
+        searchDropdown.classList.add('hidden');
+        isSearchActive = false;
+    }
+
+    function showSuggestions() {
+        searchResults.classList.add('hidden');
+        searchHistory.classList.add('hidden');
+        searchSuggestions.classList.remove('hidden');
+    }
+
+    function showHistory() {
+        searchResults.classList.add('hidden');
+        searchSuggestions.classList.add('hidden');
+        searchHistory.classList.remove('hidden');
+    }
+
+    function showResults() {
+        searchSuggestions.classList.add('hidden');
+        searchHistory.classList.add('hidden');
+        searchResults.classList.remove('hidden');
+    }
+
+    function performSearch(query) {
+        showResults();
+        
+        // Simulate search results (in real implementation, this would be an API call)
+        console.log('Searching for:', query);
+        
+        // Update URL without page reload
+        const url = new URL(window.location);
+        url.searchParams.set('q', query);
+        window.history.pushState({}, '', url);
+    }
+
+    function addToHistory(query) {
+        // 検索履歴をローカルストレージに保存
+        let history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+        
+        // 重複削除・最新を先頭に
+        history = history.filter(item => item.query !== query);
+        history.unshift({
+            query: query,
+            timestamp: new Date().toISOString()
+        });
+        
+        // 最大10件まで保持
+        if (history.length > 10) {
+            history = history.slice(0, 10);
+        }
+        
+        localStorage.setItem('searchHistory', JSON.stringify(history));
+        updateHistoryDisplay();
+    }
+    
+    function updateHistoryDisplay() {
+        const historyContainer = document.querySelector('#search-history .max-h-48');
+        if (!historyContainer) return;
+        
+        const history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+        historyContainer.innerHTML = '';
+        
+        history.forEach(item => {
+            const button = document.createElement('button');
+            button.className = 'flex items-center space-x-3 w-full px-4 py-2 hover:bg-gray-50 text-left border-b border-gray-100';
+            button.innerHTML = `
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="text-sm text-gray-700">${item.query}</span>
+                <div class="flex-1"></div>
+                <span class="text-xs text-gray-400">${new Date(item.timestamp).toLocaleDateString('ja-JP')}</span>
+            `;
+            
+            button.addEventListener('click', function() {
+                searchInput.value = item.query;
+                performSearch(item.query);
+            });
+            
+            historyContainer.appendChild(button);
+        });
+    }
+    
+    // カテゴリAPIから動的に読み込み
+    async function loadCategories() {
+        try {
+            const response = await fetch('/api/v1/categories');
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                renderCategories(data.data);
+            }
+        } catch (error) {
+            console.error('カテゴリ読み込みエラー:', error);
+            showCategoriesError();
+        }
+    }
+    
+    function renderCategories(categories) {
+        const container = document.getElementById('categories-container');
+        container.innerHTML = '';
+        
+        categories.forEach(category => {
+            const categoryElement = document.createElement('div');
+            categoryElement.className = 'category-card bg-blue-50 border border-blue-200 rounded-lg p-6 text-center cursor-pointer';
+            categoryElement.innerHTML = `
+                <div class="text-3xl mb-4">${category.icon || '📁'}</div>
+                <h3 class="text-xl font-bold mb-2 text-blue-800">${category.name}</h3>
+                <p class="text-blue-600 text-sm mb-3">${category.description || ''}</p>
+                <div class="text-blue-700 font-semibold">${category.article_count}記事</div>
+            `;
+            
+            categoryElement.addEventListener('click', function() {
+                window.location.href = `/blog/category/${category.slug}`;
+            });
+            
+            container.appendChild(categoryElement);
+        });
+    }
+    
+    function showCategoriesError() {
+        const container = document.getElementById('categories-container');
+        container.innerHTML = `
+            <div class="col-span-4 text-center py-8">
+                <p class="text-red-600">カテゴリの読み込みに失敗しました</p>
+                <button onclick="loadCategories()" class="mt-2 text-blue-600 hover:text-blue-800">再試行</button>
+            </div>
+        `;
+    }
+    
+    // ページ読み込み時の初期化
+    loadCategories();
+    updateHistoryDisplay();
+});
+</script>
+
+</body>
+</html>

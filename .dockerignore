@@ -49,3 +49,15 @@
 # Ignore Docker-related files
 /.dockerignore
 /Dockerfile*
+
+# Ignore documentation and development tools (not needed in production image)
+/docs/
+/reports/
+/.kiro/
+/.claude/
+/.claude-on-rails/
+/.claude-swarm/
+
+# Ignore test files
+/spec/
+/test/

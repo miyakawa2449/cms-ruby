@@ -1,0 +1,340 @@
+erDiagram
+    %% === Portfolio Site Database Schema v2.0 (Rails 8.0 Compatible) ===
+    %% Devise統合・Rails 8.0外部キー自動インデックス対応・PostgreSQL制約考慮版
+    
+    %% ========================================
+    %% 1. Deviseネイティブ統合管理ユーザー
+    %% ========================================
+    admin_users {
+        bigserial id PK "主キー"
+        varchar email UK "メールアドレス（Deviseネイティブ）"
+        varchar encrypted_password "暗号化パスワード（Devise）"
+        varchar reset_password_token "パスワードリセット（Devise）"
+        timestamp reset_password_sent_at "リセット送信日時（Devise）"
+        timestamp remember_created_at "ログイン保持（Devise）"
+        integer sign_in_count "サインイン回数（Devise）"
+        timestamp current_sign_in_at "現在サインイン日時（Devise）"
+        timestamp last_sign_in_at "前回サインイン日時（Devise）"
+        inet current_sign_in_ip "現在サインインIP（Devise）"
+        inet last_sign_in_ip "前回サインインIP（Devise）"
+        varchar confirmation_token "確認トークン（Devise）"
+        timestamp confirmed_at "確認日時（Devise）"
+        timestamp confirmation_sent_at "確認送信日時（Devise）"
+        varchar unconfirmed_email "未確認メール（Devise）"
+        varchar name "表示名（カスタム）"
+        varchar avatar_url "アバター画像URL（カスタム）"
+        varchar role "権限（admin/editor/author/viewer）"
+        jsonb settings "UI設定・個人設定（JSONB）"
+        varchar api_token "API認証トークン"
+        varchar otp_secret "2FA秘密鍵"
+        boolean otp_required_for_login "2FA必須フラグ"
+        integer failed_attempts "失敗試行回数"
+        timestamp locked_at "ロック日時"
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    %% ========================================
+    %% 2. コンテンツ管理テーブル
+    %% ========================================
+    articles {
+        bigserial id PK
+        bigint admin_user_id FK "Rails 8.0が自動インデックス作成"
+        varchar title "記事タイトル"
+        varchar slug UK "URLスラッグ"
+        text content "Markdownコンテンツ"
+        text content_html "レンダリング済みHTML"
+        text excerpt "記事抜粋"
+        varchar status "公開状態（draft/published/scheduled/archived）"
+        timestamp published_at "公開日時"
+        varchar meta_description "SEO説明文"
+        varchar meta_keywords "SEOキーワード"
+        varchar og_title "OG:title"
+        varchar og_description "OG:description"
+        varchar og_image_url "OG:image URL"
+        integer view_count "閲覧数"
+        integer comment_count "コメント数"
+        integer reading_time "読了時間（分）"
+        text ai_summary "AI生成要約"
+        text ai_keywords "AI抽出キーワード"
+        decimal ai_seo_score "AI SEOスコア（0.00-1.00）"
+        integer revision_count "リビジョン数"
+        tsvector search_vector "全文検索ベクター（英語辞書）"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    categories {
+        bigserial id PK
+        bigint parent_id FK "自己参照・Rails 8.0が自動インデックス"
+        varchar name "カテゴリ名"
+        varchar slug "URLスラッグ"
+        text description "説明"
+        varchar icon "Heroアイコン名"
+        varchar color "HEXカラーコード"
+        integer position "表示順序"
+        integer article_count "記事数（自動更新）"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    tags {
+        bigserial id PK
+        varchar name UK "タグ名"
+        varchar slug UK "URLスラッグ"
+        integer article_count "記事数（自動更新）"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    %% ========================================
+    %% 3. 中間テーブル（多対多関係）
+    %% ========================================
+    article_categories {
+        bigint article_id FK "Rails 8.0が自動インデックス"
+        bigint category_id FK "Rails 8.0が自動インデックス"
+        boolean is_primary "主カテゴリフラグ"
+        timestamp created_at
+    }
+
+    article_tags {
+        bigint article_id FK "Rails 8.0が自動インデックス"
+        bigint tag_id FK "Rails 8.0が自動インデックス"
+        timestamp created_at
+    }
+
+    article_media {
+        bigint article_id FK "Rails 8.0が自動インデックス"
+        bigint media_file_id FK "Rails 8.0が自動インデックス"
+        integer position "記事内表示順序"
+        timestamp created_at
+    }
+
+    %% ========================================
+    %% 4. コメント管理（スレッド対応）
+    %% ========================================
+    comments {
+        bigserial id PK
+        bigint article_id FK "Rails 8.0が自動インデックス"
+        bigint parent_id FK "自己参照・Rails 8.0が自動インデックス"
+        varchar author_name "投稿者名"
+        varchar author_email "投稿者メール"
+        varchar author_url "投稿者サイトURL"
+        inet author_ip "投稿者IP"
+        text author_user_agent "ユーザーエージェント"
+        text content "コメント本文"
+        text content_html "サニタイズ済みHTML"
+        varchar status "承認状態（pending/approved/spam/trash）"
+        bigint moderated_by FK "モデレーター・Rails 8.0が自動インデックス"
+        timestamp moderated_at "モデレーション日時"
+        decimal spam_score "スパムスコア（0.00-1.00）"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    %% ========================================
+    %% 5. メディア管理
+    %% ========================================
+    media_files {
+        bigserial id PK
+        bigint admin_user_id FK "Rails 8.0が自動インデックス"
+        varchar filename "保存ファイル名"
+        varchar original_filename "元ファイル名"
+        varchar content_type "MIMEタイプ"
+        bigint file_size "ファイルサイズ（バイト）"
+        varchar storage_path "ストレージパス"
+        varchar storage_provider "ストレージ（local/s3）"
+        varchar cdn_url "CDN URL"
+        integer width "画像幅"
+        integer height "画像高さ"
+        varchar thumbnail_path "サムネイルパス"
+        varchar webp_path "WebP変換パス"
+        varchar alt_text "Alt属性"
+        text caption "キャプション"
+        integer usage_count "使用回数"
+        timestamp last_used_at "最終使用日時"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    %% ========================================
+    %% 6. ポートフォリオセクション管理
+    %% ========================================
+    sections {
+        bigserial id PK
+        varchar name UK "セクション名（hero/about/service/my_story/works/blog/contact）"
+        varchar display_name "表示名"
+        boolean is_visible "表示フラグ"
+        integer position "表示順序"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    section_contents {
+        bigserial id PK
+        bigint section_id FK "Rails 8.0が自動インデックス"
+        jsonb content "JSONBコンテンツ（GINインデックス対応）"
+        integer version "バージョン番号"
+        boolean is_active "アクティブフラグ"
+        bigint published_by FK "公開者・Rails 8.0が自動インデックス"
+        timestamp published_at "公開日時"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    %% ========================================
+    %% 7. お問い合わせ管理
+    %% ========================================
+    contacts {
+        bigserial id PK
+        varchar name "送信者名"
+        varchar email "送信者メール"
+        varchar subject "件名"
+        text message "メッセージ本文"
+        inet ip_address "送信者IP"
+        text user_agent "ユーザーエージェント"
+        varchar referrer "リファラー"
+        varchar status "対応状態（unread/read/replied/archived）"
+        bigint assigned_to FK "担当者・Rails 8.0が自動インデックス"
+        timestamp replied_at "返信日時"
+        text notes "対応メモ"
+        decimal spam_score "スパムスコア"
+        boolean is_spam "スパムフラグ"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    %% ========================================
+    %% 8. システム設定・機能拡張
+    %% ========================================
+    settings {
+        bigserial id PK
+        varchar key UK "設定キー"
+        text value "設定値（文字列）"
+        varchar value_type "値タイプ（string/integer/boolean/jsonb）"
+        varchar category "カテゴリ（general/seo/ai/security/integration/email/backup/api）"
+        text description "説明"
+        boolean is_sensitive "機密情報フラグ"
+        jsonb json_value "複雑な設定値（JSONB・GINインデックス対応）"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    article_revisions {
+        bigserial id PK
+        bigint article_id FK "Rails 8.0が自動インデックス"
+        bigint admin_user_id FK "Rails 8.0が自動インデックス"
+        varchar title "リビジョン時のタイトル"
+        text content "リビジョン時のコンテンツ"
+        integer revision_number "リビジョン番号"
+        varchar change_summary "変更要約"
+        jsonb metadata "メタデータ（JSONB・GINインデックス対応）"
+        timestamp created_at
+    }
+
+    article_ai_analyses {
+        bigserial id PK
+        bigint article_id FK UK "Rails 8.0が自動インデックス"
+        text summary "AI生成要約"
+        text keywords "AI抽出キーワード"
+        text related_topics "関連トピック"
+        decimal seo_score "SEOスコア"
+        jsonb seo_suggestions "SEO改善提案（JSONB・GINインデックス対応）"
+        decimal readability_score "読みやすさスコア"
+        varchar sentiment "感情分析（positive/neutral/negative）"
+        varchar tone "トーン分析（professional/casual/technical）"
+        jsonb api_metadata "API情報（model/response_time/cost等）"
+        timestamp analyzed_at "分析日時"
+    }
+
+    %% ========================================
+    %% 9. 通知・ログ管理
+    %% ========================================
+    slack_notifications {
+        bigserial id PK
+        varchar notification_type "通知タイプ（contact/article_published/comment/error）"
+        bigint reference_id "関連レコードID"
+        varchar reference_type "関連レコード種類（Contact/Article/Comment）"
+        varchar webhook_url "Webhook URL"
+        varchar channel "Slackチャンネル"
+        jsonb payload "送信ペイロード（JSONB・GINインデックス対応）"
+        varchar status "送信状態（pending/sent/failed）"
+        text error_message "エラーメッセージ"
+        integer retry_count "リトライ回数"
+        timestamp created_at
+        timestamp sent_at "送信日時"
+    }
+
+    access_logs {
+        bigserial id "パーティション複合主キー用"
+        varchar path "アクセスパス"
+        varchar method "HTTPメソッド"
+        integer status_code "HTTPステータスコード"
+        inet ip_address "アクセス元IP"
+        text user_agent "ユーザーエージェント"
+        varchar referrer "リファラー"
+        integer response_time "レスポンス時間（ミリ秒）"
+        bigint admin_user_id "ユーザーID（認証時）"
+        varchar session_id "セッションID"
+        timestamp created_at "アクセス日時（パーティションキー）"
+    }
+
+    backups {
+        bigserial id PK
+        varchar backup_type "バックアップ種類（full/incremental/database/media）"
+        varchar status "実行状態（running/completed/failed）"
+        varchar filename "バックアップファイル名"
+        bigint file_size "ファイルサイズ"
+        varchar storage_location "保存場所"
+        integer duration_seconds "実行時間（秒）"
+        integer tables_count "テーブル数"
+        integer records_count "レコード数"
+        text error_message "エラーメッセージ"
+        timestamp started_at "開始日時"
+        timestamp completed_at "完了日時"
+    }
+
+    %% ========================================
+    %% リレーション定義（Rails 8.0外部キー自動インデックス対応）
+    %% ========================================
+    
+    %% 管理ユーザー関連
+    admin_users ||--o{ articles : "writes（記事執筆）"
+    admin_users ||--o{ comments : "moderates（コメント管理）"
+    admin_users ||--o{ media_files : "uploads（メディア投稿）"
+    admin_users ||--o{ section_contents : "publishes（セクション公開）"
+    admin_users ||--o{ article_revisions : "creates（リビジョン作成）"
+    admin_users ||--o{ access_logs : "generates（アクセス記録）"
+    admin_users ||--o{ contacts : "assigns_to（問い合わせ担当）"
+
+    %% 記事コンテンツ関連
+    articles ||--o{ article_categories : "has（カテゴリ関連付け）"
+    articles ||--o{ article_tags : "has（タグ関連付け）"
+    articles ||--o{ comments : "receives（コメント受信）"
+    articles ||--o{ article_media : "uses（メディア使用）"
+    articles ||--|| article_ai_analyses : "has（AI分析・1対1）"
+    articles ||--o{ article_revisions : "has_versions（リビジョン履歴）"
+
+    %% カテゴリ・タグ関連
+    categories ||--o{ article_categories : "contains（記事分類）"
+    categories ||--o{ categories : "has_children（階層構造・自己参照）"
+    tags ||--o{ article_tags : "attached_to（記事タグ付け）"
+
+    %% メディア関連
+    media_files ||--o{ article_media : "used_in（記事で使用）"
+
+    %% ポートフォリオ関連
+    sections ||--o{ section_contents : "has_versions（セクションバージョン管理）"
+
+    %% 通知・コメント関連
+    contacts ||--o{ slack_notifications : "triggers（通知トリガー）"
+    comments ||--o{ comments : "has_replies（コメント返信・自己参照）"
+
+    %% === 設計要点 ===
+    %% 1. Rails 8.0外部キー自動インデックス: t.referencesで自動生成される単一カラムインデックスは手動作成不要
+    %% 2. PostgreSQL Alpine対応: 全文検索は英語辞書使用（pg_catalog.english）
+    %% 3. Devise完全統合: admin_usersテーブルでDevise標準フィールド+カスタムフィールド併用
+    %% 4. JSONB統一: GINインデックス対応のため複雑データ構造はJSONB使用
+    %% 5. パーティショニング: access_logsは月次パーティション（パフォーマンス最適化）
+    %% 6. 複合インデックス: クエリパフォーマンス向上の必要がある場合のみ手動追加
+    %% 7. 部分インデックス: WHERE条件付きインデックスでストレージ効率化

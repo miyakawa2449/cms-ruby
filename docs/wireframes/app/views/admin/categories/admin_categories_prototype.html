@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カテゴリ管理 - CMS管理画面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+        .sidebar-gradient {
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+        }
+        .category-color-rails { background-color: #fee2e2; color: #991b1b; }
+        .category-color-ai { background-color: #ede9fe; color: #6b21a8; }
+        .category-color-requirements { background-color: #dbeafe; color: #1e40af; }
+        .category-color-infra { background-color: #d1fae5; color: #065f46; }
+        .modal {
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .color-picker {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .color-picker:hover {
+            transform: scale(1.1);
+        }
+        .color-picker.selected {
+            border: 3px solid #3b82f6;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<!-- Layout Wrapper -->
+<div class="flex min-h-screen">
+    
+    <!-- Sidebar -->
+    <div class="sidebar-gradient w-64 flex flex-col">
+        <!-- Logo -->
+        <div class="p-6 border-b border-slate-600">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">M</span>
+                </div>
+                <div>
+                    <div class="text-white font-semibold">Miyakawa Codes</div>
+                    <div class="text-slate-300 text-xs">CMS管理画面</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 p-4 space-y-2">
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                </svg>
+                <span>ダッシュボード</span>
+            </a>
+            
+            <div class="text-slate-400 text-xs font-semibold uppercase tracking-wider px-3 py-2">コンテンツ</div>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <span>ブログ記事</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 bg-slate-700 text-white rounded-md">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                </svg>
+                <span>カテゴリ・タグ</span>
+            </a>
+
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                <span>コメント管理</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span>メディアライブラリ</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+                <span>ポートフォリオ</span>
+            </a>
+
+            <div class="text-slate-400 text-xs font-semibold uppercase tracking-wider px-3 py-2 mt-6">システム</div>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <span>アクセス解析</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+                <span>ユーザー管理</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+                </svg>
+                <span>設定</span>
+            </a>
+        </nav>
+
+        <!-- User Menu -->
+        <div class="p-4 border-t border-slate-600">
+            <div class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 rounded-md cursor-pointer">
+                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                    <span class="text-white font-semibold text-sm">宮</span>
+                </div>
+                <div class="flex-1">
+                    <div class="text-sm font-medium text-white">宮川 剛</div>
+                    <div class="text-xs text-slate-400">管理者</div>
+                </div>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        
+        <!-- Top Header -->
+        <header class="bg-white border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">カテゴリ管理</h1>
+                    <p class="text-gray-600">記事カテゴリの作成・編集・管理を行います</p>
+                </div>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2" id="add-category-btn">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span>新規カテゴリ作成</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Filters and Actions -->
+        <div class="bg-white border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <!-- Search -->
+                    <div class="relative">
+                        <input type="text" placeholder="カテゴリを検索..." 
+                               class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm">
+                        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    
+                    <!-- Status Filter -->
+                    <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        <option value="">すべて表示</option>
+                        <option value="active">使用中</option>
+                        <option value="unused">未使用</option>
+                    </select>
+                </div>
+                
+                <!-- View Options -->
+                <div class="flex items-center space-x-2">
+                    <button class="p-2 border border-gray-300 rounded-lg bg-gray-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                        </svg>
+                    </button>
+                    <button class="p-2 border border-gray-300 rounded-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+        <!-- Top Actions Bar -->
+        <div class="bg-white rounded-lg shadow p-4 mb-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                    <h2 class="text-2xl font-bold">カテゴリ一覧</h2>
+                    <button id="add-category-btn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span>新規カテゴリ作成</span>
+                    </button>
+                </div>
+                
+                <div class="flex flex-col lg:flex-row lg:items-center space-y-2 lg:space-y-0 lg:space-x-4">
+                    <div class="relative">
+                        <input type="search" placeholder="カテゴリを検索..." 
+                               class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 w-full lg:w-64">
+                        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <select class="border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="">すべて表示</option>
+                        <option value="active">使用中</option>
+                        <option value="unused">未使用</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">全カテゴリ数</p>
+                        <p class="text-2xl font-bold text-gray-900">4</p>
+                    </div>
+                    <svg class="w-12 h-12 text-blue-100" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">使用中</p>
+                        <p class="text-2xl font-bold text-green-600">4</p>
+                    </div>
+                    <svg class="w-12 h-12 text-green-100" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">人気カテゴリ</p>
+                        <p class="text-2xl font-bold text-purple-600">AI・機械学習</p>
+                    </div>
+                    <svg class="w-12 h-12 text-purple-100" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">総記事数</p>
+                        <p class="text-2xl font-bold text-orange-600">69</p>
+                    </div>
+                    <svg class="w-12 h-12 text-orange-100" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Category 1: Ruby/Rails -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-4 h-4 rounded-full category-color-rails"></div>
+                            <h3 class="text-lg font-bold text-gray-900">Ruby/Rails</h3>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="text-blue-600 hover:text-blue-800 p-1" title="編集">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800 p-1" title="削除">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-600 mb-4">
+                        Web開発・フレームワークに関する技術記事
+                    </p>
+                    
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">記事数:</span>
+                            <span class="font-semibold">24件</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">月間PV:</span>
+                            <span class="font-semibold">8,420</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">作成日:</span>
+                            <span class="text-gray-700">2024/01/15</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t">
+                        <div class="text-xs text-gray-500 mb-2">人気記事</div>
+                        <div class="space-y-1">
+                            <div class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer">Rails 8.0の新機能解説</div>
+                            <div class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer">Rails初心者が陥りがちな罠</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category 2: AI・機械学習 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-4 h-4 rounded-full category-color-ai"></div>
+                            <h3 class="text-lg font-bold text-gray-900">AI・機械学習</h3>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="text-blue-600 hover:text-blue-800 p-1" title="編集">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800 p-1" title="削除">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-600 mb-4">
+                        ChatGPT・開発効率化に関する記事
+                    </p>
+                    
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">記事数:</span>
+                            <span class="font-semibold">18件</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">月間PV:</span>
+                            <span class="font-semibold">12,350</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">作成日:</span>
+                            <span class="text-gray-700">2024/02/01</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t">
+                        <div class="text-xs text-gray-500 mb-2">人気記事</div>
+                        <div class="space-y-1">
+                            <div class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer">ChatGPT API記事要約システム</div>
+                            <div class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer">開発チームでのChatGPT活用法</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category 3: 要件定義・設計 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-4 h-4 rounded-full category-color-requirements"></div>
+                            <h3 class="text-lg font-bold text-gray-900">要件定義・設計</h3>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="text-blue-600 hover:text-blue-800 p-1" title="編集">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800 p-1" title="削除">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-600 mb-4">
+                        上流工程・PMに関する経験記事
+                    </p>
+                    
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">記事数:</span>
+                            <span class="font-semibold">15件</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">月間PV:</span>
+                            <span class="font-semibold">6,890</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">作成日:</span>
+                            <span class="text-gray-700">2024/01/20</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t">
+                        <div class="text-xs text-gray-500 mb-2">人気記事</div>
+                        <div class="space-y-1">
+                            <div class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer">失敗しない要件定義の進め方</div>
+                            <div class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer">16年のPM経験から学んだ...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category 4: インフラ・デプロイ -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-4 h-4 rounded-full category-color-infra"></div>
+                            <h3 class="text-lg font-bold text-gray-900">インフラ・デプロイ</h3>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="text-blue-600 hover:text-blue-800 p-1" title="編集">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800 p-1" title="削除">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-600 mb-4">
+                        AWS・Docker・CI/CDに関する記事
+                    </p>
+                    
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">記事数:</span>
+                            <span class="font-semibold">12件</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">月間PV:</span>
+                            <span class="font-semibold">4,280</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">作成日:</span>
+                            <span class="text-gray-700">2024/03/10</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t">
+                        <div class="text-xs text-gray-500 mb-2">人気記事</div>
+                        <div class="space-y-1">
+                            <div class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer">Rails×Docker×AWS Lightsail</div>
+                            <div class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer">本番環境構築ガイド</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </main>
+    </div>
+</div>
+
+<!-- Modal for Add/Edit Category -->
+<div id="category-modal" class="fixed inset-0 modal hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+        <div class="flex items-center justify-between p-6 border-b">
+            <h3 id="modal-title" class="text-lg font-semibold">新規カテゴリ作成</h3>
+            <button id="close-modal" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <form class="p-6 space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">カテゴリ名</label>
+                <input type="text" id="category-name" 
+                       placeholder="例: Ruby/Rails" 
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">スラッグ（URL用）</label>
+                <input type="text" id="category-slug" 
+                       placeholder="例: ruby-rails" 
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <p class="text-xs text-gray-500 mt-1">URL: https://miyakawa.codes/blog/category/<span id="slug-preview">ruby-rails</span></p>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">説明</label>
+                <textarea id="category-description" 
+                          rows="3"
+                          placeholder="カテゴリの説明を入力してください"
+                          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">カテゴリカラー</label>
+                <div class="flex space-x-3">
+                    <div class="color-picker" data-color="#fee2e2" style="background-color: #fee2e2;" title="Red"></div>
+                    <div class="color-picker selected" data-color="#ede9fe" style="background-color: #ede9fe;" title="Purple"></div>
+                    <div class="color-picker" data-color="#dbeafe" style="background-color: #dbeafe;" title="Blue"></div>
+                    <div class="color-picker" data-color="#d1fae5" style="background-color: #d1fae5;" title="Green"></div>
+                    <div class="color-picker" data-color="#fef3c7" style="background-color: #fef3c7;" title="Yellow"></div>
+                    <div class="color-picker" data-color="#f3e8ff" style="background-color: #f3e8ff;" title="Indigo"></div>
+                </div>
+                <input type="hidden" id="category-color" value="#ede9fe">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">アイコン</label>
+                <div class="grid grid-cols-6 gap-2">
+                    <button type="button" class="icon-picker p-2 border rounded hover:bg-gray-50" data-icon="⚙️">⚙️</button>
+                    <button type="button" class="icon-picker p-2 border rounded hover:bg-gray-50 bg-blue-50" data-icon="🤖">🤖</button>
+                    <button type="button" class="icon-picker p-2 border rounded hover:bg-gray-50" data-icon="🏗️">🏗️</button>
+                    <button type="button" class="icon-picker p-2 border rounded hover:bg-gray-50" data-icon="🚀">🚀</button>
+                    <button type="button" class="icon-picker p-2 border rounded hover:bg-gray-50" data-icon="💡">💡</button>
+                    <button type="button" class="icon-picker p-2 border rounded hover:bg-gray-50" data-icon="📊">📊</button>
+                </div>
+                <input type="hidden" id="category-icon" value="🤖">
+            </div>
+        </form>
+        
+        <div class="flex justify-end space-x-3 p-6 bg-gray-50 rounded-b-lg">
+            <button id="cancel-btn" class="px-4 py-2 text-gray-700 border border-gray-300 rounded hover:bg-gray-50">
+                キャンセル
+            </button>
+            <button id="save-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                保存
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Modal functionality
+const modal = document.getElementById('category-modal');
+const addBtn = document.getElementById('add-category-btn');
+const closeBtn = document.getElementById('close-modal');
+const cancelBtn = document.getElementById('cancel-btn');
+
+function openModal(mode = 'add', data = {}) {
+    const title = document.getElementById('modal-title');
+    const nameInput = document.getElementById('category-name');
+    const slugInput = document.getElementById('category-slug');
+    const descInput = document.getElementById('category-description');
+    
+    if (mode === 'add') {
+        title.textContent = '新規カテゴリ作成';
+        nameInput.value = '';
+        slugInput.value = '';
+        descInput.value = '';
+    } else {
+        title.textContent = 'カテゴリ編集';
+        nameInput.value = data.name || '';
+        slugInput.value = data.slug || '';
+        descInput.value = data.description || '';
+    }
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeModal() {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+addBtn.addEventListener('click', () => openModal('add'));
+closeBtn.addEventListener('click', closeModal);
+cancelBtn.addEventListener('click', closeModal);
+
+// Close modal when clicking outside
+modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+        closeModal();
+    }
+});
+
+// Auto-generate slug from name
+const nameInput = document.getElementById('category-name');
+const slugInput = document.getElementById('category-slug');
+const slugPreview = document.getElementById('slug-preview');
+
+let isSlugManuallyEdited = false;
+
+function generateSlug(text) {
+    return text
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/--+/g, '-')
+        .trim()
+        .replace(/^-+|-+$/g, '');
+}
+
+nameInput.addEventListener('input', function() {
+    if (!isSlugManuallyEdited) {
+        const newSlug = generateSlug(this.value);
+        slugInput.value = newSlug;
+        slugPreview.textContent = newSlug;
+    }
+});
+
+slugInput.addEventListener('input', function() {
+    isSlugManuallyEdited = true;
+    slugPreview.textContent = this.value;
+});
+
+// Color picker functionality
+document.querySelectorAll('.color-picker').forEach(picker => {
+    picker.addEventListener('click', function() {
+        document.querySelectorAll('.color-picker').forEach(p => p.classList.remove('selected'));
+        this.classList.add('selected');
+        document.getElementById('category-color').value = this.dataset.color;
+    });
+});
+
+// Icon picker functionality
+document.querySelectorAll('.icon-picker').forEach(picker => {
+    picker.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelectorAll('.icon-picker').forEach(p => p.classList.remove('bg-blue-50'));
+        this.classList.add('bg-blue-50');
+        document.getElementById('category-icon').value = this.dataset.icon;
+    });
+});
+
+// Edit category functionality
+document.querySelectorAll('button[title="編集"]').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const categoryCard = this.closest('.bg-white');
+        const categoryName = categoryCard.querySelector('h3').textContent;
+        const categoryDesc = categoryCard.querySelector('p').textContent;
+        
+        openModal('edit', {
+            name: categoryName,
+            slug: categoryName.toLowerCase().replace(/[・]/g, '-').replace(/\s+/g, '-'),
+            description: categoryDesc
+        });
+    });
+});
+
+// Delete category functionality
+document.querySelectorAll('button[title="削除"]').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const categoryName = this.closest('.bg-white').querySelector('h3').textContent;
+        if (confirm(`「${categoryName}」カテゴリを削除しますか？\n\nこのカテゴリに属する記事は「未分類」に移動されます。`)) {
+            console.log('Delete category:', categoryName);
+            // Implement delete logic here
+        }
+    });
+});
+
+// Save category functionality
+document.getElementById('save-btn').addEventListener('click', function() {
+    const name = document.getElementById('category-name').value;
+    const slug = document.getElementById('category-slug').value;
+    const description = document.getElementById('category-description').value;
+    const color = document.getElementById('category-color').value;
+    const icon = document.getElementById('category-icon').value;
+    
+    if (!name.trim()) {
+        alert('カテゴリ名を入力してください');
+        return;
+    }
+    
+    if (!slug.trim()) {
+        alert('スラッグを入力してください');
+        return;
+    }
+    
+    console.log('Save category:', {
+        name,
+        slug,
+        description,
+        color,
+        icon
+    });
+    
+    // Implement save logic here
+    alert('カテゴリを保存しました');
+    closeModal();
+});
+
+</script>
+
+</body>
+</html>

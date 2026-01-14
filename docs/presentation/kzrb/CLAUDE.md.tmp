@@ -1,0 +1,128 @@
+# CLAUDE.md - Project Context & Rules
+
+## 🧠 Memory Bank & Guidelines
+このファイルは、本プロジェクトにおけるAI（Claude Code）の振る舞い、ルール、文脈を定義するものである。
+セッション開始時、および判断に迷った際は必ずこのファイルを参照すること。
+
+---
+
+## 🌐 言語設定
+すべての応答は**日本語**で行うこと。
+- ユーザーとの会話・説明は日本語
+- コード内のコメントは英語または日本語（プロジェクト規約に従う）
+
+---
+
+## 📋 プロジェクト概要
+- **プロジェクト名**: [PROJECT_NAME]
+- **技術スタック**: [Rails X.X / React / Python / etc.]
+- **目的**: [プロジェクトの一言説明]
+- **リポジトリ**: [GitHub URL]
+
+---
+
+## 🛠️ Custom Commands (Workflow)
+
+> **実装方法**: 下記コマンドは `.claude/commands/` ディレクトリに
+> Markdownファイルとして配置すること。
+> 例: `.claude/commands/session-start.md`
+
+### `session-start`
+- **目的**: セッション開始時のコンテキスト復帰
+- **動作**:
+  1. `[PHASE_PLAN_PATH]` を読み込み、現在のフェーズと進捗を確認する。
+  2. `[REPORTS_DIR]` の直近1日分のレポートを読み込む。
+  3. 「準備完了。現在のフェーズは[PHASE]です。指示を待機します。」と応答する。
+
+### `add-report`
+- **目的**: セッション終了時の進捗記録
+- **動作**:
+  1. 今回のセッションでの変更点（ファイル数、主な実装内容）を要約する。
+  2. 次回のセッションでやるべき「Next Action」を列挙する。
+  3. `[REPORTS_DIR]/YYYY-MM-DD/` フォルダに連番でレポートを作成する。
+- **出力形式**:
+  ```
+  [REPORTS_DIR]/
+  ├── 2025-01-15/
+  │   ├── 1st.md
+  │   ├── 2nd.md
+  │   └── 3rd.md
+  └── 2025-01-16/
+      └── 1st.md
+  ```
+
+### `check-quality`
+- **目的**: コード品質の自動チェック
+- **動作**:
+  1. 直近で変更されたファイルをスキャンする。
+  2. 下記の「Coding Standards」に違反していないかチェックする。
+  3. 違反がある場合、修正案を提示する。
+
+---
+
+## 📏 Coding Standards (Quality Control)
+
+### General
+- **DRY原則**: 同じロジックを2回書かない。共通化できないか常に検討せよ。
+- **KISS原則**: 複雑な実装より、単純で読みやすい実装を優先せよ。
+
+### Constraints (Strict)
+
+| 項目 | 制約 | 超過時の対応 |
+|------|------|--------------|
+| メソッド行数 | 最大20行 | プライベートメソッドに切り出し |
+| クラス行数 | 最大100行 | 責務分割（Concern/Service） |
+
+### 命名規則
+- **変数名**: スネークケース（`user_id`）
+- **クラス名**: キャメルケース（`UserManager`）
+- **禁止**: 意味のない名前（`temp`, `data`, `a`）
+
+### Refactoring Policy
+- プロトタイプフェーズ（Phase 1-2）では、冗長性を許容する。
+- ただし、実装後に必ず `TODO: Refactor later (Date: YYYY-MM-DD)` コメントを残すこと。
+
+---
+
+## 🏗️ Architecture & Context
+- **Architecture**: [MVC / Clean Architecture / etc.]
+- **Frontend**: [Tailwind CSS / Hotwire / React / etc.]
+- **Infrastructure**: [Docker / AWS / Heroku / etc.]
+- **Key Philosophy**: 「実装」はAIが、「設計」は人間が行う。
+
+---
+
+## ⛔ 禁止事項
+- ユーザーの指示なしに勝手に**コミット・プッシュ**しない
+- 設計書・承認なしに**新機能を実装**しない
+- 既存の**アーキテクチャを無断で変更**しない
+- **本番環境**に直接変更を加えない
+- **機密情報**（APIキー、パスワード等）をコードに埋め込まない
+
+---
+
+## 📚 参照ドキュメント
+| 用途 | ファイルパス |
+|------|-------------|
+| フェーズ計画 | `[PHASE_PLAN_PATH]` |
+| レポート | `[REPORTS_DIR]/YYYY-MM-DD/*.md` |
+| 設計書 | `[DESIGN_DOC_PATH]` |
+| API仕様 | `[API_SPEC_PATH]` |
+
+---
+
+## 🔧 カスタマイズガイド
+
+このテンプレートを使用する際は、以下の `[PLACEHOLDER]` を置き換えてください：
+
+| プレースホルダー | 説明 | 例 |
+|-----------------|------|-----|
+| `[PROJECT_NAME]` | プロジェクト名 | `MyPortfolio` |
+| `[PHASE_PLAN_PATH]` | フェーズ計画のパス | `docs/phase_plan.md` |
+| `[REPORTS_DIR]` | レポート保存ディレクトリ | `reports` |
+| `[DESIGN_DOC_PATH]` | 設計書のパス | `docs/design.md` |
+| `[API_SPEC_PATH]` | API仕様書のパス | `docs/api.md` |
+
+---
+
+*このテンプレートは [Claude Code](https://claude.ai/code) との協働開発を効率化するためのものです。*

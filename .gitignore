@@ -38,12 +38,6 @@
 
 /node_modules
 
-# Ignore all daily reports (personal work logs)
-/reports/
-
-# Ignore development documentation and planning files
-/docs/
-
 # Ignore test files and directories for production deployment
 /spec/
 /test/
@@ -86,7 +80,6 @@ Gemfile.lock.*.backup
 
 # ClaudeOnRails
 .claude-on-rails/
-.claude/
 .claude-swarm/
 claude-swarm.log
 claude-swarm.yml

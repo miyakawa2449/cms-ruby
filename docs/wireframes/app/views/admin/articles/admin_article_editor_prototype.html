@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>記事エディタ - CMS管理画面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+        .sidebar-gradient {
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+        }
+        .editor-container {
+            min-height: 400px;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+        }
+        .ai-suggestion {
+            background: linear-gradient(45deg, #fef3c7, #fed7aa);
+            border-left: 4px solid #f59e0b;
+        }
+        .tag-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            min-height: 2.5rem;
+        }
+        .tag {
+            background-color: #e0e7ff;
+            color: #3730a3;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+        }
+        .markdown-toolbar {
+            display: flex;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            background-color: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+        }
+        .toolbar-btn {
+            padding: 0.5rem;
+            border: none;
+            background: transparent;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+        .toolbar-btn:hover {
+            background-color: #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<!-- Layout Wrapper -->
+<div class="flex min-h-screen">
+    
+    <!-- Sidebar -->
+    <div class="sidebar-gradient w-64 flex flex-col">
+        <!-- Logo -->
+        <div class="p-6 border-b border-slate-600">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">M</span>
+                </div>
+                <div>
+                    <div class="text-white font-semibold">Miyakawa Codes</div>
+                    <div class="text-slate-300 text-xs">CMS管理画面</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 p-4 space-y-2">
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                </svg>
+                <span>ダッシュボード</span>
+            </a>
+            
+            <div class="text-slate-400 text-xs font-semibold uppercase tracking-wider px-3 py-2">コンテンツ</div>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 bg-slate-700 text-white rounded-md">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <span>ブログ記事</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                </svg>
+                <span>カテゴリ・タグ</span>
+            </a>
+
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                <span>コメント管理</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span>メディアライブラリ</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+                <span>ポートフォリオ</span>
+            </a>
+
+            <div class="text-slate-400 text-xs font-semibold uppercase tracking-wider px-3 py-2 mt-6">システム</div>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <span>アクセス解析</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+                <span>ユーザー管理</span>
+            </a>
+            
+            <a href="#" class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 hover:text-white rounded-md transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+                </svg>
+                <span>設定</span>
+            </a>
+        </nav>
+
+        <!-- User Menu -->
+        <div class="p-4 border-t border-slate-600">
+            <div class="flex items-center space-x-3 px-3 py-2 text-slate-300 hover:bg-slate-700 rounded-md cursor-pointer">
+                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                    <span class="text-white font-semibold text-sm">宮</span>
+                </div>
+                <div class="flex-1">
+                    <div class="text-sm font-medium text-white">宮川 剛</div>
+                    <div class="text-xs text-slate-400">管理者</div>
+                </div>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        
+        <!-- Top Header -->
+        <header class="bg-white border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-2xl font-bold text-gray-900">記事エディタ</h1>
+                    <div class="flex items-center space-x-2 text-sm text-gray-500">
+                        <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                        <span>自動保存 - 最終保存: 2分前</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button class="px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        プレビュー
+                    </button>
+                    <button class="px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        下書き保存
+                    </button>
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        公開
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Editor Content -->
+        <main class="flex-1 p-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Main Editor Area -->
+                    <div class="lg:col-span-2 space-y-6">
+                        
+                        <!-- Article Title -->
+                        <div class="bg-white rounded-lg border border-gray-200 p-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">記事タイトル</label>
+                            <input type="text" 
+                                   value="ChatGPT APIとRailsで作る自動記事要約システム"
+                                   class="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                   placeholder="記事のタイトルを入力...">
+                            <p class="mt-2 text-sm text-gray-500">SEO最適化のため、60文字以内を推奨</p>
+                        </div>
+
+                        <!-- Article Content -->
+                        <div class="bg-white rounded-lg border border-gray-200">
+                            <div class="markdown-toolbar">
+                                <button class="toolbar-btn" title="太字">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4v12m0-6h7c1.38 0 2.5-1.12 2.5-2.5S16.38 5 15 5H8zm0 6h8c1.38 0 2.5 1.12 2.5 2.5S17.38 18 16 18H8z"></path>
+                                    </svg>
+                                </button>
+                                <button class="toolbar-btn" title="斜体">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 4l4 16M6 12h12"></path>
+                                    </svg>
+                                </button>
+                                <button class="toolbar-btn" title="見出し">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"></path>
+                                    </svg>
+                                </button>
+                                <button class="toolbar-btn" title="リンク">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                                    </svg>
+                                </button>
+                                <button class="toolbar-btn" title="画像">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </button>
+                                <button class="toolbar-btn" title="コードブロック">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <textarea class="w-full h-96 p-4 border-0 rounded-b-lg resize-none focus:outline-none"
+                                      placeholder="記事の内容をMarkdownで記述してください...">## はじめに
+
+OpenAI APIとRuby on Railsを組み合わせることで、記事の自動要約システムを構築できます。この記事では、実際の実装手順について詳しく解説します。
+
+## 必要な準備
+
+1. OpenAI APIキーの取得
+2. Rails 8.0の環境構築
+3. 必要なGemのインストール
+
+```ruby
+gem 'openai', '~> 0.5.0'
+gem 'sidekiq', '~> 7.0'
+```
+
+## 実装方法
+
+### 1. OpenAI APIクライアントの設定
+
+```ruby
+class OpenaiService
+  def initialize
+    @client = OpenAI::Client.new(
+      access_token: Rails.application.credentials.openai.api_key
+    )
+  end
+  
+  def summarize_text(content)
+    response = @client.completions(
+      parameters: {
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: generate_prompt(content) }],
+        max_tokens: 150
+      }
+    )
+    response.dig("choices", 0, "message", "content")
+  end
+  
+  private
+  
+  def generate_prompt(content)
+    "以下の記事を3行で要約してください：\n\n#{content}"
+  end
+end
+```
+
+### 2. 非同期処理の実装
+
+Sidekiqを使用して、記事要約を非同期で処理します。
+
+```ruby
+class SummarizeJob < ApplicationJob
+  queue_as :default
+  
+  def perform(article_id)
+    article = Article.find(article_id)
+    service = OpenaiService.new
+    summary = service.summarize_text(article.content)
+    
+    article.update!(summary: summary)
+  end
+end
+```
+
+## まとめ
+
+OpenAI APIとRailsを組み合わせることで、効率的な記事要約システムを構築できました。非同期処理により、ユーザー体験を損なうことなく機能を提供できます。</textarea>
+                        </div>
+
+                        <!-- AI Suggestions -->
+                        <div class="ai-suggestion rounded-lg p-4">
+                            <div class="flex items-start space-x-3">
+                                <svg class="w-6 h-6 text-amber-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                </svg>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-amber-800 mb-2">AI提案</h3>
+                                    <div class="space-y-2 text-sm">
+                                        <p class="text-amber-700"><strong>SEO改善:</strong> 「Ruby on Rails OpenAI API 連携」などのキーワードを追加することを推奨</p>
+                                        <p class="text-amber-700"><strong>構成提案:</strong> 実装例の前に「メリット・デメリット」の章を追加すると読みやすくなります</p>
+                                        <p class="text-amber-700"><strong>関連記事:</strong> 「Rails API開発」「Sidekiq活用術」の記事とのリンク追加を提案</p>
+                                    </div>
+                                    <button class="mt-3 px-3 py-1 bg-amber-100 text-amber-800 rounded text-sm hover:bg-amber-200">
+                                        提案を適用
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <!-- Sidebar Settings -->
+                    <div class="space-y-6">
+                        
+                        <!-- Publish Settings -->
+                        <div class="bg-white rounded-lg border border-gray-200 p-6">
+                            <h3 class="font-semibold text-gray-900 mb-4">公開設定</h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">ステータス</label>
+                                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                                        <option>下書き</option>
+                                        <option>公開</option>
+                                        <option>予約投稿</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">公開日時</label>
+                                    <input type="datetime-local" 
+                                           value="2024-11-27T10:00"
+                                           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">URL slug</label>
+                                    <input type="text" 
+                                           value="chatgpt-rails-auto-summary"
+                                           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Categories and Tags -->
+                        <div class="bg-white rounded-lg border border-gray-200 p-6">
+                            <h3 class="font-semibold text-gray-900 mb-4">カテゴリ・タグ</h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">メインカテゴリ</label>
+                                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                                        <option>AI・機械学習</option>
+                                        <option>Ruby/Rails</option>
+                                        <option>要件定義・PM</option>
+                                        <option>インフラ・DevOps</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">サブカテゴリ</label>
+                                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                                        <option>OpenAI API</option>
+                                        <option>ChatGPT活用</option>
+                                        <option>API連携</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">タグ</label>
+                                    <div class="tag-input">
+                                        <span class="tag">
+                                            OpenAI
+                                            <button class="text-indigo-400 hover:text-indigo-600">×</button>
+                                        </span>
+                                        <span class="tag">
+                                            Rails
+                                            <button class="text-indigo-400 hover:text-indigo-600">×</button>
+                                        </span>
+                                        <span class="tag">
+                                            API
+                                            <button class="text-indigo-400 hover:text-indigo-600">×</button>
+                                        </span>
+                                        <span class="tag">
+                                            自動化
+                                            <button class="text-indigo-400 hover:text-indigo-600">×</button>
+                                        </span>
+                                        <input type="text" 
+                                               placeholder="タグを追加..." 
+                                               class="border-none outline-none bg-transparent flex-1 min-w-24">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Featured Image -->
+                        <div class="bg-white rounded-lg border border-gray-200 p-6">
+                            <h3 class="font-semibold text-gray-900 mb-4">アイキャッチ画像</h3>
+                            
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                                <img src="https://via.placeholder.com/300x200?text=ChatGPT+API" 
+                                     alt="アイキャッチ画像" 
+                                     class="w-full h-32 object-cover rounded mb-4">
+                                <div class="space-y-2">
+                                    <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                                        画像を変更
+                                    </button>
+                                    <button class="block mx-auto px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 text-sm">
+                                        AI画像生成
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Alt text</label>
+                                <input type="text" 
+                                       value="ChatGPT APIとRailsの連携イメージ"
+                                       placeholder="画像の説明を入力..."
+                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm">
+                            </div>
+                        </div>
+
+                        <!-- SEO Settings -->
+                        <div class="bg-white rounded-lg border border-gray-200 p-6">
+                            <h3 class="font-semibold text-gray-900 mb-4">SEO設定</h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">メタディスクリプション</label>
+                                    <textarea class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm" 
+                                              rows="3"
+                                              placeholder="記事の要約を入力...">OpenAI APIとRuby on Railsを使って記事の自動要約システムを構築する方法を詳しく解説。実装コード例と非同期処理も含めて紹介します。</textarea>
+                                    <p class="mt-1 text-xs text-gray-500">160文字以内推奨 (現在: 76文字)</p>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">フォーカスキーワード</label>
+                                    <input type="text" 
+                                           value="OpenAI API Rails"
+                                           placeholder="メインキーワードを入力..."
+                                           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+</body>
+</html>
