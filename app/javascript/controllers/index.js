@@ -8,6 +8,7 @@ import MediaLibraryController from "./media_library_controller"
 import MediaUploadController from "./media_upload_controller"
 import MediaEditorController from "./media_editor_controller"
 import ThumbnailEditorController from "./thumbnail_editor_controller"
+import ContentImageEditorController from "./content_image_editor_controller"
 
 application.register("confirm-dialog", ConfirmDialogController)
 application.register("contact-form", ContactFormController)
@@ -17,3 +18,4 @@ application.register("media-library", MediaLibraryController)
 application.register("media-upload", MediaUploadController)
 application.register("media-editor", MediaEditorController)
 application.register("thumbnail-editor", ThumbnailEditorController)
+application.register("content-image-editor", ContentImageEditorController)
