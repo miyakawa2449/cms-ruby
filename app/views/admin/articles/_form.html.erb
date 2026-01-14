@@ -10,35 +10,78 @@
     </div>
   <% end %>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6"
+       data-controller="ai-assistant"
+       data-ai-assistant-article-id-value="<%= article.id || 0 %>"
+       data-ai-assistant-base-url-value="<%= admin_root_path.chomp('/') %>">
     <!-- メインコンテンツエリア -->
     <div class="lg:col-span-2 space-y-6">
       <!-- タイトル -->
       <div class="bg-white shadow rounded-lg p-6">
         <h3 class="text-lg font-medium text-gray-900 mb-4">記事情報</h3>
-        
+
         <div class="space-y-4">
           <div>
             <%= form.label :title, "タイトル", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.text_field :title, 
+            <%= form.text_field :title,
                 class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
                 placeholder: "記事のタイトルを入力してください" %>
           </div>
 
+          <!-- スラッグ with AI -->
           <div>
-            <%= form.label :slug, "URL スラッグ", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.text_field :slug, 
+            <div class="flex items-center justify-between">
+              <%= form.label :slug, "URL スラッグ", class: "block text-sm font-medium text-gray-700" %>
+              <% if article.persisted? %>
+                <button type="button"
+                        data-action="click->ai-assistant#generateSlug"
+                        data-ai-assistant-target="slugButton"
+                        class="inline-flex items-center px-2 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded hover:bg-purple-200 transition-colors">
+                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  </svg>
+                  AI提案
+                </button>
+              <% end %>
+            </div>
+            <%= form.text_field :slug,
+                data: { ai_assistant_target: "slug" },
                 class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
                 placeholder: "article-url-slug" %>
             <p class="mt-1 text-sm text-gray-500">URLで使用される部分です。英数字とハイフンのみ使用可能。</p>
+            <!-- Slug AI Results -->
+            <div data-ai-assistant-target="slugLoading" class="hidden mt-2">
+              <span class="text-sm text-purple-600">生成中...</span>
+            </div>
+            <div data-ai-assistant-target="slugResults" class="mt-2"></div>
           </div>
 
+          <!-- 抜粋 with AI -->
           <div>
-            <%= form.label :excerpt, "抜粋", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.text_area :excerpt, 
+            <div class="flex items-center justify-between">
+              <%= form.label :excerpt, "抜粋", class: "block text-sm font-medium text-gray-700" %>
+              <% if article.persisted? %>
+                <button type="button"
+                        data-action="click->ai-assistant#generateSummary"
+                        data-ai-assistant-target="summaryButton"
+                        class="inline-flex items-center px-2 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded hover:bg-purple-200 transition-colors">
+                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  </svg>
+                  AI要約
+                </button>
+              <% end %>
+            </div>
+            <%= form.text_area :excerpt,
                 rows: 3,
+                data: { ai_assistant_target: "excerpt" },
                 class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
                 placeholder: "記事の概要を簡潔に入力してください" %>
+            <!-- Summary AI Results -->
+            <div data-ai-assistant-target="summaryLoading" class="hidden mt-2">
+              <span class="text-sm text-purple-600">要約を生成中...</span>
+            </div>
+            <div data-ai-assistant-target="summaryResults" class="mt-2"></div>
           </div>
         </div>
       </div>
@@ -46,10 +89,10 @@
       <!-- メインコンテンツ -->
       <div class="bg-white shadow rounded-lg p-6">
         <h3 class="text-lg font-medium text-gray-900 mb-4">本文</h3>
-        
+
         <div>
           <%= form.label :content, "本文（Markdown）", class: "block text-sm font-medium text-gray-700 mb-2" %>
-          <%= form.text_area :content, 
+          <%= form.text_area :content,
               rows: 20,
               id: "article_content",
               class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm font-mono",
@@ -75,10 +118,10 @@ puts 'Hello, World!'
            data-controller="content-image-editor"
            data-content-image-editor-article-id-value="<%= article.id || 'new' %>"
            data-content-image-editor-upload-url-value="<%= article.persisted? ? admin_article_images_path(article_id: article.id) : '#' %>">
-        <h3 class="text-lg font-medium text-blue-900 mb-4">📷 本文内画像アップロード</h3>
+        <h3 class="text-lg font-medium text-blue-900 mb-4">本文内画像アップロード</h3>
         <p class="text-sm text-blue-700 mb-4">
           画像をアップロードして、本文に挿入できます。<br>
-          <span class="text-blue-600">✨ 800x600px（4:3）にトリミングして最適化されます。</span>
+          <span class="text-blue-600">800x600px（4:3）にトリミングして最適化されます。</span>
         </p>
 
         <% if article.persisted? %>
@@ -104,9 +147,9 @@ puts 'Hello, World!'
             </div>
 
             <div class="text-xs text-gray-600 space-y-1">
-              <p>📐 出力サイズ: 800x600px（4:3固定）</p>
-              <p>📁 対応形式: JPEG, PNG, GIF, WebP</p>
-              <p>📦 最大ファイルサイズ: 10MB</p>
+              <p>出力サイズ: 800x600px（4:3固定）</p>
+              <p>対応形式: JPEG, PNG, GIF, WebP</p>
+              <p>最大ファイルサイズ: 10MB</p>
             </div>
           </div>
 
@@ -115,7 +158,7 @@ puts 'Hello, World!'
         <% else %>
           <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4">
             <p class="text-sm text-yellow-800">
-              ⚠️ 画像をアップロードするには、まず記事を保存してください。
+              画像をアップロードするには、まず記事を保存してください。
             </p>
           </div>
         <% end %>
@@ -124,12 +167,12 @@ puts 'Hello, World!'
       <!-- サムネイル画像 -->
       <div class="bg-white shadow rounded-lg p-6">
         <h3 class="text-lg font-medium text-gray-900 mb-4">サムネイル画像</h3>
-        
+
         <div class="space-y-4" data-controller="thumbnail-editor">
           <div>
             <%= form.label :thumbnail_image, "サムネイル画像", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.file_field :thumbnail_image, 
-                data: { 
+            <%= form.file_field :thumbnail_image,
+                data: {
                   action: "change->thumbnail-editor#selectFile",
                   thumbnail_editor_target: "fileInput"
                 },
@@ -141,14 +184,14 @@ puts 'Hello, World!'
                 hover:file:bg-blue-100",
                 accept: "image/*" %>
             <p class="mt-1 text-sm text-gray-500">
-              📸 画像を選択すると、トリミング画面が表示されます。<br>
+              画像を選択すると、トリミング画面が表示されます。<br>
               3つのサイズ（記事表示用・OGP用・サムネイル用）が自動生成されます。
             </p>
-            
+
             <% if article.thumbnail_image.attached? %>
               <div class="mt-4">
                 <p class="text-sm font-medium text-gray-700 mb-2">現在の画像:</p>
-                <%= image_tag article.thumbnail_image, 
+                <%= image_tag article.thumbnail_image,
                     class: "rounded-md shadow-sm max-w-full h-auto",
                     style: "max-height: 200px;" %>
               </div>
@@ -160,22 +203,43 @@ puts 'Hello, World!'
         </div>
       </div>
 
-      <!-- SEO設定 -->
+      <!-- SEO設定 with AI -->
       <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">SEO設定</h3>
-        
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-medium text-gray-900">SEO設定</h3>
+          <% if article.persisted? %>
+            <button type="button"
+                    data-action="click->ai-assistant#generateSeoMeta"
+                    data-ai-assistant-target="seoButton"
+                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-purple-700 bg-purple-100 rounded hover:bg-purple-200 transition-colors">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+              AI生成
+            </button>
+          <% end %>
+        </div>
+
+        <!-- SEO AI Loading/Results -->
+        <div data-ai-assistant-target="seoLoading" class="hidden mb-4">
+          <span class="text-sm text-purple-600">SEOメタを生成中...</span>
+        </div>
+        <div data-ai-assistant-target="seoResults" class="mb-4"></div>
+
         <div class="space-y-4">
           <div>
             <%= form.label :meta_description, "メタディスクリプション", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.text_area :meta_description, 
+            <%= form.text_area :meta_description,
                 rows: 2,
+                data: { ai_assistant_target: "metaDescription" },
                 class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
                 placeholder: "検索結果に表示される説明文（160文字以内推奨）" %>
           </div>
 
           <div>
             <%= form.label :meta_keywords, "メタキーワード", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.text_field :meta_keywords, 
+            <%= form.text_field :meta_keywords,
+                data: { ai_assistant_target: "metaKeywords" },
                 class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
                 placeholder: "キーワード1, キーワード2, キーワード3" %>
           </div>
@@ -183,14 +247,16 @@ puts 'Hello, World!'
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <%= form.label :og_title, "OGタイトル", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.text_field :og_title, 
+              <%= form.text_field :og_title,
+                  data: { ai_assistant_target: "ogTitle" },
                   class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
                   placeholder: "SNSシェア用タイトル" %>
             </div>
-            
+
             <div>
               <%= form.label :og_description, "OG説明文", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.text_field :og_description, 
+              <%= form.text_field :og_description,
+                  data: { ai_assistant_target: "ogDescription" },
                   class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
                   placeholder: "SNSシェア用説明文" %>
             </div>
@@ -201,14 +267,31 @@ puts 'Hello, World!'
 
     <!-- サイドバー -->
     <div class="space-y-6">
+      <!-- AI支援パネル（記事保存後のみ表示） -->
+      <% if article.persisted? %>
+        <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+          <h3 class="text-sm font-medium text-purple-900 mb-2">AI支援機能</h3>
+          <p class="text-xs text-purple-700">
+            各フィールドの「AI提案」「AI要約」「AI生成」ボタンをクリックして、AIによる提案を取得できます。
+          </p>
+        </div>
+      <% else %>
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <h3 class="text-sm font-medium text-gray-700 mb-2">AI支援機能</h3>
+          <p class="text-xs text-gray-500">
+            AI支援機能を使用するには、まず記事を保存してください。
+          </p>
+        </div>
+      <% end %>
+
       <!-- 公開設定 -->
       <div class="bg-white shadow rounded-lg p-6">
         <h3 class="text-lg font-medium text-gray-900 mb-4">公開設定</h3>
-        
+
         <div class="space-y-4">
           <div>
             <%= form.label :status, "ステータス", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.select :status, 
+            <%= form.select :status,
                 [["下書き", "draft"], ["公開", "published"], ["予約投稿", "scheduled"], ["アーカイブ", "archived"]],
                 {},
                 class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
@@ -219,14 +302,14 @@ puts 'Hello, World!'
       <!-- カテゴリ選択 -->
       <div class="bg-white shadow rounded-lg p-6">
         <h3 class="text-lg font-medium text-gray-900 mb-4">カテゴリ</h3>
-        
+
         <%= form.hidden_field :category_ids, value: '', multiple: true %>
         <div class="space-y-2">
           <% @categories.each do |category| %>
             <label class="flex items-center">
-              <%= form.check_box :category_ids, 
-                  { multiple: true, checked: article.category_ids.include?(category.id) }, 
-                  category.id, 
+              <%= form.check_box :category_ids,
+                  { multiple: true, checked: article.category_ids.include?(category.id) },
+                  category.id,
                   "" %>
               <span class="ml-2 text-sm text-gray-700">
                 <%= category.full_name %>
@@ -236,26 +319,46 @@ puts 'Hello, World!'
               </span>
             </label>
           <% end %>
-          
+
           <% if @categories.empty? %>
             <p class="text-sm text-gray-500">カテゴリがありません。</p>
-            <%= link_to "カテゴリを作成", new_admin_category_path, 
+            <%= link_to "カテゴリを作成", new_admin_category_path,
                 class: "text-blue-600 hover:text-blue-500 text-sm" %>
           <% end %>
         </div>
       </div>
 
-      <!-- タグ -->
+      <!-- タグ with AI -->
       <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">タグ</h3>
-        
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-medium text-gray-900">タグ</h3>
+          <% if article.persisted? %>
+            <button type="button"
+                    data-action="click->ai-assistant#suggestTags"
+                    data-ai-assistant-target="tagButton"
+                    class="inline-flex items-center px-2 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded hover:bg-purple-200 transition-colors">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+              AI提案
+            </button>
+          <% end %>
+        </div>
+
         <div>
           <%= form.label :tag_names, "タグ（カンマ区切り）", class: "block text-sm font-medium text-gray-700" %>
-          <%= form.text_field :tag_names, 
+          <%= form.text_field :tag_names,
               value: article.tag_names.join(", "),
+              data: { ai_assistant_target: "tagNames" },
               class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
               placeholder: "Ruby, Rails, プログラミング" %>
           <p class="mt-1 text-sm text-gray-500">タグをカンマ区切りで入力してください。存在しないタグは自動作成されます。</p>
+
+          <!-- Tag AI Loading/Results -->
+          <div data-ai-assistant-target="tagLoading" class="hidden mt-2">
+            <span class="text-sm text-purple-600">タグを提案中...</span>
+          </div>
+          <div data-ai-assistant-target="tagResults" class="mt-2"></div>
         </div>
       </div>
 
@@ -263,11 +366,11 @@ puts 'Hello, World!'
       <div class="bg-purple-50 border border-purple-200 rounded-lg p-6" id="works-settings">
         <h3 class="text-lg font-medium text-purple-900 mb-4">実績・作品設定</h3>
         <p class="text-sm text-purple-700 mb-4">「実績・作品」カテゴリを選択した場合の追加設定です。</p>
-        
+
         <div class="space-y-4">
           <div>
             <%= form.label :work_type, "作品タイプ", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.select :work_type, 
+            <%= form.select :work_type,
                 [
                   ["標準記事", ""],
                   ["GitHub プロジェクト", "github"],
@@ -277,26 +380,26 @@ puts 'Hello, World!'
                 {},
                 class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
           </div>
-          
+
           <div class="grid grid-cols-2 gap-4">
             <div>
               <%= form.label :github_url, "GitHub URL", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.url_field :github_url, 
+              <%= form.url_field :github_url,
                   class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
                   placeholder: "https://github.com/username/project" %>
             </div>
-            
+
             <div>
               <%= form.label :demo_url, "デモURL", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.url_field :demo_url, 
+              <%= form.url_field :demo_url,
                   class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
                   placeholder: "https://demo.example.com" %>
             </div>
           </div>
-          
+
           <div>
             <%= form.label :tech_stack, "技術スタック", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.text_area :tech_stack, 
+            <%= form.text_area :tech_stack,
                 rows: 3,
                 class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
                 placeholder: "Rails, PostgreSQL, AWS, Docker" %>
@@ -308,10 +411,10 @@ puts 'Hello, World!'
       <!-- 保存ボタン -->
       <div class="bg-white shadow rounded-lg p-6">
         <div class="space-y-3">
-          <%= form.submit article.persisted? ? "更新する" : "作成する", 
+          <%= form.submit article.persisted? ? "更新する" : "作成する",
                           class: "w-full bg-blue-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-          
-          <%= link_to "キャンセル", admin_articles_path, 
+
+          <%= link_to "キャンセル", admin_articles_path,
                       class: "w-full bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-center block" %>
         </div>
       </div>
