@@ -77,9 +77,10 @@ gem "image_processing", "~> 1.2"
 # Markdown processing
 gem "redcarpet", "~> 3.6"
 
-# AWS SES for email delivery
-gem "aws-sdk-sesv2", "~> 1.35"
-gem "aws-sdk-rails", "~> 4.0"
+# AWS Services
+gem "aws-sdk-sesv2", "~> 1.35"         # SES for email delivery
+gem "aws-sdk-rails", "~> 4.0"          # Rails integration
+gem "aws-sdk-bedrockruntime", "~> 1.0" # Bedrock for AI features
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

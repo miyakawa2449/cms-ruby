@@ -7,6 +7,7 @@ class AdminUser < ApplicationRecord
   
   has_many :published_section_contents, class_name: "SectionContent", foreign_key: :published_by, dependent: :nullify
   has_many :articles, dependent: :destroy
+  has_many :ai_generations, dependent: :nullify
   
   validates :email, presence: true, uniqueness: true
 end

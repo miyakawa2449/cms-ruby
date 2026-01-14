@@ -25,6 +25,7 @@ class Article < ApplicationRecord
   has_many :categories, through: :article_categories
   has_many :article_tags, dependent: :destroy
   has_many :tags, through: :article_tags
+  has_many :ai_generations, dependent: :destroy
   
   has_one_attached :thumbnail_image
   has_many_attached :content_images  # 本文内画像用
