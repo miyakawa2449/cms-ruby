@@ -1,7 +1,6 @@
 # Amazon Bedrock API client for AI model invocation
 # Handles communication with AWS Bedrock Runtime service
 require 'aws-sdk-bedrockruntime'
-require_relative 'errors'
 
 module Ai
   class BedrockClient

@@ -1,5 +1,10 @@
 # Custom error classes for AI services
+# Zeitwerk expects Ai::Errors from errors.rb
 module Ai
+  # Errors namespace for Zeitwerk compatibility
+  module Errors
+  end
+
   # Base error class for all AI-related errors
   class Error < StandardError; end
 
