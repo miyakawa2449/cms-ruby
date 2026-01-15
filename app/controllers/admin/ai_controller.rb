@@ -2,7 +2,21 @@
 # Provides summary generation, tag suggestions, slug generation, and SEO meta generation
 class Admin::AiController < Admin::BaseController
   before_action :set_article
-  before_action :check_ai_availability, only: [:generate_summary, :suggest_tags, :generate_slug, :generate_seo_meta]
+  before_action :check_ai_availability, only: [:generate_summary, :suggest_tags, :generate_slug, :generate_seo_meta, :suggest_title]
+
+  # POST /admin/articles/:article_id/ai/suggest_title
+  def suggest_title
+    suggester = Ai::TitleSuggester.new(
+      article: @article,
+      admin_user: current_admin_user
+    )
+
+    result = suggester.suggest(
+      count: (params[:count] || 3).to_i
+    )
+
+    render json: result
+  end
 
   # POST /admin/articles/:article_id/ai/generate_summary
   def generate_summary

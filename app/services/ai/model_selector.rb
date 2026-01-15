@@ -8,6 +8,7 @@ module Ai
     # Haiku: Faster, cheaper, good for simple tasks
     MODELS = {
       summary: 'us.anthropic.claude-3-5-sonnet-20241022-v2:0',    # High quality summaries
+      title: 'us.anthropic.claude-3-5-sonnet-20241022-v2:0',      # High quality title suggestions
       tags: 'us.anthropic.claude-3-haiku-20240307-v1:0',          # Fast tag extraction
       slug: 'us.anthropic.claude-3-haiku-20240307-v1:0',          # Fast slug generation
       seo_meta: 'us.anthropic.claude-3-5-sonnet-20241022-v2:0',   # High quality SEO text

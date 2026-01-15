@@ -5,14 +5,14 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
     // Form fields
-    "excerpt", "slug", "tagNames",
+    "title", "excerpt", "slug", "tagNames",
     "metaDescription", "metaKeywords", "ogTitle", "ogDescription",
     // Result display areas
-    "summaryResults", "slugResults", "tagResults", "seoResults",
+    "titleResults", "summaryResults", "slugResults", "tagResults", "seoResults",
     // Loading indicators
-    "summaryLoading", "slugLoading", "tagLoading", "seoLoading",
+    "titleLoading", "summaryLoading", "slugLoading", "tagLoading", "seoLoading",
     // Buttons
-    "summaryButton", "slugButton", "tagButton", "seoButton"
+    "titleButton", "summaryButton", "slugButton", "tagButton", "seoButton"
   ]
 
   static values = {
@@ -22,6 +22,121 @@ export default class extends Controller {
 
   connect() {
     console.log("AI Assistant controller connected")
+  }
+
+  // ===== Title Suggestions =====
+  async suggestTitle(event) {
+    event.preventDefault()
+
+    if (!this.articleIdValue) {
+      this.showError("titleResults", "記事を保存してからAI機能を使用してください。")
+      return
+    }
+
+    this.setLoading("title", true)
+    this.clearResults("titleResults")
+
+    try {
+      const response = await fetch(`${this.baseUrlValue}/articles/${this.articleIdValue}/ai/suggest_title`, {
+        method: "POST",
+        headers: this.headers,
+        body: JSON.stringify({ count: 3 })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        this.displayTitleResults(data.data)
+      } else {
+        this.showError("titleResults", data.error || "タイトル提案の取得に失敗しました")
+      }
+    } catch (error) {
+      console.error("Title suggestion error:", error)
+      this.showError("titleResults", "通信エラーが発生しました")
+    } finally {
+      this.setLoading("title", false)
+    }
+  }
+
+  displayTitleResults(data) {
+    if (!this.hasTitleResultsTarget) return
+
+    const descriptiveTitles = data.descriptive_titles || []
+    const engagingTitles = data.engaging_titles || []
+
+    let html = '<div class="space-y-4">'
+
+    // Descriptive titles section
+    if (descriptiveTitles.length > 0) {
+      html += `
+        <div>
+          <h4 class="text-xs font-semibold text-gray-700 mb-2 flex items-center">
+            <svg class="w-4 h-4 mr-1 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            わかりやすいタイトル
+          </h4>
+          <div class="space-y-2">
+      `
+
+      descriptiveTitles.forEach(item => {
+        html += `
+          <div class="p-3 bg-blue-50 rounded-md hover:bg-blue-100 cursor-pointer border border-transparent hover:border-blue-300 transition-colors"
+               data-action="click->ai-assistant#applyTitle"
+               data-title="${this.escapeHtml(item.title)}">
+            <div class="flex justify-between items-start mb-1">
+              <span class="text-sm font-medium text-gray-900 flex-1">${this.escapeHtml(item.title)}</span>
+              <span class="text-xs text-blue-600 ml-2 whitespace-nowrap">選択</span>
+            </div>
+            <p class="text-xs text-gray-600">${this.escapeHtml(item.reason)}</p>
+          </div>
+        `
+      })
+
+      html += '</div></div>'
+    }
+
+    // Engaging titles section
+    if (engagingTitles.length > 0) {
+      html += `
+        <div>
+          <h4 class="text-xs font-semibold text-gray-700 mb-2 flex items-center">
+            <svg class="w-4 h-4 mr-1 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            SNS映えするタイトル
+          </h4>
+          <div class="space-y-2">
+      `
+
+      engagingTitles.forEach(item => {
+        html += `
+          <div class="p-3 bg-purple-50 rounded-md hover:bg-purple-100 cursor-pointer border border-transparent hover:border-purple-300 transition-colors"
+               data-action="click->ai-assistant#applyTitle"
+               data-title="${this.escapeHtml(item.title)}">
+            <div class="flex justify-between items-start mb-1">
+              <span class="text-sm font-medium text-gray-900 flex-1">${this.escapeHtml(item.title)}</span>
+              <span class="text-xs text-purple-600 ml-2 whitespace-nowrap">選択</span>
+            </div>
+            <p class="text-xs text-gray-600">${this.escapeHtml(item.reason)}</p>
+          </div>
+        `
+      })
+
+      html += '</div></div>'
+    }
+
+    html += '</div>'
+    this.titleResultsTarget.innerHTML = html
+  }
+
+  applyTitle(event) {
+    const title = event.currentTarget.dataset.title
+    if (this.hasTitleTarget) {
+      this.titleTarget.value = title
+      this.highlightField(this.titleTarget)
+    }
+    this.clearResults("titleResults")
   }
 
   // Get CSRF token from meta tag

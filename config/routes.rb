@@ -39,6 +39,7 @@ Rails.application.routes.draw do
       resources :images, only: [:create], controller: 'article_images'
       # AI支援機能
       namespace :ai do
+        post 'suggest_title', action: :suggest_title, controller: '/admin/ai'
         post 'generate_summary', action: :generate_summary, controller: '/admin/ai'
         post 'suggest_tags', action: :suggest_tags, controller: '/admin/ai'
         post 'generate_slug', action: :generate_slug, controller: '/admin/ai'
