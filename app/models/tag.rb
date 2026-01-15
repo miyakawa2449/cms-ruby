@@ -17,11 +17,19 @@ class Tag < ApplicationRecord
   end
   
   private
-  
+
   def generate_slug
     base_slug = name.parameterize
+
+    # 日本語などparameterizeで空になる場合はBase64エンコード（URL安全）を使用
+    if base_slug.blank?
+      # URLセーフなBase64でエンコード（短縮版）
+      require 'digest'
+      base_slug = "tag-#{Digest::SHA256.hexdigest(name)[0, 8]}"
+    end
+
     self.slug = base_slug
-    
+
     # 重複チェックして番号を付加
     counter = 1
     while Tag.where(slug: self.slug).where.not(id: self.id).exists?
