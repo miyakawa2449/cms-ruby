@@ -119,10 +119,15 @@ class Admin::AiController < Admin::BaseController
   end
 
   def aws_credentials_configured?
-    # In production, we expect IAM role credentials
-    # In development, we check for environment variables
-    ENV['AWS_REGION'].present? ||
-      (ENV['AWS_ACCESS_KEY_ID'].present? && ENV['AWS_SECRET_ACCESS_KEY'].present?)
+    # Check for Bedrock-specific credentials first, then fall back to general AWS credentials
+    bedrock_configured = ENV['AWS_BEDROCK_REGION'].present? &&
+                         ENV['AWS_BEDROCK_ACCESS_KEY_ID'].present? &&
+                         ENV['AWS_BEDROCK_SECRET_ACCESS_KEY'].present?
+
+    general_configured = ENV['AWS_REGION'].present? ||
+                         (ENV['AWS_ACCESS_KEY_ID'].present? && ENV['AWS_SECRET_ACCESS_KEY'].present?)
+
+    bedrock_configured || general_configured
   end
 
   def parse_start_date(period)
