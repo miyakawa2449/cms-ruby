@@ -3,19 +3,19 @@
 # MediaMetadata model for managing uploaded images
 # Stores metadata and usage tracking for Active Storage blobs
 class MediaMetadata < ApplicationRecord
-  belongs_to :blob, class_name: 'ActiveStorage::Blob'
+  belongs_to :blob, class_name: "ActiveStorage::Blob"
 
   validates :blob, presence: true
 
   # Scopes
-  scope :used, -> { where('usage_count > 0') }
+  scope :used, -> { where("usage_count > 0") }
   scope :unused, -> { where(usage_count: 0) }
   scope :recent, -> { order(created_at: :desc) }
   scope :by_size, ->(direction = :desc) { order(file_size: direction) }
   scope :by_mime_type, ->(type) { where(mime_type: type) }
   scope :created_between, ->(start_date, end_date) { where(created_at: start_date..end_date) }
   scope :search, ->(query) {
-    joins(:blob).where('active_storage_blobs.filename LIKE ?', "%#{sanitize_sql_like(query)}%")
+    joins(:blob).where("active_storage_blobs.filename LIKE ?", "%#{sanitize_sql_like(query)}%")
   }
 
   # Track usage
@@ -50,9 +50,9 @@ class MediaMetadata < ApplicationRecord
 
   # Human readable file size
   def human_file_size
-    return '0 B' if file_size.nil? || file_size.zero?
+    return "0 B" if file_size.nil? || file_size.zero?
 
-    units = ['B', 'KB', 'MB', 'GB']
+    units = [ "B", "KB", "MB", "GB" ]
     size = file_size.to_f
     unit_index = 0
 
@@ -61,12 +61,12 @@ class MediaMetadata < ApplicationRecord
       unit_index += 1
     end
 
-    format('%.2f %s', size, units[unit_index])
+    format("%.2f %s", size, units[unit_index])
   end
 
   # Image dimensions as string
   def dimensions
-    return '不明' if width.nil? || height.nil?
+    return "不明" if width.nil? || height.nil?
 
     "#{width}x#{height}"
   end

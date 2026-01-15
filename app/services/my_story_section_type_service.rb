@@ -13,13 +13,13 @@ class MyStorySectionTypeService
   def available_types
     if @section&.persisted?
       # 編集時は現在のセクションタイプを含める
-      available_types = all_types - existing_types + [@section.section_type]
+      available_types = all_types - existing_types + [ @section.section_type ]
     else
       # 新規作成時は既存のタイプを除外
       available_types = all_types - existing_types
     end
-    
-    available_types.map { |type| [section_type_label(type), type] }
+
+    available_types.map { |type| [ section_type_label(type), type ] }
   end
 
   private

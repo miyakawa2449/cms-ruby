@@ -27,7 +27,7 @@ class SectionContentActivationService
 
   def toggle_active
     new_state = !@section_content.is_active?
-    
+
     if @section_content.update(is_active: new_state)
       status = new_state ? "公開" : "非公開"
       { success: true, is_active: new_state, message: "コンテンツを#{status}にしました。" }

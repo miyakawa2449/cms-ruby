@@ -1,5 +1,5 @@
 class Admin::MyStorySectionsController < Admin::BaseController
-  before_action :set_my_story_section, only: [:show, :edit, :update, :destroy, :move_up, :move_down, :toggle_active]
+  before_action :set_my_story_section, only: [ :show, :edit, :update, :destroy, :move_up, :move_down, :toggle_active ]
 
   def index
     @my_story_sections = MyStorySection.by_position.includes(
@@ -7,7 +7,7 @@ class Admin::MyStorySectionsController < Admin::BaseController
       chapter_image_attachment: :blob,
       gallery_images_attachments: :blob
     )
-    
+
     # 統計情報をサービスに委譲
     stats_service = MyStorySectionStatisticsService.new(@my_story_sections)
     stats = stats_service.section_index_stats
@@ -36,7 +36,7 @@ class Admin::MyStorySectionsController < Admin::BaseController
     @available_section_types = MyStorySectionTypeService.available_types_for(@my_story_section)
 
     if @my_story_section.save
-      redirect_to admin_my_story_section_path(@my_story_section), 
+      redirect_to admin_my_story_section_path(@my_story_section),
                   notice: "My Storyセクション「#{@my_story_section.title}」を作成しました。"
     else
       render :new, status: :unprocessable_entity
@@ -57,13 +57,13 @@ class Admin::MyStorySectionsController < Admin::BaseController
   def destroy
     section_title = @my_story_section.title
     @my_story_section.destroy
-    redirect_to admin_my_story_sections_path, 
+    redirect_to admin_my_story_sections_path,
                 notice: "My Storyセクション「#{section_title}」を削除しました。"
   end
 
   def move_up
     ordering_service = MyStorySectionOrderingService.new(@my_story_section)
-    
+
     if ordering_service.move_up
       redirect_to admin_my_story_sections_path, notice: "セクションの順序を上に移動しました。"
     else
@@ -73,7 +73,7 @@ class Admin::MyStorySectionsController < Admin::BaseController
 
   def move_down
     ordering_service = MyStorySectionOrderingService.new(@my_story_section)
-    
+
     if ordering_service.move_down
       redirect_to admin_my_story_sections_path, notice: "セクションの順序を下に移動しました。"
     else
@@ -103,7 +103,7 @@ class Admin::MyStorySectionsController < Admin::BaseController
   def my_story_section_params
     params.require(:my_story_section).permit(
       :section_type,
-      :title, 
+      :title,
       :subtitle,
       :content,
       :position,

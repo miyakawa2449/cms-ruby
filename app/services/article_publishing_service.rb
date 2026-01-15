@@ -10,7 +10,7 @@ class ArticlePublishingService
   end
 
   def publish
-    if @article.update(status: 'published', published_at: Time.current)
+    if @article.update(status: "published", published_at: Time.current)
       { success: true, message: "記事を公開しました。" }
     else
       @errors.concat(@article.errors.full_messages)
@@ -19,7 +19,7 @@ class ArticlePublishingService
   end
 
   def unpublish
-    if @article.update(status: 'draft', published_at: nil)
+    if @article.update(status: "draft", published_at: nil)
       { success: true, message: "記事を非公開にしました。" }
     else
       @errors.concat(@article.errors.full_messages)
@@ -36,7 +36,7 @@ class ArticlePublishingService
   end
 
   def schedule_publish(scheduled_at)
-    if @article.update(status: 'scheduled', published_at: scheduled_at)
+    if @article.update(status: "scheduled", published_at: scheduled_at)
       { success: true, message: "記事の公開予約をしました。" }
     else
       @errors.concat(@article.errors.full_messages)

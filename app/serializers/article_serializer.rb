@@ -3,7 +3,7 @@ class ArticleSerializer
     @article = article
     @detailed = options[:detailed] || false
   end
-  
+
   def serializable_hash
     base_attributes = {
       id: @article.id,
@@ -21,16 +21,16 @@ class ArticleSerializer
         web: "/blog/#{@article.slug}"
       }
     }
-    
+
     if @detailed
       base_attributes.merge!(detailed_attributes)
     end
-    
+
     base_attributes
   end
-  
+
   private
-  
+
   def detailed_attributes
     {
       content: @article.content,
@@ -46,7 +46,7 @@ class ArticleSerializer
       updated_at: @article.updated_at.iso8601
     }
   end
-  
+
   def categories_data
     @article.categories.map do |category|
       {
@@ -57,7 +57,7 @@ class ArticleSerializer
       }
     end
   end
-  
+
   def tags_data
     @article.tags.map do |tag|
       {
@@ -71,17 +71,17 @@ class ArticleSerializer
 
   def calculate_reading_time
     return 0 unless @article.content.present?
-    
+
     # 200 words per minute reading speed
     words_per_minute = 200
     word_count = @article.content.split.size
-    
+
     (word_count.to_f / words_per_minute).ceil
   end
-  
+
   def thumbnail_url
     return nil unless @article.thumbnail_image.attached?
-    
+
     Rails.application.routes.url_helpers.rails_blob_url(@article.thumbnail_image, only_path: true)
   end
 end

@@ -15,7 +15,7 @@ class ArticleMetaManager
 
   def update_slug(new_title)
     return if new_title.blank?
-    
+
     base_slug = new_title.parameterize
     @article.slug = generate_unique_slug(base_slug)
     save_article
@@ -51,29 +51,29 @@ class ArticleMetaManager
   end
 
   def seo_description
-    @article.read_attribute(:meta_description).presence || 
-    @article.read_attribute(:excerpt).presence || 
+    @article.read_attribute(:meta_description).presence ||
+    @article.read_attribute(:excerpt).presence ||
     content_manager.generate_excerpt(length: 160)
   end
 
   def seo_keywords
     keywords = []
-    
+
     # メタキーワードがあれば使用
     if @article.read_attribute(:meta_keywords).present?
-      keywords = @article.read_attribute(:meta_keywords).split(',').map(&:strip)
+      keywords = @article.read_attribute(:meta_keywords).split(",").map(&:strip)
     else
       # タグとカテゴリから生成
       keywords.concat(@article.tags.pluck(:name))
       keywords.concat(@article.categories.pluck(:name))
-      
+
       # 技術スタックがあれば追加
       tech_stack = @article.read_attribute(:tech_stack)
       if tech_stack.present?
-        keywords.concat(tech_stack.split(',').map(&:strip).reject(&:blank?))
+        keywords.concat(tech_stack.split(",").map(&:strip).reject(&:blank?))
       end
     end
-    
+
     keywords.uniq.reject(&:blank?)
   end
 
@@ -88,13 +88,13 @@ class ArticleMetaManager
 
   def og_image_url
     return nil unless @article.thumbnail_image.attached?
-    
+
     # Active Storage URL生成は呼び出し元で処理
     @article.thumbnail_image
   end
 
   def twitter_card_type
-    @article.thumbnail_image.attached? ? 'summary_large_image' : 'summary'
+    @article.thumbnail_image.attached? ? "summary_large_image" : "summary"
   end
 
   # Schema.org structured data
@@ -110,8 +110,8 @@ class ArticleMetaManager
       },
       "datePublished": @article.published_at&.iso8601,
       "dateModified": @article.updated_at&.iso8601,
-      "keywords": seo_keywords.join(', '),
-      "articleSection": @article.categories.pluck(:name).join(', ')
+      "keywords": seo_keywords.join(", "),
+      "articleSection": @article.categories.pluck(:name).join(", ")
     }
   end
 
@@ -122,18 +122,18 @@ class ArticleMetaManager
   # Validation helpers
   def validate_slug_uniqueness
     return true if @article.slug.blank?
-    
+
     duplicate = Article.where(slug: @article.slug)
                       .where.not(id: @article.id)
                       .exists?
-    
+
     !duplicate
   end
 
   def slug_suggestion(base_title = nil)
     title = base_title || @article.title
     return nil if title.blank?
-    
+
     base_slug = title.parameterize
     generate_unique_slug(base_slug)
   end
@@ -149,18 +149,18 @@ class ArticleMetaManager
   end
 
   def is_work_article?
-    @article.categories.exists?(slug: 'works')
+    @article.categories.exists?(slug: "works")
   end
 
   def generate_unique_slug(base_slug)
     slug = base_slug
     counter = 1
-    
+
     while slug_exists?(slug)
       slug = "#{base_slug}-#{counter}"
       counter += 1
     end
-    
+
     slug
   end
 

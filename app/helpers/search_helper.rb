@@ -4,7 +4,7 @@ module SearchHelper
   # @param query [String] 検索キーワード（スペース区切りで複数可）
   # @return [String] ハイライト済みのHTML safe文字列
   def highlight_keywords(text, query)
-    return '' if text.nil?
+    return "" if text.nil?
     return text if query.blank?
 
     # テキストをHTMLエスケープ
@@ -34,7 +34,7 @@ module SearchHelper
   # @param length [Integer] 抽出する最大文字数
   # @return [String] 切り詰め・ハイライト済みのHTML safe文字列
   def truncate_with_highlight(text, query, length: 200)
-    return '' if text.nil?
+    return "" if text.nil?
     text_str = text.to_s
 
     if query.present?
@@ -44,19 +44,19 @@ module SearchHelper
 
       if keyword_pos
         # キーワード周辺のテキストを抽出
-        start_pos = [keyword_pos - 50, 0].max
+        start_pos = [ keyword_pos - 50, 0 ].max
         truncated = text_str[start_pos, length]
 
         # 前後に省略記号を追加
-        prefix = start_pos > 0 ? '...' : ''
-        suffix = (start_pos + length) < text_str.length ? '...' : ''
+        prefix = start_pos > 0 ? "..." : ""
+        suffix = (start_pos + length) < text_str.length ? "..." : ""
 
         return "#{prefix}#{highlight_keywords(truncated, query)}#{suffix}".html_safe
       end
     end
 
     # キーワードが見つからない場合は先頭から切り詰め
-    truncated = truncate(text_str, length: length, omission: '...')
+    truncated = truncate(text_str, length: length, omission: "...")
     highlight_keywords(truncated, query)
   end
 end

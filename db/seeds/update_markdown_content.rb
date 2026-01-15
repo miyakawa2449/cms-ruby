@@ -96,7 +96,7 @@ if docker_article
       ```dockerfile
       FROM ruby:3.4-alpine as builder
       # ビルド用の依存関係インストール
-      
+
       FROM ruby:3.4-alpine
       # 実行時の最小限の依存関係のみ
       ```
@@ -147,7 +147,7 @@ if works_article
       # 高速化のためのキャッシュ戦略
       class ProductsController < ApplicationController
         before_action :set_cache_headers
-        
+      #{'  '}
         def index
           page = params[:page] || 1
           @products = Rails.cache.fetch("products_\#{page}", expires_in: 1.hour) do

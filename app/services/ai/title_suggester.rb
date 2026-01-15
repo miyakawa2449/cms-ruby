@@ -48,8 +48,8 @@ module Ai
     private
 
     def validate_article!
-      raise Ai::ValidationError.new('記事が必要です', field: :article) if article.blank?
-      raise Ai::ValidationError.new('記事の本文が必要です', field: :content) if article.content.blank?
+      raise Ai::ValidationError.new("記事が必要です", field: :article) if article.blank?
+      raise Ai::ValidationError.new("記事の本文が必要です", field: :content) if article.content.blank?
     end
 
     def build_prompt(count)

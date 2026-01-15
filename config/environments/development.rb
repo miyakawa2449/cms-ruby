@@ -65,16 +65,16 @@ Rails.application.configure do
 
   # Suppress logger output for asset requests.
   config.assets.quiet = true
-  
+
   # Force serving from app/assets/builds in development
   config.public_file_server.enabled = true
-  
+
   # URL設定統合（Active Storage・Mailer・Routes共通）
-  url_options = { host: 'localhost', port: 3000 }
+  url_options = { host: "localhost", port: 3000 }
   config.action_controller.default_url_options = url_options
   config.action_mailer.default_url_options = url_options
   Rails.application.routes.default_url_options = url_options
-  config.action_controller.asset_host = 'http://localhost:3000'
+  config.action_controller.asset_host = "http://localhost:3000"
 
   # メール設定（開発環境：ログ出力のみ）
   config.action_mailer.delivery_method = :test

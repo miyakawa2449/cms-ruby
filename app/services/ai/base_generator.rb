@@ -1,6 +1,6 @@
 # Base class for AI content generators
 # Provides common functionality for all AI generation services
-require_relative 'errors'
+require_relative "errors"
 
 module Ai
   class BaseGenerator
@@ -25,7 +25,7 @@ module Ai
 
     # Override in subclasses
     def generation_type
-      raise NotImplementedError, 'Subclass must implement generation_type'
+      raise NotImplementedError, "Subclass must implement generation_type"
     end
 
     # Create an AiGeneration record to track this generation
@@ -36,7 +36,7 @@ module Ai
         generation_type: generation_type.to_s,
         input_content: input_content,
         model_used: model_id,
-        status: 'pending'
+        status: "pending"
       )
     end
 

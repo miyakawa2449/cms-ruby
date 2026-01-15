@@ -10,10 +10,10 @@ class CreateSectionContents < ActiveRecord::Migration[8.1]
 
       t.timestamps
     end
-    
+
     add_foreign_key :section_contents, :admin_users, column: :published_by, on_delete: :nullify
     add_index :section_contents, :content, using: :gin
     add_index :section_contents, :published_by
-    add_index :section_contents, [:section_id, :version], unique: true
+    add_index :section_contents, [ :section_id, :version ], unique: true
   end
 end

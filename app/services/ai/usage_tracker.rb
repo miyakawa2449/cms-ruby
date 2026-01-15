@@ -69,7 +69,7 @@ module Ai
       # Get remaining budget for the month
       def remaining_budget(monthly_limit)
         used = this_month[:totals][:cost]
-        [monthly_limit - used, 0].max.round(2)
+        [ monthly_limit - used, 0 ].max.round(2)
       end
 
       private
@@ -77,9 +77,9 @@ module Ai
       def model_breakdown(stats)
         stats.group(:ai_model).pluck(
           :ai_model,
-          Arel.sql('SUM(total_requests)'),
-          Arel.sql('SUM(total_tokens)'),
-          Arel.sql('SUM(total_cost)')
+          Arel.sql("SUM(total_requests)"),
+          Arel.sql("SUM(total_tokens)"),
+          Arel.sql("SUM(total_cost)")
         ).map do |model, requests, tokens, cost|
           {
             model: model,
@@ -94,9 +94,9 @@ module Ai
       def daily_breakdown(stats)
         stats.group(:date).pluck(
           :date,
-          Arel.sql('SUM(total_requests)'),
-          Arel.sql('SUM(total_tokens)'),
-          Arel.sql('SUM(total_cost)')
+          Arel.sql("SUM(total_requests)"),
+          Arel.sql("SUM(total_tokens)"),
+          Arel.sql("SUM(total_cost)")
         ).sort_by(&:first).reverse.map do |date, requests, tokens, cost|
           {
             date: date,
@@ -109,7 +109,7 @@ module Ai
 
       def type_breakdown(start_date, end_date)
         generations = AiGeneration.where(created_at: start_date..end_date.end_of_day)
-                                  .where(status: 'completed')
+                                  .where(status: "completed")
 
         AiGeneration::GENERATION_TYPES.map do |type|
           type_records = generations.where(generation_type: type)

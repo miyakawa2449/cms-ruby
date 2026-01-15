@@ -13,10 +13,10 @@ if Rails.env.production?
   else
     # AWS SDK の設定
     Aws.config.update(
-      region: ENV.fetch('AWS_SES_REGION', 'ap-northeast-1'),
+      region: ENV.fetch("AWS_SES_REGION", "ap-northeast-1"),
       credentials: Aws::Credentials.new(
-        ENV.fetch('AWS_SES_ACCESS_KEY_ID'),
-        ENV.fetch('AWS_SES_SECRET_ACCESS_KEY')
+        ENV.fetch("AWS_SES_ACCESS_KEY_ID"),
+        ENV.fetch("AWS_SES_SECRET_ACCESS_KEY")
       )
     )
 
@@ -25,12 +25,12 @@ if Rails.env.production?
       config.action_mailer.delivery_method = :sesv2
 
       config.action_mailer.default_options = {
-        from: ENV.fetch('MAIL_FROM', 'noreply@miyakawa.codes')
+        from: ENV.fetch("MAIL_FROM", "noreply@miyakawa.codes")
       }
 
       config.action_mailer.default_url_options = {
-        host: ENV.fetch('APP_HOST', 'miyakawa.codes'),
-        protocol: 'https'
+        host: ENV.fetch("APP_HOST", "miyakawa.codes"),
+        protocol: "https"
       }
 
       config.action_mailer.perform_deliveries = true

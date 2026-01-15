@@ -6,7 +6,7 @@ module Ai
     # @param topic [String] Article topic or theme
     # @param detail_level [String] 'basic', 'detailed', or 'comprehensive'
     # @return [Hash] { success: Boolean, data: { structure: Hash } }
-    def suggest(topic:, detail_level: 'detailed')
+    def suggest(topic:, detail_level: "detailed")
       begin
         validate_topic!(topic)
         validate_detail_level!(detail_level)
@@ -42,7 +42,7 @@ module Ai
     private
 
     def validate_topic!(topic)
-      raise Ai::ValidationError.new('Topic is required', field: :topic) if topic.blank?
+      raise Ai::ValidationError.new("Topic is required", field: :topic) if topic.blank?
     end
 
     def validate_detail_level!(level)
@@ -54,10 +54,10 @@ module Ai
 
     def build_prompt(topic, detail_level)
       section_count = case detail_level
-                      when 'basic' then '3-4'
-                      when 'detailed' then '5-7'
-                      when 'comprehensive' then '8-10'
-                      end
+      when "basic" then "3-4"
+      when "detailed" then "5-7"
+      when "comprehensive" then "8-10"
+      end
 
       <<~PROMPT
         以下のトピックについて、技術ブログ記事の構成案を作成してください。
@@ -104,11 +104,11 @@ module Ai
       json = parse_json_response(content)
 
       {
-        title_suggestions: json['title_suggestions'] || [],
-        sections: parse_sections(json['sections'] || []),
-        total_recommended_words: json['total_recommended_words'].to_i,
-        related_topics: json['related_topics'] || [],
-        keywords: json['keywords'] || []
+        title_suggestions: json["title_suggestions"] || [],
+        sections: parse_sections(json["sections"] || []),
+        total_recommended_words: json["total_recommended_words"].to_i,
+        related_topics: json["related_topics"] || [],
+        keywords: json["keywords"] || []
       }
     rescue => e
       Rails.logger.warn("Failed to parse structure: #{e.message}")
@@ -118,11 +118,11 @@ module Ai
     def parse_sections(sections)
       sections.map do |section|
         {
-          heading: section['heading'],
-          level: section['level'].to_i,
-          description: section['description'],
-          recommended_words: section['recommended_words'].to_i,
-          subsections: parse_sections(section['subsections'] || [])
+          heading: section["heading"],
+          level: section["level"].to_i,
+          description: section["description"],
+          recommended_words: section["recommended_words"].to_i,
+          subsections: parse_sections(section["subsections"] || [])
         }
       end
     end

@@ -19,9 +19,9 @@ class AiGeneration < ApplicationRecord
 
   # Scopes
   scope :by_type, ->(type) { where(generation_type: type) }
-  scope :completed, -> { where(status: 'completed') }
-  scope :failed, -> { where(status: 'failed') }
-  scope :pending, -> { where(status: 'pending') }
+  scope :completed, -> { where(status: "completed") }
+  scope :failed, -> { where(status: "failed") }
+  scope :pending, -> { where(status: "pending") }
   scope :recent, -> { order(created_at: :desc) }
   scope :today, -> { where(created_at: Date.current.all_day) }
   scope :this_month, -> { where(created_at: Date.current.all_month) }
@@ -29,7 +29,7 @@ class AiGeneration < ApplicationRecord
   # Mark as completed with output data
   def complete!(output_data, tokens: 0, cost: 0.0)
     update!(
-      status: 'completed',
+      status: "completed",
       output_data: output_data,
       tokens_used: tokens,
       cost: cost
@@ -39,29 +39,29 @@ class AiGeneration < ApplicationRecord
   # Mark as failed with error message
   def fail!(error_message)
     update!(
-      status: 'failed',
+      status: "failed",
       error_message: error_message
     )
   end
 
   # Check if generation is complete
   def completed?
-    status == 'completed'
+    status == "completed"
   end
 
   # Check if generation failed
   def failed?
-    status == 'failed'
+    status == "failed"
   end
 
   # Check if generation is pending
   def pending?
-    status == 'pending'
+    status == "pending"
   end
 
   # Get formatted cost
   def formatted_cost
-    format('$%.4f', cost || 0)
+    format("$%.4f", cost || 0)
   end
 
   # Class method to calculate total cost for a period

@@ -17,7 +17,7 @@ class CreateContacts < ActiveRecord::Migration[8.1]
 
       t.timestamps
     end
-    
+
     add_index :contacts, :email
     add_index :contacts, :status
     add_index :contacts, :created_at

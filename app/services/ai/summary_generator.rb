@@ -3,9 +3,9 @@
 module Ai
   class SummaryGenerator < BaseGenerator
     LENGTH_CONFIGS = {
-      'short' => { max_chars: 80, description: '短い版' },
-      'medium' => { max_chars: 120, description: '中版' },
-      'long' => { max_chars: 160, description: '長い版' }
+      "short" => { max_chars: 80, description: "短い版" },
+      "medium" => { max_chars: 120, description: "中版" },
+      "long" => { max_chars: 160, description: "長い版" }
     }.freeze
 
     DEFAULT_COUNT = 3
@@ -14,7 +14,7 @@ module Ai
     # @param length [String] 'short', 'medium', or 'long'
     # @param count [Integer] Number of summaries to generate
     # @return [Hash] { success: Boolean, data: { summaries: Array } }
-    def generate(length: 'medium', count: DEFAULT_COUNT)
+    def generate(length: "medium", count: DEFAULT_COUNT)
       begin
         validate_article!
         validate_length!(length)
@@ -50,8 +50,8 @@ module Ai
     private
 
     def validate_article!
-      raise Ai::ValidationError.new('Article is required', field: :article) if article.blank?
-      raise Ai::ValidationError.new('Article content is required', field: :content) if article.content.blank?
+      raise Ai::ValidationError.new("Article is required", field: :article) if article.blank?
+      raise Ai::ValidationError.new("Article content is required", field: :content) if article.content.blank?
     end
 
     def validate_length!(length)
@@ -93,12 +93,12 @@ module Ai
 
     def parse_summaries(content, length)
       json = parse_json_response(content)
-      summaries = json['summaries'] || []
+      summaries = json["summaries"] || []
 
       summaries.map.with_index do |summary, index|
         {
-          text: summary['text'] || '',
-          length: (summary['text'] || '').length,
+          text: summary["text"] || "",
+          length: (summary["text"] || "").length,
           type: length
         }
       end

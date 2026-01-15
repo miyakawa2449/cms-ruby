@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 # Active Storage URL Options Configuration
-# 
+#
 # このイニシャライザは、Active Storage がファイルURLを生成する際に
 # 正しいホスト名とプロトコルを使用することを保証します。
-# 
+#
 # 問題: Docker環境でリバースプロキシ（nginx）の背後にRailsがある場合、
 # Active Storage のディスクサービスがDockerコンテナ名（例：portfolio-web）を
 # ホストとして使用してしまう。
@@ -51,12 +51,12 @@ class ActiveStorageUrlOptionsMiddleware
   def call(env)
     if Rails.env.production?
       # 明示的にホストを設定（X-Forwarded-Host があればそちらを優先）
-      forwarded_host = env['HTTP_X_FORWARDED_HOST']
-      original_host = env['HTTP_HOST']
+      forwarded_host = env["HTTP_X_FORWARDED_HOST"]
+      original_host = env["HTTP_HOST"]
 
       # X-Forwarded-Proto または HTTPS 環境変数からプロトコルを決定
-      forwarded_proto = env['HTTP_X_FORWARDED_PROTO']
-      is_https = forwarded_proto == 'https' || env['HTTPS'] == 'on'
+      forwarded_proto = env["HTTP_X_FORWARDED_PROTO"]
+      is_https = forwarded_proto == "https" || env["HTTPS"] == "on"
 
       # 信頼できるホスト名を使用（環境変数で指定されたものを優先）
       trusted_host = ENV.fetch("APP_HOST", "miyakawa.codes")

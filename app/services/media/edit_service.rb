@@ -9,16 +9,16 @@ class Media::EditService
   end
 
   def call
-    return { success: false, error: 'Invalid operation' } unless valid_operation?
-    return { success: false, error: 'Media not found' } unless @media
-    return { success: false, error: 'Not an image' } unless @media.image?
+    return { success: false, error: "Invalid operation" } unless valid_operation?
+    return { success: false, error: "Media not found" } unless @media
+    return { success: false, error: "Not an image" } unless @media.image?
 
     case @operation
-    when 'crop'
+    when "crop"
       crop_image
-    when 'rotate'
+    when "rotate"
       rotate_image
-    when 'flip'
+    when "flip"
       flip_image
     end
   rescue => e
@@ -38,7 +38,7 @@ class Media::EditService
     width = @params[:width].to_i
     height = @params[:height].to_i
 
-    return { success: false, error: 'Invalid crop dimensions' } if width <= 0 || height <= 0
+    return { success: false, error: "Invalid crop dimensions" } if width <= 0 || height <= 0
 
     # Generate cropped variant
     variant = @media.blob.variant(
@@ -62,7 +62,7 @@ class Media::EditService
 
   def rotate_image
     degrees = @params[:degrees].to_i
-    return { success: false, error: 'Invalid rotation degrees' } unless [90, 180, 270, -90, -180, -270].include?(degrees)
+    return { success: false, error: "Invalid rotation degrees" } unless [ 90, 180, 270, -90, -180, -270 ].include?(degrees)
 
     variant = @media.blob.variant(rotate: degrees)
 
@@ -79,12 +79,12 @@ class Media::EditService
     direction = @params[:direction].to_s
 
     transformations = case direction
-    when 'horizontal'
+    when "horizontal"
       { flop: true }
-    when 'vertical'
+    when "vertical"
       { flip: true }
     else
-      return { success: false, error: 'Invalid flip direction' }
+      return { success: false, error: "Invalid flip direction" }
     end
 
     variant = @media.blob.variant(transformations)

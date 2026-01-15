@@ -80,18 +80,18 @@ module Media
         id: metadata.id,
         filename: blob.filename.to_s,
         url: Rails.application.routes.url_helpers.rails_blob_url(blob, only_path: true),
-        status: 'success'
+        status: "success"
       }
     end
 
     def format_error(file)
       error_message = if !valid_content_type?(file)
-                        'Invalid file type'
-                      elsif !valid_file_size?(file)
-                        'File size exceeds limit (10MB)'
-                      else
-                        'Unknown error'
-                      end
+                        "Invalid file type"
+      elsif !valid_file_size?(file)
+                        "File size exceeds limit (10MB)"
+      else
+                        "Unknown error"
+      end
 
       {
         filename: file.original_filename,

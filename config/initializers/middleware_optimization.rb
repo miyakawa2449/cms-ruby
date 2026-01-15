@@ -7,7 +7,7 @@ Rails.application.configure do
     # Only disable for web requests, not console/runner
     config.middleware.delete(ActiveRecord::Migration::CheckPending) if defined?(Puma)
   end
-  
+
   # Connection pool optimization
   config.after_initialize do
     ActiveRecord::Base.connection_pool.disconnect!

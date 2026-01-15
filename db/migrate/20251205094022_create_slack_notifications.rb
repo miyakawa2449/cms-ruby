@@ -14,7 +14,7 @@ class CreateSlackNotifications < ActiveRecord::Migration[8.1]
 
       t.timestamps
     end
-    
+
     add_index :slack_notifications, :notification_type
     add_index :slack_notifications, :status
     add_index :slack_notifications, :created_at

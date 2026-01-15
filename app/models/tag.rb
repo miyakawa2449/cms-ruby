@@ -1,21 +1,21 @@
 class Tag < ApplicationRecord
   has_many :article_tags, dependent: :destroy
   has_many :articles, through: :article_tags
-  
+
   validates :name, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 50 }
   validates :slug, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 50 }
-  
-  scope :popular, -> { where('article_count > 0').order(article_count: :desc) }
+
+  scope :popular, -> { where("article_count > 0").order(article_count: :desc) }
   scope :alphabetical, -> { order(:name) }
-  scope :with_published_articles, -> { joins(:articles).where(articles: { status: 'published' }).distinct }
+  scope :with_published_articles, -> { joins(:articles).where(articles: { status: "published" }).distinct }
   scope :ordered_by_count, -> { order(article_count: :desc) }
-  
+
   before_validation :generate_slug, if: -> { name_changed? && slug.blank? }
-  
+
   def to_param
     slug
   end
-  
+
   private
 
   def generate_slug
@@ -24,7 +24,7 @@ class Tag < ApplicationRecord
     # 日本語などparameterizeで空になる場合はBase64エンコード（URL安全）を使用
     if base_slug.blank?
       # URLセーフなBase64でエンコード（短縮版）
-      require 'digest'
+      require "digest"
       base_slug = "tag-#{Digest::SHA256.hexdigest(name)[0, 8]}"
     end
 

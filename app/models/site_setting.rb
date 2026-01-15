@@ -1,16 +1,16 @@
 class SiteSetting < ApplicationRecord
   validates :key, presence: true, uniqueness: true
   validates :setting_type, inclusion: { in: SiteSettingTypeManager::VALID_TYPES }
-  
+
   has_one_attached :image_value
   has_one_attached :file_value
 
   # 設定種別の定数（TypeManagerから参照）
   SETTING_TYPES = SiteSettingTypeManager::SETTING_TYPES
-  
+
   # 動的にクラスメソッドを生成
   SiteSettingTypeManager.define_setting_methods_on(self)
-  
+
   # Service delegation methods
   def value_manager
     @value_manager ||= SiteSettingValueManager.new(self)

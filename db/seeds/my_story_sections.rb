@@ -19,7 +19,7 @@ timeline = MyStorySection.find_or_create_by(section_type: 'timeline') do |sectio
   section.position = 2
   section.is_active = true
   section.additional_data = {
-    timeline_years: ["1994-2005", "2005-2021", "2022-現在"]
+    timeline_years: [ "1994-2005", "2005-2021", "2022-現在" ]
   }
 end
 
@@ -118,21 +118,21 @@ projects = MyStorySection.find_or_create_by(section_type: 'projects') do |sectio
         description: "社内問い合わせ対応を自動化するRAGシステム",
         period: "2024年",
         scale: "月間1,000件の問い合わせを95%自動対応",
-        technologies: ["Python", "OpenAI API", "PostgreSQL", "Docker"]
+        technologies: [ "Python", "OpenAI API", "PostgreSQL", "Docker" ]
       },
       {
         title: "金融システム基盤構築",
         description: "高可用性を要求される金融機関向けシステム",
         period: "2018-2020年",
         scale: "100万ユーザー対応・99.99%可用性達成",
-        technologies: ["Java", "Spring Boot", "Oracle", "AWS"]
+        technologies: [ "Java", "Spring Boot", "Oracle", "AWS" ]
       },
       {
         title: "プログラミング教育カリキュラム",
         description: "初心者向け体系的学習プログラム",
         period: "2000-2005年",
         scale: "累計1,000名以上の卒業生",
-        technologies: ["C", "Java", "SQL", "Web技術"]
+        technologies: [ "C", "Java", "SQL", "Web技術" ]
       }
     ]
   }
@@ -157,7 +157,7 @@ cta = MyStorySection.find_or_create_by(section_type: 'cta') do |section|
         style: "primary"
       },
       {
-        text: "実績を見る", 
+        text: "実績を見る",
         url: "/works",
         style: "secondary"
       }

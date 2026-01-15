@@ -26,7 +26,7 @@ if about_section && about_section.section_contents.count == 0
     sub_title: 'シニアエンジニアとしての歩み',
     profile_text: '20年以上のシステムエンジニア経験を持ち、要件定義から実装まで幅広く対応。最近はAI技術との融合に注力し、ChatGPTを活用した開発効率化に取り組んでいます。',
     experience_text: '20年以上',
-    core_skills: ['要件定義', 'プロジェクト管理', 'AI活用開発'],
+    core_skills: [ '要件定義', 'プロジェクト管理', 'AI活用開発' ],
     content: {}
   )
   puts "✅ About section content created"
@@ -80,7 +80,7 @@ if my_story_section && my_story_section.section_contents.count == 0
     phase1_period: '11年間',
     phase1_description: '人材育成と教育の基礎を築いた時期',
     phase2_title: 'SE/PM・ビジネス分析者',
-    phase2_year: '2005-2021',  
+    phase2_year: '2005-2021',
     phase2_period: '16年間',
     phase2_description: '大規模プロジェクトのリードと上流工程専門家として活躍',
     phase3_title: 'AI活用エンジニア',
@@ -109,7 +109,7 @@ if works_category && admin_user
     published_at: 1.month.ago,
     admin_user: admin_user,
     work_type: 'github',
-    tech_stack: ['Ruby on Rails', 'React', 'AWS', 'PostgreSQL'].join(','),
+    tech_stack: [ 'Ruby on Rails', 'React', 'AWS', 'PostgreSQL' ].join(','),
     github_url: 'https://github.com/miyakawa2449/ec-site-project',
     demo_url: 'https://demo-ec-site.com'
   )
@@ -124,7 +124,7 @@ if works_category && admin_user
     published_at: 2.months.ago,
     admin_user: admin_user,
     work_type: 'external_url',
-    tech_stack: ['Python', 'TensorFlow', 'OpenCV', 'Docker'].join(','),
+    tech_stack: [ 'Python', 'TensorFlow', 'OpenCV', 'Docker' ].join(','),
     demo_url: 'https://ai-vision-demo.com'
   )
   article2.categories << works_category
@@ -138,7 +138,7 @@ if works_category && admin_user
     published_at: 1.week.ago,
     admin_user: admin_user,
     work_type: 'github',
-    tech_stack: ['Ruby on Rails', 'PostgreSQL', 'Tailwind CSS', 'Stimulus'].join(','),
+    tech_stack: [ 'Ruby on Rails', 'PostgreSQL', 'Tailwind CSS', 'Stimulus' ].join(','),
     github_url: 'https://github.com/miyakawa2449/portfolio_rb'
   )
   article3.categories << works_category
@@ -156,11 +156,11 @@ if tech_category && admin_user
     admin_user: admin_user
   )
   blog1.categories << tech_category
-  
+
   # タグを既存のものがあれば使用、なければ作成
   rails_tag = Tag.find_or_create_by!(slug: 'rails') { |t| t.name = 'Rails' }
   ruby_tag = Tag.find_or_create_by!(slug: 'ruby') { |t| t.name = 'Ruby' }
-  blog1.tags << [rails_tag, ruby_tag]
+  blog1.tags << [ rails_tag, ruby_tag ]
   puts "✅ Tech blog article created"
 
   blog2 = Article.create!(
@@ -172,10 +172,10 @@ if tech_category && admin_user
     admin_user: admin_user
   )
   blog2.categories << tech_category
-  
+
   docker_tag = Tag.find_or_create_by!(slug: 'docker') { |t| t.name = 'Docker' }
   dev_tag = Tag.find_or_create_by!(slug: 'development') { |t| t.name = '開発環境' }
-  blog2.tags << [rails_tag, docker_tag, dev_tag]
+  blog2.tags << [ rails_tag, docker_tag, dev_tag ]
   puts "✅ Tech blog article 2 created"
 end
 

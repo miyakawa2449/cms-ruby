@@ -64,13 +64,13 @@ Rails.application.configure do
 
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "example.com" }
-  
+
   # URL生成（ActiveStorage/OGP等）で必要な host/protocol を固定
   Rails.application.routes.default_url_options[:host] = ENV.fetch("APP_HOST", "miyakawa.codes")
   Rails.application.routes.default_url_options[:protocol] = "https"
-  
+
   config.action_controller.default_url_options = Rails.application.routes.default_url_options
-  
+
   # ActiveStorage の redirect/disk URL生成に確実に効かせる
   config.after_initialize do
     ActiveStorage::Current.url_options = Rails.application.routes.default_url_options
@@ -99,8 +99,8 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.default_url_options = {
-    host: ENV['APP_HOST'] || 'miyakawa.codes',
-    protocol: ENV['FORCE_SSL'] == 'true' ? 'https' : 'http'
+    host: ENV["APP_HOST"] || "miyakawa.codes",
+    protocol: ENV["FORCE_SSL"] == "true" ? "https" : "http"
   }
 
   # Enable DNS rebinding protection and other `Host` header attacks.

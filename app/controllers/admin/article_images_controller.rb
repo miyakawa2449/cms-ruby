@@ -11,21 +11,21 @@ class Admin::ArticleImagesController < Admin::BaseController
 
     # Validate required parameters
     unless params[:image].present?
-      return render_error('画像ファイルが選択されていません')
+      return render_error("画像ファイルが選択されていません")
     end
 
     unless params[:alt_text].present?
-      return render_error('alt属性は必須です')
+      return render_error("alt属性は必須です")
     end
 
     # Validate file format (server-side)
     unless valid_image_format?(params[:image])
-      return render_error('対応していないファイル形式です。JPEG, PNG, GIF, WebPを選択してください。')
+      return render_error("対応していないファイル形式です。JPEG, PNG, GIF, WebPを選択してください。")
     end
 
     # Validate file size (server-side)
     if params[:image].size > MAX_FILE_SIZE
-      return render_error('ファイルサイズは10MB以下にしてください。')
+      return render_error("ファイルサイズは10MB以下にしてください。")
     end
 
     # Attach image to Active Storage
@@ -54,10 +54,10 @@ class Admin::ArticleImagesController < Admin::BaseController
         height: CONTENT_IMAGE_HEIGHT
       }
     else
-      render_error('画像のアップロードに失敗しました')
+      render_error("画像のアップロードに失敗しました")
     end
   rescue ActiveRecord::RecordNotFound
-    render_error('記事が見つかりません', :not_found)
+    render_error("記事が見つかりません", :not_found)
   rescue => e
     Rails.logger.error "Article image upload error: #{e.message}"
     Rails.logger.error e.backtrace.join("\n")

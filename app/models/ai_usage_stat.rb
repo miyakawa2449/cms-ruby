@@ -4,7 +4,7 @@ class AiUsageStat < ApplicationRecord
   # Validations
   validates :date, presence: true
   validates :ai_model, presence: true
-  validates :date, uniqueness: { scope: :ai_model, message: 'and model combination already exists' }
+  validates :date, uniqueness: { scope: :ai_model, message: "and model combination already exists" }
   validates :total_requests, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :total_tokens, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :total_cost, numericality: { greater_than_or_equal_to: 0 }
@@ -30,10 +30,10 @@ class AiUsageStat < ApplicationRecord
     # Update breakdown by generation type
     if generation_type.present?
       self.breakdown ||= {}
-      self.breakdown[generation_type] ||= { 'requests' => 0, 'tokens' => 0, 'cost' => 0.0 }
-      self.breakdown[generation_type]['requests'] += requests
-      self.breakdown[generation_type]['tokens'] += tokens
-      self.breakdown[generation_type]['cost'] += cost
+      self.breakdown[generation_type] ||= { "requests" => 0, "tokens" => 0, "cost" => 0.0 }
+      self.breakdown[generation_type]["requests"] += requests
+      self.breakdown[generation_type]["tokens"] += tokens
+      self.breakdown[generation_type]["cost"] += cost
     end
 
     save!
@@ -60,10 +60,10 @@ class AiUsageStat < ApplicationRecord
     where(date: start_date..Date.current)
       .group(:date)
       .select(
-        'date',
-        'SUM(total_requests) as requests',
-        'SUM(total_tokens) as tokens',
-        'SUM(total_cost) as cost'
+        "date",
+        "SUM(total_requests) as requests",
+        "SUM(total_tokens) as tokens",
+        "SUM(total_cost) as cost"
       )
       .order(date: :desc)
   end
@@ -73,16 +73,16 @@ class AiUsageStat < ApplicationRecord
     this_month
       .group(:ai_model)
       .select(
-        'ai_model',
-        'SUM(total_requests) as requests',
-        'SUM(total_tokens) as tokens',
-        'SUM(total_cost) as cost'
+        "ai_model",
+        "SUM(total_requests) as requests",
+        "SUM(total_tokens) as tokens",
+        "SUM(total_cost) as cost"
       )
   end
 
   # Formatted cost
   def formatted_cost
-    format('$%.2f', total_cost)
+    format("$%.2f", total_cost)
   end
 
   # Average cost per request

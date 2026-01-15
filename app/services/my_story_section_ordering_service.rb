@@ -11,7 +11,7 @@ class MyStorySectionOrderingService
 
   def move_up
     previous_section = find_previous_section
-    
+
     if previous_section
       swap_positions(previous_section, @section.position)
     else
@@ -22,7 +22,7 @@ class MyStorySectionOrderingService
 
   def move_down
     next_section = find_next_section
-    
+
     if next_section
       swap_positions(next_section, @section.position)
     else
@@ -38,13 +38,13 @@ class MyStorySectionOrderingService
   private
 
   def find_previous_section
-    MyStorySection.where('position < ?', @section.position)
+    MyStorySection.where("position < ?", @section.position)
                   .order(position: :desc)
                   .first
   end
 
   def find_next_section
-    MyStorySection.where('position > ?', @section.position)
+    MyStorySection.where("position > ?", @section.position)
                   .order(position: :asc)
                   .first
   end

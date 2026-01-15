@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'open-uri'
-require 'nokogiri'
-require 'uri'
+require "open-uri"
+require "nokogiri"
+require "uri"
 
 # 外部URLからOGP情報を取得するサービス
 class OgpFetcherService
@@ -23,7 +23,7 @@ class OgpFetcherService
     return Result.new(success?: true, data: cached) if cached
 
     html = fetch_html
-    return Result.new(success?: false, error: 'Failed to fetch URL') unless html
+    return Result.new(success?: false, error: "Failed to fetch URL") unless html
 
     doc = Nokogiri::HTML(html)
     ogp_data = extract_ogp(doc)
@@ -44,7 +44,7 @@ class OgpFetcherService
   def fetch_html
     URI.open(
       @url,
-      'User-Agent' => 'Mozilla/5.0 (compatible; OGPBot/1.0)',
+      "User-Agent" => "Mozilla/5.0 (compatible; OGPBot/1.0)",
       read_timeout: TIMEOUT,
       open_timeout: TIMEOUT
     ).read
@@ -65,25 +65,25 @@ class OgpFetcherService
   end
 
   def extract_title(doc)
-    og_title = doc.at('meta[property="og:title"]')&.[]('content')
-    twitter_title = doc.at('meta[name="twitter:title"]')&.[]('content')
-    html_title = doc.at('title')&.text
+    og_title = doc.at('meta[property="og:title"]')&.[]("content")
+    twitter_title = doc.at('meta[name="twitter:title"]')&.[]("content")
+    html_title = doc.at("title")&.text
 
     (og_title || twitter_title || html_title || @uri.host).to_s.strip.truncate(100)
   end
 
   def extract_description(doc)
-    og_desc = doc.at('meta[property="og:description"]')&.[]('content')
-    twitter_desc = doc.at('meta[name="twitter:description"]')&.[]('content')
-    meta_desc = doc.at('meta[name="description"]')&.[]('content')
+    og_desc = doc.at('meta[property="og:description"]')&.[]("content")
+    twitter_desc = doc.at('meta[name="twitter:description"]')&.[]("content")
+    meta_desc = doc.at('meta[name="description"]')&.[]("content")
 
-    desc = (og_desc || twitter_desc || meta_desc || '').to_s.strip
+    desc = (og_desc || twitter_desc || meta_desc || "").to_s.strip
     desc.truncate(MAX_DESCRIPTION_LENGTH)
   end
 
   def extract_image(doc)
-    og_image = doc.at('meta[property="og:image"]')&.[]('content')
-    twitter_image = doc.at('meta[name="twitter:image"]')&.[]('content')
+    og_image = doc.at('meta[property="og:image"]')&.[]("content")
+    twitter_image = doc.at('meta[name="twitter:image"]')&.[]("content")
 
     image_url = og_image || twitter_image
     return nil unless image_url.present?
@@ -92,11 +92,11 @@ class OgpFetcherService
   end
 
   def extract_site_name(doc)
-    og_site = doc.at('meta[property="og:site_name"]')&.[]('content')
+    og_site = doc.at('meta[property="og:site_name"]')&.[]("content")
     return og_site if og_site.present?
 
     # サイト名がない場合はドメイン名を使用
-    @uri.host.sub(/^www\./, '')
+    @uri.host.sub(/^www\./, "")
   end
 
   def extract_favicon(doc)
@@ -110,8 +110,8 @@ class OgpFetcherService
 
     favicon_selectors.each do |selector|
       link = doc.at(selector)
-      if link && link['href'].present?
-        return absolutize_url(link['href'])
+      if link && link["href"].present?
+        return absolutize_url(link["href"])
       end
     end
 
@@ -120,11 +120,11 @@ class OgpFetcherService
   end
 
   def absolutize_url(relative_url)
-    return relative_url if relative_url.start_with?('http://', 'https://')
-    return "https:#{relative_url}" if relative_url.start_with?('//')
+    return relative_url if relative_url.start_with?("http://", "https://")
+    return "https:#{relative_url}" if relative_url.start_with?("//")
 
     base_url = "#{@uri.scheme}://#{@uri.host}"
-    if relative_url.start_with?('/')
+    if relative_url.start_with?("/")
       "#{base_url}#{relative_url}"
     else
       "#{base_url}/#{relative_url}"

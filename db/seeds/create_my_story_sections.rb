@@ -10,7 +10,7 @@ MyStorySection.create!(
   is_active: true
 )
 
-# Timeline section  
+# Timeline section
 MyStorySection.create!(
   section_type: 'timeline',
   title: 'キャリアタイムライン',
@@ -35,8 +35,8 @@ MyStorySection.create!(
   position: 3,
   is_active: true,
   additional_data: {
-    skills: ['課題の明確化・分析', 'モチベーション維持・管理', 'レベル差のある人材の統率', '資格試験指導・目標管理', '情報処理国家試験指導'],
-    achievements: ['教室運営で培った人材管理・課題解決スキルは、後のプロジェクト管理業務の強固な基盤となりました。'],
+    skills: [ '課題の明確化・分析', 'モチベーション維持・管理', 'レベル差のある人材の統率', '資格試験指導・目標管理', '情報処理国家試験指導' ],
+    achievements: [ '教室運営で培った人材管理・課題解決スキルは、後のプロジェクト管理業務の強固な基盤となりました。' ],
     quote: '20人近い受講生を前に教室を運営し、資格試験合格に向けて取りまとめる経験は、後のプロジェクト管理に大いに役立つスキルの基礎となった...'
   }
 )

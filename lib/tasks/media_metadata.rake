@@ -10,7 +10,7 @@ namespace :media_metadata do
 
     ActiveStorage::Blob.find_each do |blob|
       # Skip non-image files
-      unless blob.content_type&.start_with?('image/')
+      unless blob.content_type&.start_with?("image/")
         skipped_count += 1
         next
       end
@@ -79,7 +79,7 @@ namespace :media_metadata do
 
       # Check content_images
       usage_count += ActiveStorage::Attachment
-                      .where(name: 'content_images', blob_id: metadata.blob_id)
+                      .where(name: "content_images", blob_id: metadata.blob_id)
                       .count
 
       # Update usage_count

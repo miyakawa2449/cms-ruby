@@ -3,7 +3,7 @@ class TagSerializer
     @tag = tag
     @detailed = options[:detailed] || false
   end
-  
+
   def serializable_hash
     base_attributes = {
       id: @tag.id,
@@ -16,16 +16,16 @@ class TagSerializer
         web: "/blog?tag=#{@tag.id}"
       }
     }
-    
+
     if @detailed
       base_attributes.merge!(detailed_attributes)
     end
-    
+
     base_attributes
   end
-  
+
   private
-  
+
   def detailed_attributes
     {
       created_at: @tag.created_at.iso8601,

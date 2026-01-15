@@ -4,22 +4,22 @@ class ApplicationController < ActionController::Base
 
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
-  
+
   protect_from_forgery with: :exception
-  
+
   # ApplicationHelperを明示的にinclude
   helper ApplicationHelper
-  
+
   # Content Security Policy
   before_action :set_csp_header
-  
+
   private
-  
+
   def set_csp_header
     # Skip CSP for admin pages to avoid issues with third-party libraries
-    return if request.path.start_with?('/admin')
-    
-    response.headers['Content-Security-Policy'] = [
+    return if request.path.start_with?("/admin")
+
+    response.headers["Content-Security-Policy"] = [
       "default-src 'self'",
       # スクリプト: GTM, GA4, Clarity, SNS埋め込み
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://www.googletagmanager.com https://googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com https://www.clarity.ms https://*.clarity.ms https://www.youtube.com https://www.instagram.com https://connect.facebook.net https://platform.twitter.com https://platform.x.com",
@@ -47,9 +47,9 @@ class ApplicationController < ActionController::Base
       "worker-src 'self' blob:",
       # HTTPSアップグレード
       "upgrade-insecure-requests"
-    ].join('; ')
+    ].join("; ")
   end
-  
+
   def after_sign_in_path_for(resource)
     if resource.is_a?(AdminUser)
       admin_dashboard_path
@@ -57,7 +57,7 @@ class ApplicationController < ActionController::Base
       root_path
     end
   end
-  
+
   def after_sign_out_path_for(resource_or_scope)
     if resource_or_scope == :admin_user
       new_admin_user_session_path

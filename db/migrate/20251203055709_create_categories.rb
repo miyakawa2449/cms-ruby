@@ -12,7 +12,7 @@ class CreateCategories < ActiveRecord::Migration[8.1]
 
       t.timestamps
     end
-    
+
     add_index :categories, :name, unique: true
     add_index :categories, :slug, unique: true
     add_index :categories, :position

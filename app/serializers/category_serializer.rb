@@ -3,7 +3,7 @@ class CategorySerializer
     @category = category
     @detailed = options[:detailed] || false
   end
-  
+
   def serializable_hash
     base_attributes = {
       id: @category.id,
@@ -16,7 +16,7 @@ class CategorySerializer
         web: "/blog?category=#{@category.id}"
       }
     }
-    
+
     # 親カテゴリ情報
     if @category.parent_id.present?
       base_attributes[:parent] = {
@@ -25,16 +25,16 @@ class CategorySerializer
         slug: @category.parent.slug
       }
     end
-    
+
     if @detailed
       base_attributes.merge!(detailed_attributes)
     end
-    
+
     base_attributes
   end
-  
+
   private
-  
+
   def detailed_attributes
     {
       description: @category.description,

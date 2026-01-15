@@ -8,7 +8,7 @@ class CreateSiteSettings < ActiveRecord::Migration[8.1]
 
       t.timestamps
     end
-    
+
     add_index :site_settings, :key, unique: true
   end
 end

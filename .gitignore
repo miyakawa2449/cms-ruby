@@ -38,9 +38,7 @@
 
 /node_modules
 
-# Ignore test files and directories for production deployment
-/spec/
-/test/
+# Note: spec/ and test/ are now tracked in git for CI/CD
 
 # Ignore development and test backup files
 *.backup

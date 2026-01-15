@@ -2,14 +2,14 @@ namespace :portfolio do
   desc "Create sample section contents for testing"
   task create_sample_content: :environment do
     admin_user = AdminUser.first
-    
+
     if admin_user.nil?
       puts "❌ Admin user not found. Please run rails db:seed first."
       exit
     end
-    
+
     # Heroセクションのサンプルコンテンツ
-    hero_section = Section.find_by(name: 'hero')
+    hero_section = Section.find_by(name: "hero")
     if hero_section
       hero_content = {
         title: "シニアエンジニアの技術発信・ポートフォリオサイト",
@@ -17,7 +17,7 @@ namespace :portfolio do
         cta_text: "お問い合わせ",
         cta_url: "#contact"
       }
-      
+
       hero_section.section_contents.create!(
         content: hero_content,
         is_active: true,
@@ -26,16 +26,16 @@ namespace :portfolio do
       )
       puts "✅ Hero section content created"
     end
-    
+
     # Aboutセクションのサンプルコンテンツ
-    about_section = Section.find_by(name: 'about')
+    about_section = Section.find_by(name: "about")
     if about_section
       about_content = {
         title: "About Me",
         description: "20年間のソフトウェア開発経験を持つシニアエンジニア。要件定義からシステム設計、実装、運用まで幅広い経験を持ち、最近はAI/ML技術の活用にも注力しています。",
         image_url: "/images/profile.jpg"
       }
-      
+
       about_section.section_contents.create!(
         content: about_content,
         is_active: true,
@@ -44,9 +44,9 @@ namespace :portfolio do
       )
       puts "✅ About section content created"
     end
-    
+
     # Serviceセクションのサンプルコンテンツ
-    service_section = Section.find_by(name: 'service')
+    service_section = Section.find_by(name: "service")
     if service_section
       service_content = {
         title: "Service",
@@ -68,7 +68,7 @@ namespace :portfolio do
           }
         ]
       }
-      
+
       service_section.section_contents.create!(
         content: service_content,
         is_active: true,
@@ -77,16 +77,16 @@ namespace :portfolio do
       )
       puts "✅ Service section content created"
     end
-    
+
     # Blogセクションのサンプルコンテンツ
-    blog_section = Section.find_by(name: 'blog')
+    blog_section = Section.find_by(name: "blog")
     if blog_section
       blog_content = {
         title: "Blog",
         description: "技術情報やプロジェクトの進捗、学んだことを発信しています",
         posts_count: 3
       }
-      
+
       blog_section.section_contents.create!(
         content: blog_content,
         is_active: true,
@@ -95,7 +95,7 @@ namespace :portfolio do
       )
       puts "✅ Blog section content created"
     end
-    
+
     puts "🚀 Sample content creation completed!"
     puts "Total sections: #{Section.count}"
     puts "Total section contents: #{SectionContent.count}"

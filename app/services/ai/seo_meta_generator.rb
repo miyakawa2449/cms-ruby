@@ -48,8 +48,8 @@ module Ai
     private
 
     def validate_article!
-      raise Ai::ValidationError.new('Article is required', field: :article) if article.blank?
-      raise Ai::ValidationError.new('Article content is required', field: :content) if article.content.blank?
+      raise Ai::ValidationError.new("Article is required", field: :article) if article.blank?
+      raise Ai::ValidationError.new("Article content is required", field: :content) if article.content.blank?
     end
 
     def validate_fields!(fields)
@@ -93,10 +93,10 @@ module Ai
 
     def build_fields_description(fields)
       descriptions = {
-        'meta_description' => 'メタディスクリプション（160文字以内）',
-        'meta_keywords' => 'メタキーワード（カンマ区切り）',
-        'og_title' => 'OGタイトル（60文字以内）',
-        'og_description' => 'OGディスクリプション（200文字以内）'
+        "meta_description" => "メタディスクリプション（160文字以内）",
+        "meta_keywords" => "メタキーワード（カンマ区切り）",
+        "og_title" => "OGタイトル（60文字以内）",
+        "og_description" => "OGディスクリプション（200文字以内）"
       }
 
       fields.map { |f| "- #{descriptions[f]}" }.join("\n")
@@ -119,11 +119,11 @@ module Ai
 
     def sanitize_meta_value(field, value)
       case field
-      when 'meta_description'
+      when "meta_description"
         value.to_s.truncate(160)
-      when 'og_title'
+      when "og_title"
         value.to_s.truncate(60)
-      when 'og_description'
+      when "og_description"
         value.to_s.truncate(200)
       else
         value.to_s

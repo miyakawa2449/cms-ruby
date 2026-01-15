@@ -6,9 +6,9 @@ class SiteSettingValueManager
   # 値を取得（画像の場合はAttachmentオブジェクト、テキストの場合は文字列）
   def get_value
     case @setting.setting_type
-    when 'image'
+    when "image"
       @setting.image_value
-    when 'file'
+    when "file"
       @setting.file_value
     else
       @setting.read_attribute(:value)
@@ -18,14 +18,14 @@ class SiteSettingValueManager
   # 値を設定
   def set_value(new_value)
     case @setting.setting_type
-    when 'image'
+    when "image"
       @setting.image_value = new_value
-    when 'file'
+    when "file"
       @setting.file_value = new_value
     else
       @setting.value = new_value
     end
-    
+
     save_setting
   end
 
@@ -41,9 +41,9 @@ class SiteSettingValueManager
   # 値の存在チェック
   def has_value?
     case @setting.setting_type
-    when 'image'
+    when "image"
       image_attached?
-    when 'file'
+    when "file"
       file_attached?
     else
       @setting.read_attribute(:value).present?
@@ -52,12 +52,12 @@ class SiteSettingValueManager
 
   # 画像が添付されているかチェック
   def image_attached?
-    @setting.setting_type == 'image' && @setting.image_value.attached?
+    @setting.setting_type == "image" && @setting.image_value.attached?
   end
 
   # ファイルが添付されているかチェック
   def file_attached?
-    @setting.setting_type == 'file' && @setting.file_value.attached?
+    @setting.setting_type == "file" && @setting.file_value.attached?
   end
 
   # デフォルト値の復元
@@ -73,9 +73,9 @@ class SiteSettingValueManager
   # 値のフォーマット（表示用）
   def formatted_value
     value = get_value
-    
+
     case @setting.setting_type
-    when 'image', 'file'
+    when "image", "file"
       if value&.attached?
         {
           filename: value.filename.to_s,
@@ -94,7 +94,7 @@ class SiteSettingValueManager
   # 画像URL生成（安全）
   def image_url(variant_options = {})
     return nil unless image_attached?
-    
+
     begin
       if variant_options.any?
         url_for_attachment(@setting.image_value.variant(variant_options))
@@ -110,7 +110,7 @@ class SiteSettingValueManager
   # ファイルダウンロードURL生成
   def download_url
     return nil unless file_attached?
-    
+
     begin
       url_for_attachment(@setting.file_value)
     rescue => e
@@ -125,9 +125,9 @@ class SiteSettingValueManager
       key: @setting.read_attribute(:key),
       type: @setting.read_attribute(:setting_type),
       value: case @setting.read_attribute(:setting_type)
-             when 'image', 'file'
+             when "image", "file"
                # ファイルのバックアップは別途考慮
-               has_value? ? 'attached_file' : nil
+               has_value? ? "attached_file" : nil
              else
                get_value
              end,

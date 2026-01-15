@@ -16,7 +16,7 @@ class CreateMyStorySections < ActiveRecord::Migration[8.1]
     add_index :my_story_sections, :section_type, unique: true
     add_index :my_story_sections, :position
     add_index :my_story_sections, :is_active
-    add_index :my_story_sections, [:is_active, :position]
+    add_index :my_story_sections, [ :is_active, :position ]
     add_index :my_story_sections, :additional_data, using: :gin
   end
 end

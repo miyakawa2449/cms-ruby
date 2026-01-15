@@ -23,10 +23,10 @@ class SectionContentParamsService
       :phase3_year, :phase3_title, :phase3_description, :phase3_period,
       :cta_button_text, :cta_description
     )
-    
+
     # contentパラメータを処理
     content_data = process_content_params
-    
+
     permitted_params.merge(content: content_data)
   end
 
@@ -52,21 +52,21 @@ class SectionContentParamsService
 
   def process_structured_params(content_params)
     content_data = {}
-    
+
     # 基本フィールドを許可
-    basic_fields = [:title, :subtitle, :description, :image_url, :cta_text, :cta_url, :email, :story, :posts_count]
+    basic_fields = [ :title, :subtitle, :description, :image_url, :cta_text, :cta_url, :email, :story, :posts_count ]
     basic_fields.each do |field|
       content_data[field] = content_params[field] if content_params[field].present?
     end
-    
+
     # JSONフィールドの処理
-    json_fields = [:skills, :services, :works, :social_links]
+    json_fields = [ :skills, :services, :works, :social_links ]
     json_fields.each do |field|
       if content_params[field].present?
         content_data[field] = parse_json_field(content_params[field])
       end
     end
-    
+
     content_data
   end
 

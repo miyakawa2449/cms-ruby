@@ -9,7 +9,7 @@ module GtmHelper
 
   def gtm_head_tag
     return unless gtm_installed?
-    
+
     tag.script do
       raw(<<~JS)
         (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -23,12 +23,12 @@ module GtmHelper
 
   def gtm_body_tag
     return unless gtm_installed?
-    
+
     content_tag(:noscript) do
       tag.iframe(
         src: "https://www.googletagmanager.com/ns.html?id=#{gtm_id}",
         height: "0",
-        width: "0", 
+        width: "0",
         style: "display:none;visibility:hidden"
       )
     end

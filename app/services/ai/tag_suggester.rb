@@ -44,12 +44,12 @@ module Ai
     private
 
     def validate_article!
-      raise Ai::ValidationError.new('Article is required', field: :article) if article.blank?
-      raise Ai::ValidationError.new('Article content is required', field: :content) if article.content.blank?
+      raise Ai::ValidationError.new("Article is required", field: :article) if article.blank?
+      raise Ai::ValidationError.new("Article content is required", field: :content) if article.content.blank?
     end
 
     def build_prompt(max_tags, existing_tags)
-      existing_tags_list = existing_tags.any? ? existing_tags.join(', ') : 'なし'
+      existing_tags_list = existing_tags.any? ? existing_tags.join(", ") : "なし"
 
       <<~PROMPT
         以下の記事に適切なタグを#{max_tags}個まで提案してください。
@@ -84,15 +84,15 @@ module Ai
 
     def parse_tags(content, existing_tags)
       json = parse_json_response(content)
-      tags = json['tags'] || []
+      tags = json["tags"] || []
 
       existing_tags_map = Tag.where(name: existing_tags).index_by(&:name)
 
       tags.map do |tag|
-        existing_tag = existing_tags_map[tag['name']]
+        existing_tag = existing_tags_map[tag["name"]]
         {
-          name: tag['name'],
-          confidence: tag['confidence'].to_f,
+          name: tag["name"],
+          confidence: tag["confidence"].to_f,
           existing: existing_tag.present?,
           tag_id: existing_tag&.id
         }

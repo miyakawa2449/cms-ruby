@@ -21,21 +21,21 @@ module Ai
 
   # Raised when API rate limit is exceeded
   class RateLimitError < BedrockError
-    def initialize(message = 'API rate limit exceeded')
+    def initialize(message = "API rate limit exceeded")
       super(message, error_type: :rate_limit)
     end
   end
 
   # Raised when request times out
   class TimeoutError < BedrockError
-    def initialize(message = 'Request timed out')
+    def initialize(message = "Request timed out")
       super(message, error_type: :timeout)
     end
   end
 
   # Raised when model is unavailable
   class ModelUnavailableError < BedrockError
-    def initialize(message = 'Model is unavailable')
+    def initialize(message = "Model is unavailable")
       super(message, error_type: :model_unavailable)
     end
   end

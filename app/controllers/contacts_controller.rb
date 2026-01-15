@@ -8,8 +8,8 @@ class ContactsController < ApplicationController
       # ボット判定：成功を返すが保存しない（ボットに気づかせない）
       Rails.logger.info "[SPAM] Honeypot triggered from IP: #{request.remote_ip}"
       return render json: {
-        message: 'お問い合わせを受け付けました。ご連絡をお待ちください。',
-        status: 'success'
+        message: "お問い合わせを受け付けました。ご連絡をお待ちください。",
+        status: "success"
       }, status: :created
     end
 
@@ -21,21 +21,21 @@ class ContactsController < ApplicationController
     @contact.referrer = request.referer
 
     if @contact.save
-      render json: { 
-        message: 'お問い合わせを受け付けました。ご連絡をお待ちください。',
-        status: 'success' 
+      render json: {
+        message: "お問い合わせを受け付けました。ご連絡をお待ちください。",
+        status: "success"
       }, status: :created
     else
-      render json: { 
-        message: 'エラーが発生しました。',
+      render json: {
+        message: "エラーが発生しました。",
         errors: @contact.errors.full_messages,
-        status: 'error' 
+        status: "error"
       }, status: :unprocessable_entity
     end
   end
-  
+
   private
-  
+
   def contact_params
     params.require(:contact).permit(:name, :email, :subject, :message)
   end

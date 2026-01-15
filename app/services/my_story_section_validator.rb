@@ -10,7 +10,7 @@ class MyStorySectionValidator
     validate_required_fields
     validate_json_data
     validate_position_constraints
-    
+
     @errors.empty?
   end
 
@@ -25,17 +25,17 @@ class MyStorySectionValidator
   # セクションタイプ固有のバリデーション
   def validate_section_type
     case @section.section_type
-    when 'hero'
+    when "hero"
       validate_hero_section
-    when 'timeline'
+    when "timeline"
       validate_timeline_section
-    when 'chapter_1', 'chapter_2', 'chapter_3'
+    when "chapter_1", "chapter_2", "chapter_3"
       validate_chapter_section
-    when 'skills_integration'
+    when "skills_integration"
       validate_skills_section
-    when 'projects'
+    when "projects"
       validate_projects_section
-    when 'cta'
+    when "cta"
       validate_cta_section
     else
       add_error(:section_type, "Unknown section type: #{@section.section_type}")
@@ -57,7 +57,7 @@ class MyStorySectionValidator
 
   def validate_required_fields
     required_fields = required_fields_for_section_type
-    
+
     required_fields.each do |field|
       if field_missing?(field)
         add_error(field, "#{field.humanize} is required for #{@section.section_type} section")
@@ -104,14 +104,14 @@ class MyStorySectionValidator
   def validate_timeline_section
     json_manager = MyStorySectionJsonManager.new(@section)
     years = json_manager.timeline_years
-    
+
     if years.empty?
       add_error(:timeline_years, "Timeline section must have years data")
     end
 
     # 年データの形式チェック
     years.each do |year_data|
-      unless year_data.is_a?(Hash) && year_data.key?('year')
+      unless year_data.is_a?(Hash) && year_data.key?("year")
         add_error(:timeline_years, "Invalid year data structure")
       end
     end
@@ -119,7 +119,7 @@ class MyStorySectionValidator
 
   def validate_chapter_section
     json_manager = MyStorySectionJsonManager.new(@section)
-    
+
     # チャプターには通常スキルや実績データが必要
     if json_manager.chapter_skills.empty?
       add_warning(:chapter_skills, "Chapter section should have skills data")
@@ -132,7 +132,7 @@ class MyStorySectionValidator
 
   def validate_skills_section
     json_manager = MyStorySectionJsonManager.new(@section)
-    
+
     if json_manager.skills_list.empty?
       add_error(:skills_list, "Skills section must have skills list")
     end
@@ -140,7 +140,7 @@ class MyStorySectionValidator
 
   def validate_projects_section
     json_manager = MyStorySectionJsonManager.new(@section)
-    
+
     if json_manager.project_items.empty?
       add_warning(:project_items, "Projects section should have project items")
     end
@@ -148,7 +148,7 @@ class MyStorySectionValidator
 
   def validate_cta_section
     json_manager = MyStorySectionJsonManager.new(@section)
-    
+
     if json_manager.cta_buttons.empty?
       add_error(:cta_buttons, "CTA section must have buttons")
     end
@@ -156,20 +156,20 @@ class MyStorySectionValidator
 
   def required_fields_for_section_type
     case @section.section_type
-    when 'hero'
-      [:title]
-    when 'timeline'
-      [:title]
-    when 'chapter_1', 'chapter_2', 'chapter_3'
-      [:title, :content]
-    when 'skills_integration'
-      [:title]
-    when 'projects'
-      [:title]
-    when 'cta'
-      [:title]
+    when "hero"
+      [ :title ]
+    when "timeline"
+      [ :title ]
+    when "chapter_1", "chapter_2", "chapter_3"
+      [ :title, :content ]
+    when "skills_integration"
+      [ :title ]
+    when "projects"
+      [ :title ]
+    when "cta"
+      [ :title ]
     else
-      [:title]
+      [ :title ]
     end
   end
 
@@ -190,7 +190,7 @@ class MyStorySectionValidator
     # 深いネスト構造の制限
     max_depth = 5
     check_depth(data, max_depth)
-    
+
     # 配列サイズの制限
     check_array_sizes(data)
   end

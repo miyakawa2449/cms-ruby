@@ -23,9 +23,9 @@ class MyStorySectionPositionManager
   # 指定位置に移動
   def move_to_position(new_position)
     return false if new_position < 0
-    
+
     max_position = MyStorySection.maximum(:position) || 0
-    new_position = [new_position, max_position].min
+    new_position = [ new_position, max_position ].min
 
     old_position = @section.position
 
@@ -33,17 +33,17 @@ class MyStorySectionPositionManager
       if new_position > old_position
         # 下に移動：間のアイテムを上にシフト
         MyStorySection.where(
-          'position > ? AND position <= ?', 
-          old_position, 
+          "position > ? AND position <= ?",
+          old_position,
           new_position
-        ).update_all('position = position - 1')
+        ).update_all("position = position - 1")
       elsif new_position < old_position
         # 上に移動：間のアイテムを下にシフト
         MyStorySection.where(
-          'position >= ? AND position < ?', 
-          new_position, 
+          "position >= ? AND position < ?",
+          new_position,
           old_position
-        ).update_all('position = position + 1')
+        ).update_all("position = position + 1")
       end
 
       @section.update!(position: new_position)
@@ -85,7 +85,7 @@ class MyStorySectionPositionManager
   def self.validate_positions
     positions = MyStorySection.pluck(:position)
     duplicates = positions.group_by(&:itself).select { |_, v| v.size > 1 }.keys
-    
+
     if duplicates.any?
       Rails.logger.warn "Duplicate positions found: #{duplicates}"
       return false
@@ -102,7 +102,7 @@ class MyStorySectionPositionManager
 
     MyStorySection.transaction do
       current_position = @section.position
-      
+
       # 一時的に-1に設定してユニーク制約を回避
       @section.update!(position: -1)
       target_section.update!(position: current_position)

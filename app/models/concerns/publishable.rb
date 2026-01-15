@@ -4,8 +4,8 @@ module Publishable
   extend ActiveSupport::Concern
 
   included do
-    scope :published, -> { where(status: 'published') }
-    scope :draft, -> { where(status: 'draft') }
+    scope :published, -> { where(status: "published") }
+    scope :draft, -> { where(status: "draft") }
     scope :visible, -> { where(is_visible: true) }
   end
 
@@ -13,7 +13,7 @@ module Publishable
   def published?
     case
     when respond_to?(:status)
-      status == 'published' && (respond_to?(:published_at) ? (published_at.nil? || published_at <= Time.current) : true)
+      status == "published" && (respond_to?(:published_at) ? (published_at.nil? || published_at <= Time.current) : true)
     when respond_to?(:is_active)
       is_active?
     when respond_to?(:is_visible)
@@ -28,7 +28,7 @@ module Publishable
   def draft?
     case
     when respond_to?(:status)
-      status == 'draft'
+      status == "draft"
     when respond_to?(:is_active)
       !is_active?
     when respond_to?(:is_visible)
@@ -39,11 +39,11 @@ module Publishable
   end
 
   def archived?
-    respond_to?(:status) && status == 'archived'
+    respond_to?(:status) && status == "archived"
   end
 
   def scheduled?
-    respond_to?(:status) && status == 'scheduled'
+    respond_to?(:status) && status == "scheduled"
   end
 
   # 公開可能かチェック
@@ -63,23 +63,23 @@ module Publishable
     case
     when respond_to?(:status)
       case status
-      when 'published'
-        (published_at && published_at > Time.current) ? '予約公開' : '公開中'
-      when 'draft'
-        '下書き'
-      when 'scheduled'
-        '予約済み'
-      when 'archived'
-        'アーカイブ'
+      when "published"
+        (published_at && published_at > Time.current) ? "予約公開" : "公開中"
+      when "draft"
+        "下書き"
+      when "scheduled"
+        "予約済み"
+      when "archived"
+        "アーカイブ"
       else
         status.humanize
       end
     when respond_to?(:is_active)
-      is_active? ? '有効' : '無効'
+      is_active? ? "有効" : "無効"
     when respond_to?(:is_visible)
-      is_visible? ? '表示中' : '非表示'
+      is_visible? ? "表示中" : "非表示"
     else
-      '不明'
+      "不明"
     end
   end
 
@@ -87,8 +87,8 @@ module Publishable
   def toggle_published!
     case
     when respond_to?(:status)
-      new_status = published? ? 'draft' : 'published'
-      update!(status: new_status, published_at: (new_status == 'published' ? Time.current : nil))
+      new_status = published? ? "draft" : "published"
+      update!(status: new_status, published_at: (new_status == "published" ? Time.current : nil))
     when respond_to?(:is_active)
       update!(is_active: !is_active)
     when respond_to?(:is_visible)
@@ -101,7 +101,7 @@ module Publishable
   # 公開日時設定
   def set_published_at!
     return unless respond_to?(:published_at) && published?
-    
+
     update!(published_at: Time.current) if published_at.blank?
   end
 end

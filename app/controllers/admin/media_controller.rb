@@ -4,12 +4,12 @@ module Admin
   # Media library management controller
   # Handles image uploads, listing, editing, and deletion
   class MediaController < BaseController
-    before_action :set_media, only: [:show, :update, :destroy, :edit_image, :usage]
+    before_action :set_media, only: [ :show, :update, :destroy, :edit_image, :usage ]
 
     # GET /admin/media
     def index
       @media = filtered_media.page(params[:page]).per(params[:per_page] || 50)
-      @view_mode = params[:view] || 'grid'
+      @view_mode = params[:view] || "grid"
 
       respond_to do |format|
         format.html
@@ -29,8 +29,8 @@ module Admin
     def create
       result = Media::UploadService.new(
         upload_params[:images],
-        generate_webp: upload_params[:generate_webp] == 'true',
-        generate_thumbnails: upload_params[:generate_thumbnails] == 'true'
+        generate_webp: upload_params[:generate_webp] == "true",
+        generate_thumbnails: upload_params[:generate_thumbnails] == "true"
       ).call
 
       respond_to do |format|
@@ -52,7 +52,7 @@ module Admin
       if @media.update(media_params)
         respond_to do |format|
           format.html do
-            flash[:notice] = '画像情報を更新しました'
+            flash[:notice] = "画像情報を更新しました"
             redirect_to admin_media_path
           end
           format.json { render json: { success: true, data: media_data(@media) } }
@@ -60,7 +60,7 @@ module Admin
       else
         respond_to do |format|
           format.html do
-            flash[:alert] = '画像情報の更新に失敗しました'
+            flash[:alert] = "画像情報の更新に失敗しました"
             redirect_to admin_media_path
           end
           format.json { render json: { success: false, errors: @media.errors.full_messages }, status: :unprocessable_entity }
@@ -76,7 +76,7 @@ module Admin
             flash[:alert] = "この画像は#{@media.usage_count}件の記事で使用中です。削除できません。"
             redirect_to admin_media_path
           end
-          format.json { render json: { success: false, error: '使用中の画像は削除できません' }, status: :unprocessable_entity }
+          format.json { render json: { success: false, error: "使用中の画像は削除できません" }, status: :unprocessable_entity }
         end
         return
       end
@@ -87,7 +87,7 @@ module Admin
 
       respond_to do |format|
         format.html do
-          flash[:notice] = '画像を削除しました'
+          flash[:notice] = "画像を削除しました"
           redirect_to admin_media_path
         end
         format.json { render json: { success: true } }
@@ -119,11 +119,11 @@ module Admin
     private
 
     def save_edited_image
-      save_as_new = params[:save_as_new] == 'true'
+      save_as_new = params[:save_as_new] == "true"
       uploaded_file = params[:image]
 
       unless uploaded_file
-        render json: { success: false, error: 'No image provided' }, status: :unprocessable_entity
+        render json: { success: false, error: "No image provided" }, status: :unprocessable_entity
         return
       end
 
@@ -142,7 +142,7 @@ module Admin
       new_blob = ActiveStorage::Blob.create_and_upload!(
         io: uploaded_file,
         filename: generate_edited_filename(@media.filename),
-        content_type: uploaded_file.content_type || 'image/jpeg'
+        content_type: uploaded_file.content_type || "image/jpeg"
       )
 
       new_metadata = MediaMetadata.create!(
@@ -160,7 +160,7 @@ module Admin
         data: {
           id: new_metadata.id,
           filename: new_blob.filename.to_s,
-          message: '新しい画像として保存しました'
+          message: "新しい画像として保存しました"
         }
       }
     end
@@ -191,7 +191,7 @@ module Admin
         data: {
           id: @media.id,
           filename: new_blob.filename.to_s,
-          message: '画像を上書き保存しました'
+          message: "画像を上書き保存しました"
         }
       }
     end
@@ -233,9 +233,9 @@ module Admin
 
       # Filter by usage
       case params.dig(:filter, :usage)
-      when 'used'
+      when "used"
         media = media.used
-      when 'unused'
+      when "unused"
         media = media.unused
       end
 
@@ -252,14 +252,14 @@ module Admin
 
       # Sort
       case params[:sort]
-      when 'size_asc'
+      when "size_asc"
         media = media.by_size(:asc)
-      when 'size_desc'
+      when "size_desc"
         media = media.by_size(:desc)
-      when 'name_asc'
-        media = media.joins(:blob).order('active_storage_blobs.filename ASC')
-      when 'name_desc'
-        media = media.joins(:blob).order('active_storage_blobs.filename DESC')
+      when "name_asc"
+        media = media.joins(:blob).order("active_storage_blobs.filename ASC")
+      when "name_desc"
+        media = media.joins(:blob).order("active_storage_blobs.filename DESC")
       else
         media = media.recent
       end

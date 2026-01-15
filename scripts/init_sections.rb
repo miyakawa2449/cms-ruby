@@ -18,7 +18,7 @@ sections = [
     content: {
       title: "私について",
       description: "システムエンジニア・プロジェクトマネージャーとして20年以上の経験を持ち、上流工程から下流工程まで幅広く対応可能なエンジニアです。",
-      skills: ["Ruby on Rails", "PostgreSQL", "Docker", "AWS", "プロジェクト管理"],
+      skills: [ "Ruby on Rails", "PostgreSQL", "Docker", "AWS", "プロジェクト管理" ],
       experience_years: 20
     }
   },
@@ -52,7 +52,7 @@ sections = [
     content: {
       title: "お問い合わせ",
       description: "お仕事のご依頼・ご相談はこちらからお願いします。",
-      form_fields: ["name", "email", "message"]
+      form_fields: [ "name", "email", "message" ]
     }
   }
 ]

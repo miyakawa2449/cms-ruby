@@ -26,7 +26,7 @@ module JsonStorable
   # JSON データ安全読み込み
   def read_json_field(field_name, key)
     return nil unless respond_to?(field_name)
-    
+
     begin
       data = send(field_name) || {}
       data = JSON.parse(data) if data.is_a?(String)
@@ -37,21 +37,21 @@ module JsonStorable
     end
   end
 
-  # JSON データ安全書き込み  
+  # JSON データ安全書き込み
   def write_json_field(field_name, key, value)
     return unless respond_to?("#{field_name}=")
-    
+
     begin
       current_data = send(field_name) || {}
       current_data = JSON.parse(current_data) if current_data.is_a?(String)
       current_data = {} unless current_data.is_a?(Hash)
-      
+
       if value.nil?
         current_data.delete(key)
       else
         current_data[key] = value
       end
-      
+
       send("#{field_name}=", current_data)
     rescue JSON::ParserError => e
       Rails.logger.error "JSON parse error for #{self.class.name}##{field_name}: #{e.message}"
@@ -63,7 +63,7 @@ module JsonStorable
   def update_json_field(field_name, new_data)
     return false unless respond_to?("#{field_name}=")
     return false unless new_data.is_a?(Hash)
-    
+
     begin
       send("#{field_name}=", new_data)
       true
@@ -76,12 +76,12 @@ module JsonStorable
   # JSON データマージ
   def merge_json_field(field_name, merge_data)
     return false unless respond_to?(field_name) && merge_data.is_a?(Hash)
-    
+
     begin
       current_data = send(field_name) || {}
       current_data = JSON.parse(current_data) if current_data.is_a?(String)
       current_data = {} unless current_data.is_a?(Hash)
-      
+
       merged_data = current_data.deep_merge(merge_data)
       send("#{field_name}=", merged_data)
       true
@@ -94,7 +94,7 @@ module JsonStorable
   # JSON データクリア
   def clear_json_field(field_name)
     return false unless respond_to?("#{field_name}=")
-    
+
     send("#{field_name}=", {})
     true
   end
@@ -103,11 +103,11 @@ module JsonStorable
   def json_field_present?(field_name, key = nil)
     data = send(field_name) rescue nil
     return false if data.blank?
-    
+
     begin
       parsed_data = data.is_a?(String) ? JSON.parse(data) : data
       return parsed_data.present? if key.nil?
-      
+
       parsed_data.is_a?(Hash) && parsed_data[key].present?
     rescue JSON::ParserError
       false
@@ -130,11 +130,11 @@ module JsonStorable
   # JSON フィールドのデフォルト値を保証
   def ensure_json_data_defaults
     json_fields = self.class.columns.select { |col| col.type == :json || col.sql_type_metadata&.type == :jsonb }
-    
+
     json_fields.each do |field|
       field_name = field.name
       next unless respond_to?(field_name) && respond_to?("#{field_name}=")
-      
+
       current_value = send(field_name)
       if current_value.nil?
         send("#{field_name}=", {})

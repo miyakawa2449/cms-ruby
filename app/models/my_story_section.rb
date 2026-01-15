@@ -4,7 +4,7 @@
 #
 #  id               :bigint           not null, primary key
 #  section_type     :string           not null
-#  title            :string           not null  
+#  title            :string           not null
 #  subtitle         :string
 #  content          :text
 #  additional_data  :jsonb            default({})
@@ -25,7 +25,7 @@
 class MyStorySection < ApplicationRecord
   include Positionable
   include JsonStorable
-  
+
   # Section type constants (定義順序重要)
   SECTION_TYPES = %w[
     hero
@@ -39,14 +39,14 @@ class MyStorySection < ApplicationRecord
   ].freeze
 
   SECTION_TYPE_LABELS = {
-    'hero' => 'ヒーローセクション',
-    'timeline' => 'タイムライン概要',
-    'chapter_1' => '第1章: パソコンスクール講師時代',
-    'chapter_2' => '第2章: SE/PM・ビジネス分析者時代',
-    'chapter_3' => '第3章: AI活用エンジニア時代',
-    'skills_integration' => 'スキル統合セクション',
-    'projects' => '実績・事例セクション',
-    'cta' => 'Call to Action'
+    "hero" => "ヒーローセクション",
+    "timeline" => "タイムライン概要",
+    "chapter_1" => "第1章: パソコンスクール講師時代",
+    "chapter_2" => "第2章: SE/PM・ビジネス分析者時代",
+    "chapter_3" => "第3章: AI活用エンジニア時代",
+    "skills_integration" => "スキル統合セクション",
+    "projects" => "実績・事例セクション",
+    "cta" => "Call to Action"
   }.freeze
 
   # Virtual attributes for form input (chapter sections)
@@ -58,16 +58,16 @@ class MyStorySection < ApplicationRecord
   has_many_attached :gallery_images
 
   # Validations
-  validates :section_type, presence: true, 
-                          inclusion: { 
+  validates :section_type, presence: true,
+                          inclusion: {
                             in: SECTION_TYPES,
-                            message: "%{value} is not a valid section type" 
+                            message: "%{value} is not a valid section type"
                           },
                           uniqueness: true
   validates :title, presence: true, length: { maximum: 255 }
   validates :subtitle, length: { maximum: 255 }
   validate :validate_with_custom_validator
-  
+
   # Scopes
   scope :active, -> { where(is_active: true) }
   scope :inactive, -> { where(is_active: false) }
@@ -76,7 +76,7 @@ class MyStorySection < ApplicationRecord
 
   # Class methods
   def self.section_type_options
-    SECTION_TYPES.map { |type| [SECTION_TYPE_LABELS[type], type] }
+    SECTION_TYPES.map { |type| [ SECTION_TYPE_LABELS[type], type ] }
   end
 
   def self.find_by_section_type(type)
@@ -84,11 +84,11 @@ class MyStorySection < ApplicationRecord
   end
 
   def self.hero_section
-    find_by_section_type('hero')
+    find_by_section_type("hero")
   end
 
   def self.timeline_section
-    find_by_section_type('timeline')
+    find_by_section_type("timeline")
   end
 
   def self.chapter_sections
@@ -96,15 +96,15 @@ class MyStorySection < ApplicationRecord
   end
 
   def self.skills_integration_section
-    find_by_section_type('skills_integration')
+    find_by_section_type("skills_integration")
   end
 
   def self.projects_section
-    find_by_section_type('projects')
+    find_by_section_type("projects")
   end
 
   def self.cta_section
-    find_by_section_type('cta')
+    find_by_section_type("cta")
   end
 
   # Service delegation methods
@@ -141,27 +141,27 @@ class MyStorySection < ApplicationRecord
   end
 
   def chapter_section?
-    section_type.start_with?('chapter_')
+    section_type.start_with?("chapter_")
   end
 
   def hero_section?
-    section_type == 'hero'
+    section_type == "hero"
   end
 
   def timeline_section?
-    section_type == 'timeline'
+    section_type == "timeline"
   end
 
   def skills_integration_section?
-    section_type == 'skills_integration'
+    section_type == "skills_integration"
   end
 
   def projects_section?
-    section_type == 'projects'
+    section_type == "projects"
   end
 
   def cta_section?
-    section_type == 'cta'
+    section_type == "cta"
   end
 
   # Image helpers
@@ -186,14 +186,14 @@ class MyStorySection < ApplicationRecord
 
   def set_default_position
     return if position.present?
-    
+
     self.position = self.class.next_position
   end
 
   # Load virtual attributes from additional_data when record is loaded
   def load_chapter_fields_from_additional_data
     return unless section_type.present? && chapter_section?
-    
+
     @skills = chapter_skills.join("\n") if chapter_skills.any?
     @achievements = chapter_achievements.join("\n") if chapter_achievements.any?
     @quote = chapter_quote
@@ -202,22 +202,22 @@ class MyStorySection < ApplicationRecord
   # Sync virtual attributes to additional_data before save
   def sync_chapter_fields_to_additional_data
     return unless section_type.present? && chapter_section?
-    
+
     self.additional_data ||= {}
-    
+
     # Parse skills from textarea (newline-separated)
     if @skills.present?
-      self.additional_data['skills'] = @skills.to_s.split(/[\r\n]+/).map(&:strip).reject(&:blank?)
+      self.additional_data["skills"] = @skills.to_s.split(/[\r\n]+/).map(&:strip).reject(&:blank?)
     end
-    
+
     # Parse achievements from textarea (newline-separated)
     if @achievements.present?
-      self.additional_data['achievements'] = @achievements.to_s.split(/[\r\n]+/).map(&:strip).reject(&:blank?)
+      self.additional_data["achievements"] = @achievements.to_s.split(/[\r\n]+/).map(&:strip).reject(&:blank?)
     end
-    
+
     # Set quote directly
     if @quote.present?
-      self.additional_data['quote'] = @quote.to_s.strip
+      self.additional_data["quote"] = @quote.to_s.strip
     end
   end
 

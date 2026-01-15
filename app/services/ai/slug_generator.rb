@@ -45,7 +45,7 @@ module Ai
     private
 
     def validate_title!(title)
-      raise Ai::ValidationError.new('Title is required', field: :title) if title.blank?
+      raise Ai::ValidationError.new("Title is required", field: :title) if title.blank?
     end
 
     def build_prompt(title, count)
@@ -77,14 +77,14 @@ module Ai
 
     def parse_slugs(content)
       json = parse_json_response(content)
-      slugs = json['slugs'] || []
+      slugs = json["slugs"] || []
 
       slugs.map do |slug|
-        normalized_slug = normalize_slug(slug['slug'] || '')
+        normalized_slug = normalize_slug(slug["slug"] || "")
         {
           slug: normalized_slug,
           available: slug_available?(normalized_slug),
-          seo_score: slug['seo_score'].to_i
+          seo_score: slug["seo_score"].to_i
         }
       end.sort_by { |s| -s[:seo_score] }
     rescue => e
@@ -94,10 +94,10 @@ module Ai
 
     def normalize_slug(slug)
       slug.downcase
-          .gsub(/[^a-z0-9\-]/, '-')  # Replace non-alphanumeric with hyphen
-          .gsub(/-+/, '-')            # Remove consecutive hyphens
-          .gsub(/^-|-$/, '')          # Remove leading/trailing hyphens
-          .truncate(50, omission: '')
+          .gsub(/[^a-z0-9\-]/, "-")  # Replace non-alphanumeric with hyphen
+          .gsub(/-+/, "-")            # Remove consecutive hyphens
+          .gsub(/^-|-$/, "")          # Remove leading/trailing hyphens
+          .truncate(50, omission: "")
     end
 
     def slug_available?(slug)

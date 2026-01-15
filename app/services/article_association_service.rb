@@ -34,7 +34,7 @@ class ArticleAssociationService
 
   def process_categories(category_ids)
     return unless category_ids.present?
-    
+
     # 有効なカテゴリIDのみを設定
     valid_ids = Category.where(id: category_ids).pluck(:id)
     @article.category_ids = valid_ids
@@ -42,12 +42,12 @@ class ArticleAssociationService
 
   def process_tags(tag_names)
     return unless tag_names.present?
-    
+
     # タグ名から既存タグを検索し、存在しない場合は新規作成
-    tags = tag_names.split(',').map(&:strip).reject(&:blank?).map do |tag_name|
+    tags = tag_names.split(",").map(&:strip).reject(&:blank?).map do |tag_name|
       Tag.find_or_create_by(name: tag_name.downcase)
     end
-    
+
     @article.tags = tags
   end
 end

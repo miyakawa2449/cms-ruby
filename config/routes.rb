@@ -6,64 +6,64 @@ Rails.application.routes.draw do
 
   # Simple test
   get "test" => "simple_test#index"
-  
+
   # Contact form submission
   post "contacts", to: "contacts#create"
   # NOTE: registrations skipped for security (single-user CMS)
   # Future: Remove skip when implementing multi-tenant CMS sales version
-  devise_for :admin_users, path: 'admin-secure-panel-miyakawa2449',
-    skip: [:registrations],
-    controllers: { sessions: 'admin_users/sessions' }
-  
+  devise_for :admin_users, path: "admin-secure-panel-miyakawa2449",
+    skip: [ :registrations ],
+    controllers: { sessions: "admin_users/sessions" }
+
   # Admin routes (セキュリティのため長いURL使用)
-  namespace :admin, path: 'admin-secure-panel-miyakawa2449' do
-    resource :site_settings, only: [:show, :update]
-    resources :contacts, only: [:index, :show, :edit, :update, :destroy]
+  namespace :admin, path: "admin-secure-panel-miyakawa2449" do
+    resource :site_settings, only: [ :show, :update ]
+    resources :contacts, only: [ :index, :show, :edit, :update, :destroy ]
     root to: "dashboard#index", as: :root
     get "dashboard", to: "dashboard#index", as: :dashboard
-    
+
     resources :sections do
-      resources :section_contents, only: [:new, :create, :edit, :update, :destroy] do
+      resources :section_contents, only: [ :new, :create, :edit, :update, :destroy ] do
         member do
           patch :activate
         end
       end
     end
-    
+
     resources :articles do
       member do
         patch :publish
         patch :unpublish
       end
       # 本文内画像アップロード用
-      resources :images, only: [:create], controller: 'article_images'
+      resources :images, only: [ :create ], controller: "article_images"
       # AI支援機能
       namespace :ai do
-        post 'suggest_title', action: :suggest_title, controller: '/admin/ai'
-        post 'generate_summary', action: :generate_summary, controller: '/admin/ai'
-        post 'suggest_tags', action: :suggest_tags, controller: '/admin/ai'
-        post 'generate_slug', action: :generate_slug, controller: '/admin/ai'
-        post 'generate_seo_meta', action: :generate_seo_meta, controller: '/admin/ai'
+        post "suggest_title", action: :suggest_title, controller: "/admin/ai"
+        post "generate_summary", action: :generate_summary, controller: "/admin/ai"
+        post "suggest_tags", action: :suggest_tags, controller: "/admin/ai"
+        post "generate_slug", action: :generate_slug, controller: "/admin/ai"
+        post "generate_seo_meta", action: :generate_seo_meta, controller: "/admin/ai"
       end
     end
 
     # AI機能（記事に紐づかないもの）
-    scope 'ai', as: 'ai' do
-      post 'suggest_structure', to: 'ai#suggest_structure'
-      get 'usage_stats', to: 'ai#usage_stats'
+    scope "ai", as: "ai" do
+      post "suggest_structure", to: "ai#suggest_structure"
+      get "usage_stats", to: "ai#usage_stats"
     end
-    
+
     resources :categories do
       member do
         patch :move_up
         patch :move_down
       end
     end
-    
+
     resources :tags
 
     # Media library
-    resources :media, only: [:index, :show, :create, :update, :destroy] do
+    resources :media, only: [ :index, :show, :create, :update, :destroy ] do
       member do
         post :edit_image
         get :usage
@@ -81,49 +81,49 @@ Rails.application.routes.draw do
       end
     end
   end
-  
+
   # Public routes
   root "portfolio#index"
-  
+
   # Blog routes
   get "blog", to: "blog#index", as: :blog
   get "blog/:slug", to: "blog#show", as: :blog_article
-  
+
   # My Story route
   get "my-story", to: "my_story#index", as: :my_story
-  
+
   # Public API routes
   namespace :api do
     namespace :v1 do
       # Articles API
-      resources :articles, only: [:index, :show], param: :slug do
+      resources :articles, only: [ :index, :show ], param: :slug do
         collection do
           get :search
         end
       end
-      
+
       # Categories API
-      resources :categories, only: [:index, :show] do
+      resources :categories, only: [ :index, :show ] do
         member do
           get :articles
         end
       end
-      
+
       # Tags API
-      resources :tags, only: [:index, :show] do
+      resources :tags, only: [ :index, :show ] do
         member do
           get :articles
         end
       end
-      
+
       # Sections API (Portfolio content)
-      resources :sections, only: [:index, :show], param: :name
-      
+      resources :sections, only: [ :index, :show ], param: :name
+
       # API info endpoint
-      get '', to: 'base#info'
+      get "", to: "base#info"
     end
   end
-  
+
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 end

@@ -11,7 +11,7 @@ class MyStorySectionStateService
 
   def toggle_active
     new_state = !@section.is_active?
-    
+
     if @section.update(is_active: new_state)
       { success: true, is_active: new_state, message: status_message(new_state) }
     else

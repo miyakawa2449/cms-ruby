@@ -38,19 +38,19 @@ if about_section
       "skills" => [
         {
           "category" => "フロントエンド",
-          "items" => ["HTML/CSS", "JavaScript", "React", "Vue.js", "Tailwind CSS"]
+          "items" => [ "HTML/CSS", "JavaScript", "React", "Vue.js", "Tailwind CSS" ]
         },
         {
-          "category" => "バックエンド", 
-          "items" => ["Ruby on Rails", "Python", "Node.js", "PHP", "Java"]
+          "category" => "バックエンド",
+          "items" => [ "Ruby on Rails", "Python", "Node.js", "PHP", "Java" ]
         },
         {
           "category" => "AI・機械学習",
-          "items" => ["OpenAI API", "LangChain", "TensorFlow", "PyTorch", "RAG"]
+          "items" => [ "OpenAI API", "LangChain", "TensorFlow", "PyTorch", "RAG" ]
         },
         {
           "category" => "インフラ・DevOps",
-          "items" => ["AWS", "Docker", "PostgreSQL", "Redis", "CI/CD"]
+          "items" => [ "AWS", "Docker", "PostgreSQL", "Redis", "CI/CD" ]
         }
       ],
       "experience_years" => 30,
@@ -74,25 +74,25 @@ if service_section
           "title" => "要件定義・設計",
           "description" => "ビジネス要件の整理から技術仕様の策定まで、プロジェクト全体の設計を行います。",
           "icon" => "document-text",
-          "features" => ["要件分析", "システム設計", "DB設計", "API設計"]
+          "features" => [ "要件分析", "システム設計", "DB設計", "API設計" ]
         },
         {
           "title" => "フルスタック開発",
           "description" => "フロントエンドからバックエンドまで、一貫した開発を提供します。",
           "icon" => "code",
-          "features" => ["React/Vue.js", "Ruby on Rails", "REST API", "データベース"]
+          "features" => [ "React/Vue.js", "Ruby on Rails", "REST API", "データベース" ]
         },
         {
           "title" => "AI システム開発",
           "description" => "生成AI・機械学習を活用したシステムの企画・開発を行います。",
           "icon" => "cog",
-          "features" => ["OpenAI API", "RAG システム", "チャットボット", "自動化"]
+          "features" => [ "OpenAI API", "RAG システム", "チャットボット", "自動化" ]
         },
         {
           "title" => "技術コンサルティング",
           "description" => "技術選定から開発プロセス改善まで、包括的な技術支援を提供します。",
           "icon" => "academic-cap",
-          "features" => ["技術選定", "アーキテクチャ", "コードレビュー", "教育・研修"]
+          "features" => [ "技術選定", "アーキテクチャ", "コードレビュー", "教育・研修" ]
         }
       ]
     },
@@ -119,7 +119,7 @@ if my_story_section
           "description" => "プログラミング講師として基礎を築く"
         },
         {
-          "period" => "2005-2021", 
+          "period" => "2005-2021",
           "title" => "SE・PM時代",
           "description" => "大規模システム開発の最前線で活動"
         },

@@ -7,7 +7,7 @@ module TrackableAttachment
 
   included do
     # Only track new attachments, not existing ones
-    after_commit :create_media_metadata_for_new_attachments, on: [:create, :update]
+    after_commit :create_media_metadata_for_new_attachments, on: [ :create, :update ]
   end
 
   private
@@ -30,7 +30,7 @@ module TrackableAttachment
 
   def ensure_media_metadata(blob, alt_text = nil)
     return unless blob
-    return unless blob.content_type&.start_with?('image/')
+    return unless blob.content_type&.start_with?("image/")
 
     # Check if MediaMetadata already exists (this prevents duplicates)
     existing = MediaMetadata.find_by(blob: blob)

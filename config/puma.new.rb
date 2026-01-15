@@ -19,10 +19,10 @@ plugin :tmp_restart
 if ENV["RAILS_ENV"] == "development"
   # Single mode for development to avoid connection issues
   workers 0
-  
+
   # Preload application for faster startup in development
   preload_app! false
-  
+
   # Enable reloading
   plugin :tmp_restart
 end
@@ -31,13 +31,13 @@ end
 if ENV["RAILS_ENV"] == "production"
   # Use multiple workers in production
   workers ENV.fetch("WEB_CONCURRENCY") { 2 }
-  
+
   # Preload application for memory efficiency
   preload_app!
-  
+
   # Solid Queue integration for production
   plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
-  
+
   # PID file for production
   pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 end

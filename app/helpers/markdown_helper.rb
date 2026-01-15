@@ -1,5 +1,5 @@
-require 'redcarpet'
-require 'cgi'
+require "redcarpet"
+require "cgi"
 
 module MarkdownHelper
   # カスタムレンダラー
@@ -17,11 +17,11 @@ module MarkdownHelper
 
   # Markdownテキストを安全なHTMLに変換
   def markdown(text)
-    return '' if text.blank?
-    
+    return "" if text.blank?
+
     # エスケープされた改行文字を実際の改行に変換
     text = text.gsub('\\n', "\n")
-    
+
     renderer = Redcarpet::Render::HTML.new(
       filter_html: false,
       no_images: false,
@@ -31,7 +31,7 @@ module MarkdownHelper
       with_toc_data: false,
       hard_wrap: true
     )
-    
+
     markdown_processor = Redcarpet::Markdown.new(renderer,
       autolink: true,
       tables: true,
@@ -43,17 +43,17 @@ module MarkdownHelper
       highlight: true,
       quote: true
     )
-    
+
     markdown_processor.render(text).html_safe
   end
-  
+
   # コードシンタックスハイライト対応版
   def markdown_with_highlight(text)
-    return '' if text.blank?
-    
+    return "" if text.blank?
+
     # エスケープされた改行文字を実際の改行に変換
     text = text.gsub('\\n', "\n")
-    
+
     renderer = HTMLwithPygments.new(
       filter_html: false,
       no_images: false,
@@ -63,7 +63,7 @@ module MarkdownHelper
       with_toc_data: false,
       hard_wrap: true
     )
-    
+
     markdown_processor = Redcarpet::Markdown.new(renderer,
       autolink: true,
       tables: true,
@@ -75,13 +75,13 @@ module MarkdownHelper
       highlight: true,
       quote: true
     )
-    
+
     markdown_processor.render(text).html_safe
   end
-  
+
   # 安全なMarkdown処理（エラーハンドリング付き）
   def safe_markdown(text)
-    return '' if text.blank?
+    return "" if text.blank?
 
     begin
       markdown(text)
@@ -94,7 +94,7 @@ module MarkdownHelper
   # OGPカード対応Markdown処理
   # 単独行のURLをOGPカードに変換
   def markdown_with_ogp_cards(text)
-    return '' if text.blank?
+    return "" if text.blank?
 
     # エスケープされた改行文字を実際の改行に変換
     text = text.gsub('\\n', "\n")
@@ -109,8 +109,8 @@ module MarkdownHelper
 
       # 単独行のURL（前後が空行または先頭/末尾）をチェック
       if stripped.match?(url_pattern)
-        prev_line = index > 0 ? lines[index - 1]&.strip : ''
-        next_line = lines[index + 1]&.strip || ''
+        prev_line = index > 0 ? lines[index - 1]&.strip : ""
+        next_line = lines[index + 1]&.strip || ""
 
         # 前後が空行、または先頭/末尾の場合のみカード化
         if (prev_line.empty? || index == 0) && (next_line.empty? || index == lines.length - 1)
@@ -164,7 +164,7 @@ module MarkdownHelper
 
     if result.success?
       ApplicationController.render(
-        partial: 'shared/ogp_card',
+        partial: "shared/ogp_card",
         locals: { ogp_data: result.data }
       )
     else

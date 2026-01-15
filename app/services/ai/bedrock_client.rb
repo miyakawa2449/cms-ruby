@@ -1,6 +1,6 @@
 # Amazon Bedrock API client for AI model invocation
 # Handles communication with AWS Bedrock Runtime service
-require 'aws-sdk-bedrockruntime'
+require "aws-sdk-bedrockruntime"
 
 module Ai
   class BedrockClient
@@ -26,8 +26,8 @@ module Ai
       response = @client.invoke_model({
         model_id: model_id,
         body: request_body.to_json,
-        content_type: 'application/json',
-        accept: 'application/json'
+        content_type: "application/json",
+        accept: "application/json"
       })
 
       parse_response(response)
@@ -72,17 +72,17 @@ module Ai
 
     def build_client
       # Prefer Bedrock-specific credentials, fallback to general AWS credentials
-      access_key = ENV['AWS_BEDROCK_ACCESS_KEY_ID'] || ENV['AWS_ACCESS_KEY_ID']
-      secret_key = ENV['AWS_BEDROCK_SECRET_ACCESS_KEY'] || ENV['AWS_SECRET_ACCESS_KEY']
-      region = ENV['AWS_BEDROCK_REGION'] || ENV['AWS_REGION'] || 'us-east-1'
+      access_key = ENV["AWS_BEDROCK_ACCESS_KEY_ID"] || ENV["AWS_ACCESS_KEY_ID"]
+      secret_key = ENV["AWS_BEDROCK_SECRET_ACCESS_KEY"] || ENV["AWS_SECRET_ACCESS_KEY"]
+      region = ENV["AWS_BEDROCK_REGION"] || ENV["AWS_REGION"] || "us-east-1"
 
       # Use explicit credentials if provided (works on Lightsail and other environments)
       # Fall back to IAM instance profile if no credentials are set (EC2 with IAM role)
       credentials = if access_key.present? && secret_key.present?
                       Aws::Credentials.new(access_key, secret_key)
-                    else
+      else
                       Aws::InstanceProfileCredentials.new
-                    end
+      end
 
       Aws::BedrockRuntime::Client.new(
         region: region,
@@ -97,12 +97,12 @@ module Ai
 
     def build_request_body(prompt, max_tokens, temperature)
       {
-        anthropic_version: 'bedrock-2023-05-31',
+        anthropic_version: "bedrock-2023-05-31",
         max_tokens: max_tokens,
         temperature: temperature,
         messages: [
           {
-            role: 'user',
+            role: "user",
             content: prompt
           }
         ]
@@ -110,9 +110,9 @@ module Ai
     end
 
     def validate_inputs!(model_id, prompt)
-      raise Ai::ValidationError.new('Model ID is required', field: :model_id) if model_id.blank?
-      raise Ai::ValidationError.new('Prompt is required', field: :prompt) if prompt.blank?
-      raise Ai::ValidationError.new('Prompt is too long (max 100,000 chars)', field: :prompt) if prompt.length > 100_000
+      raise Ai::ValidationError.new("Model ID is required", field: :model_id) if model_id.blank?
+      raise Ai::ValidationError.new("Prompt is required", field: :prompt) if prompt.blank?
+      raise Ai::ValidationError.new("Prompt is too long (max 100,000 chars)", field: :prompt) if prompt.length > 100_000
     end
 
     def parse_response(response)
@@ -121,19 +121,19 @@ module Ai
       {
         content: extract_content(body),
         usage: {
-          input_tokens: body.dig('usage', 'input_tokens') || 0,
-          output_tokens: body.dig('usage', 'output_tokens') || 0
+          input_tokens: body.dig("usage", "input_tokens") || 0,
+          output_tokens: body.dig("usage", "output_tokens") || 0
         }
       }
     end
 
     def extract_content(body)
-      content = body['content']
-      return '' if content.blank?
+      content = body["content"]
+      return "" if content.blank?
 
       # Claude returns content as array of content blocks
       if content.is_a?(Array)
-        content.map { |c| c['text'] }.compact.join("\n")
+        content.map { |c| c["text"] }.compact.join("\n")
       else
         content.to_s
       end

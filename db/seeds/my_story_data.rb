@@ -1,10 +1,10 @@
 # My Story sections sample data
 def create_my_story_sections
   puts "Creating My Story sections..."
-  
+
   # Clear existing data
   MyStorySection.destroy_all
-  
+
   # Hero Section
   hero_section = MyStorySection.create!(
     section_type: 'hero',
@@ -16,7 +16,7 @@ def create_my_story_sections
   )
   puts "Created hero section: #{hero_section.title}"
 
-  # Timeline Section  
+  # Timeline Section
   timeline_section = MyStorySection.create!(
     section_type: 'timeline',
     position: 2,
@@ -24,7 +24,7 @@ def create_my_story_sections
     subtitle: '30年のキャリアで培った独自のスキルセット',
     content: '3つの時代を経て形成された、技術とビジネスを橋渡しする力',
     additional_data: {
-      years: ['1994', '2005', '2022']
+      years: [ '1994', '2005', '2022' ]
     },
     is_active: true
   )
@@ -40,7 +40,7 @@ def create_my_story_sections
     additional_data: {
       skills: [
         '課題の明確化・分析',
-        'モチベーション維持・管理', 
+        'モチベーション維持・管理',
         'レベル差のある人材の統率',
         '資格試験指導・目標管理',
         '情報処理国家試験指導'
@@ -121,10 +121,10 @@ def create_my_story_sections
     content: '「一人で要件定義から実装まで対応できる」という希少価値のあるエンジニアになることができました',
     additional_data: {
       skill_cards: [
-        { 'icon' => '👨‍🏫', 'title' => '講師経験', 'skills' => ['人材育成・管理', '課題分析力', 'PM基礎力'] },
-        { 'icon' => '🎯', 'title' => 'SE/PM経験', 'skills' => ['要件定義・業務分析', 'プロジェクト推進力', 'ステークホルダー調整'] },
-        { 'icon' => '💻', 'title' => 'プログラミング', 'skills' => ['Ruby/Rails開発', 'Webアプリケーション構築', 'アーキテクチャ設計'] },
-        { 'icon' => '🤖', 'title' => 'AI活用', 'skills' => ['ChatGPT API連携', 'AI効率化ツール開発', 'DXコンサルティング'] }
+        { 'icon' => '👨‍🏫', 'title' => '講師経験', 'skills' => [ '人材育成・管理', '課題分析力', 'PM基礎力' ] },
+        { 'icon' => '🎯', 'title' => 'SE/PM経験', 'skills' => [ '要件定義・業務分析', 'プロジェクト推進力', 'ステークホルダー調整' ] },
+        { 'icon' => '💻', 'title' => 'プログラミング', 'skills' => [ 'Ruby/Rails開発', 'Webアプリケーション構築', 'アーキテクチャ設計' ] },
+        { 'icon' => '🤖', 'title' => 'AI活用', 'skills' => [ 'ChatGPT API連携', 'AI効率化ツール開発', 'DXコンサルティング' ] }
       ],
       summary: '「一人で要件定義から実装まで対応できる」という希少価値のあるエンジニアになることができました'
     },
@@ -146,21 +146,21 @@ def create_my_story_sections
           description: 'お客様のビジネス課題を分析し、最適なシステムを一貫して構築',
           period: '6ヶ月',
           scale: '中規模',
-          technologies: ['Ruby/Rails', 'PostgreSQL', 'Docker', 'AWS']
+          technologies: [ 'Ruby/Rails', 'PostgreSQL', 'Docker', 'AWS' ]
         },
         {
           title: 'レガシーシステム モダン化',
           description: '古いシステムを現代的な技術スタックで再構築',
           period: '8ヶ月',
-          scale: '大規模', 
-          technologies: ['Python', 'Docker', 'AWS', 'Microservices']
+          scale: '大規模',
+          technologies: [ 'Python', 'Docker', 'AWS', 'Microservices' ]
         },
         {
           title: 'AI活用ツール開発',
           description: 'ChatGPT APIを活用した業務効率化ツールの開発',
           period: '3ヶ月',
           scale: '小規模',
-          technologies: ['ChatGPT API', 'React', 'Node.js', 'TypeScript']
+          technologies: [ 'ChatGPT API', 'React', 'Node.js', 'TypeScript' ]
         }
       ]
     },

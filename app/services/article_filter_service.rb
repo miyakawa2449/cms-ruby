@@ -25,14 +25,14 @@ class ArticleFilterService
 
   def filter_by_status(articles, status)
     return articles unless status.present?
-    
+
     case status
-    when 'published'
+    when "published"
       articles.published
-    when 'draft'
+    when "draft"
       articles.draft
-    when 'scheduled'
-      articles.where(status: 'scheduled')
+    when "scheduled"
+      articles.where(status: "scheduled")
     else
       articles.where(status: status)
     end
@@ -40,19 +40,19 @@ class ArticleFilterService
 
   def filter_by_category(articles, category_id)
     return articles unless category_id.present?
-    
+
     articles.joins(:categories).where(categories: { id: category_id })
   end
 
   def filter_by_tag(articles, tag_id)
     return articles unless tag_id.present?
-    
+
     articles.joins(:tags).where(tags: { id: tag_id })
   end
 
   def filter_by_search(articles, search_term)
     return articles unless search_term.present?
-    
+
     articles.where(
       "title ILIKE ? OR content ILIKE ? OR excerpt ILIKE ?",
       "%#{search_term}%", "%#{search_term}%", "%#{search_term}%"
@@ -61,7 +61,7 @@ class ArticleFilterService
 
   def filter_by_work_type(articles, work_type)
     return articles unless work_type.present?
-    
+
     articles.where(work_type: work_type)
   end
 
