@@ -28,6 +28,10 @@ services:
       RAILS_ENV: production
       RAILS_LOG_TO_STDOUT: true
       RAILS_SERVE_STATIC_FILES: true
+      # AWS Bedrock Configuration
+      AWS_BEDROCK_REGION: ${AWS_BEDROCK_REGION}
+      AWS_BEDROCK_ACCESS_KEY_ID: ${AWS_BEDROCK_ACCESS_KEY_ID}
+      AWS_BEDROCK_SECRET_ACCESS_KEY: ${AWS_BEDROCK_SECRET_ACCESS_KEY}
     volumes:
       - storage_data:/rails/storage
       - log_data:/rails/log
@@ -49,6 +53,10 @@ services:
       RAILS_ENV: production
       DATABASE_URL: postgresql://portfolio:${POSTGRES_PASSWORD}@portfolio-db:5432/portfolio_production
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      # AWS Bedrock Configuration
+      AWS_BEDROCK_REGION: ${AWS_BEDROCK_REGION}
+      AWS_BEDROCK_ACCESS_KEY_ID: ${AWS_BEDROCK_ACCESS_KEY_ID}
+      AWS_BEDROCK_SECRET_ACCESS_KEY: ${AWS_BEDROCK_SECRET_ACCESS_KEY}
     command: bundle exec rails solid_queue:start
     volumes:
       - storage_data:/rails/storage
