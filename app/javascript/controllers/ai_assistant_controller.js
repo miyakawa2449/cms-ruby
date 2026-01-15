@@ -75,16 +75,20 @@ export default class extends Controller {
   displaySummaryResults(summaries) {
     if (!this.hasSummaryResultsTarget) return
 
-    const html = summaries.map((summary, index) => `
+    const html = summaries.map((summary, index) => {
+      // Handle both object format {text: "..."} and string format
+      const text = typeof summary === 'object' ? summary.text : summary
+      return `
       <div class="p-3 bg-gray-50 rounded-md mb-2 hover:bg-gray-100 cursor-pointer border border-transparent hover:border-blue-300"
            data-action="click->ai-assistant#applySummary"
-           data-summary="${this.escapeHtml(summary)}">
+           data-summary="${this.escapeHtml(text)}">
         <div class="flex justify-between items-start">
-          <span class="text-sm text-gray-700 flex-1">${this.escapeHtml(summary)}</span>
+          <span class="text-sm text-gray-700 flex-1">${this.escapeHtml(text)}</span>
           <span class="text-xs text-blue-600 ml-2 whitespace-nowrap">選択</span>
         </div>
       </div>
-    `).join("")
+    `
+    }).join("")
 
     this.summaryResultsTarget.innerHTML = html
   }
@@ -135,13 +139,18 @@ export default class extends Controller {
   displaySlugResults(slugs) {
     if (!this.hasSlugResultsTarget) return
 
-    const html = slugs.map((slug, index) => `
+    const html = slugs.map((slugItem, index) => {
+      // Handle both object format {slug: "...", seo_score: 95} and string format
+      const slug = typeof slugItem === 'object' ? slugItem.slug : slugItem
+      const score = typeof slugItem === 'object' && slugItem.seo_score ? ` (${slugItem.seo_score}点)` : ''
+      return `
       <div class="inline-block px-3 py-1 bg-gray-100 rounded-full text-sm mr-2 mb-2 hover:bg-blue-100 cursor-pointer"
            data-action="click->ai-assistant#applySlug"
            data-slug="${this.escapeHtml(slug)}">
-        ${this.escapeHtml(slug)}
+        ${this.escapeHtml(slug)}${score}
       </div>
-    `).join("")
+    `
+    }).join("")
 
     this.slugResultsTarget.innerHTML = html
   }
@@ -194,17 +203,23 @@ export default class extends Controller {
 
     const suggested = suggestedTags || []
     const existing = existingTags || []
+    const existingNames = existing.map(t => typeof t === 'object' ? t.name : t)
 
     let html = '<div class="flex flex-wrap gap-2">'
 
     // Suggested tags (new)
-    suggested.forEach(tag => {
-      if (!existing.includes(tag)) {
+    suggested.forEach(tagItem => {
+      // Handle both object format {name: "...", confidence: 0.95} and string format
+      const tagName = typeof tagItem === 'object' ? tagItem.name : tagItem
+      const confidence = typeof tagItem === 'object' && tagItem.confidence
+        ? ` (${Math.round(tagItem.confidence * 100)}%)` : ''
+
+      if (!existingNames.includes(tagName)) {
         html += `
           <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 cursor-pointer hover:bg-blue-200"
                 data-action="click->ai-assistant#addTag"
-                data-tag="${this.escapeHtml(tag)}">
-            + ${this.escapeHtml(tag)}
+                data-tag="${this.escapeHtml(tagName)}">
+            + ${this.escapeHtml(tagName)}${confidence}
           </span>
         `
       }
