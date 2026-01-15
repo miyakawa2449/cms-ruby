@@ -71,19 +71,18 @@ module Ai
     private
 
     def build_client
-      credentials = if Rails.env.production?
-                      # Use IAM instance profile in production
-                      Aws::InstanceProfileCredentials.new
-                    else
-                      # Use environment variables in development/test
-                      # Prefer Bedrock-specific credentials, fallback to general AWS credentials
-                      access_key = ENV['AWS_BEDROCK_ACCESS_KEY_ID'] || ENV['AWS_ACCESS_KEY_ID']
-                      secret_key = ENV['AWS_BEDROCK_SECRET_ACCESS_KEY'] || ENV['AWS_SECRET_ACCESS_KEY']
-                      
-                      Aws::Credentials.new(access_key, secret_key)
-                    end
-
+      # Prefer Bedrock-specific credentials, fallback to general AWS credentials
+      access_key = ENV['AWS_BEDROCK_ACCESS_KEY_ID'] || ENV['AWS_ACCESS_KEY_ID']
+      secret_key = ENV['AWS_BEDROCK_SECRET_ACCESS_KEY'] || ENV['AWS_SECRET_ACCESS_KEY']
       region = ENV['AWS_BEDROCK_REGION'] || ENV['AWS_REGION'] || 'us-east-1'
+
+      # Use explicit credentials if provided (works on Lightsail and other environments)
+      # Fall back to IAM instance profile if no credentials are set (EC2 with IAM role)
+      credentials = if access_key.present? && secret_key.present?
+                      Aws::Credentials.new(access_key, secret_key)
+                    else
+                      Aws::InstanceProfileCredentials.new
+                    end
 
       Aws::BedrockRuntime::Client.new(
         region: region,
