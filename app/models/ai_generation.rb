@@ -2,7 +2,7 @@
 # Tracks all AI-generated content (summaries, tags, slugs, SEO meta, structures)
 class AiGeneration < ApplicationRecord
   # Valid generation types
-  GENERATION_TYPES = %w[summary tags slug seo_meta structure].freeze
+  GENERATION_TYPES = %w[summary title tags slug seo_meta structure].freeze
 
   # Valid statuses
   STATUSES = %w[pending completed failed].freeze
