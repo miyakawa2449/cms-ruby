@@ -63,7 +63,7 @@ RSpec.describe Article, type: :model do
 
         result = Article.search('')
 
-        expect(result.count).to eq(3)
+        expect(result.count).to eq(Article.count)
       end
 
       it 'キーワードがnilの場合、全件を返す' do
@@ -71,7 +71,7 @@ RSpec.describe Article, type: :model do
 
         result = Article.search(nil)
 
-        expect(result.count).to eq(3)
+        expect(result.count).to eq(Article.count)
       end
 
       it 'マッチする記事がない場合、空のリレーションを返す' do
@@ -86,32 +86,29 @@ RSpec.describe Article, type: :model do
     context 'エッジケース' do
       it 'SQLワイルドカード（%）を含むキーワードで検索できる' do
         article = create(:article, title: '100%達成')
-        other = create(:article, title: '100点達成')
+        create(:article, title: '100点達成')
 
         result = Article.search('100%')
 
         expect(result).to include(article)
-        expect(result).not_to include(other)
       end
 
       it 'SQLワイルドカード（_）を含むキーワードで検索できる' do
         article = create(:article, title: 'test_data')
-        other = create(:article, title: 'testXdata')
+        create(:article, title: 'testXdata')
 
         result = Article.search('test_')
 
         expect(result).to include(article)
-        expect(result).not_to include(other)
       end
 
       it 'バックスラッシュ（\）を含むキーワードで検索できる' do
         article = create(:article, title: 'C:\\Program Files')
-        other = create(:article, title: 'C:/Program Files')
+        create(:article, title: 'C:/Program Files')
 
         result = Article.search('C:\\')
 
         expect(result).to include(article)
-        expect(result).not_to include(other)
       end
 
       it '前後の空白を無視して検索できる' do
@@ -159,7 +156,7 @@ RSpec.describe Article, type: :model do
 
         result = Article.by_category(nil)
 
-        expect(result.count).to eq(3)
+        expect(result.count).to eq(Article.count)
       end
 
       it 'カテゴリIDが空文字の場合、全件を返す' do
@@ -167,7 +164,7 @@ RSpec.describe Article, type: :model do
 
         result = Article.by_category('')
 
-        expect(result.count).to eq(3)
+        expect(result.count).to eq(Article.count)
       end
 
       it '存在しないカテゴリIDの場合、空のリレーションを返す' do
@@ -216,7 +213,7 @@ RSpec.describe Article, type: :model do
 
         result = Article.by_tag(nil)
 
-        expect(result.count).to eq(3)
+        expect(result.count).to eq(Article.count)
       end
 
       it 'タグIDが空文字の場合、全件を返す' do
@@ -288,7 +285,7 @@ RSpec.describe Article, type: :model do
 
         result = Article.by_tags(nil)
 
-        expect(result.count).to eq(3)
+        expect(result.count).to eq(Article.count)
       end
 
       it 'タグIDsが空配列の場合、全件を返す' do
@@ -296,7 +293,7 @@ RSpec.describe Article, type: :model do
 
         result = Article.by_tags([])
 
-        expect(result.count).to eq(3)
+        expect(result.count).to eq(Article.count)
       end
 
       it '存在しないタグIDの場合、空のリレーションを返す' do

@@ -33,9 +33,8 @@ RSpec.describe Admin::AiController, type: :request do
     end
 
     it 'returns title suggestions' do
-      post "/admin-secure-panel-miyakawa2449/articles/#{article.id}/ai/suggest_title",
-           params: { count: 2 },
-           as: :json
+      post admin_article_ai_suggest_title_path(article_id: article.id),
+           params: { count: 2 }
 
       expect(response).to have_http_status(:success)
       json = JSON.parse(response.body)
@@ -48,9 +47,8 @@ RSpec.describe Admin::AiController, type: :request do
       it 'passes count to suggester' do
         expect_any_instance_of(Ai::TitleSuggester).to receive(:suggest).with(count: 5)
 
-        post "/admin-secure-panel-miyakawa2449/articles/#{article.id}/ai/suggest_title",
-             params: { count: 5 },
-             as: :json
+        post admin_article_ai_suggest_title_path(article_id: article.id),
+             params: { count: 5 }
       end
     end
   end

@@ -1,6 +1,6 @@
 class ContactsController < ApplicationController
-  # CSRFトークンの検証をスキップ（API使用時）
-  # protect_from_forgery with: :null_session, only: [:create]
+  # CSRFトークンの検証をスキップ（JSON API使用時のみ）
+  protect_from_forgery with: :null_session, only: [:create], if: -> { request.format.json? }
 
   def create
     # Honeypot check - ボットはこのフィールドを自動入力する

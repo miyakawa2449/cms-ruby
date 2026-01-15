@@ -14,16 +14,15 @@ RSpec.describe Ai::TitleSuggester, type: :service do
   describe '#suggest' do
     context 'when article has content' do
       it 'returns success with descriptive and engaging titles' do
-        # Mock Bedrock API response
-        allow(suggester).to receive(:call_bedrock_api).and_return(
-          {
-            "descriptive_titles" => [
-              { "title" => "わかりやすいタイトル1", "reason" => "内容を正確に表現" },
-              { "title" => "わかりやすいタイトル2", "reason" => "検索に最適化" }
+        mock_bedrock_client(
+          response_content: {
+            descriptive_titles: [
+              { title: "わかりやすいタイトル1", reason: "内容を正確に表現" },
+              { title: "わかりやすいタイトル2", reason: "検索に最適化" }
             ],
-            "engaging_titles" => [
-              { "title" => "クリックしたくなるタイトル1", "reason" => "好奇心を刺激" },
-              { "title" => "クリックしたくなるタイトル2", "reason" => "感情に訴える" }
+            engaging_titles: [
+              { title: "クリックしたくなるタイトル1", reason: "好奇心を刺激" },
+              { title: "クリックしたくなるタイトル2", reason: "感情に訴える" }
             ]
           }.to_json
         )
@@ -40,18 +39,24 @@ RSpec.describe Ai::TitleSuggester, type: :service do
     end
 
     context 'when article has no content' do
-      let(:article) { create(:article, content: nil) }
+      let(:article) { build(:article, content: nil) }
 
-      it 'raises an error' do
-        expect { suggester.suggest }.to raise_error(ArgumentError, "記事の本文が必要です")
+      it 'returns an error result' do
+        result = suggester.suggest
+
+        expect(result[:success]).to be false
+        expect(result[:error]).to include("記事の本文が必要です")
       end
     end
 
     context 'when article is nil' do
       let(:article) { nil }
 
-      it 'raises an error' do
-        expect { suggester.suggest }.to raise_error(ArgumentError, "記事が必要です")
+      it 'returns an error result' do
+        result = suggester.suggest
+
+        expect(result[:success]).to be false
+        expect(result[:error]).to include("記事が必要です")
       end
     end
   end
