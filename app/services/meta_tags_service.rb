@@ -14,9 +14,18 @@ class MetaTagsService
 
     og_title = article.og_title.presence || article.title
     og_description = article.og_description.presence || description
-    og_image = article.thumbnail_image.attached? ?
-              safe_url_for(article.thumbnail_image) :
-              default_og_image_url
+    og_image = if article.thumbnail_image.attached?
+                 if article.thumbnail_image.variable?
+                   # Twitterは2:1比率を推奨するため、OGP用は1200x628に固定
+                   Rails.application.routes.url_helpers.url_for(
+                     article.thumbnail_image.variant(resize_to_fill: [1200, 628])
+                   )
+                 else
+                   safe_url_for(article.thumbnail_image)
+                 end
+               else
+                 default_og_image_url
+               end
 
     build_meta_tags(
       title: article.title,
