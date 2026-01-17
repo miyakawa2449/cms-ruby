@@ -77,6 +77,9 @@ gem "image_processing", "~> 1.2"
 # Markdown processing
 gem "redcarpet", "~> 3.6"
 
+# ZIP file handling
+gem "rubyzip", "~> 2.3"
+
 # AWS Services
 gem "aws-sdk-sesv2", "~> 1.35"         # SES for email delivery
 gem "aws-sdk-rails", "~> 4.0"          # Rails integration

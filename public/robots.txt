@@ -17,5 +17,12 @@ Disallow: /api/
 # Active Storageの直接アクセスを制限（画像は記事ページ経由で取得）
 Disallow: /rails/active_storage/
 
+# SNSカード用クローラーはOGP画像取得を許可
+User-agent: Twitterbot
+Allow: /rails/active_storage/
+
+User-agent: facebookexternalhit
+Allow: /rails/active_storage/
+
 # サイトマップの場所
 Sitemap: https://miyakawa.codes/sitemap.xml
