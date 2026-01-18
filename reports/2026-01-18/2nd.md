@@ -81,10 +81,22 @@ package.json（Chart.js 4.5.1追加）
 - CSVエクスポート: 正常動作
 
 ## 次回最優先事項
-**Chart.jsグラフが描画されない問題のデバッグ**
 
+### 1. Chart.jsグラフが描画されない問題のデバッグ
 調査ポイント:
 1. Chart.jsがimportmap/ESMで正しく読み込まれているか
 2. ブラウザコンソールにエラーが出ていないか
 3. canvas要素とStimulusコントローラーの接続
 4. `@chart_data`がビューに正しく渡されているか
+
+### 2. AIモデルをClaude 4.5に更新
+**現状**: `ModelSelector`で古いモデルID（Claude 3.5 Sonnet / Claude 3 Haiku）を使用中
+
+**新しいモデルID**:
+- Haiku 4.5: `anthropic.claude-haiku-4-5-20251001-v1:0`
+- Sonnet 4.5: `anthropic.claude-sonnet-4-5-20250929-v1:0`
+
+**対応ファイル**: `app/services/ai/model_selector.rb`
+- `MODELS`定数のモデルIDを更新
+- `MODEL_COSTS`に新モデルのコスト情報を追加
+- クロスリージョン推論の場合は`us.`プレフィックスが必要か確認
