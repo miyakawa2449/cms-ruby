@@ -6,13 +6,13 @@
 
 ## Tasks
 
-- [ ] 1. Setup and Infrastructure
+- [x] 1. Setup and Infrastructure
   - ルーティングとコントローラの基本構造を作成
   - 必要なgemの追加（rubyzip）
   - _Requirements: 4.1, 4.2_
 
-- [ ] 2. Implement Export Services
-  - [ ] 2.1 Create DatabaseExportService
+- [x] 2. Implement Export Services
+  - [x] 2.1 Create DatabaseExportService
     - 全対象モデル（AdminUser、Article、Category、Tag、Section、SectionContent、MyStorySection、Contact、SiteSetting）のレコードをJSON化
     - Active Storageメタデータ（blobs、attachments）をエクスポート
     - メタデータ（exported_at、models_count）を生成
@@ -22,7 +22,7 @@
     - **Property 1: Export includes all model records**
     - **Validates: Requirements 1.2**
 
-  - [ ] 2.3 Create ActiveStorageExportService
+  - [x] 2.3 Create ActiveStorageExportService
     - storage/ディレクトリ全体を一時ディレクトリにコピー
     - 進捗ログを出力
     - _Requirements: 1.3_
@@ -31,7 +31,7 @@
     - **Property 2: Export includes all Active Storage files**
     - **Validates: Requirements 1.3**
 
-  - [ ] 2.5 Create ZipGeneratorService
+  - [x] 2.5 Create ZipGeneratorService
     - data.jsonを一時ディレクトリに書き込み
     - 一時ディレクトリの内容をZIPファイルに圧縮
     - 一時ファイルをクリーンアップ
@@ -41,8 +41,8 @@
     - **Property 3: Export generates valid ZIP structure**
     - **Validates: Requirements 1.4**
 
-- [ ] 3. Implement Export Controller Action
-  - [ ] 3.1 Add export action to Admin::DatabaseController
+- [x] 3. Implement Export Controller Action
+  - [x] 3.1 Add export action to Admin::DatabaseController
     - サービスクラスを呼び出してZIPファイルを生成
     - ZIPファイルをダウンロードレスポンスとして返す
     - エラーハンドリングとログ記録
@@ -52,11 +52,11 @@
     - エクスポートボタンからZIPダウンロードまでの流れをテスト
     - _Requirements: 1.5, 4.3_
 
-- [ ] 4. Checkpoint - Ensure export tests pass
+- [x] 4. Checkpoint - Ensure export tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Implement Import Services
-  - [ ] 5.1 Create ZipExtractorService
+- [x] 5. Implement Import Services
+  - [x] 5.1 Create ZipExtractorService
     - ZIPファイルを一時ディレクトリに解凍
     - data.jsonとstorageフォルダの存在を検証
     - 無効なZIPファイルのエラーハンドリング
@@ -66,7 +66,7 @@
     - 無効なZIPファイルのエラーケースをテスト
     - _Requirements: 5.1, 5.2_
 
-  - [ ] 5.3 Create DatabaseImportService
+  - [x] 5.3 Create DatabaseImportService
     - トランザクション内で既存データを削除
     - data.jsonからレコードを投入（外部キー制約を考慮した順序）
     - AdminUserのパスワードをリセット
@@ -94,7 +94,7 @@
     - **Property 7: Import transaction rollback on error**
     - **Validates: Requirements 5.3**
 
-  - [ ] 5.9 Create ActiveStorageImportService
+  - [x] 5.9 Create ActiveStorageImportService
     - 解凍されたstorageフォルダからファイルをコピー
     - 既存のstorageフォルダをバックアップ（オプション）
     - 進捗ログを出力
@@ -104,13 +104,13 @@
     - **Property 5: Import-Export round trip preserves Active Storage**
     - **Validates: Requirements 2.4, 6.2**
 
-- [ ] 6. Implement Import Controller Actions
-  - [ ] 6.1 Add import_form action to Admin::DatabaseController
+- [x] 6. Implement Import Controller Actions
+  - [x] 6.1 Add import_form action to Admin::DatabaseController
     - インポートフォームを表示
     - 本番環境では確認ダイアログを表示
     - _Requirements: 2.1, 7.4_
 
-  - [ ] 6.2 Add import action to Admin::DatabaseController
+  - [x] 6.2 Add import action to Admin::DatabaseController
     - アップロードされたZIPファイルを受け取る
     - サービスクラスを呼び出してインポート実行
     - 成功/エラーメッセージを表示
@@ -121,16 +121,16 @@
     - インポートフォームからデータ復元までの流れをテスト
     - _Requirements: 2.5, 4.5_
 
-- [ ] 7. Checkpoint - Ensure import tests pass
+- [x] 7. Checkpoint - Ensure import tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 8. Add UI Components
-  - [ ] 8.1 Add export/import buttons to admin dashboard
+- [x] 8. Add UI Components
+  - [x] 8.1 Add export/import buttons to admin dashboard
     - ダッシュボードビューにエクスポートボタンを追加
     - ダッシュボードビューにインポートボタンを追加
     - _Requirements: 4.1, 4.2_
 
-  - [ ] 8.2 Create import form view
+  - [x] 8.2 Create import form view
     - ファイルアップロードフォームを作成
     - 本番環境用の確認ダイアログを追加
     - _Requirements: 2.1, 7.4_
@@ -139,8 +139,8 @@
     - ボタンの表示とクリック動作をテスト
     - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
-- [ ] 9. Implement Security and Access Control
-  - [ ] 9.1 Add authorization checks
+- [x] 9. Implement Security and Access Control
+  - [x] 9.1 Add authorization checks
     - 非管理者ユーザのアクセスを拒否
     - Punditポリシーを作成（必要に応じて）
     - _Requirements: 7.1, 7.2_
@@ -157,13 +157,13 @@
     - **Property 11: Export includes encrypted data**
     - **Validates: Requirements 7.5**
 
-- [ ] 10. Final Integration and Documentation
-  - [ ] 10.1 Add comprehensive error handling
+- [x] 10. Final Integration and Documentation
+  - [x] 10.1 Add comprehensive error handling
     - 全サービスクラスにエラーハンドリングを追加
     - エラーメッセージの日本語化
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-  - [ ] 10.2 Add progress logging
+  - [x] 10.2 Add progress logging
     - エクスポート/インポートの進捗ログを追加
     - 処理時間と処理件数をログに出力
     - _Requirements: 8.2, 8.3, 8.5_
@@ -172,11 +172,11 @@
     - 無効なZIPファイル、data.json欠落などのエラーケースをテスト
     - _Requirements: 5.1, 5.2, 5.3, 5.4_
 
-  - [ ] 10.4 Update README with usage instructions
+  - [x] 10.4 Update README with usage instructions
     - エクスポート/インポート機能の使い方を記載
     - 注意事項（本番環境での使用、パスワードリセットなど）を記載
 
-- [ ] 11. Final checkpoint - Ensure all tests pass
+- [x] 11. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

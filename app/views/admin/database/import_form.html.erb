@@ -1,0 +1,160 @@
+<% content_for :page_title, "データベースインポート" %>
+
+<div class="max-w-3xl mx-auto">
+  <!-- ヘッダー -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">データベースインポート</h1>
+    <p class="mt-1 text-sm text-gray-500">
+      エクスポートしたZIPファイルからデータベースとActive Storageファイルを復元します。
+    </p>
+  </div>
+
+  <!-- 警告メッセージ -->
+  <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <div class="ml-3">
+        <h3 class="text-sm font-medium text-yellow-800">注意事項</h3>
+        <div class="mt-2 text-sm text-yellow-700">
+          <ul class="list-disc list-inside space-y-1">
+            <li><strong>既存のデータは全て削除されます</strong></li>
+            <li>インポート後、管理者パスワードは <code class="bg-yellow-100 px-1 rounded">password123</code> にリセットされます</li>
+            <li>処理中はブラウザを閉じないでください</li>
+            <% if @is_production %>
+              <li class="text-red-600 font-bold">本番環境です！十分に注意してください</li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 現在のデータ状況 -->
+  <div class="bg-white shadow rounded-lg mb-6">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">現在のデータ状況</h2>
+      <p class="mt-1 text-sm text-gray-500">インポートにより以下のデータが削除されます</p>
+    </div>
+    <div class="px-6 py-4">
+      <dl class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div>
+          <dt class="text-sm font-medium text-gray-500">管理ユーザー</dt>
+          <dd class="text-lg font-semibold text-gray-900"><%= @model_counts[:admin_users] %>件</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">記事</dt>
+          <dd class="text-lg font-semibold text-gray-900"><%= @model_counts[:articles] %>件</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">カテゴリ</dt>
+          <dd class="text-lg font-semibold text-gray-900"><%= @model_counts[:categories] %>件</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">タグ</dt>
+          <dd class="text-lg font-semibold text-gray-900"><%= @model_counts[:tags] %>件</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">セクション</dt>
+          <dd class="text-lg font-semibold text-gray-900"><%= @model_counts[:sections] %>件</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">お問い合わせ</dt>
+          <dd class="text-lg font-semibold text-gray-900"><%= @model_counts[:contacts] %>件</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <!-- インポートフォーム -->
+  <div class="bg-white shadow rounded-lg">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">ZIPファイルをアップロード</h2>
+    </div>
+    <div class="px-6 py-6">
+      <%= form_with url: import_admin_database_path, method: :post, multipart: true, local: true,
+                    data: { turbo: false }, class: "space-y-6" do |f| %>
+
+        <!-- ファイル選択 -->
+        <div>
+          <label for="zip_file" class="block text-sm font-medium text-gray-700 mb-2">
+            ZIPファイル
+          </label>
+          <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+            <div class="space-y-1 text-center">
+              <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <div class="flex text-sm text-gray-600">
+                <label for="zip_file" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                  <span>ファイルを選択</span>
+                  <%= file_field_tag :zip_file, accept: ".zip", class: "sr-only", id: "zip_file" %>
+                </label>
+                <p class="pl-1">またはドラッグ&ドロップ</p>
+              </div>
+              <p class="text-xs text-gray-500">ZIP形式のみ対応</p>
+            </div>
+          </div>
+          <p id="file-name" class="mt-2 text-sm text-gray-600"></p>
+        </div>
+
+        <% if @is_production %>
+          <!-- 本番環境用の確認チェックボックス -->
+          <div class="bg-red-50 border border-red-200 rounded-md p-4">
+            <div class="flex items-start">
+              <input type="checkbox" id="confirm_production" name="confirm_production" required
+                     class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded mt-0.5">
+              <label for="confirm_production" class="ml-2 text-sm text-red-700">
+                本番環境でデータを上書きすることを理解し、同意します
+              </label>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- 送信ボタン -->
+        <div class="flex items-center justify-between pt-4">
+          <%= link_to "キャンセル", admin_dashboard_path,
+                      class: "text-sm font-medium text-gray-600 hover:text-gray-500" %>
+
+          <button type="submit" id="submit-button"
+                  class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed">
+            <svg class="hidden animate-spin -ml-1 mr-2 h-4 w-4 text-white" id="loading-spinner" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span id="button-text">インポート実行</span>
+          </button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ファイル選択時にファイル名を表示
+  document.getElementById('zip_file').addEventListener('change', function(e) {
+    const fileName = e.target.files[0]?.name || '';
+    document.getElementById('file-name').textContent = fileName ? `選択中: ${fileName}` : '';
+  });
+
+  // フォーム送信時にローディング表示
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const fileInput = document.getElementById('zip_file');
+    if (!fileInput.files.length) {
+      e.preventDefault();
+      alert('ZIPファイルを選択してください');
+      return;
+    }
+
+    const button = document.getElementById('submit-button');
+    const spinner = document.getElementById('loading-spinner');
+    const buttonText = document.getElementById('button-text');
+
+    button.disabled = true;
+    spinner.classList.remove('hidden');
+    buttonText.textContent = 'インポート中...';
+  });
+</script>

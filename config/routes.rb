@@ -80,6 +80,15 @@ Rails.application.routes.draw do
         patch :toggle_active
       end
     end
+
+    # Database export/import
+    resource :database, only: [], controller: "database" do
+      collection do
+        get :export
+        get :import_form
+        post :import
+      end
+    end
   end
 
   # Public routes
