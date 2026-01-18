@@ -44,18 +44,34 @@ module Ai
     end
 
     # Invoke model with retry logic for transient errors
-    def invoke_model_with_retry(model_id, prompt, max_retries: 3, **options)
+    # @param model_id [String] Bedrock model ID
+    # @param prompt [String] User prompt
+    # @param max_retries [Integer] Maximum number of retry attempts (default: 3)
+    # @param base_delay [Float] Base delay in seconds for exponential backoff (default: 1.0)
+    # @param options [Hash] Additional options passed to invoke_model
+    # @return [Hash] { content: String, usage: { input_tokens: Integer, output_tokens: Integer } }
+    def invoke_model_with_retry(model_id, prompt, max_retries: 3, base_delay: 1.0, **options)
       retries = 0
+      last_error = nil
+
       begin
         invoke_model(model_id, prompt, **options)
-      rescue RateLimitError, TimeoutError => e
+      rescue RateLimitError, TimeoutError, ModelUnavailableError => e
+        last_error = e
         retries += 1
+
         if retries <= max_retries
-          sleep_time = 2**retries # Exponential backoff
-          Rails.logger.warn("AI request retry #{retries}/#{max_retries} after #{sleep_time}s: #{e.message}")
+          # Exponential backoff with jitter to avoid thundering herd
+          sleep_time = (base_delay * (2**retries)) + rand(0.0..0.5)
+          Rails.logger.warn(
+            "AI request retry #{retries}/#{max_retries} after #{sleep_time.round(2)}s " \
+            "(#{e.class.name}: #{e.message})"
+          )
           sleep(sleep_time)
           retry
         end
+
+        Rails.logger.error("AI request failed after #{max_retries} retries: #{e.message}")
         raise
       end
     end

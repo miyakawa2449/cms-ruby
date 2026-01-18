@@ -146,7 +146,7 @@ RSpec.describe "Admin::Ai", type: :request do
       end
 
       it "記事構成案を返す" do
-        post admin_ai_suggest_structure_path, params: { topic: 'Railsのテスト' }
+        post admin_ai_suggest_structure_path, params: { topic: 'Railsのテスト', format: 'json' }
 
         expect(response).to have_http_status(:success)
         json = JSON.parse(response.body)

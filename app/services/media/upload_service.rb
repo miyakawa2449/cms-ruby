@@ -52,14 +52,10 @@ module Media
 
       # Analyze blob for dimensions
       blob.analyze unless blob.analyzed?
+      blob.reload
 
-      # Update metadata with dimensions
-      if blob.metadata[:width] && blob.metadata[:height]
-        metadata.update(
-          width: blob.metadata[:width],
-          height: blob.metadata[:height]
-        )
-      end
+      width, height = extract_dimensions(blob)
+      metadata.update(width: width, height: height) if width && height
 
       results[:uploaded] << format_success(blob, metadata)
     rescue => e
@@ -73,6 +69,58 @@ module Media
         mime_type: blob.content_type,
         file_size: blob.byte_size
       )
+    end
+
+    def extract_dimensions(blob)
+      width = blob.metadata[:width]
+      height = blob.metadata[:height]
+      return [ width, height ] if width && height
+
+      data = blob.download
+
+      if data.start_with?("\xFF\xD8".b)
+        read_jpeg_dimensions(data)
+      elsif data.start_with?("\x89PNG\r\n\x1A\n".b)
+        width, height = data.byteslice(16, 8).unpack("N2")
+        [ width, height ]
+      elsif data.start_with?("GIF87a") || data.start_with?("GIF89a")
+        width, height = data.byteslice(6, 4).unpack("v2")
+        [ width, height ]
+      else
+        [ nil, nil ]
+      end
+    rescue => e
+      Rails.logger.warn "Failed to extract image dimensions: #{e.message}"
+      [ nil, nil ]
+    end
+
+    def read_jpeg_dimensions(data)
+      i = 2
+      while i < data.bytesize
+        i += 1 while i < data.bytesize && data.getbyte(i) != 0xFF
+        break if i >= data.bytesize
+        i += 1 while i < data.bytesize && data.getbyte(i) == 0xFF
+        break if i >= data.bytesize
+        marker = data.getbyte(i)
+        i += 1
+        next if marker == 0xD8 || marker == 0xD9
+        break if i + 2 > data.bytesize
+        length = data.byteslice(i, 2).unpack1("n")
+        i += 2
+        break if length < 2
+        sof_markers = [
+          0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7,
+          0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF
+        ]
+        if sof_markers.include?(marker)
+          height = data.byteslice(i + 1, 2).unpack1("n")
+          width = data.byteslice(i + 3, 2).unpack1("n")
+          return [ width, height ]
+        end
+        i += length - 2
+      end
+
+      [ nil, nil ]
     end
 
     def format_success(blob, metadata)

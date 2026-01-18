@@ -5,14 +5,16 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
     // Form fields
-    "title", "excerpt", "slug", "tagNames",
+    "title", "excerpt", "slug", "tagNames", "body",
     "metaDescription", "metaKeywords", "ogTitle", "ogDescription",
+    // Structure suggestion fields
+    "structureTopic", "structureDetailLevel",
     // Result display areas
-    "titleResults", "summaryResults", "slugResults", "tagResults", "seoResults",
+    "titleResults", "summaryResults", "slugResults", "tagResults", "seoResults", "structureResults",
     // Loading indicators
-    "titleLoading", "summaryLoading", "slugLoading", "tagLoading", "seoLoading",
+    "titleLoading", "summaryLoading", "slugLoading", "tagLoading", "seoLoading", "structureLoading",
     // Buttons
-    "titleButton", "summaryButton", "slugButton", "tagButton", "seoButton"
+    "titleButton", "summaryButton", "slugButton", "tagButton", "seoButton", "structureButton"
   ]
 
   static values = {
@@ -469,6 +471,105 @@ export default class extends Controller {
     })
 
     this.clearResults("seoResults")
+  }
+
+  // ===== Structure Suggestion =====
+  async suggestStructure(event) {
+    event.preventDefault()
+
+    const topic = this.hasStructureTopicTarget ? this.structureTopicTarget.value : ""
+    if (!topic.trim()) {
+      this.showError("structureResults", "トピックを入力してください")
+      return
+    }
+
+    const detailLevel = this.hasStructureDetailLevelTarget
+      ? this.structureDetailLevelTarget.value
+      : "detailed"
+
+    this.setLoading("structure", true)
+    this.clearResults("structureResults")
+
+    try {
+      const response = await fetch(`${this.baseUrlValue}/ai/suggest_structure`, {
+        method: "POST",
+        headers: this.headers,
+        body: JSON.stringify({
+          topic: topic,
+          detail_level: detailLevel,
+          format: "markdown"
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        this.displayStructureResults(data.data.structure)
+      } else {
+        this.showError("structureResults", data.error || "構成提案の取得に失敗しました")
+      }
+    } catch (error) {
+      console.error("Structure suggestion error:", error)
+      this.showError("structureResults", "通信エラーが発生しました")
+    } finally {
+      this.setLoading("structure", false)
+    }
+  }
+
+  displayStructureResults(structure) {
+    if (!this.hasStructureResultsTarget) return
+
+    const html = `
+      <div class="space-y-3">
+        <div class="bg-gray-50 rounded-md p-4 border border-gray-200">
+          <pre class="text-sm text-gray-800 whitespace-pre-wrap font-mono">${this.escapeHtml(structure)}</pre>
+        </div>
+        <div class="flex gap-2">
+          <button type="button"
+                  class="flex-1 py-2 px-4 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
+                  data-action="click->ai-assistant#applyStructure"
+                  data-structure="${this.escapeHtml(structure)}">
+            本文に挿入
+          </button>
+          <button type="button"
+                  class="py-2 px-4 bg-gray-200 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-300"
+                  data-action="click->ai-assistant#copyStructure"
+                  data-structure="${this.escapeHtml(structure)}">
+            コピー
+          </button>
+        </div>
+      </div>
+    `
+    this.structureResultsTarget.innerHTML = html
+  }
+
+  applyStructure(event) {
+    const structure = event.currentTarget.dataset.structure
+    if (this.hasBodyTarget) {
+      // Insert at cursor position or at the beginning if no body content
+      const currentContent = this.bodyTarget.value
+      if (currentContent.trim()) {
+        this.bodyTarget.value = structure + "\n\n" + currentContent
+      } else {
+        this.bodyTarget.value = structure
+      }
+      this.highlightField(this.bodyTarget)
+    }
+    this.clearResults("structureResults")
+  }
+
+  copyStructure(event) {
+    const structure = event.currentTarget.dataset.structure
+    navigator.clipboard.writeText(structure).then(() => {
+      // Show brief confirmation
+      const originalText = event.currentTarget.textContent
+      event.currentTarget.textContent = "コピーしました"
+      setTimeout(() => {
+        event.currentTarget.textContent = originalText
+      }, 1500)
+    }).catch(err => {
+      console.error("Copy failed:", err)
+    })
   }
 
   // ===== Helper Methods =====

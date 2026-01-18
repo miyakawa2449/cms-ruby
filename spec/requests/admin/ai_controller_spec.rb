@@ -34,8 +34,12 @@ RSpec.describe Admin::AiController, type: :request do
 
     it 'returns title suggestions' do
       post admin_article_ai_suggest_title_path(article_id: article.id),
-           params: { count: 2 }
+           params: { count: 2 },
+           headers: { "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" }
 
+      puts "status=#{response.status}"
+      puts "body=#{response.body}"
+      puts "content_type=#{response.headers['Content-Type']}"
       expect(response).to have_http_status(:success)
       json = JSON.parse(response.body)
       expect(json['success']).to be true

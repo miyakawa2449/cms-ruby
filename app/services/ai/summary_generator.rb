@@ -62,23 +62,35 @@ module Ai
 
     def build_prompt(length, count)
       max_chars = LENGTH_CONFIGS[length][:max_chars]
+      content_preview = article.content.truncate(4000)
 
       <<~PROMPT
-        以下の記事の要約を#{max_chars}文字以内で#{count}つ生成してください。
+        あなたは経験豊富なテクニカルライターです。
+        以下の技術記事を分析し、#{count}つの異なる視点から要約を作成してください。
 
-        記事タイトル: #{article.title}
+        【記事タイトル】
+        #{article.title}
 
-        記事本文:
-        #{article.content.truncate(5000)}
+        【記事本文】
+        #{content_preview}
 
-        要件:
-        - 記事の主要なポイントを簡潔にまとめる
-        - #{max_chars}文字以内に収める
-        - 読者の興味を引く表現を使う
-        - #{count}つの異なる視点から要約を作成
-        - SEOを意識した自然な文章
+        【タスク】
+        #{max_chars}文字以内の要約を#{count}つ作成してください。
+        それぞれ異なるアプローチで記事の価値を伝えてください：
 
-        出力形式（JSON）:
+        1. **内容中心型**: 記事で解説されている技術・手法の本質を簡潔に説明
+        2. **課題解決型**: 読者が得られるメリット・解決できる課題を強調
+        3. **学習誘導型**: 記事を読むことで学べる具体的なスキルを提示
+
+        【要件】
+        - 各要約は必ず#{max_chars}文字以内
+        - 技術的に正確な表現を使用
+        - 読者の興味を引く導入にする
+        - 記事の核心的な価値を伝える
+        - 自然で読みやすい日本語
+
+        【出力形式】
+        以下のJSON形式で出力してください：
         {
           "summaries": [
             {"text": "要約1", "length": 文字数},
@@ -87,7 +99,7 @@ module Ai
           ]
         }
 
-        JSONのみを出力してください。
+        注意：JSONのみを出力し、説明文は含めないでください。
       PROMPT
     end
 

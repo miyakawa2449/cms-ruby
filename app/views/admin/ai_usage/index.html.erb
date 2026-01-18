@@ -1,0 +1,286 @@
+<% content_for :title, "AI使用統計" %>
+
+<div class="max-w-7xl mx-auto">
+  <!-- ヘッダー -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">AI使用統計</h1>
+    <div class="flex gap-2">
+      <%= link_to export_admin_ai_usage_index_path(start_date: @start_date, end_date: @end_date),
+                  class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50",
+                  data: { turbo: false } do %>
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        CSVエクスポート
+      <% end %>
+    </div>
+  </div>
+
+  <!-- サマリーカード -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <!-- 今日 -->
+    <div class="bg-white rounded-lg shadow p-4">
+      <div class="text-sm font-medium text-gray-500">今日</div>
+      <div class="mt-1">
+        <div class="text-2xl font-semibold text-gray-900"><%= @summary[:today][:requests] %> <span class="text-sm font-normal text-gray-500">リクエスト</span></div>
+        <div class="text-sm text-gray-500">$<%= number_with_precision(@summary[:today][:cost], precision: 4) %></div>
+      </div>
+    </div>
+
+    <!-- 今月 -->
+    <div class="bg-white rounded-lg shadow p-4">
+      <div class="text-sm font-medium text-gray-500">今月</div>
+      <div class="mt-1">
+        <div class="text-2xl font-semibold text-gray-900"><%= @summary[:this_month][:requests] %> <span class="text-sm font-normal text-gray-500">リクエスト</span></div>
+        <div class="text-sm text-gray-500">$<%= number_with_precision(@summary[:this_month][:cost], precision: 4) %></div>
+      </div>
+    </div>
+
+    <!-- コスト傾向 -->
+    <div class="bg-white rounded-lg shadow p-4">
+      <div class="text-sm font-medium text-gray-500">コスト（前月比）</div>
+      <div class="mt-1">
+        <% trend = @summary[:trends][:cost] %>
+        <div class="flex items-center">
+          <% if trend > 0 %>
+            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+            </svg>
+            <span class="text-2xl font-semibold text-red-600 ml-1">+<%= trend %>%</span>
+          <% elsif trend < 0 %>
+            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path>
+            </svg>
+            <span class="text-2xl font-semibold text-green-600 ml-1"><%= trend %>%</span>
+          <% else %>
+            <span class="text-2xl font-semibold text-gray-600">±0%</span>
+          <% end %>
+        </div>
+        <div class="text-sm text-gray-500">先月: $<%= number_with_precision(@summary[:last_month][:cost], precision: 4) %></div>
+      </div>
+    </div>
+
+    <!-- トークン -->
+    <div class="bg-white rounded-lg shadow p-4">
+      <div class="text-sm font-medium text-gray-500">今月の総トークン</div>
+      <div class="mt-1">
+        <div class="text-2xl font-semibold text-gray-900"><%= number_with_delimiter(@summary[:this_month][:tokens]) %></div>
+        <div class="text-sm text-gray-500">入力 + 出力</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 日付フィルター -->
+  <div class="bg-white rounded-lg shadow p-4 mb-6">
+    <%= form_with url: admin_ai_usage_index_path, method: :get, local: true, class: "flex flex-wrap items-end gap-4" do |f| %>
+      <div>
+        <label for="start_date" class="block text-sm font-medium text-gray-700">開始日</label>
+        <input type="date" name="start_date" id="start_date" value="<%= @start_date %>"
+               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+      </div>
+      <div>
+        <label for="end_date" class="block text-sm font-medium text-gray-700">終了日</label>
+        <input type="date" name="end_date" id="end_date" value="<%= @end_date %>"
+               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+      </div>
+      <div>
+        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          フィルター
+        </button>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <!-- 日次使用グラフ -->
+    <div class="bg-white rounded-lg shadow p-4">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">日次リクエスト数（過去30日）</h2>
+      <div class="h-64">
+        <canvas id="dailyRequestsChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 日次コストグラフ -->
+    <div class="bg-white rounded-lg shadow p-4">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">日次コスト（過去30日）</h2>
+      <div class="h-64">
+        <canvas id="dailyCostChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <!-- 機能別使用状況 -->
+    <div class="bg-white rounded-lg shadow p-4">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">機能別使用状況</h2>
+      <% if @usage_by_feature.any? %>
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">機能</th>
+              <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">回数</th>
+              <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">トークン</th>
+              <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">コスト</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <% @usage_by_feature.each do |usage| %>
+              <tr>
+                <td class="px-3 py-2 text-sm text-gray-900"><%= usage[:feature_label] %></td>
+                <td class="px-3 py-2 text-sm text-gray-500 text-right"><%= number_with_delimiter(usage[:count]) %></td>
+                <td class="px-3 py-2 text-sm text-gray-500 text-right"><%= number_with_delimiter(usage[:tokens]) %></td>
+                <td class="px-3 py-2 text-sm text-gray-500 text-right">$<%= number_with_precision(usage[:cost], precision: 4) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="text-sm text-gray-500">指定期間のデータがありません</p>
+      <% end %>
+    </div>
+
+    <!-- モデル別使用状況 -->
+    <div class="bg-white rounded-lg shadow p-4">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">モデル別使用状況</h2>
+      <% if @model_breakdown.any? %>
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">モデル</th>
+              <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">回数</th>
+              <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">トークン</th>
+              <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">コスト</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <% @model_breakdown.each do |model| %>
+              <tr>
+                <td class="px-3 py-2 text-sm text-gray-900 font-mono text-xs"><%= model[:model] %></td>
+                <td class="px-3 py-2 text-sm text-gray-500 text-right"><%= number_with_delimiter(model[:requests]) %></td>
+                <td class="px-3 py-2 text-sm text-gray-500 text-right"><%= number_with_delimiter(model[:tokens]) %></td>
+                <td class="px-3 py-2 text-sm text-gray-500 text-right">$<%= number_with_precision(model[:cost], precision: 4) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="text-sm text-gray-500">指定期間のデータがありません</p>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- 最近のAI生成 -->
+  <div class="bg-white rounded-lg shadow p-4">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">最近のAI生成</h2>
+    <% if @summary[:recent_generations].any? %>
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead>
+          <tr>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">日時</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">機能</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">記事</th>
+            <th class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">ステータス</th>
+            <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">コスト</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <% @summary[:recent_generations].each do |gen| %>
+            <tr>
+              <td class="px-3 py-2 text-sm text-gray-500"><%= gen[:created_at].strftime("%m/%d %H:%M") %></td>
+              <td class="px-3 py-2 text-sm text-gray-900"><%= gen[:feature_label] %></td>
+              <td class="px-3 py-2 text-sm text-gray-500 max-w-xs truncate"><%= gen[:article_title] || "-" %></td>
+              <td class="px-3 py-2 text-center">
+                <% case gen[:status] %>
+                <% when "completed" %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <%= gen[:status_label] %>
+                  </span>
+                <% when "failed" %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                    <%= gen[:status_label] %>
+                  </span>
+                <% else %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    <%= gen[:status_label] %>
+                  </span>
+                <% end %>
+              </td>
+              <td class="px-3 py-2 text-sm text-gray-500 text-right">$<%= number_with_precision(gen[:cost], precision: 4) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p class="text-sm text-gray-500">まだAI生成の履歴がありません</p>
+    <% end %>
+  </div>
+</div>
+
+<script type="module">
+  import { Chart, registerables } from 'chart.js';
+  Chart.register(...registerables);
+
+  const chartData = <%= raw @chart_data.to_json %>;
+
+  // 日次リクエストグラフ
+  new Chart(document.getElementById('dailyRequestsChart'), {
+    type: 'bar',
+    data: {
+      labels: chartData.labels,
+      datasets: [{
+        label: 'リクエスト数',
+        data: chartData.datasets.requests,
+        backgroundColor: 'rgba(79, 70, 229, 0.5)',
+        borderColor: 'rgb(79, 70, 229)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1 }
+        }
+      },
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+
+  // 日次コストグラフ
+  new Chart(document.getElementById('dailyCostChart'), {
+    type: 'line',
+    data: {
+      labels: chartData.labels,
+      datasets: [{
+        label: 'コスト (USD)',
+        data: chartData.datasets.cost,
+        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+        borderColor: 'rgb(16, 185, 129)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: function(value) {
+              return '$' + value.toFixed(4);
+            }
+          }
+        }
+      },
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+</script>

@@ -115,6 +115,7 @@
           <%= form.text_area :content,
               rows: 20,
               id: "article_content",
+              data: { ai_assistant_target: "body" },
               class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm font-mono",
               placeholder: "# 見出し
 
@@ -303,6 +304,63 @@ puts 'Hello, World!'
           </p>
         </div>
       <% end %>
+
+      <!-- AI構成提案パネル -->
+      <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">
+          <span class="flex items-center">
+            <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+            </svg>
+            AI構成提案
+          </span>
+        </h3>
+        <p class="text-xs text-gray-500 mb-4">トピックを入力すると、AIが記事の構成（見出し構成）を提案します。</p>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">トピック</label>
+            <input type="text"
+                   data-ai-assistant-target="structureTopic"
+                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+                   placeholder="例: Railsのパフォーマンス最適化">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">詳細度</label>
+            <select data-ai-assistant-target="structureDetailLevel"
+                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
+              <option value="basic">基本（3〜4セクション）</option>
+              <option value="detailed" selected>詳細（5〜7セクション）</option>
+              <option value="comprehensive">包括的（8〜10セクション）</option>
+            </select>
+          </div>
+
+          <button type="button"
+                  data-action="click->ai-assistant#suggestStructure"
+                  data-ai-assistant-target="structureButton"
+                  class="w-full inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            構成を提案
+          </button>
+
+          <!-- Loading indicator -->
+          <div data-ai-assistant-target="structureLoading" class="hidden">
+            <div class="flex items-center justify-center py-4">
+              <svg class="animate-spin h-5 w-5 text-purple-600 mr-2" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span class="text-sm text-purple-600">構成を生成中...</span>
+            </div>
+          </div>
+
+          <!-- Results container -->
+          <div data-ai-assistant-target="structureResults"></div>
+        </div>
+      </div>
 
       <!-- 公開設定 -->
       <div class="bg-white shadow rounded-lg p-6">

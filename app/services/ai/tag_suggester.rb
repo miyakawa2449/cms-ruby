@@ -50,35 +50,46 @@ module Ai
 
     def build_prompt(max_tags, existing_tags)
       existing_tags_list = existing_tags.any? ? existing_tags.join(", ") : "なし"
+      content_preview = article.content.truncate(4000)
 
       <<~PROMPT
-        以下の記事に適切なタグを#{max_tags}個まで提案してください。
+        あなたは技術ブログのコンテンツ分類の専門家です。
+        以下の記事を分析し、最適なタグを#{max_tags}個まで提案してください。
 
-        記事タイトル: #{article.title}
+        【記事タイトル】
+        #{article.title}
 
-        記事本文:
-        #{article.content.truncate(5000)}
+        【記事本文】
+        #{content_preview}
 
-        システムに存在する既存タグ:
+        【既存のタグ一覧】
         #{existing_tags_list}
 
-        要件:
-        - 記事の内容を的確に表すタグを選択
-        - 既存タグとのマッチングを優先
-        - 新規タグも提案可能（既存にない場合）
-        - 各タグの関連度（confidence）を0-1で評価
-        - タグは具体的で検索しやすいもの
-        - 日本語タグを優先
+        【タグ選定の基準】
+        1. **技術キーワード**: 使用されているプログラミング言語、フレームワーク、ツール
+        2. **トピック分類**: 記事の主題（パフォーマンス、セキュリティ、テスト等）
+        3. **レベル**: 初心者向け、中級者向け、上級者向け（該当する場合）
+        4. **カテゴリ**: チュートリアル、解説、Tips、トラブルシューティング等
 
-        出力形式（JSON）:
+        【要件】
+        - 既存タグとの完全一致を最優先（表記揺れを避ける）
+        - 一般的すぎるタグは避ける（例：「プログラミング」より「Ruby」）
+        - 各タグの関連度（confidence）を0.0〜1.0で評価
+        - 日本語タグを基本とするが、技術用語は英語可
+        - SEO効果の高い具体的なタグを選択
+
+        【出力形式】
+        以下のJSON形式で出力してください：
         {
           "tags": [
             {"name": "タグ名", "confidence": 0.98, "existing": true},
-            {"name": "タグ名", "confidence": 0.85, "existing": false}
+            {"name": "新規タグ名", "confidence": 0.85, "existing": false}
           ]
         }
 
-        JSONのみを出力してください。
+        注意：
+        - JSONのみを出力し、説明文は含めないでください
+        - confidenceが高い順に並べてください
       PROMPT
     end
 

@@ -53,6 +53,13 @@ Rails.application.routes.draw do
       get "usage_stats", to: "ai#usage_stats"
     end
 
+    # AI使用統計
+    resources :ai_usage, only: [ :index ] do
+      collection do
+        get :export
+      end
+    end
+
     resources :categories do
       member do
         patch :move_up

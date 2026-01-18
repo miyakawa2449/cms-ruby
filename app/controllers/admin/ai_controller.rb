@@ -2,7 +2,7 @@
 # Provides summary generation, tag suggestions, slug generation, and SEO meta generation
 class Admin::AiController < Admin::BaseController
   before_action :set_article
-  before_action :check_ai_availability, only: [ :generate_summary, :suggest_tags, :generate_slug, :generate_seo_meta, :suggest_title ]
+  before_action :check_ai_availability, only: [ :generate_summary, :suggest_tags, :generate_slug, :generate_seo_meta, :suggest_title, :suggest_structure ]
 
   # POST /admin/articles/:article_id/ai/suggest_title
   def suggest_title
@@ -77,12 +77,17 @@ class Admin::AiController < Admin::BaseController
   end
 
   # POST /admin/ai/suggest_structure
+  # Suggests article structure based on a topic
+  # @param topic [String] Article topic (required)
+  # @param detail_level [String] 'basic', 'detailed', or 'comprehensive' (default: 'detailed')
+  # @param format [String] 'markdown' or 'json' (default: 'markdown')
   def suggest_structure
     suggester = Ai::StructureSuggester.new(admin_user: current_admin_user)
 
     result = suggester.suggest(
       topic: params[:topic],
-      detail_level: params[:detail_level] || "detailed"
+      detail_level: params[:detail_level] || "detailed",
+      format: params[:format] || "markdown"
     )
 
     render json: result

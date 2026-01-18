@@ -5,17 +5,19 @@ module Ai
     # Suggest article structure based on a topic
     # @param topic [String] Article topic or theme
     # @param detail_level [String] 'basic', 'detailed', or 'comprehensive'
-    # @return [Hash] { success: Boolean, data: { structure: Hash } }
-    def suggest(topic:, detail_level: "detailed")
+    # @param format [String] 'json' or 'markdown'
+    # @return [Hash] { success: Boolean, data: { structure: Hash/String } }
+    def suggest(topic:, detail_level: "detailed", format: "markdown")
       begin
         validate_topic!(topic)
         validate_detail_level!(detail_level)
+        validate_format!(format)
 
         generation = create_generation_record(topic)
-        prompt = build_prompt(topic, detail_level)
+        prompt = format == "markdown" ? build_markdown_prompt(topic, detail_level) : build_json_prompt(topic, detail_level)
         response = bedrock_client.invoke_model(model_id, prompt)
 
-        structure = parse_structure(response[:content])
+        structure = format == "markdown" ? response[:content].strip : parse_structure(response[:content])
         complete_generation!(generation, { structure: structure }, response[:usage])
 
         build_result(
@@ -42,37 +44,88 @@ module Ai
     private
 
     def validate_topic!(topic)
-      raise Ai::ValidationError.new("Topic is required", field: :topic) if topic.blank?
+      raise Ai::ValidationError.new("トピックを入力してください", field: :topic) if topic.blank?
     end
 
     def validate_detail_level!(level)
       valid_levels = %w[basic detailed comprehensive]
       unless valid_levels.include?(level)
-        raise Ai::ValidationError.new("Invalid detail level: #{level}", field: :detail_level)
+        raise Ai::ValidationError.new("無効な詳細レベルです: #{level}", field: :detail_level)
       end
     end
 
-    def build_prompt(topic, detail_level)
-      section_count = case detail_level
-      when "basic" then "3-4"
-      when "detailed" then "5-7"
-      when "comprehensive" then "8-10"
+    def validate_format!(format)
+      valid_formats = %w[json markdown]
+      unless valid_formats.include?(format)
+        raise Ai::ValidationError.new("無効な出力形式です: #{format}", field: :format)
       end
+    end
+
+    def build_markdown_prompt(topic, detail_level)
+      section_count = section_count_for(detail_level)
 
       <<~PROMPT
-        以下のトピックについて、技術ブログ記事の構成案を作成してください。
+        あなたはプロの技術ライターです。以下のトピックについて、技術ブログ記事の構成（アウトライン）を作成してください。
 
-        トピック: #{topic}
-        詳細度: #{detail_level}（#{section_count}セクション程度）
+        【トピック】
+        #{topic}
 
-        要件:
+        【要件】
+        - #{section_count}程度のセクション構成
+        - 論理的で読みやすい流れ
+        - 読者が理解しやすい順序
+        - 実践的な内容を含む
+
+        【出力形式】
+        Markdown形式の見出し構成のみを出力してください。
+        - H2（##）を主要セクション
+        - H3（###）をサブセクション
+        - 各見出しの下に1行の簡単な説明（コメントとして）
+
+        【出力例】
+        ## はじめに
+        <!-- この記事の目的と対象読者について説明 -->
+
+        ## 基本概念
+        <!-- 主要な概念や用語の解説 -->
+
+        ### 重要な用語
+        <!-- 理解に必要な専門用語の説明 -->
+
+        ## 実装方法
+        <!-- 具体的な実装手順を解説 -->
+
+        ## まとめ
+        <!-- 記事の要点と次のステップ -->
+
+        【注意事項】
+        - 必ず日本語で回答してください
+        - Markdown形式の見出しとコメントのみを出力してください
+        - 説明文は不要です
+      PROMPT
+    end
+
+    def build_json_prompt(topic, detail_level)
+      section_count = section_count_for(detail_level)
+
+      <<~PROMPT
+        あなたはプロの技術ライターです。以下のトピックについて、技術ブログ記事の構成案を作成してください。
+
+        【トピック】
+        #{topic}
+
+        【詳細度】
+        #{detail_level}（#{section_count}程度）
+
+        【要件】
         - 論理的で読みやすい構成
         - 各セクションに適切な見出し（H2/H3）
         - 各セクションの簡単な説明文
         - 推奨文字数（合計と各セクション）
         - 関連トピックの提案
 
-        出力形式（JSON）:
+        【出力形式】
+        以下のJSON形式で出力してください：
         {
           "title_suggestions": ["タイトル案1", "タイトル案2"],
           "sections": [
@@ -96,8 +149,18 @@ module Ai
           "keywords": ["キーワード1", "キーワード2"]
         }
 
-        JSONのみを出力してください。
+        【注意事項】
+        - 必ず日本語で回答してください
+        - JSONのみを出力してください（説明文は不要）
       PROMPT
+    end
+
+    def section_count_for(detail_level)
+      case detail_level
+      when "basic" then "3〜4セクション"
+      when "detailed" then "5〜7セクション"
+      when "comprehensive" then "8〜10セクション"
+      end
     end
 
     def parse_structure(content)
