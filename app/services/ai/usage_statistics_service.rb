@@ -60,7 +60,7 @@ module Ai
         .select(
           "generation_type",
           "COUNT(*) as count",
-          "SUM(input_tokens + output_tokens) as total_tokens",
+          "SUM(tokens_used) as total_tokens",
           "SUM(cost) as total_cost"
         )
         .order("count DESC")
@@ -116,8 +116,7 @@ module Ai
           "記事ID",
           "記事タイトル",
           "モデル",
-          "入力トークン",
-          "出力トークン",
+          "トークン合計",
           "コスト(USD)",
           "ステータス"
         ]
@@ -128,9 +127,8 @@ module Ai
             feature_label(gen.generation_type),
             gen.article_id,
             gen.article&.title || "-",
-            gen.model_id || "-",
-            gen.input_tokens,
-            gen.output_tokens,
+            gen.model_used || "-",
+            gen.tokens_used,
             gen.cost&.round(6) || 0,
             status_label(gen.status)
           ]
