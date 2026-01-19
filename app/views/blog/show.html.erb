@@ -177,7 +177,7 @@
                   <div class="p-6">
                     <% if article.categories.any? %>
                       <div class="flex gap-2 mb-3">
-                        <% article.categories.limit(1).each do |category| %>
+                        <% article.categories.first(1).each do |category| %>
                           <span class="text-xs font-medium px-2 py-1 rounded text-white"
                                 style="background-color: <%= category.color || '#3B82F6' %>;">
                             <%= category.name %>

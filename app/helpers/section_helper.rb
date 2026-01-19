@@ -3,6 +3,8 @@ module SectionHelper
 
   # Aboutセクションの情報を取得
   def about_section
+    return @about_section if defined?(@about_section) && @about_section
+
     @about_section ||= Section.find_by(name: "about")
   end
 

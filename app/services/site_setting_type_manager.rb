@@ -98,11 +98,7 @@ class SiteSettingTypeManager
   def self.define_setting_methods_on(klass)
     SETTING_TYPES.each do |setting_name, config|
       klass.define_singleton_method(setting_name) do
-        find_or_create_by(key: config[:key]) do |setting|
-          setting.description = config[:description]
-          setting.setting_type = config[:type]
-          setting.value = config[:default] if config[:default]
-        end
+        SiteSettingCacheManager.fetch_all_settings[setting_name]
       end
     end
   end

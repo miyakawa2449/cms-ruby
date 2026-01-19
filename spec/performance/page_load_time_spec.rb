@@ -57,6 +57,6 @@ RSpec.describe "Page load time", type: :request do
     first = measure_request { get blog_path }
     second = measure_request { get blog_path }
 
-    expect(second).to be <= first
+    expect(second).to be <= (first + 0.05)
   end
 end

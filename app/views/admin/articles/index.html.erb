@@ -117,13 +117,13 @@
             
             <td class="px-6 py-4 whitespace-nowrap">
               <% if article.categories.any? %>
-                <% article.categories.limit(2).each do |category| %>
+                <% article.categories.first(2).each do |category| %>
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 mr-1">
                     <%= category.name %>
                   </span>
                 <% end %>
-                <% if article.categories.count > 2 %>
-                  <span class="text-xs text-gray-500">+<%= article.categories.count - 2 %>個</span>
+                <% if article.categories.size > 2 %>
+                  <span class="text-xs text-gray-500">+<%= article.categories.size - 2 %>個</span>
                 <% end %>
               <% else %>
                 <span class="text-xs text-gray-500">未分類</span>

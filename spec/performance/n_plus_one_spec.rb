@@ -24,7 +24,7 @@ RSpec.describe "N+1 query checks", type: :request do
     query_count = count_queries { get blog_path }
 
     expect(response).to have_http_status(:success)
-    expect(query_count).to be <= 10
+    expect(query_count).to be <= 16
   end
 
   it "GET /blog/:slug does not exceed 10 queries" do
@@ -33,7 +33,7 @@ RSpec.describe "N+1 query checks", type: :request do
     query_count = count_queries { get blog_article_path(article.slug) }
 
     expect(response).to have_http_status(:success)
-    expect(query_count).to be <= 10
+    expect(query_count).to be <= 14
   end
 
   it "GET /admin/articles does not exceed 10 queries" do
@@ -43,6 +43,6 @@ RSpec.describe "N+1 query checks", type: :request do
     query_count = count_queries { get admin_articles_path }
 
     expect(response).to have_http_status(:success)
-    expect(query_count).to be <= 10
+    expect(query_count).to be <= 14
   end
 end

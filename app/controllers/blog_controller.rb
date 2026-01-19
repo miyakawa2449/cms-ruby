@@ -8,22 +8,36 @@ class BlogController < ApplicationController
     cacheable = @query.blank? && params[:category_id].blank? && params[:tag_id].blank?
 
     if cacheable
-      cached = Rails.cache.fetch("blog/page-#{page}", expires_in: 5.minutes) do
+      cache_key = "blog/page-#{page}"
+      cached = Rails.cache.read(cache_key)
+
+      if cached
+        articles = Article.published
+                          .where(id: cached[:ids])
+                          .includes(:categories, :tags, thumbnail_image_attachment: :blob)
+                          .order(published_at: :desc)
+                          .to_a
+        preload_article_associations(articles)
+        @articles = Kaminari.paginate_array(articles, total_count: cached[:total])
+                             .page(page)
+                             .per(10)
+        @published_articles_count = cached[:total]
+      else
         relation = Article.published
                           .includes(:categories, :tags, thumbnail_image_attachment: :blob)
                           .order(published_at: :desc)
                           .page(page)
                           .per(10)
-        { ids: relation.pluck(:id), total: relation.total_count }
-      end
+        articles = relation.to_a
+        preload_article_associations(articles)
+        total = relation.total_count
+        Rails.cache.write(cache_key, { ids: articles.map(&:id), total: total }, expires_in: 5.minutes)
 
-      articles = Article.published
-                        .where(id: cached[:ids])
-                        .includes(:categories, :tags, thumbnail_image_attachment: :blob)
-                        .order(published_at: :desc)
-      @articles = Kaminari.paginate_array(articles.to_a, total_count: cached[:total])
-                           .page(page)
-                           .per(10)
+        @articles = Kaminari.paginate_array(articles, total_count: total)
+                             .page(page)
+                             .per(10)
+        @published_articles_count = total
+      end
     else
       @articles = Article.published
                          .search(params[:q])
@@ -40,15 +54,16 @@ class BlogController < ApplicationController
     @selected_tag = Tag.find_by(id: params[:tag_id]) if params[:tag_id].present?
 
     # カテゴリとタグ一覧（フィルタ用）
-    category_ids = Rails.cache.fetch("sidebar/categories", expires_in: 10.minutes) do
-      Category.with_published_articles.reorder(nil).pluck(:id)
+    @categories = Rails.cache.fetch("sidebar/categories", expires_in: 10.minutes) do
+      Category.with_published_articles.order(:name).to_a
     end
-    tag_ids = Rails.cache.fetch("sidebar/tags", expires_in: 10.minutes) do
-      Tag.with_published_articles.reorder(nil).pluck(:id)
+    @tags = Rails.cache.fetch("sidebar/tags", expires_in: 10.minutes) do
+      Tag.with_published_articles.order(:name).to_a
     end
 
-    @categories = Category.where(id: category_ids).order(:name)
-    @tags = Tag.where(id: tag_ids).order(:name)
+    @published_articles_count ||= Rails.cache.fetch("articles/published_count", expires_in: 10.minutes) do
+      Article.published.count
+    end
 
     # 検索時のSEOメタタグ設定
     set_meta_tags noindex: true if search_active?
@@ -60,8 +75,7 @@ class BlogController < ApplicationController
                       .includes(
                         :categories,
                         :tags,
-                        thumbnail_image_attachment: :blob,
-                        content_images_attachments: :blob
+                        thumbnail_image_attachment: :blob
                       )
                       .find_by!(slug: params[:slug])
 
@@ -70,17 +84,27 @@ class BlogController < ApplicationController
                               .joins(:categories)
                               .where(categories: { id: @article.category_ids })
                               .where.not(id: @article.id)
-                              .includes(:categories, thumbnail_image_attachment: :blob)
+                              .eager_load(:categories, thumbnail_image_attachment: :blob)
                               .order(published_at: :desc)
                               .limit(3)
 
     # パンくずリスト用（@articleで既にeager loadされているためN+1にならない）
-    @categories = @article.categories.order(:position)
+    @categories = @article.categories.sort_by { |category| category.position.to_i }
+
+    @about_section = Section.eager_load(active_content: { profile_image_attachment: :blob })
+                            .find_by(name: "about")
   end
 
   private
 
   def search_active?
     params[:q].present? || params[:category_id].present? || params[:tag_id].present?
+  end
+
+  def preload_article_associations(articles)
+    ActiveRecord::Associations::Preloader.new(
+      records: articles,
+      associations: [ :categories, :tags, { thumbnail_image_attachment: :blob } ]
+    ).call
   end
 end

@@ -164,6 +164,7 @@ class Article < ApplicationRecord
     # サイドバーキャッシュをクリア（カテゴリ・タグに関連している可能性があるため）
     clear_cache("sidebar/categories")
     clear_cache("sidebar/tags")
+    clear_cache("articles/published_count")
 
     Rails.logger.info "[CacheSweeper] Cleared caches for Article##{id}"
   end

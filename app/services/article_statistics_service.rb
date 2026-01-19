@@ -19,10 +19,11 @@ class ArticleStatisticsService
   end
 
   def index_stats
+    counts = Article.group(:status).count
     {
-      total_count: Article.count,
-      published_count: Article.published.count,
-      draft_count: Article.draft.count
+      total_count: counts.values.sum,
+      published_count: counts["published"].to_i,
+      draft_count: counts["draft"].to_i
     }
   end
 
