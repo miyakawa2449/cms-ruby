@@ -123,7 +123,7 @@ group :development do
   gem "listen", "~> 3.8"
   gem "spring", "~> 4.1"
   gem "spring-commands-rspec", "~> 1.0"
-  gem "dotenv-rails", "~> 2.8"
+  gem "dotenv-rails", "~> 3.2"
 end
 
 group :test do
