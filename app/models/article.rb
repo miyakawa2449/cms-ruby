@@ -28,6 +28,7 @@ class Article < ApplicationRecord
   has_many :ai_generations, dependent: :destroy
 
   has_one_attached :thumbnail_image
+  has_one_attached :ogp_image
   has_many_attached :content_images  # 本文内画像用
 
   validates :title, presence: true, length: { maximum: 255 }

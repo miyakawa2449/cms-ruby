@@ -14,11 +14,19 @@ class MetaTagsService
 
     og_title = article.og_title.presence || article.title
     og_description = article.og_description.presence || description
-    og_image = if article.thumbnail_image.attached?
-                 if article.thumbnail_image.variable?
-                   # Twitterは2:1比率を推奨するため、OGP用は1200x628に固定
+    og_image = if article.ogp_image.attached?
+                 if article.ogp_image.variable?
                    Rails.application.routes.url_helpers.url_for(
-                     article.thumbnail_image.variant(resize_to_fill: [1200, 628])
+                     article.ogp_image.variant(resize_to_limit: [1200, 630])
+                   )
+                 else
+                   safe_url_for(article.ogp_image)
+                 end
+               elsif article.thumbnail_image.attached?
+                 if article.thumbnail_image.variable?
+                   # OGP用は1200x630を基準にセンタークロップ
+                   Rails.application.routes.url_helpers.url_for(
+                     article.thumbnail_image.variant(resize_to_fill: [1200, 630])
                    )
                  else
                    safe_url_for(article.thumbnail_image)
@@ -168,9 +176,9 @@ class MetaTagsService
     tags << content_tag(:meta, nil, property: "og:type", content: meta_tags[:og][:type])
     tags << content_tag(:meta, nil, property: "og:url", content: meta_tags[:og][:url])
     tags << content_tag(:meta, nil, property: "og:image", content: meta_tags[:og][:image])
-    # TODO: トリミング機能実装時は1200x628を維持すること
+    # OGP画像は1200x630で統一
     tags << content_tag(:meta, nil, property: "og:image:width", content: "1200")
-    tags << content_tag(:meta, nil, property: "og:image:height", content: "628")
+    tags << content_tag(:meta, nil, property: "og:image:height", content: "630")
     tags << content_tag(:meta, nil, property: "og:locale", content: meta_tags[:og][:locale])
 
     # Twitter Card tags
@@ -181,7 +189,7 @@ class MetaTagsService
     tags << content_tag(:meta, nil, name: "twitter:description", content: meta_tags[:twitter][:description])
     tags << content_tag(:meta, nil, name: "twitter:image", content: meta_tags[:twitter][:image])
     tags << content_tag(:meta, nil, name: "twitter:image:width", content: "1200")
-    tags << content_tag(:meta, nil, name: "twitter:image:height", content: "628")
+    tags << content_tag(:meta, nil, name: "twitter:image:height", content: "630")
 
     # Ensure all tags are UTF-8 encoded before joining
     tags.map { |tag| tag.to_s.encode("UTF-8", invalid: :replace, undef: :replace) }

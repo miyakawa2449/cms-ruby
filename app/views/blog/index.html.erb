@@ -140,7 +140,7 @@
                 <!-- サムネイル画像 -->
                 <% if article.thumbnail_image.attached? %>
                   <%= link_to blog_article_path(article.slug), class: "block" do %>
-                    <div class="h-48 bg-gray-200 overflow-hidden">
+                    <div class="bg-gray-200 overflow-hidden" style="aspect-ratio: 4 / 3;">
                       <%= image_tag article.thumbnail_image,
                           alt: article.title,
                           class: "w-full h-full object-cover hover:scale-105 transition-transform duration-300" %>

@@ -7,6 +7,7 @@ export default class extends Controller {
     "modal", 
     "cropperContainer", 
     "fileInput",
+    "ogpInput",
     "previewArticle",
     "previewOgp",
     "previewThumbnail",
@@ -202,16 +203,16 @@ export default class extends Controller {
       const thumbnailBlob = await this.getThumbnailBlob()
 
       // FormDataを作成
-      const formData = new FormData()
-      formData.append('thumbnail_image', articleBlob, 'thumbnail_article.jpg')
-      formData.append('thumbnail_ogp', ogpBlob, 'thumbnail_ogp.jpg')
-      formData.append('thumbnail_small', thumbnailBlob, 'thumbnail_small.jpg')
-
       // 元のフォームに画像を設定
       const originalInput = this.fileInputTarget
       const dataTransfer = new DataTransfer()
       dataTransfer.items.add(new File([articleBlob], 'thumbnail.jpg', { type: 'image/jpeg' }))
       originalInput.files = dataTransfer.files
+      if (this.hasOgpInputTarget) {
+        const ogpTransfer = new DataTransfer()
+        ogpTransfer.items.add(new File([ogpBlob], 'thumbnail_ogp.jpg', { type: 'image/jpeg' }))
+        this.ogpInputTarget.files = ogpTransfer.files
+      }
 
       // モーダルを閉じる
       this.close()

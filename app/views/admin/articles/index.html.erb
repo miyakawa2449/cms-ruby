@@ -80,6 +80,17 @@
                     <%= truncate(article.excerpt, length: 100) %>
                   </p>
                 <% end %>
+                <div class="mt-1">
+                  <% if article.ogp_image.attached? %>
+                    <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-100 text-emerald-800">
+                      OGP
+                    </span>
+                  <% else %>
+                    <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
+                      OGP未設定
+                    </span>
+                  <% end %>
+                </div>
               </div>
             </td>
             
