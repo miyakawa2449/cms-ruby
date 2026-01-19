@@ -82,7 +82,7 @@ gem "rubyzip", "~> 2.3"
 
 # AWS Services
 gem "aws-sdk-sesv2", "~> 1.35"         # SES for email delivery
-gem "aws-sdk-rails", "~> 4.0"          # Rails integration
+gem "aws-sdk-rails", "~> 5.1"          # Rails integration
 gem "aws-sdk-bedrockruntime", "~> 1.0" # Bedrock for AI features
 
 group :development, :test do
