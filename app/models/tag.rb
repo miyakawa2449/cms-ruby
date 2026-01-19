@@ -1,4 +1,6 @@
 class Tag < ApplicationRecord
+  include CacheSweeper
+
   has_many :article_tags, dependent: :destroy
   has_many :articles, through: :article_tags
 
@@ -36,5 +38,17 @@ class Tag < ApplicationRecord
       self.slug = "#{base_slug}-#{counter}"
       counter += 1
     end
+  end
+
+  # CacheSweeper implementation
+  def clear_related_caches
+    # サイドバータグキャッシュをクリア
+    clear_cache("sidebar/tags")
+
+    # 記事一覧キャッシュをクリア
+    clear_cache_matched("articles/page-*")
+    clear_cache_matched("blog/page-*")
+
+    Rails.logger.info "[CacheSweeper] Cleared caches for Tag##{id}"
   end
 end

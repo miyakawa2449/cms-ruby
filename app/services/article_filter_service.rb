@@ -9,7 +9,8 @@ class ArticleFilterService
   end
 
   def filter(params)
-    result = @articles.includes(:admin_user, :categories, :tags)
+    # Eager load associations to prevent N+1 queries
+    result = @articles.includes(:admin_user, :categories, :tags, thumbnail_image_attachment: :blob)
                      .order(created_at: :desc)
 
     result = filter_by_status(result, params[:status])

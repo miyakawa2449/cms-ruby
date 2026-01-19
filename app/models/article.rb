@@ -2,6 +2,7 @@ class Article < ApplicationRecord
   include PgSearch::Model
   include Publishable
   include TrackableAttachment
+  include CacheSweeper
 
   # pg_search full-text search configuration
   # Uses trigram for Japanese text support
@@ -149,5 +150,21 @@ class Article < ApplicationRecord
 
   def update_tag_counts
     tags.find_each { |tag| tag.update_column(:article_count, tag.articles.published.count) }
+  end
+
+  # CacheSweeper implementation
+  def clear_related_caches
+    # 記事一覧キャッシュをクリア
+    clear_cache_matched("articles/page-*")
+    clear_cache_matched("blog/page-*")
+
+    # 人気記事キャッシュをクリア
+    clear_cache("popular_articles")
+
+    # サイドバーキャッシュをクリア（カテゴリ・タグに関連している可能性があるため）
+    clear_cache("sidebar/categories")
+    clear_cache("sidebar/tags")
+
+    Rails.logger.info "[CacheSweeper] Cleared caches for Article##{id}"
   end
 end

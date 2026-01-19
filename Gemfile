@@ -124,6 +124,11 @@ group :development do
   gem "spring", "~> 4.1"
   gem "spring-commands-rspec", "~> 1.0"
   gem "dotenv-rails", "~> 2.8"
+
+  # Performance Monitoring & Optimization
+  gem "bullet", "~> 8.0"                   # N+1 query detection
+  gem "rack-mini-profiler", "~> 3.3"       # Page load profiling
+  gem "memory_profiler", "~> 1.0"          # Memory profiling
 end
 
 group :test do

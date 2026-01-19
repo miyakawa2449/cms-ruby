@@ -26,17 +26,26 @@ class BlogController < ApplicationController
   end
 
   def show
-    @article = Article.published.find_by!(slug: params[:slug])
+    # Eager load associations to prevent N+1 queries
+    @article = Article.published
+                      .includes(
+                        :categories,
+                        :tags,
+                        thumbnail_image_attachment: :blob,
+                        content_images_attachments: :blob
+                      )
+                      .find_by!(slug: params[:slug])
 
-    # 関連記事（同じカテゴリの他の記事）
+    # 関連記事（同じカテゴリの他の記事）- N+1問題を回避
     @related_articles = Article.published
                               .joins(:categories)
                               .where(categories: { id: @article.category_ids })
                               .where.not(id: @article.id)
+                              .includes(:categories, thumbnail_image_attachment: :blob)
                               .order(published_at: :desc)
                               .limit(3)
 
-    # パンくずリスト用
+    # パンくずリスト用（@articleで既にeager loadされているためN+1にならない）
     @categories = @article.categories.order(:position)
   end
 

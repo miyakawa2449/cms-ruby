@@ -158,7 +158,7 @@
                   <% if article.thumbnail_image.attached? %>
                     <%= link_to blog_article_path(article.slug), class: "block" do %>
                       <div class="h-32 bg-gray-200 overflow-hidden">
-                        <%= image_tag article.thumbnail_image, 
+                        <%= lazy_image_tag article.thumbnail_image,
                             alt: article.title,
                             class: "w-full h-full object-cover hover:scale-105 transition-transform duration-300" %>
                       </div>
@@ -259,7 +259,7 @@
           <div class="text-center">
             <% if about_section&.active_content&.profile_image&.attached? %>
               <div class="w-16 h-16 rounded-full overflow-hidden shadow-lg mx-auto mb-3">
-                <%= image_tag about_section.active_content.profile_image, 
+                <%= lazy_image_tag about_section.active_content.profile_image,
                     alt: "宮川剛のプロフィール写真",
                     class: "w-16 h-16 object-cover rounded-full" %>
               </div>

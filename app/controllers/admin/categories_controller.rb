@@ -8,6 +8,8 @@ class Admin::CategoriesController < Admin::BaseController
   end
 
   def show
+    # Eager load parent and children to prevent N+1 queries in view
+    @category = Category.includes(:parent, :children).find(@category.id)
     @articles = @category.articles.includes(:admin_user).recent.limit(10)
   end
 

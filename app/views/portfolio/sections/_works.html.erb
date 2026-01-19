@@ -23,8 +23,8 @@
             <div class="<%= card_class %>">
               <% if article.thumbnail_image.attached? %>
                 <div class="h-48 bg-gradient-to-br from-blue-100 to-blue-200">
-                  <%= image_tag article.thumbnail_image, 
-                      alt: article.title, 
+                  <%= lazy_image_tag article.thumbnail_image,
+                      alt: article.title,
                       class: "w-full h-full object-cover" %>
                 </div>
               <% else %>

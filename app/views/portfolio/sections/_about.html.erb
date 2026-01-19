@@ -11,7 +11,7 @@
           <div class="relative">
             <% if section.active_content&.profile_image&.attached? %>
               <div class="w-80 h-80 rounded-full overflow-hidden shadow-xl bg-gradient-to-br from-blue-100 to-blue-200">
-                <%= image_tag section.active_content.profile_image, 
+                <%= lazy_image_tag section.active_content.profile_image,
                     class: "w-full h-full object-cover",
                     alt: "宮川剛のプロフィール" %>
               </div>

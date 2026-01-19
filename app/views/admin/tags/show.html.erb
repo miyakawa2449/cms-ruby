@@ -168,19 +168,19 @@
         <div class="flex justify-between">
           <span class="text-sm text-gray-500">初回使用</span>
           <span class="text-sm font-medium text-gray-900">
-            <% if @tag.articles.any? %>
-              <%= @tag.articles.order(:created_at).first.created_at.strftime("%Y年%m月%d日") %>
+            <% if @oldest_article %>
+              <%= @oldest_article.created_at.strftime("%Y年%m月%d日") %>
             <% else %>
               -
             <% end %>
           </span>
         </div>
-        
+
         <div class="flex justify-between">
           <span class="text-sm text-gray-500">最新使用</span>
           <span class="text-sm font-medium text-gray-900">
-            <% if @tag.articles.any? %>
-              <%= @tag.articles.order(:created_at).last.created_at.strftime("%Y年%m月%d日") %>
+            <% if @newest_article %>
+              <%= @newest_article.created_at.strftime("%Y年%m月%d日") %>
             <% else %>
               -
             <% end %>

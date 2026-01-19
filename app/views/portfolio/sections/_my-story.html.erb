@@ -2,7 +2,7 @@
   <% if section.active_content&.background_image&.attached? %>
     <!-- 背景画像 -->
     <div class="absolute inset-0">
-      <%= image_tag section.active_content.background_image, 
+      <%= lazy_image_tag section.active_content.background_image,
           class: "w-full h-full object-cover",
           alt: "My Story background" %>
     </div>

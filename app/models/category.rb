@@ -1,5 +1,6 @@
 class Category < ApplicationRecord
   include Positionable
+  include CacheSweeper
 
   belongs_to :parent, class_name: "Category", optional: true
   has_many :children, class_name: "Category", foreign_key: :parent_id, dependent: :destroy
@@ -41,5 +42,17 @@ class Category < ApplicationRecord
 
   def update_parent_article_count
     parent&.update_column(:article_count, parent.articles.count)
+  end
+
+  # CacheSweeper implementation
+  def clear_related_caches
+    # サイドバーカテゴリキャッシュをクリア
+    clear_cache("sidebar/categories")
+
+    # 記事一覧キャッシュをクリア
+    clear_cache_matched("articles/page-*")
+    clear_cache_matched("blog/page-*")
+
+    Rails.logger.info "[CacheSweeper] Cleared caches for Category##{id}"
   end
 end

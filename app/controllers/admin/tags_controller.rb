@@ -11,6 +11,9 @@ class Admin::TagsController < Admin::BaseController
 
   def show
     @articles = @tag.articles.includes(:admin_user, :categories).recent.limit(10)
+    # Pre-calculate stats to prevent N+1 queries in view
+    @oldest_article = @tag.articles.order(:created_at).first
+    @newest_article = @tag.articles.order(created_at: :desc).first
   end
 
   def new
