@@ -4,22 +4,51 @@ class BlogController < ApplicationController
     @query = params[:q].to_s.strip.presence
 
     # 記事の検索・フィルタリング
-    @articles = Article.published
-                       .search(params[:q])
-                       .by_category(params[:category_id])
-                       .by_tag(params[:tag_id])
-                       .includes(:categories, :tags, thumbnail_image_attachment: :blob)
-                       .order(published_at: :desc)
-                       .page(params[:page])
-                       .per(10)
+    page = params[:page].presence || 1
+    cacheable = @query.blank? && params[:category_id].blank? && params[:tag_id].blank?
+
+    if cacheable
+      cached = Rails.cache.fetch("blog/page-#{page}", expires_in: 5.minutes) do
+        relation = Article.published
+                          .includes(:categories, :tags, thumbnail_image_attachment: :blob)
+                          .order(published_at: :desc)
+                          .page(page)
+                          .per(10)
+        { ids: relation.pluck(:id), total: relation.total_count }
+      end
+
+      articles = Article.published
+                        .where(id: cached[:ids])
+                        .includes(:categories, :tags, thumbnail_image_attachment: :blob)
+                        .order(published_at: :desc)
+      @articles = Kaminari.paginate_array(articles.to_a, total_count: cached[:total])
+                           .page(page)
+                           .per(10)
+    else
+      @articles = Article.published
+                         .search(params[:q])
+                         .by_category(params[:category_id])
+                         .by_tag(params[:tag_id])
+                         .includes(:categories, :tags, thumbnail_image_attachment: :blob)
+                         .order(published_at: :desc)
+                         .page(page)
+                         .per(10)
+    end
 
     # 選択中のカテゴリ・タグ
     @selected_category = Category.find_by(id: params[:category_id]) if params[:category_id].present?
     @selected_tag = Tag.find_by(id: params[:tag_id]) if params[:tag_id].present?
 
     # カテゴリとタグ一覧（フィルタ用）
-    @categories = Category.with_published_articles.order(:name)
-    @tags = Tag.with_published_articles.order(:name)
+    category_ids = Rails.cache.fetch("sidebar/categories", expires_in: 10.minutes) do
+      Category.with_published_articles.reorder(nil).pluck(:id)
+    end
+    tag_ids = Rails.cache.fetch("sidebar/tags", expires_in: 10.minutes) do
+      Tag.with_published_articles.reorder(nil).pluck(:id)
+    end
+
+    @categories = Category.where(id: category_ids).order(:name)
+    @tags = Tag.where(id: tag_ids).order(:name)
 
     # 検索時のSEOメタタグ設定
     set_meta_tags noindex: true if search_active?

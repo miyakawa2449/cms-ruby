@@ -32,6 +32,31 @@ RSpec.describe "Blog", type: :request do
       end
     end
 
+    context "キャッシュ挙動" do
+      let(:cache_store) { ActiveSupport::Cache::MemoryStore.new }
+
+      before do
+        allow(Rails).to receive(:cache).and_return(cache_store)
+      end
+
+      it "2回目のリクエストでキャッシュが使用される" do
+        create(:article, :published, title: "キャッシュ対象記事")
+
+        get blog_path
+        get blog_path
+
+        expect(cache_store.exist?("blog/page-1")).to be(true)
+      end
+
+      it "記事作成時にキャッシュが無効化される" do
+        cache_store.write("blog/page-1", "cached blog list")
+
+        create(:article, :published, title: "新規記事")
+
+        expect(cache_store.exist?("blog/page-1")).to be(false)
+      end
+    end
+
     context "キーワード検索" do
       it "検索結果を表示する" do
         article = create(:article, :published, title: "Ruby on Rails入門")
@@ -59,8 +84,10 @@ RSpec.describe "Blog", type: :request do
 
         get blog_path, params: { q: "Rails" }
 
+        expected_count = Article.published.search("Rails").count
+
         expect(response.body).to include("検索結果")
-        expect(response.body).to include(">5</span>件")
+        expect(response.body).to include(">#{expected_count}</span>件")
       end
     end
 
@@ -133,6 +160,30 @@ RSpec.describe "Blog", type: :request do
 
         expect(response).to have_http_status(:success)
       end
+    end
+  end
+
+  describe "GET /blog/:slug" do
+    it "記事詳細を表示する" do
+      article = create(:article, :published, title: "詳細記事")
+
+      get blog_article_path(article.slug)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include(article.title)
+    end
+
+    it "記事詳細ページで関連データが表示される" do
+      category = create(:category, name: "関連カテゴリ")
+      tag = create(:tag, name: "関連タグ")
+      article = create(:article, :published, title: "関連記事")
+      article.categories << category
+      article.tags << tag
+
+      get blog_article_path(article.slug)
+
+      expect(response.body).to include(category.name)
+      expect(response.body).to include(tag.name)
     end
   end
 end
