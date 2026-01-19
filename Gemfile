@@ -105,7 +105,7 @@ group :development, :test do
   gem "shoulda-matchers", "~> 6.0"
   gem "database_cleaner-active_record", "~> 2.1"
   gem "webmock", "~> 3.19"
-  gem "vcr", "~> 6.2"
+  gem "vcr", "~> 6.4"
   gem "simplecov", "~> 0.22"
 end
 
