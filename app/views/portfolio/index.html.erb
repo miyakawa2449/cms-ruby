@@ -3,7 +3,7 @@
 <% content_for :meta_tags, portfolio_meta_tags %>
 
 <!-- Header -->
-<header class="fixed top-0 w-full bg-white/90 backdrop-blur-sm border-b border-gray-200 z-50">
+<header class="fixed top-0 w-full bg-white border-b border-gray-200 z-50">
   <nav class="container mx-auto px-6 py-4">
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-3">
@@ -23,12 +23,47 @@
         <a href="#blog" class="text-gray-700 hover:text-blue-600 transition-colors">Blog</a>
         <a href="#contact" class="text-gray-700 hover:text-blue-600 transition-colors">Contact</a>
       </div>
-      <div class="flex items-center">
-        <button class="md:hidden">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-        </button>
+      <div class="flex items-center" data-controller="mobile-menu">
+        <div class="md:hidden">
+          <button type="button"
+                  data-action="click->mobile-menu#toggle"
+                  data-mobile-menu-target="button"
+                  aria-expanded="false"
+                  class="rounded-md p-2 hover:bg-gray-100">
+            <span class="sr-only">メニュー</span>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+          <div class="fixed inset-0 z-50 hidden"
+               data-mobile-menu-target="panel">
+            <div class="absolute inset-0 bg-black/30" data-action="click->mobile-menu#close"></div>
+            <div class="relative h-full w-full bg-white/95 backdrop-blur-sm">
+              <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+                <div class="text-base font-semibold text-gray-900">メニュー</div>
+                <button type="button"
+                        class="rounded-md p-2 hover:bg-gray-100"
+                        data-action="click->mobile-menu#close">
+                  <span class="sr-only">閉じる</span>
+                  <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+              <nav class="px-6 py-4 text-lg text-gray-900">
+                <div class="divide-y divide-gray-200 border-y border-gray-200">
+                  <a href="#hero" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">Home</a>
+                  <a href="#about" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">About</a>
+                  <a href="#services" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">Services</a>
+                  <a href="#my-story" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">My Story</a>
+                  <a href="#works" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">Works</a>
+                  <a href="#blog" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">Blog</a>
+                  <a href="#contact" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">Contact</a>
+                </div>
+              </nav>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </nav>

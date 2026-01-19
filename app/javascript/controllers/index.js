@@ -10,6 +10,7 @@ import MediaEditorController from "./media_editor_controller"
 import ThumbnailEditorController from "./thumbnail_editor_controller"
 import ContentImageEditorController from "./content_image_editor_controller"
 import AiAssistantController from "./ai_assistant_controller"
+import MobileMenuController from "./mobile_menu_controller"
 
 application.register("confirm-dialog", ConfirmDialogController)
 application.register("contact-form", ContactFormController)
@@ -21,3 +22,4 @@ application.register("media-editor", MediaEditorController)
 application.register("thumbnail-editor", ThumbnailEditorController)
 application.register("content-image-editor", ContentImageEditorController)
 application.register("ai-assistant", AiAssistantController)
+application.register("mobile-menu", MobileMenuController)
