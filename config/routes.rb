@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  admin_path = ENV.fetch("ADMIN_PATH", "admin-secure-panel-miyakawa2449")
   # SEO関連
   get "/sitemap.xml", to: "sitemaps#index", defaults: { format: "xml" }
   get "/feed.rss", to: "feeds#rss", defaults: { format: "rss" }, as: :feed_rss
@@ -11,12 +12,12 @@ Rails.application.routes.draw do
   post "contacts", to: "contacts#create"
   # NOTE: registrations skipped for security (single-user CMS)
   # Future: Remove skip when implementing multi-tenant CMS sales version
-  devise_for :admin_users, path: "admin-secure-panel-miyakawa2449",
+  devise_for :admin_users, path: admin_path,
     skip: [ :registrations ],
     controllers: { sessions: "admin_users/sessions" }
 
   # Admin routes (セキュリティのため長いURL使用)
-  namespace :admin, path: "admin-secure-panel-miyakawa2449" do
+  namespace :admin, path: admin_path do
     resource :site_settings, only: [ :show, :update ]
     resources :contacts, only: [ :index, :show, :edit, :update, :destroy ]
     root to: "dashboard#index", as: :root

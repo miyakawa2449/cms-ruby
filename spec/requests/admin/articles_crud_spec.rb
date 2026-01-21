@@ -133,7 +133,7 @@ RSpec.describe "Admin::Articles CRUD", type: :request do
 
       expect {
         delete admin_article_path(article)
-      }.to change(ArticleCategory, :count).by(-1)
+      }.to change { ArticleCategory.where(article_id: article.id).count }.by(-1)
     end
   end
 

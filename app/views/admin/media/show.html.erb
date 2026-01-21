@@ -77,9 +77,9 @@
         <!-- URL -->
         <div class="mt-6">
           <label class="block text-sm font-medium text-gray-700">URL</label>
-          <div class="mt-1 flex gap-2">
-            <input type="text" readonly value="<%= url_for(@media.blob) %>" class="flex-1 bg-gray-50 border-gray-300 rounded-lg text-sm" id="mediaUrl">
-            <button type="button" onclick="navigator.clipboard.writeText(document.getElementById('mediaUrl').value); alert('URLをコピーしました')" class="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200">
+          <div class="mt-1 flex gap-2" data-controller="clipboard" data-clipboard-message-value="URLをコピーしました">
+            <input type="text" readonly value="<%= url_for(@media.blob) %>" class="flex-1 bg-gray-50 border-gray-300 rounded-lg text-sm" id="mediaUrl" data-clipboard-target="source">
+            <button type="button" data-action="click->clipboard#copy" class="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200">
               コピー
             </button>
           </div>

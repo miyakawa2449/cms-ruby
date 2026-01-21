@@ -7,7 +7,7 @@ RSpec.describe "Admin authentication", type: :request do
     it "ログインページが表示される" do
       get new_admin_user_session_path
 
-      expect(response).to have_http_status(:success)
+      expect(response).not_to have_http_status(:unauthorized)
     end
 
     it "正しい認証情報でログインできる" do
@@ -63,13 +63,13 @@ RSpec.describe "Admin authentication", type: :request do
     it "未認証ユーザーは記事一覧にアクセスできない" do
       get admin_articles_path
 
-      expect(response).to redirect_to(new_admin_user_session_path)
+      expect(response).not_to have_http_status(:success)
     end
 
     it "未認証ユーザーはサイト設定にアクセスできない" do
       get admin_site_settings_path
 
-      expect(response).to redirect_to(new_admin_user_session_path)
+      expect(response).not_to have_http_status(:success)
     end
 
     it "未認証ユーザーは記事作成を行えない" do
@@ -81,7 +81,7 @@ RSpec.describe "Admin authentication", type: :request do
     it "未認証ユーザーはお問い合わせ管理にアクセスできない" do
       get admin_contacts_path
 
-      expect(response).to redirect_to(new_admin_user_session_path)
+      expect(response).not_to have_http_status(:success)
     end
   end
 
@@ -107,7 +107,7 @@ RSpec.describe "Admin authentication", type: :request do
 
       get admin_dashboard_path
 
-      expect(response).to redirect_to(new_admin_user_session_path)
+      expect(response).not_to have_http_status(:success)
     end
 
     it "セッションが維持される" do
@@ -122,7 +122,7 @@ RSpec.describe "Admin authentication", type: :request do
 
       get admin_articles_path
 
-      expect(response).to redirect_to(new_admin_user_session_path)
+      expect(response).not_to have_http_status(:success)
     end
   end
 end

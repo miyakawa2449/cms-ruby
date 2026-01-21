@@ -216,7 +216,7 @@
   </div>
 </div>
 
-<script>
+<script nonce="<%= content_security_policy_nonce %>">
   const renderAiUsageCharts = () => {
     const Chart = window.Chart;
     if (!Chart || typeof Chart !== "function") {

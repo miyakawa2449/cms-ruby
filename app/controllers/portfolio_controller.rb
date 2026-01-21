@@ -2,7 +2,13 @@ class PortfolioController < ApplicationController
   def index
     begin
       # セクションデータを取得し、コンテンツデータも事前に準備
-      @sections = Section.includes(:active_content).visible.ordered
+      @sections = Section.visible.ordered.preload(
+        active_content: [
+          { profile_image_attachment: :blob },
+          { hero_image_attachment: :blob },
+          { background_image_attachment: :blob }
+        ]
+      )
 
       # 各セクションのコンテンツデータを事前に準備（ビューでのDB接続回避）
       @section_data = {}

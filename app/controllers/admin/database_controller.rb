@@ -4,7 +4,7 @@ class Admin::DatabaseController < Admin::BaseController
   # GET /admin/database/export
   # Exports database and Active Storage files as a ZIP download
   def export
-    Rails.logger.info "[DatabaseExport] Export started by #{current_admin_user.email}"
+    Rails.logger.info "[DatabaseExport] Export started by #{safe_admin_email}"
 
     temp_dir = Dir.mktmpdir("database_export")
 
@@ -33,7 +33,7 @@ class Admin::DatabaseController < Admin::BaseController
   # GET /admin/database/import_form
   # Displays the import form with file upload
   def import_form
-    Rails.logger.info "[DatabaseImport] Import form accessed by #{current_admin_user.email}"
+    Rails.logger.info "[DatabaseImport] Import form accessed by #{safe_admin_email}"
 
     @is_production = Rails.env.production?
     @model_counts = calculate_model_counts
@@ -42,7 +42,7 @@ class Admin::DatabaseController < Admin::BaseController
   # POST /admin/database/import
   # Processes the uploaded ZIP file and imports data
   def import
-    Rails.logger.info "[DatabaseImport] Import started by #{current_admin_user.email}"
+    Rails.logger.info "[DatabaseImport] Import started by #{safe_admin_email}"
 
     unless params[:zip_file].present?
       redirect_to import_form_admin_database_path, alert: "ZIPファイルを選択してください"
@@ -89,6 +89,10 @@ class Admin::DatabaseController < Admin::BaseController
   private
 
   # Export helpers
+
+  def safe_admin_email
+    current_admin_user.respond_to?(:email) ? current_admin_user.email : "unknown"
+  end
 
   def send_zip_file(zip_path)
     zip_filename = File.basename(zip_path)

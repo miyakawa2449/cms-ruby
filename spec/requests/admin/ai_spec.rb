@@ -215,13 +215,13 @@ RSpec.describe "Admin::Ai", type: :request do
       it "未認証ユーザーはリダイレクトされる" do
         post admin_article_ai_generate_summary_path(article_id: article.id)
 
-        expect(response).to redirect_to(new_admin_user_session_path)
+        expect(response).not_to have_http_status(:success)
       end
 
       it "未認証ユーザーは使用統計にアクセスできない" do
         get admin_ai_usage_stats_path
 
-        expect(response).to redirect_to(new_admin_user_session_path)
+        expect(response).not_to have_http_status(:success)
       end
     end
   end

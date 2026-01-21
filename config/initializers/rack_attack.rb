@@ -2,11 +2,22 @@
 # Rate limiting and security rules
 
 class Rack::Attack
-  # Cache configuration for throttling
-  Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+  if Rails.env.production?
+    Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
+      url: ENV.fetch("REDIS_URL", "redis://localhost:6379/1")
+    )
+  else
+    Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+  end
+
+  admin_path = ENV.fetch("ADMIN_PATH", "admin-secure-panel-miyakawa2449")
+
+  safelist("allow from admin IPs") do |req|
+    admin_ips = ENV.fetch("ADMIN_WHITELIST_IPS", "").split(",").map(&:strip)
+    admin_ips.include?(req.ip) if admin_ips.any?
+  end
 
   # Throttle login attempts by IP
-  # Matches any Devise sign_in path (e.g., /admin-secure-panel-miyakawa2449/sign_in)
   throttle("logins/ip", limit: 5, period: 20.seconds) do |req|
     if req.path.end_with?("/sign_in") && req.post?
       req.ip
@@ -14,21 +25,35 @@ class Rack::Attack
   end
 
   # Throttle password reset attempts by IP
-  # Matches Devise password reset path
   throttle("password_resets/ip", limit: 5, period: 1.hour) do |req|
     if req.path.end_with?("/password") && req.post?
       req.ip
     end
   end
 
-  # Throttle API requests by IP
-  throttle("api/ip", limit: 100, period: 1.minute) do |req|
-    req.ip if req.path.start_with?("/api")
+  # Throttle API requests by IP (authenticated vs unauthenticated)
+  throttle("api/authenticated", limit: 300, period: 1.minute) do |req|
+    if req.path.start_with?("/api") && req.env["warden"]&.user
+      req.env["warden"].user.id
+    end
+  end
+
+  throttle("api/unauthenticated", limit: 60, period: 1.minute) do |req|
+    if req.path.start_with?("/api") && !req.env["warden"]&.user
+      req.ip
+    end
   end
 
   # Throttle contact form submissions
   throttle("contact_form/ip", limit: 5, period: 1.hour) do |req|
     if req.path == "/contacts" && req.post?
+      req.ip
+    end
+  end
+
+  # Throttle admin access attempts by IP
+  throttle("admin/ip", limit: 10, period: 1.minute) do |req|
+    if req.path.start_with?("/#{admin_path}") && !req.env["warden"]&.user
       req.ip
     end
   end
@@ -40,13 +65,12 @@ class Rack::Attack
 
   # Block suspicious requests
   blocklist("block suspicious requests") do |req|
-    # Block requests containing suspicious SQL patterns
-    CGI.unescape(req.query_string) =~ /(\.|%2e)(\.|%2e)(\/|%2f|\\|%5c)/i ||
-    CGI.unescape(req.query_string) =~ /union.*select/i ||
-    CGI.unescape(req.query_string) =~ /\b(exec|execute|select|insert|update|delete|drop|create)\b/i
+    query = CGI.unescape(req.query_string.to_s)
+    query =~ /(\.|%2e)(\.|%2e)(\/|%2f|\\|%5c)/i ||
+      query =~ /union.*select/i ||
+      query =~ /\b(exec|execute|select|insert|update|delete|drop|create)\b/i
   end
 
-  # Custom responses
   self.throttled_responder = lambda do |req|
     match_data = req.env["rack.attack.match_data"]
     now = match_data[:epoch_time]
@@ -75,7 +99,14 @@ class Rack::Attack
   end
 end
 
-# Enable only in production and staging
-if Rails.env.production? || Rails.env.staging?
+ActiveSupport::Notifications.subscribe("rack.attack") do |_name, _start, _finish, _request_id, payload|
+  request = payload[:request]
+  matched = request&.env&.[]( "rack.attack.matched")
+  next unless matched
+
+  SecurityLogger.log_rate_limit_exceeded(matched, request)
+end
+
+if Rails.env.production? || Rails.env.staging? || Rails.env.test?
   Rails.application.config.middleware.use Rack::Attack
 end

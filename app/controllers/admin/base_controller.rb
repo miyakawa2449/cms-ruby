@@ -9,6 +9,14 @@ class Admin::BaseController < ApplicationController
     Current.admin_user = current_admin_user
   end
 
+  def authenticate_admin_user!
+    unless admin_user_signed_in?
+      SecurityLogger.log_unauthorized_access(request.fullpath, request)
+    end
+
+    super
+  end
+
   def after_sign_in_path_for(resource)
     admin_dashboard_path
   end

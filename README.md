@@ -57,6 +57,26 @@
 - **認可**: Pundit 2.3
 - **セキュリティ**: Rack::Attack、Brakeman
 
+## セキュリティ機能
+
+### セキュリティヘッダー
+- Content Security Policy (CSP)
+- X-Frame-Options
+- X-Content-Type-Options
+- Referrer-Policy
+- Permissions-Policy
+- HSTS（本番環境のみ）
+
+### レート制限
+- ログイン試行制限: 5回/20秒
+- APIレート制限: 認証済み 300回/分、未認証 60回/分
+- 管理画面アクセス制限: 10回/分
+- お問い合わせフォーム: 5回/1時間
+
+### セキュリティログ
+すべてのセキュリティイベント（ログイン、ログアウト、アカウントロック等）が構造化ログとして記録されます。
+詳細は `docs/security/SECURITY_GUIDE.md` を参照してください。
+
 ## セットアップ
 
 ### 前提条件

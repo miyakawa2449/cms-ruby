@@ -10,7 +10,7 @@ module GtmHelper
   def gtm_head_tag
     return unless gtm_installed?
 
-    tag.script do
+    tag.script(nonce: content_security_policy_nonce) do
       raw(<<~JS)
         (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
         new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],

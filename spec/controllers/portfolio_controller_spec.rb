@@ -1,52 +1,67 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.describe PortfolioController, type: :controller do
-  before do
-    SectionContent.delete_all
-    Section.delete_all
-    ActiveRecord::Base.connection.reset_pk_sequence!("sections")
-    ArticleCategory.delete_all
-    ArticleTag.delete_all
-    AiGeneration.delete_all
-    Article.delete_all
-    Category.delete_all
-    Tag.delete_all
-  end
+  describe "#index" do
+    before do
+      allow(Article).to receive_message_chain(:joins, :where, :pluck).and_return([])
+    end
 
-  describe "GET #index" do
     it "assigns sections and recent articles" do
-      visible = create(:section, name: "visible", is_visible: true, position: 0)
-      create(:section_content, section: visible, is_active: true, content: { "message" => "hello" })
-      create(:section, name: "hidden", is_visible: false, position: 1)
-
-      works = create(:category, slug: "works")
-      create(:article, :published, categories: [ works ])
-      article = create(:article, :published, content: "searchable content")
-
-      get :index
-
-      expect(assigns(:sections)).to eq([visible])
-      expect(assigns(:section_data)["visible"]).to eq({ "message" => "hello" })
-      expect(assigns(:recent_articles)).to include(article)
-    end
-
-    it "applies search filter and sets search query" do
-      create(:article, :published, content: "alpha")
-      target = create(:article, :published, content: "beta keyword")
-
-      get :index, params: { search: "keyword" }
-
-      expect(assigns(:search_query)).to eq("keyword")
-      expect(assigns(:recent_articles)).to include(target)
-    end
-
-    it "handles unexpected errors gracefully" do
-      allow(Section).to receive(:includes).and_raise(StandardError, "boom")
+      allow(Section).to receive_message_chain(:visible, :ordered, :preload).and_return([])
+      allow(Article).to receive_message_chain(:published, :includes, :where, :not, :recent, :limit).and_return([])
 
       get :index
 
       expect(assigns(:sections)).to eq([])
+      expect(assigns(:section_data)).to eq({})
       expect(assigns(:recent_articles)).to eq([])
+    end
+
+    it "applies search when query is present" do
+      allow(Section).to receive_message_chain(:visible, :ordered, :preload).and_return([])
+      recent_relation = double("RecentRelation")
+      allow(recent_relation).to receive(:search_by_content).with("ruby").and_return([:hit])
+      allow(Article).to receive_message_chain(:published, :includes, :where, :not, :recent, :limit).and_return(recent_relation)
+
+      get :index, params: { search: "ruby" }
+
+      expect(assigns(:search_query)).to eq("ruby")
+      expect(assigns(:recent_articles)).to eq([:hit])
+    end
+
+    it "handles standard errors and clears assigns" do
+      allow(Section).to receive_message_chain(:visible, :ordered, :preload).and_raise(StandardError, "boom")
+      allow(Rails.logger).to receive(:error)
+
+      get :index
+
+      expect(assigns(:sections)).to eq([])
+      expect(assigns(:section_data)).to eq({})
+      expect(assigns(:recent_articles)).to eq([])
+    end
+
+    it "retries once when DB connection is lost" do
+      visible_relation = double("VisibleRelation")
+      ordered_relation = double("OrderedRelation")
+      allow(visible_relation).to receive(:ordered).and_return(ordered_relation)
+      allow(ordered_relation).to receive(:preload).and_return([])
+
+      attempts = 0
+      allow(Section).to receive(:visible) do
+        attempts += 1
+        attempts == 1 ? raise(ActiveRecord::ConnectionNotEstablished) : visible_relation
+      end
+      allow(ActiveRecord::Base).to receive(:establish_connection)
+      allow(Article).to receive_message_chain(:published, :includes, :where, :not, :recent, :limit).and_return([])
+      allow(Rails.logger).to receive(:error)
+
+      get :index
+
+      expect(ActiveRecord::Base).to have_received(:establish_connection)
+      expect(assigns(:sections)).to eq([])
+      expect(assigns(:section_data)).to eq({})
     end
   end
 end

@@ -6,9 +6,7 @@
      target="_blank"
      rel="noopener noreferrer"
      style="display: block; text-decoration: none; color: inherit;">
-    <div style="border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; background: #fff; max-width: 42rem; transition: box-shadow 0.2s;"
-         onmouseover="this.style.boxShadow='0 10px 15px -3px rgba(0,0,0,0.1)'"
-         onmouseout="this.style.boxShadow='none'">
+    <div style="border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; background: #fff; max-width: 42rem;">
 
       <%# サムネイル画像 %>
       <% if ogp_data.image.present? %>
@@ -16,8 +14,7 @@
           <img src="<%= ogp_data.image %>"
                alt="<%= ogp_data.title %>"
                style="display: block; width: 100%; height: auto; margin: 0; border-radius: 0; box-shadow: none;"
-               loading="lazy"
-               onerror="this.parentElement.style.display='none'">
+               loading="lazy">
         </div>
       <% end %>
 
@@ -29,8 +26,7 @@
             <img src="<%= ogp_data.favicon %>"
                  alt=""
                  style="width: 1rem; height: 1rem; flex-shrink: 0; margin: 0; border-radius: 0; box-shadow: none;"
-                 loading="lazy"
-                 onerror="this.style.display='none'">
+                 loading="lazy">
           <% end %>
           <span style="font-size: 0.75rem; color: #6b7280; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
             <%= ogp_data.site_name %>

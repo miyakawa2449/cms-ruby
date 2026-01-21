@@ -2,6 +2,7 @@ require "redcarpet"
 require "cgi"
 
 module MarkdownHelper
+  include ActionView::Helpers::SanitizeHelper
   # カスタムレンダラー
   class HTMLwithPygments < Redcarpet::Render::HTML
     def block_code(code, language)
@@ -44,7 +45,7 @@ module MarkdownHelper
       quote: true
     )
 
-    markdown_processor.render(text).html_safe
+    sanitize_html(markdown_processor.render(text))
   end
 
   # コードシンタックスハイライト対応版
@@ -76,7 +77,15 @@ module MarkdownHelper
       quote: true
     )
 
-    markdown_processor.render(text).html_safe
+    sanitize_html(markdown_processor.render(text))
+  end
+
+  def sanitize_html(html)
+    ActionController::Base.helpers.sanitize(
+      html,
+      tags: allowed_tags,
+      attributes: allowed_attributes
+    )
   end
 
   # 安全なMarkdown処理（エラーハンドリング付き）
@@ -139,7 +148,7 @@ module MarkdownHelper
     )
 
     markdown_processor = Redcarpet::Markdown.new(renderer, markdown_options)
-    html = markdown_processor.render(processed_text)
+    html = sanitize(markdown_processor.render(processed_text), tags: allowed_tags, attributes: allowed_attributes).to_s
 
     # autolinkされたURLをOGPカードに置換
     url_cards.each_key do |url|
@@ -187,6 +196,34 @@ module MarkdownHelper
       underline: true,
       highlight: true,
       quote: true
+    }
+  end
+
+  def allowed_tags
+    %w[
+      h1 h2 h3 h4 h5 h6 p br hr
+      strong em u s del ins mark
+      ul ol li
+      blockquote pre code
+      a img
+      table thead tbody tr th td
+      div span figure figcaption
+    ]
+  end
+
+  def allowed_attributes
+    {
+      "a" => %w[href title target rel],
+      "img" => %w[src alt title width height loading],
+      "code" => %w[class],
+      "pre" => %w[class],
+      "table" => %w[class],
+      "th" => %w[colspan rowspan],
+      "td" => %w[colspan rowspan],
+      "div" => %w[class],
+      "span" => %w[class],
+      "figure" => %w[class],
+      "figcaption" => %w[class]
     }
   end
 

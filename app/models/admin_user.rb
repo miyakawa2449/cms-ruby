@@ -10,4 +10,16 @@ class AdminUser < ApplicationRecord
   has_many :ai_generations, dependent: :nullify
 
   validates :email, presence: true, uniqueness: true
+
+  after_commit :log_lock_state_change, if: :saved_change_to_locked_at?
+
+  private
+
+  def log_lock_state_change
+    if locked_at.present?
+      SecurityLogger.log_account_locked(self, Current.request)
+    else
+      SecurityLogger.log_account_unlocked(self, Current.request)
+    end
+  end
 end

@@ -3,6 +3,8 @@
 # MediaMetadata model for managing uploaded images
 # Stores metadata and usage tracking for Active Storage blobs
 class MediaMetadata < ApplicationRecord
+  include MediaValidatable
+
   belongs_to :blob, class_name: "ActiveStorage::Blob"
 
   validates :blob, presence: true

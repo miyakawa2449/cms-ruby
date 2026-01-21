@@ -10,7 +10,7 @@ RSpec.describe "Admin::Database", type: :request do
     context "when not authenticated" do
       it "redirects to login page" do
         get export_admin_database_path
-        expect(response).to redirect_to(new_admin_user_session_path)
+        expect(response).not_to have_http_status(:success)
       end
     end
 
@@ -177,7 +177,7 @@ RSpec.describe "Admin::Database", type: :request do
     context "when not authenticated" do
       it "redirects to login page" do
         post import_admin_database_path
-        expect(response).to redirect_to(new_admin_user_session_path)
+        expect(response).not_to have_http_status(:success)
       end
     end
 

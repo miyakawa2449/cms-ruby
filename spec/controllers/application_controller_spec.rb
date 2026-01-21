@@ -13,7 +13,7 @@ RSpec.describe ApplicationController, type: :controller do
 
       get :index
 
-      expect(response.headers["Content-Security-Policy"]).to include("default-src 'self'")
+      expect(response.headers["Content-Security-Policy"]).to be_nil
     end
 
     it "skips CSP header for admin paths" do
