@@ -3,9 +3,15 @@
 
 class Rack::Attack
   if Rails.env.production?
-    Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
-      url: ENV.fetch("REDIS_URL", "redis://localhost:6379/1")
-    )
+    begin
+      Rack::Attack.cache.store = ActiveSupport::Cache.lookup_store(
+        :redis_cache_store,
+        { url: ENV.fetch("REDIS_URL", "redis://localhost:6379/1") }
+      )
+    rescue ArgumentError => e
+      Rails.logger.warn("[Rack::Attack] Redis cache store init failed, falling back to MemoryStore: #{e.message}")
+      Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+    end
   else
     Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
   end
