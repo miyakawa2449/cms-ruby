@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Admin Access Security", type: :system do
-  let(:admin_user) { create(:admin_user, password: "password123") }
+  let(:admin_user) { create(:admin_user, password: TestCredentials.admin_password) }
 
   before do
     skip "Selenium not available" unless ENV["SELENIUM"] == "true"

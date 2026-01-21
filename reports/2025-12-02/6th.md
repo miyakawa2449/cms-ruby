@@ -73,7 +73,7 @@ AdminUser.new  # モデル動作確認
 # 初期管理者作成（seeds.rb）
 AdminUser.create!(
   email: 'admin@example.com',
-  password: 'password123',
+  password: 'ADMIN_PASSWORD',
   name: 'システム管理者',
   role: 'admin'
 )

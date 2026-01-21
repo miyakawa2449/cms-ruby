@@ -1,12 +1,12 @@
 require "rails_helper"
 
 RSpec.describe "Authentication Security", type: :request do
-  let(:admin_user) { create(:admin_user, password: "password123") }
+  let(:admin_user) { create(:admin_user, password: TestCredentials.admin_password) }
 
   describe "Login" do
     it "allows login with valid credentials" do
       post admin_user_session_path, params: {
-        admin_user: { email: admin_user.email, password: "password123" }
+        admin_user: { email: admin_user.email, password: TestCredentials.admin_password }
       }
 
       expect(response).to redirect_to(admin_root_path)
@@ -14,7 +14,7 @@ RSpec.describe "Authentication Security", type: :request do
 
     it "sets remember me cookie when requested" do
       post admin_user_session_path, params: {
-        admin_user: { email: admin_user.email, password: "password123", remember_me: "1" }
+        admin_user: { email: admin_user.email, password: TestCredentials.admin_password, remember_me: "1" }
       }
 
       expect(admin_user.reload.remember_created_at).to be_present
@@ -30,7 +30,7 @@ RSpec.describe "Authentication Security", type: :request do
 
     it "rejects login with non-existent email" do
       post admin_user_session_path, params: {
-        admin_user: { email: "missing@example.com", password: "password123" }
+        admin_user: { email: "missing@example.com", password: TestCredentials.admin_password }
       }
 
       expect(response).not_to have_http_status(:success)
@@ -89,7 +89,7 @@ RSpec.describe "Authentication Security", type: :request do
       admin_user.lock_access!
 
       post admin_user_session_path, params: {
-        admin_user: { email: admin_user.email, password: "password123" }
+        admin_user: { email: admin_user.email, password: TestCredentials.admin_password }
       }
 
       expect(response.body).to include("アカウントがロックされています")
@@ -100,7 +100,7 @@ RSpec.describe "Authentication Security", type: :request do
       admin_user.update!(locked_at: 2.hours.ago)
 
       post admin_user_session_path, params: {
-        admin_user: { email: admin_user.email, password: "password123" }
+        admin_user: { email: admin_user.email, password: TestCredentials.admin_password }
       }
 
       expect(response).to redirect_to(admin_root_path)

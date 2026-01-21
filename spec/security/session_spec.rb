@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Session Security", type: :request do
-  let(:admin_user) { create(:admin_user, password: "password123") }
+  let(:admin_user) { create(:admin_user, password: TestCredentials.admin_password) }
   let(:session_key) { Rails.application.config.session_options[:key] }
 
   it "resets session on login" do
@@ -9,7 +9,7 @@ RSpec.describe "Session Security", type: :request do
     initial_cookie = response.cookies[session_key]
 
     post admin_user_session_path, params: {
-      admin_user: { email: admin_user.email, password: "password123" }
+      admin_user: { email: admin_user.email, password: TestCredentials.admin_password }
     }
 
     expect(response).not_to have_http_status(:unauthorized)
@@ -18,7 +18,7 @@ RSpec.describe "Session Security", type: :request do
 
   it "has a session after login" do
     post admin_user_session_path, params: {
-      admin_user: { email: admin_user.email, password: "password123" }
+      admin_user: { email: admin_user.email, password: TestCredentials.admin_password }
     }
 
     expect(response).not_to have_http_status(:unauthorized)

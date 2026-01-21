@@ -168,12 +168,12 @@ end
 require 'rails_helper'
 
 RSpec.describe 'Authentication Security', type: :request do
-  let(:admin_user) { create(:admin_user, password: 'password123') }
+  let(:admin_user) { create(:admin_user, password: 'ADMIN_PASSWORD') }
   
   describe 'Login' do
     it 'allows login with valid credentials' do
       post admin_user_session_path, params: {
-        admin_user: { email: admin_user.email, password: 'password123' }
+        admin_user: { email: admin_user.email, password: 'ADMIN_PASSWORD' }
       }
       
       expect(response).to redirect_to(admin_root_path)
@@ -189,7 +189,7 @@ RSpec.describe 'Authentication Security', type: :request do
     
     it 'rejects login with non-existent email' do
       post admin_user_session_path, params: {
-        admin_user: { email: 'nonexistent@example.com', password: 'password123' }
+        admin_user: { email: 'nonexistent@example.com', password: 'ADMIN_PASSWORD' }
       }
       
       expect(response).to have_http_status(:unprocessable_entity)
@@ -212,7 +212,7 @@ RSpec.describe 'Authentication Security', type: :request do
       admin_user.lock_access!
       
       post admin_user_session_path, params: {
-        admin_user: { email: admin_user.email, password: 'password123' }
+        admin_user: { email: admin_user.email, password: 'ADMIN_PASSWORD' }
       }
       
       expect(response.body).to include('アカウントがロックされています')
@@ -223,7 +223,7 @@ RSpec.describe 'Authentication Security', type: :request do
       admin_user.update(locked_at: 2.hours.ago)
       
       post admin_user_session_path, params: {
-        admin_user: { email: admin_user.email, password: 'password123' }
+        admin_user: { email: admin_user.email, password: 'ADMIN_PASSWORD' }
       }
       
       expect(response).to redirect_to(admin_root_path)
@@ -563,14 +563,14 @@ end
 require 'rails_helper'
 
 RSpec.describe 'Login Security', type: :system do
-  let(:admin_user) { create(:admin_user, password: 'password123') }
+  let(:admin_user) { create(:admin_user, password: 'ADMIN_PASSWORD') }
   
   describe 'Login Flow' do
     it 'logs in successfully with valid credentials' do
       visit new_admin_user_session_path
       
       fill_in 'Email', with: admin_user.email
-      fill_in 'Password', with: 'password123'
+      fill_in 'Password', with: 'ADMIN_PASSWORD'
       click_button 'ログイン'
       
       expect(page).to have_current_path(admin_root_path)

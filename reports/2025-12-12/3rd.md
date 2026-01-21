@@ -32,7 +32,7 @@ Docker PostgreSQL接続問題の根本解決のため、環境完全再構築を
 **バックアップ場所**: `/tmp/backup_20251212_164316/`
 
 #### バックアップ内容詳細:
-- **AdminUsers**: 1件 (admin@portfolio.dev / password123)
+- **AdminUsers**: 1件 (admin@example.test / ADMIN_PASSWORD)
 - **Categories**: 4件 (works, tech-blog, dev-log, misc)
 - **Sections**: 7件 (基本セクション構成)
 - **SectionContents**: 4件 (JSONBデータ含む重要コンテンツ)

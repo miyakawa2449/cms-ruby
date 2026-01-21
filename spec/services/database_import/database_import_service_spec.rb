@@ -82,7 +82,7 @@ RSpec.describe DatabaseImport::DatabaseImportService do
         described_class.new(data_json_path).call
 
         admin = AdminUser.find_by(email: "original@example.com")
-        expect(admin.valid_password?(DatabaseImport::DatabaseImportService::DEFAULT_PASSWORD)).to be true
+        expect(admin.valid_password?(DatabaseImport::DatabaseImportService.admin_reset_password)).to be true
       end
 
       it "updates category article counts" do
@@ -180,7 +180,7 @@ RSpec.describe DatabaseImport::DatabaseImportService do
 
         # In test environment, default admin user is created
         expect(AdminUser.find_by(email: "export@example.com")).to be_present
-        expect(AdminUser.find_by(email: "admin@portfolio.dev")).to be_present
+        expect(AdminUser.find_by(email: TestCredentials.admin_email)).to be_present
         expect(AdminUser.where(email: "existing@example.com")).to be_empty
       end
     end

@@ -111,9 +111,9 @@ rails server
 
 ### 管理画面アクセス
 ```
-URL: http://localhost:3000/admin
-Email: admin@portfolio.dev
-Password: password123
+URL: http://localhost:3000/${ADMIN_PATH:-admin}
+Email: ${ADMIN_EMAIL:-admin@portfolio.dev}
+Password: ${ADMIN_PASSWORD:-(set in .env)}
 ```
 
 ## テスト実行
@@ -153,8 +153,8 @@ bundle exec rubocop
 | 項目 | 内容 |
 |------|------|
 | **データ削除** | インポートは既存データを**完全に置き換え**ます |
-| **パスワードリセット** | インポート後、全管理者のパスワードは `password123` にリセットされます |
-| **デフォルトユーザー** | 開発/テスト環境では `admin@portfolio.dev` が自動的に作成されます |
+| **パスワードリセット** | インポート後、全管理者のパスワードは `ADMIN_RESET_PASSWORD`（環境変数）の値にリセットされます |
+| **デフォルトユーザー** | 開発/テスト環境では `ADMIN_EMAIL`/`ADMIN_PASSWORD` の値で管理者が自動作成されます |
 | **本番環境** | 本番環境では確認チェックボックスが表示されます |
 | **バックアップ** | インポート前に必ずエクスポートでバックアップを取得してください |
 

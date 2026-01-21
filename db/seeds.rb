@@ -5,13 +5,27 @@
 puts "🌱 Starting database seeding..."
 
 # Create AdminUser for development/test
-admin = AdminUser.find_or_create_by!(email: "admin@portfolio.dev") do |user|
-  user.password = "password123"
-  user.password_confirmation = "password123"
+admin_email = ENV.fetch("ADMIN_EMAIL", "admin@example.test")
+admin_password = ENV.fetch("ADMIN_PASSWORD", "")
+
+if admin_password.empty?
+  if Rails.env.production?
+    puts "⚠️ ADMIN_PASSWORD is not set. Skipping AdminUser creation in production."
+  else
+    admin_password = SecureRandom.base58(12)
+    puts "🔐 Generated ADMIN_PASSWORD for seeding: #{admin_password}"
+  end
 end
 
-puts "✅ AdminUser created: #{admin.email}"
-puts "🎯 Password: password123"
+if admin_password.present?
+  admin = AdminUser.find_or_create_by!(email: admin_email) do |user|
+    user.password = admin_password
+    user.password_confirmation = admin_password
+  end
+
+  puts "✅ AdminUser ensured: #{admin.email}"
+  puts "🔐 Password set via ENV (ADMIN_PASSWORD)" if ENV["ADMIN_PASSWORD"].present?
+end
 
 # 実績・作品カテゴリを作成
 works_category = Category.find_or_create_by!(slug: 'works') do |category|

@@ -261,7 +261,7 @@ RSpec.describe "Admin::Database", type: :request do
 
           imported_admin = AdminUser.find_by(email: "export_admin@example.com")
           expect(imported_admin).to be_present
-          expect(imported_admin.valid_password?("password123")).to be true
+          expect(imported_admin.valid_password?(DatabaseImport::DatabaseImportService.admin_reset_password)).to be true
         end
       end
 

@@ -26,7 +26,7 @@ session-start実行によるPhase進捗確認、My StoryページのCTAボタン
 - PostgreSQLボリューム削除・再作成
 - `portfolio_rb_development`データベース作成
 - マイグレーション実行・シードデータ投入
-- 管理者アカウント: `admin@portfolio.dev` / `password123`
+- 管理者アカウント: `admin@example.test` / `ADMIN_PASSWORD`
 
 ### 3. My StoryページCTAボタン修正
 #### 修正内容

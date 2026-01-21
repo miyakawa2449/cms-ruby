@@ -6,8 +6,8 @@ module DatabaseImport
   class DatabaseImportService
     class ImportError < StandardError; end
 
-    # Default password for imported AdminUsers (development environment only)
-    DEFAULT_PASSWORD = "password123"
+    # Default password for imported AdminUsers (prefer ENV, fallback in dev/test)
+    DEFAULT_PASSWORD = "test_password_123!"
 
     # Models to import in dependency order (referenced models first)
     IMPORT_ORDER = %w[
@@ -165,34 +165,46 @@ module DatabaseImport
     def reset_admin_passwords
       Rails.logger.info "[DatabaseImport] Resetting AdminUser passwords..."
 
+      reset_password = self.class.admin_reset_password
+      if reset_password.blank?
+        Rails.logger.warn "[DatabaseImport] ADMIN_RESET_PASSWORD is not set. Skipping admin password reset."
+        return
+      end
+
       AdminUser.find_each do |admin|
         admin.update_columns(
-          encrypted_password: AdminUser.new(password: DEFAULT_PASSWORD).encrypted_password
+          encrypted_password: AdminUser.new(password: reset_password).encrypted_password
         )
       end
 
       # 開発環境用のデフォルトユーザーを確保
       if Rails.env.development? || Rails.env.test?
-        ensure_default_admin_user
+        ensure_default_admin_user(reset_password)
       end
 
       Rails.logger.info "[DatabaseImport] Reset passwords for #{AdminUser.count} admin users"
-      Rails.logger.warn "[DatabaseImport] All admin passwords have been reset to: #{DEFAULT_PASSWORD}"
+      Rails.logger.warn "[DatabaseImport] All admin passwords have been reset. Set ADMIN_RESET_PASSWORD to change."
     end
 
-    def ensure_default_admin_user
-      default_email = "admin@portfolio.dev"
+    def ensure_default_admin_user(reset_password)
+      default_email = ENV.fetch("ADMIN_EMAIL", "admin@example.test")
 
       unless AdminUser.exists?(email: default_email)
         AdminUser.create!(
           email: default_email,
-          password: DEFAULT_PASSWORD,
-          password_confirmation: DEFAULT_PASSWORD
+          password: reset_password,
+          password_confirmation: reset_password
         )
         Rails.logger.info "[DatabaseImport] Created default admin user: #{default_email}"
       else
         Rails.logger.info "[DatabaseImport] Default admin user already exists: #{default_email}"
       end
+    end
+
+    def self.admin_reset_password
+      ENV["ADMIN_RESET_PASSWORD"].presence ||
+        ENV["ADMIN_PASSWORD"].presence ||
+        (Rails.env.production? ? nil : DEFAULT_PASSWORD)
     end
 
     def update_counter_caches

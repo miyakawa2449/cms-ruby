@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Article, 'pg_search full-text search', type: :model do
-  let!(:admin_user) { AdminUser.first || AdminUser.create!(email: 'test@example.com', password: 'password123') }
+  let!(:admin_user) { AdminUser.first || AdminUser.create!(email: "test@example.com", password: TestCredentials.admin_password) }
 
   let!(:ruby_article) do
     Article.create!(

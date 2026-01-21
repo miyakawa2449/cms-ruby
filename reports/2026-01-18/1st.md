@@ -57,7 +57,7 @@ spec/services/database_import/zip_extractor_service_spec.rb
 
 4. **パストラバーサル攻撃対策**: ZipExtractorServiceで不正なファイルパスを検出・拒否
 
-5. **パスワードリセット**: セキュリティ対策として、インポート後の全AdminUserパスワードを`password123`にリセット
+5. **パスワードリセット**: セキュリティ対策として、インポート後の全AdminUserパスワードを`ADMIN_PASSWORD`にリセット
 
 6. **既存認証で十分**: Admin::BaseControllerの`authenticate_admin_user!`で認可要件を満たすため、Pundit追加は不要と判断
 

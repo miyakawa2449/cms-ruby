@@ -22,7 +22,7 @@
         <div class="mt-2 text-sm text-yellow-700">
           <ul class="list-disc list-inside space-y-1">
             <li><strong>既存のデータは全て削除されます</strong></li>
-            <li>インポート後、管理者パスワードは <code class="bg-yellow-100 px-1 rounded">password123</code> にリセットされます</li>
+            <li>インポート後、管理者パスワードは <code class="bg-yellow-100 px-1 rounded">ADMIN_RESET_PASSWORD</code>（環境変数）の値にリセットされます</li>
             <li>処理中はブラウザを閉じないでください</li>
             <% if @is_production %>
               <li class="text-red-600 font-bold">本番環境です！十分に注意してください</li>

@@ -41,7 +41,7 @@ yarn.lock
 - **データベース環境**
   - PostgreSQL 17.7動作確認
   - マイグレーション・シード投入完了
-  - 管理者アカウント作成（admin@portfolio.dev）
+  - 管理者アカウント作成（admin@example.test）
 
 ### 課題・問題点
 - entrypoint.shのデータベース接続チェックに問題あり
