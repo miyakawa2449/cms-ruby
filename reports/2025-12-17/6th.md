@@ -53,7 +53,7 @@ if Rails.env.production?
     }
     
     config.action_mailer.default_url_options = {
-      host: 'miyakawa.codes',
+      host: 'example.test',
       protocol: 'https'
     }
   end
@@ -77,8 +77,8 @@ end
 AWS_ACCESS_KEY_ID=your_access_key_id
 AWS_SECRET_ACCESS_KEY=your_secret_access_key  
 AWS_DEFAULT_REGION=ap-northeast-1
-SES_FROM_EMAIL=noreply@miyakawa.codes
-ADMIN_EMAIL=admin@miyakawa.codes
+SES_FROM_EMAIL=noreply@example.test
+ADMIN_EMAIL=admin@example.test
 ```
 
 ### 4. 技術的改善

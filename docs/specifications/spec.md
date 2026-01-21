@@ -15,7 +15,7 @@
 - **キャッシュ**: Redis（API・セッション・Sidekiq）
 - **インフラ**: AWS Lightsail
 - **Webサーバー**: Nginx（構築済み）
-- **ドメイン**: https://miyakawa.code（SSL未設定）
+- **ドメイン**: https://example.test（SSL未設定）
 - **外部API**: Amazon Bedrock（Claude/Titan・aws-sdk-bedrockruntime使用）・Slack Webhook・SNS API
 - **バックグラウンドジョブ**: Sidekiq 8.0.10（AI処理・メール送信）
 - **API セキュリティ**: Rack::Attack（レート制限）・CORS・入力検証
@@ -709,7 +709,7 @@ DELETE /api/internal/media/:id                # メディア削除
 **基本サイト情報**:
 - サイトタイトル: 「宮川剛のポートフォリオ＆技術ブログ」
 - サイト説明文: SEO・OGP用（160文字以内推奨）
-- サイトURL: https://miyakawa.codes
+- サイトURL: https://example.test
 - 管理者メールアドレス: システム通知送信先
 - タイムゾーン設定: Asia/Tokyo (GMT+9)
 - 言語設定: 日本語/English切り替え

@@ -4,7 +4,7 @@ class ContactMailer < ApplicationMailer
     @contact = contact
 
     mail(
-      to: ENV.fetch("ADMIN_EMAIL", "contact@miyakawa.codes"),
+      to: ENV.fetch("CONTACT_EMAIL", ENV.fetch("ADMIN_EMAIL", "contact@example.test")),
       subject: "[お問い合わせ] #{contact.subject} - #{contact.name}様より"
     )
   end

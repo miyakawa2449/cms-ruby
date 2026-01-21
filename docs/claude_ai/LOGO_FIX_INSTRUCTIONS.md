@@ -2,7 +2,7 @@
 
 ## 問題
 
-トップページ（https://miyakawa.codes）でロゴ画像が表示されず、フォールバックの「M」マークが表示されている。
+トップページ（https://example.test）でロゴ画像が表示されず、フォールバックの「M」マークが表示されている。
 
 ### エラー内容
 
@@ -112,7 +112,7 @@ docker compose --env-file .env.production -p portfolio-prod -f docker-compose.pr
 
 ## 動作確認
 
-1. https://miyakawa.codes/ にアクセス
+1. https://example.test/ にアクセス
 2. ヘッダー左上にロゴ画像が表示されることを確認
 3. フォールバックの「M」マークではなく、管理画面で登録したロゴ画像が表示されること
 

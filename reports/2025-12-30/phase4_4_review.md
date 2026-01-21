@@ -55,7 +55,7 @@
 - ✅ Disallow: /admin-secure-panel-miyakawa2449 設定
 - ✅ Disallow: /api/ 設定
 - ✅ Disallow: /rails/active_storage/ 設定
-- ✅ Sitemap: https://miyakawa.codes/sitemap.xml 指定
+- ✅ Sitemap: https://example.test/sitemap.xml 指定
 
 ### 5. フィードリンク表示 ✅
 - **ブログページ`<head>`**: `app/views/blog/index.html.erb` - 実装完了
@@ -194,7 +194,7 @@ $ curl http://localhost:3000/robots.txt
 - ✅ 管理画面（/admin-secure-panel-miyakawa2449）のクロール禁止
 - ✅ API（/api/）のクロール禁止
 - ✅ Active Storage（/rails/active_storage/）のクロール禁止
-- ✅ Sitemap URL指定（https://miyakawa.codes/sitemap.xml）
+- ✅ Sitemap URL指定（https://example.test/sitemap.xml）
 
 ### ブログページのフィードリンク
 - ✅ `<head>`内にRSS link tag存在

@@ -59,8 +59,8 @@
 AWS_SES_REGION=ap-northeast-1
 AWS_SES_ACCESS_KEY_ID=your_ses_access_key
 AWS_SES_SECRET_ACCESS_KEY=your_ses_secret_key
-MAIL_FROM=noreply@miyakawa.codes
-ADMIN_EMAIL=contact@miyakawa.codes
+MAIL_FROM=noreply@example.test
+ADMIN_EMAIL=contact@example.test
 ```
 
 **重要:**
@@ -103,7 +103,7 @@ class ContactMailer < ApplicationMailer
     @contact = contact
     
     mail(
-      to: ENV.fetch('ADMIN_EMAIL', 'contact@miyakawa.codes'),
+      to: ENV.fetch('ADMIN_EMAIL', 'contact@example.test'),
       subject: "[お問い合わせ] #{contact.subject} - #{contact.name}様より"
     )
   end
@@ -156,8 +156,8 @@ nano .env.production
 # AWS_SES_REGION=ap-northeast-1
 # AWS_SES_ACCESS_KEY_ID=...
 # AWS_SES_SECRET_ACCESS_KEY=...
-# MAIL_FROM=noreply@miyakawa.codes
-# ADMIN_EMAIL=contact@miyakawa.codes
+# MAIL_FROM=noreply@example.test
+# ADMIN_EMAIL=contact@example.test
 
 # 再ビルド＆再起動
 docker compose --env-file .env.production -p portfolio-prod -f docker-compose.production.yml build --no-cache portfolio-web portfolio-worker
@@ -183,8 +183,8 @@ docker compose --env-file .env.production -p portfolio-prod -f docker-compose.pr
 
 AWS Console → SES → Verified identities → Create identity
 
-- ドメイン検証: `miyakawa.codes` のDNSにレコード追加
-- または、メールアドレス検証: `contact@miyakawa.codes` に確認メール
+- ドメイン検証: `example.test` のDNSにレコード追加
+- または、メールアドレス検証: `contact@example.test` に確認メール
 
 ### 2. サンドボックスから本番へ移行
 

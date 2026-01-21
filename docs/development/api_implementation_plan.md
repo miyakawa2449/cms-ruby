@@ -251,7 +251,7 @@ end
 # config/application.rb
 config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins 'https://miyakawa.codes', 'localhost:3000'
+    origins 'https://example.test', 'localhost:3000'
     resource '/api/*',
              headers: :any,
              methods: [:get, :post, :put, :patch, :delete, :options, :head],

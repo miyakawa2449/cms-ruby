@@ -144,11 +144,11 @@ portfolio-webを外部非公開化、nginx経由のみアクセス可能に。
 
 ### 2. アクセス確認
 ```bash
-curl -I https://miyakawa.codes
+curl -I https://example.test
 ```
 
-- メインサイト: https://miyakawa.codes
-- 管理画面: https://miyakawa.codes/admin-secure-panel-miyakawa2449
+- メインサイト: https://example.test
+- 管理画面: https://example.test/admin-secure-panel-miyakawa2449
 
 ## 🎯 成功判定基準
 

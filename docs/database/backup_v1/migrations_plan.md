@@ -352,7 +352,7 @@ end
 api_settings = [
   {key: 'jwt_secret_key', value: SecureRandom.hex(32), category: 'api', is_sensitive: true},
   {key: 'api_rate_limit_global', value: '300', category: 'api'},
-  {key: 'cors_allowed_origins', value: 'https://miyakawa.codes', category: 'api'}
+  {key: 'cors_allowed_origins', value: 'https://example.test', category: 'api'}
 ]
 ```
 

@@ -125,7 +125,8 @@
       </div>
       <div>
         <h4 class="text-lg font-semibold mb-4">Contact Info</h4>
-        <p class="text-gray-300 mb-2">Email: contact@miyakawa.code</p>
+        <% contact_email = ENV.fetch("CONTACT_EMAIL", ENV.fetch("ADMIN_EMAIL", "contact@example.test")) %>
+        <p class="text-gray-300 mb-2">Email: <%= contact_email %></p>
         <p class="text-gray-300">Location: Ishikawa, Japan</p>
       </div>
     </div>

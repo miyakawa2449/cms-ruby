@@ -195,8 +195,8 @@
   }
 
   /* 外部リンクアイコン */
-  .article-content a[href^="http"]:not([href*="miyakawa.codes"]):not(.ogp-card)::after,
-  .prose a[href^="http"]:not([href*="miyakawa.codes"]):not(.ogp-card)::after {
+.article-content a[href^="http"]:not(.ogp-card)::after,
+.prose a[href^="http"]:not(.ogp-card)::after {
     content: " ↗";
     font-size: 0.75em;
     vertical-align: super;

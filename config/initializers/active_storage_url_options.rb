@@ -15,7 +15,7 @@ Rails.application.config.after_initialize do
   if Rails.env.production?
     # 環境変数またはデフォルト値からURLオプションを設定
     url_options = {
-      host: ENV.fetch("APP_HOST", "miyakawa.codes"),
+      host: ENV.fetch("APP_HOST", "example.test"),
       protocol: "https"
     }
 
@@ -59,7 +59,7 @@ class ActiveStorageUrlOptionsMiddleware
       is_https = forwarded_proto == "https" || env["HTTPS"] == "on"
 
       # 信頼できるホスト名を使用（環境変数で指定されたものを優先）
-      trusted_host = ENV.fetch("APP_HOST", "miyakawa.codes")
+      trusted_host = ENV.fetch("APP_HOST", "example.test")
 
       ActiveStorage::Current.url_options = {
         host: trusted_host,

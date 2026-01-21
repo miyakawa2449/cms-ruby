@@ -129,5 +129,5 @@ SE/PMがClaude Codeを活用することで得られる最大の価値は、**�
 
 *本稿は、実際のプロジェクトレポートとClaude Codeとの協働作業の分析に基づいて作成されました。*
 
-**Contact**: admin@miyakawa.codes  
+**Contact**: admin@example.test  
 **GitHub**: https://github.com/miyakawa2449/cms-ruby

@@ -50,7 +50,7 @@ if Rails.env.production?
   Rails.application.configure do
     config.action_mailer.delivery_method = :ses
     config.action_mailer.default_url_options = { 
-      host: 'miyakawa.codes', 
+      host: 'example.test', 
       protocol: 'https' 
     }
   end
@@ -63,12 +63,12 @@ end
 **ファイル**: `app/mailers/contact_mailer.rb`
 ```ruby
 class ContactMailer < ApplicationMailer
-  default from: ENV['SES_FROM_EMAIL'] || 'noreply@miyakawa.codes'
+  default from: ENV['SES_FROM_EMAIL'] || 'noreply@example.test'
 
   def admin_notification(contact)
     @contact = contact
     mail(
-      to: ENV['ADMIN_EMAIL'] || 'admin@miyakawa.codes',
+      to: ENV['ADMIN_EMAIL'] || 'admin@example.test',
       subject: "新しいお問い合わせ: #{@contact.subject}"
     )
   end
@@ -167,8 +167,8 @@ showSuccess() {
 AWS_ACCESS_KEY_ID=your_access_key_id
 AWS_SECRET_ACCESS_KEY=your_secret_access_key
 AWS_DEFAULT_REGION=ap-northeast-1
-SES_FROM_EMAIL=noreply@miyakawa.codes
-ADMIN_EMAIL=admin@miyakawa.codes
+SES_FROM_EMAIL=noreply@example.test
+ADMIN_EMAIL=admin@example.test
 ```
 
 ## ✅ 検証結果

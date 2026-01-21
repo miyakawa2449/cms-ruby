@@ -648,21 +648,21 @@ upstream puma {
 
 server {
   listen 80;
-  server_name miyakawa.codes www.miyakawa.codes;
+  server_name example.test www.example.test;
   return 301 https://$server_name$request_uri;
 }
 
 server {
   listen 443 ssl http2;
-  server_name miyakawa.codes www.miyakawa.codes;
+  server_name example.test www.example.test;
 
   root /var/www/portfolio/current/public;
   access_log /var/log/nginx/portfolio_access.log;
   error_log /var/log/nginx/portfolio_error.log;
 
   # SSL設定
-  ssl_certificate /etc/letsencrypt/live/miyakawa.codes/fullchain.pem;
-  ssl_certificate_key /etc/letsencrypt/live/miyakawa.codes/privkey.pem;
+  ssl_certificate /etc/letsencrypt/live/example.test/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/example.test/privkey.pem;
   ssl_protocols TLSv1.2 TLSv1.3;
   ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;
   ssl_prefer_server_ciphers off;
@@ -705,7 +705,7 @@ server {
 ### SSL証明書設定
 ```bash
 # Let's Encrypt証明書取得
-sudo certbot --nginx -d miyakawa.codes -d www.miyakawa.codes
+sudo certbot --nginx -d example.test -d www.example.test
 
 # 自動更新設定
 echo "0 12 * * * /usr/bin/certbot renew --quiet" | sudo crontab -

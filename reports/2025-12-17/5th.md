@@ -47,7 +47,7 @@ if Rails.env.production?
     config.action_mailer.smtp_settings = {
       address: ENV['SMTP_SERVER'] || 'email-smtp.ap-northeast-1.amazonaws.com',
       port: 587,
-      domain: ENV['SMTP_DOMAIN'] || 'miyakawa.codes',
+      domain: ENV['SMTP_DOMAIN'] || 'example.test',
       user_name: ENV['SMTP_USERNAME'],
       password: ENV['SMTP_PASSWORD'],
       authentication: 'login',
@@ -56,7 +56,7 @@ if Rails.env.production?
     }
     
     config.action_mailer.default_url_options = {
-      host: 'miyakawa.codes',
+      host: 'example.test',
       protocol: 'https'
     }
   end
@@ -81,10 +81,10 @@ end
 ```bash
 # AWS SES SMTP Configuration (修正版)
 SMTP_SERVER=email-smtp.ap-northeast-1.amazonaws.com
-SMTP_DOMAIN=miyakawa.codes
+SMTP_DOMAIN=example.test
 SMTP_USERNAME=your_smtp_username
 SMTP_PASSWORD=your_smtp_password
-ADMIN_EMAIL=admin@miyakawa.codes
+ADMIN_EMAIL=admin@example.test
 ```
 
 ### 技術的改善

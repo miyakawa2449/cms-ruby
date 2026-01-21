@@ -3,7 +3,7 @@
 ## API概要
 
 ### 基本情報
-- **ベースURL**: `https://miyakawa.codes/api/v1`（本番）
+- **ベースURL**: `https://example.test/api/v1`（本番）
 - **フォーマット**: JSON
 - **文字エンコーディング**: UTF-8
 - **認証**: 公開APIは認証不要、内部APIはJWT認証
@@ -184,7 +184,7 @@ GET /api/v1/articles/:slug
         "title": "Rails 8.1の新機能まとめ | Miyakawa Portfolio",
         "description": "Rails 8.1の新機能について詳しく解説",
         "keywords": ["Rails", "Ruby", "Web開発"],
-        "canonical_url": "https://miyakawa.codes/blog/rails-8-1-new-features"
+        "canonical_url": "https://example.test/blog/rails-8-1-new-features"
       },
       "related_articles": [
         {
@@ -478,7 +478,7 @@ PATCH /api/internal/articles/bulk
 ```typescript
 // APIクライアント
 class PortfolioAPI {
-  private baseURL = 'https://miyakawa.codes/api/v1';
+  private baseURL = 'https://example.test/api/v1';
   
   async getArticles(params?: ArticleParams): Promise<ArticleResponse> {
     const queryString = new URLSearchParams(params).toString();
@@ -509,7 +509,7 @@ require 'net/http'
 require 'json'
 
 class PortfolioAPIClient
-  BASE_URL = 'https://miyakawa.codes/api/v1'
+  BASE_URL = 'https://example.test/api/v1'
   
   def get_articles(params = {})
     uri = URI("#{BASE_URL}/articles")

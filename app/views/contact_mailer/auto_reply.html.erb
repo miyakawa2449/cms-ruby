@@ -44,7 +44,8 @@
         <div class="signature">
           <strong>Miyakawa Codes</strong><br>
           シニアエンジニア・技術発信プラットフォーム<br>
-          <a href="https://miyakawa.codes">https://miyakawa.codes</a>
+          <% app_host = ENV.fetch("APP_HOST", "example.test") %>
+          <a href="https://<%= app_host %>">https://<%= app_host %></a>
         </div>
       </div>
 

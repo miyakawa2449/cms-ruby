@@ -5,7 +5,7 @@
 Active Storageでアップロードした画像（Favicon、Logo等）のURLが、本番環境で`portfolio-web`（Dockerコンテナ名）にリダイレクトされ、`ERR_NAME_NOT_RESOLVED`エラーが発生している。
 
 ### 症状
-- HTMLソースでは正しいURL（`https://miyakawa.codes/rails/active_storage/blobs/redirect/...`）が生成される
+- HTMLソースでは正しいURL（`https://example.test/rails/active_storage/blobs/redirect/...`）が生成される
 - しかしリダイレクト先が`portfolio-web/rails/active_storage/disk/...`になってしまう
 - ブラウザが`portfolio-web`を解決できずエラーになる
 
@@ -45,7 +45,7 @@ RAILS_ENV=production
 # ===========================================
 # Application
 # ===========================================
-APP_HOST=miyakawa.codes
+APP_HOST=example.test
 FORCE_SSL=true
 
 # ===========================================
@@ -104,7 +104,7 @@ Rails.application.config.after_initialize do
   if Rails.env.production?
     # 環境変数またはデフォルト値からURLオプションを設定
     url_options = {
-      host: ENV.fetch("APP_HOST", "miyakawa.codes"),
+      host: ENV.fetch("APP_HOST", "example.test"),
       protocol: "https"
     }
     
@@ -136,7 +136,7 @@ class ActiveStorageUrlOptionsMiddleware
       is_https = forwarded_proto == 'https' || env['HTTPS'] == 'on'
       
       # 信頼できるホスト名を使用（環境変数で指定されたものを優先）
-      trusted_host = ENV.fetch("APP_HOST", "miyakawa.codes")
+      trusted_host = ENV.fetch("APP_HOST", "example.test")
       
       ActiveStorage::Current.url_options = {
         host: trusted_host,
@@ -176,10 +176,10 @@ location / {
 ```nginx
 location / {
     proxy_pass http://portfolio-web:80;
-    proxy_set_header Host miyakawa.codes;
+    proxy_set_header Host example.test;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Host miyakawa.codes;
+    proxy_set_header X-Forwarded-Host example.test;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-Forwarded-Port 443;
     proxy_redirect off;
@@ -202,8 +202,8 @@ location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ {
 ```nginx
 location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ {
     proxy_pass http://portfolio-web:80;
-    proxy_set_header Host miyakawa.codes;
-    proxy_set_header X-Forwarded-Host miyakawa.codes;
+    proxy_set_header Host example.test;
+    proxy_set_header X-Forwarded-Host example.test;
     proxy_set_header X-Forwarded-Proto https;
     expires 1y;
     add_header Cache-Control "public, immutable";
@@ -225,8 +225,8 @@ location /health {
 location /health {
     access_log off;
     proxy_pass http://portfolio-web:80/health;
-    proxy_set_header Host miyakawa.codes;
-    proxy_set_header X-Forwarded-Host miyakawa.codes;
+    proxy_set_header Host example.test;
+    proxy_set_header X-Forwarded-Host example.test;
     proxy_set_header X-Forwarded-Proto https;
 }
 ```
@@ -312,7 +312,7 @@ location /health {
 
 ## 動作確認
 
-1. https://miyakawa.codes/ にアクセス
+1. https://example.test/ にアクセス
 2. ブラウザの開発者ツール（F12）でConsoleを確認
 3. `ERR_NAME_NOT_RESOLVED` エラーが出ないことを確認
 4. 管理画面でFavicon/Logoが正しく表示されることを確認
@@ -332,7 +332,7 @@ location /health {
 
 ### nginxのHost固定の理由
 
-`$http_host`（動的）を`miyakawa.codes`（固定）に変更することで、Dockerネットワーク内部のリクエストでも常に正しいホスト名がRailsに伝わる。
+`$http_host`（動的）を`example.test`（固定）に変更することで、Dockerネットワーク内部のリクエストでも常に正しいホスト名がRailsに伝わる。
 
 ---
 

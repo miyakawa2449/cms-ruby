@@ -64,7 +64,7 @@ additional_data: {
 
 ```diff
 - <a href="#contact" class="inline-block border-2 border-blue-900 text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-blue-900 hover:text-white transition-colors">
-+ <a href="https://miyakawa.codes/#contact" class="inline-block border-2 border-blue-900 text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-blue-900 hover:text-white transition-colors">
++ <a href="https://example.test/#contact" class="inline-block border-2 border-blue-900 text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-blue-900 hover:text-white transition-colors">
     お問い合わせ
   </a>
 ```
@@ -248,7 +248,7 @@ docker compose -f docker-compose.production.yml exec portfolio-web rails my_stor
    - GitHub/デモリンク、「詳細を見る」リンクがあること
 
 5. **「お問い合わせ」リンク**をクリック：
-   - `https://miyakawa.codes/#contact` に遷移すること
+   - `https://example.test/#contact` に遷移すること
 
 6. **ページ下部**を確認：
    - 白背景の「ポートフォリオに戻る」が削除され、重複がないこと

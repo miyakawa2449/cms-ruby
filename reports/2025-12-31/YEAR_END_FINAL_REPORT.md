@@ -31,10 +31,10 @@
 | Phase 5 | メディアライブラリ | 2025-12-31 | **実装完了（テスト中）** |
 
 ### 本番公開URL
-- **サイト**: https://miyakawa.codes
-- **ブログ**: https://miyakawa.codes/blog
-- **sitemap**: https://miyakawa.codes/sitemap.xml
-- **RSS**: https://miyakawa.codes/feed.rss
+- **サイト**: https://example.test
+- **ブログ**: https://example.test/blog
+- **sitemap**: https://example.test/sitemap.xml
+- **RSS**: https://example.test/feed.rss
 
 ---
 

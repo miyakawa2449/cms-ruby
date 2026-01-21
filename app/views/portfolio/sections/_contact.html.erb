@@ -92,9 +92,10 @@
               <div>
                 <h4 class="font-semibold text-lg mb-1">メール</h4>
                 <p class="text-gray-300 mb-2">お気軽にメールでお問い合わせください</p>
-                <a href="mailto:<%= content['email'] || 'contact@miyakawa.code' %>" 
+                <% contact_email = ENV.fetch("CONTACT_EMAIL", ENV.fetch("ADMIN_EMAIL", "contact@example.test")) %>
+                <a href="mailto:<%= content['email'] || contact_email %>" 
                    class="text-blue-400 hover:text-blue-300 transition-colors">
-                  <%= content['email'] || 'contact@miyakawa.code' %>
+                  <%= content['email'] || contact_email %>
                 </a>
               </div>
             </div>

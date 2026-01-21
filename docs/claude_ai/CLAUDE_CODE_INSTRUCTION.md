@@ -51,11 +51,11 @@ if Rails.env.production?
       }
       
       config.action_mailer.default_options = {
-        from: ENV.fetch('MAIL_FROM', 'noreply@miyakawa.codes')
+        from: ENV.fetch('MAIL_FROM', 'noreply@example.test')
       }
       
       config.action_mailer.default_url_options = {
-        host: ENV.fetch('APP_HOST', 'miyakawa.codes'),
+        host: ENV.fetch('APP_HOST', 'example.test'),
         protocol: 'https'
       }
       
@@ -77,8 +77,8 @@ end
 AWS_SES_REGION=ap-northeast-1
 AWS_SES_SMTP_USERNAME=your_smtp_username
 AWS_SES_SMTP_PASSWORD=your_smtp_password
-MAIL_FROM=noreply@miyakawa.codes
-APP_HOST=miyakawa.codes
+MAIL_FROM=noreply@example.test
+APP_HOST=example.test
 ```
 
 ### 3. Gemfile から不要な gem を削除（任意）

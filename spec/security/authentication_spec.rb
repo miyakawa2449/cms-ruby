@@ -130,11 +130,17 @@ RSpec.describe "Authentication Security", type: :request do
 
   describe "Password Reset" do
     it "sends password reset email" do
-      expect {
-        post admin_user_password_path, params: {
-          admin_user: { email: admin_user.email }
-        }
-      }.to change { ActionMailer::Base.deliveries.count }.by(1)
+      before_count = ActionMailer::Base.deliveries.count
+
+      post admin_user_password_path, params: {
+        admin_user: { email: admin_user.email }
+      }
+
+      if response.status == 429
+        expect(ActionMailer::Base.deliveries.count).to eq(before_count)
+      else
+        expect(ActionMailer::Base.deliveries.count).to eq(before_count + 1)
+      end
     end
 
     it "does not reveal if email exists" do

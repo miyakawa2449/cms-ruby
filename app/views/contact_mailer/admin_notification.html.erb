@@ -49,7 +49,9 @@
 
       <div class="footer">
         <p>このメールは Miyakawa Codes のお問い合わせフォームから自動送信されています。</p>
-        <p>管理画面: <a href="https://miyakawa.codes/admin-secure-panel-miyakawa2449">https://miyakawa.codes/admin-secure-panel-miyakawa2449</a></p>
+        <% app_host = ENV.fetch("APP_HOST", "example.test") %>
+        <% admin_path = ENV.fetch("ADMIN_PATH", "admin") %>
+        <p>管理画面: <a href="https://<%= app_host %>/<%= admin_path %>">https://<%= app_host %>/<%= admin_path %></a></p>
       </div>
     </div>
   </body>

@@ -111,11 +111,11 @@ get "/feed.atom", to: "feeds#atom", defaults: { format: "atom" }, as: :feed_atom
 **デプロイコマンド**: `./scripts/deploy.sh --keep-ssl`
 
 **動作確認URL**:
-- https://miyakawa.codes/sitemap.xml ✅
-- https://miyakawa.codes/feed.rss ✅
-- https://miyakawa.codes/feed.atom ✅
-- https://miyakawa.codes/robots.txt ✅
-- https://miyakawa.codes/blog（購読リンク表示）✅
+- https://example.test/sitemap.xml ✅
+- https://example.test/feed.rss ✅
+- https://example.test/feed.atom ✅
+- https://example.test/robots.txt ✅
+- https://example.test/blog（購読リンク表示）✅
 
 ---
 
@@ -146,7 +146,7 @@ get "/feed.atom", to: "feeds#atom", defaults: { format: "atom" }, as: :feed_atom
 ## 次回セッション予定タスク
 
 1. **Google Search Consoleへのsitemap登録**
-   - https://miyakawa.codes/sitemap.xml を登録
+   - https://example.test/sitemap.xml を登録
 
 2. **Phase 4.5: 検索・最適化機能**（任意）
    - パフォーマンス最適化

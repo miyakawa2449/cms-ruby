@@ -416,26 +416,26 @@ GET /api/v1/sitemap
   "data": {
     "pages": [
       {
-        "url": "https://miyakawa.codes/",
+        "url": "https://example.test/",
         "lastmod": "2024-11-28T10:00:00Z",
         "priority": 1.0
       },
       {
-        "url": "https://miyakawa.codes/blog",
+        "url": "https://example.test/blog",
         "lastmod": "2024-11-28T09:00:00Z",
         "priority": 0.8
       }
     ],
     "articles": [
       {
-        "url": "https://miyakawa.codes/blog/rails-8-new-features",
+        "url": "https://example.test/blog/rails-8-new-features",
         "lastmod": "2024-11-28T09:00:00Z",
         "priority": 0.6
       }
     ],
     "categories": [
       {
-        "url": "https://miyakawa.codes/blog/category/tech",
+        "url": "https://example.test/blog/category/tech",
         "lastmod": "2024-11-27T12:00:00Z",
         "priority": 0.5
       }
@@ -458,16 +458,16 @@ GET /api/v1/feed.atom (Atom形式)
   "data": {
     "title": "宮川剛のブログ",
     "description": "技術発信・ポートフォリオサイト",
-    "link": "https://miyakawa.codes/blog",
+    "link": "https://example.test/blog",
     "language": "ja",
     "last_build_date": "2024-11-28T10:00:00Z",
     "items": [
       {
         "title": "Ruby on Rails 8.0の新機能",
-        "link": "https://miyakawa.codes/blog/rails-8-new-features",
+        "link": "https://example.test/blog/rails-8-new-features",
         "description": "Rails 8.0で追加された新機能について...",
         "pub_date": "2024-11-28T09:00:00Z",
-        "guid": "https://miyakawa.codes/blog/rails-8-new-features",
+        "guid": "https://example.test/blog/rails-8-new-features",
         "categories": ["技術", "Rails"]
       }
     ]

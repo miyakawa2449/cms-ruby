@@ -61,7 +61,7 @@ Portfolio & Technical Blog CMS
 
 ### プロジェクトURL
 - **リポジトリ**: portfolio_rb
-- **本番環境（予定）**: https://miyakawa.codes
+- **本番環境（予定）**: https://example.test
 - **インフラ**: AWS Lightsail（予定）
 
 ### 開発者情報

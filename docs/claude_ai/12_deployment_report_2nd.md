@@ -147,11 +147,11 @@ Made portfolio-web non-externally accessible, access only via nginx.
 
 ### 2. Access Verification
 ```bash
-curl -I https://miyakawa.codes
+curl -I https://example.test
 ```
 
-- Main site: https://miyakawa.codes
-- Admin panel: https://miyakawa.codes/admin-secure-panel-miyakawa2449
+- Main site: https://example.test
+- Admin panel: https://example.test/admin-secure-panel-miyakawa2449
 
 ## 🎯 Success Criteria
 

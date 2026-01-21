@@ -48,11 +48,11 @@ if Rails.env.production?
       config.action_mailer.delivery_method = :sesv2
 
       config.action_mailer.default_options = {
-        from: ENV.fetch('MAIL_FROM', 'noreply@miyakawa.codes')
+        from: ENV.fetch('MAIL_FROM', 'noreply@example.test')
       }
 
       config.action_mailer.default_url_options = {
-        host: ENV.fetch('APP_HOST', 'miyakawa.codes'),
+        host: ENV.fetch('APP_HOST', 'example.test'),
         protocol: 'https'
       }
 
@@ -61,7 +61,7 @@ if Rails.env.production?
     end
 
     Rails.logger.info "AWS SES v2 API configured for region: #{ENV.fetch('AWS_SES_REGION', 'ap-northeast-1')}"
-    Rails.logger.info "Mail from: #{ENV.fetch('MAIL_FROM', 'noreply@miyakawa.codes')}"
+    Rails.logger.info "Mail from: #{ENV.fetch('MAIL_FROM', 'noreply@example.test')}"
   end
 end
 ```
@@ -72,9 +72,9 @@ end
 AWS_SES_ACCESS_KEY_ID=AKIA...
 AWS_SES_SECRET_ACCESS_KEY=...
 AWS_SES_REGION=ap-northeast-1
-MAIL_FROM=noreply@miyakawa.codes
-ADMIN_EMAIL=contact@miyakawa.codes
-APP_HOST=miyakawa.codes
+MAIL_FROM=noreply@example.test
+ADMIN_EMAIL=contact@example.test
+APP_HOST=example.test
 ```
 
 ## デプロイ後の確認

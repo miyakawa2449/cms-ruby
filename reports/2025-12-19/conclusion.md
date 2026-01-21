@@ -246,5 +246,5 @@ AIが「実装」を担当する新しい働き方。
 
 *本稿は、2025年12月17-18日の開発作業20件の技術レポートと3件のブログ草案を分析し、その2日間の成果と教訓をまとめたものです。*
 
-**Contact**: admin@miyakawa.codes
+**Contact**: admin@example.test
 **GitHub**: https://github.com/miyakawa2449/cms-ruby

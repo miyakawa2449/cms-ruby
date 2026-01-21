@@ -20,7 +20,7 @@
 - **原因**: Active StorageがDocker内部ホスト名を使用してURL生成
 - **解決策**:
   - プロキシモード設定（`rails_storage_proxy`）
-  - Nginxのホスト名固定化（`$http_host` → `miyakawa.codes`）
+  - Nginxのホスト名固定化（`$http_host` → `example.test`）
   - ミドルウェアによる明示的URL設定
 
 ```ruby

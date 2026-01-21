@@ -61,7 +61,7 @@ portfolio-worker:
 #### 解決策
 ```ruby
 # config/environments/production.rb
-Rails.application.routes.default_url_options[:host] = ENV.fetch("APP_HOST", "miyakawa.codes")
+Rails.application.routes.default_url_options[:host] = ENV.fetch("APP_HOST", "example.test")
 Rails.application.routes.default_url_options[:protocol] = "https"
 
 config.after_initialize do

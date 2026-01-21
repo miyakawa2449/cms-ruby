@@ -203,7 +203,7 @@ position INTEGER               -- 並び順API
 Setting.create!(key: 'jwt_secret_key', value: SecureRandom.hex(32), 
                 category: 'api', is_sensitive: true)
 Setting.create!(key: 'api_rate_limit', value: '300', category: 'api')
-Setting.create!(key: 'cors_origins', value: 'https://miyakawa.codes', category: 'api')
+Setting.create!(key: 'cors_origins', value: 'https://example.test', category: 'api')
 ```
 
 #### 2. access_logs パーティショニング
@@ -240,7 +240,7 @@ api_settings = [
   {key: 'api_rate_limit_global', value: '300', category: 'api'},
   {key: 'api_rate_limit_search', value: '60', category: 'api'},
   {key: 'api_rate_limit_contact', value: '5', category: 'api'},
-  {key: 'cors_allowed_origins', value: 'https://miyakawa.codes,localhost:3000', category: 'api'}
+  {key: 'cors_allowed_origins', value: 'https://example.test,localhost:3000', category: 'api'}
 ]
 
 api_settings.each do |setting|

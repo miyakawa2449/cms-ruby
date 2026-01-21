@@ -23,15 +23,15 @@
 - ✅ Railsアプリケーション起動成功（Puma動作中）
 
 ### 4. 部分的動作確認
-- ✅ 管理画面ログイン成功（https://miyakawa.codes/admin-secure-panel-miyakawa2449）
-- ✅ AdminUser作成済み（admin@miyakawa.codes）
+- ✅ 管理画面ログイン成功（https://example.test/admin-secure-panel-miyakawa2449）
+- ✅ AdminUser作成済み（admin@example.test）
 - ✅ 基本Sectionデータ作成済み（hero, about, service, contact）
 - ✅ solid_cacheテーブル手動作成
 
 ## 現在の問題
 
 ### 1. メインページ500エラー
-- 状況: https://miyakawa.codes/ で500エラー継続
+- 状況: https://example.test/ で500エラー継続
 - データベース接続は正常
 - アセットプリコンパイル完了
 
@@ -99,7 +99,7 @@ config.force_ssl = false
 ## 環境情報
 - サーバー: AWS Lightsail (Bitnami)
 - Docker構成: https-portal + nginx + Rails + PostgreSQL
-- URL: https://miyakawa.codes/
+- URL: https://example.test/
 - 管理画面: /admin-secure-panel-miyakawa2449
 
 ## 申し送り事項

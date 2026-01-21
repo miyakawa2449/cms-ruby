@@ -63,7 +63,7 @@ Rails.application.config.after_initialize do
   if Rails.env.production?
     # 本番環境: HTTPS
     url_options = {
-      host: ENV.fetch("APP_HOST", "miyakawa.codes"),
+      host: ENV.fetch("APP_HOST", "example.test"),
       protocol: "https"
     }
   else

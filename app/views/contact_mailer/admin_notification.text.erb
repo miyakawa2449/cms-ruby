@@ -13,4 +13,6 @@
 ========================================
 
 このメールは Miyakawa Codes のお問い合わせフォームから自動送信されています。
-管理画面: https://miyakawa.codes/admin-secure-panel-miyakawa2449
+<% app_host = ENV.fetch("APP_HOST", "example.test") %>
+<% admin_path = ENV.fetch("ADMIN_PATH", "admin") %>
+管理画面: https://<%= app_host %>/<%= admin_path %>

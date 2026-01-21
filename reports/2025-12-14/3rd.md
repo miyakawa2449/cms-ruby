@@ -15,7 +15,7 @@
 
 2. **フッターSNSリンク更新** (medium) - **完了**
    - X: https://x.com/miyakawa_codes
-   - Facebook: https://facebook.com/miyakawa.codes
+   - Facebook: https://facebook.com/example.test
    - GitHub: https://github.com/miyakawa-codes
    - セキュリティ属性追加（target="_blank" rel="noopener noreferrer"）
 

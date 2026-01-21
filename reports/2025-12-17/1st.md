@@ -25,7 +25,7 @@ config.active_storage.resolve_model_to_route = :rails_storage_proxy
 
 ### 2. Nginx設定のホスト名固定化
 **ファイル**: `nginx.production.conf`
-- `proxy_set_header Host $http_host;` → `proxy_set_header Host miyakawa.codes;`
+- `proxy_set_header Host $http_host;` → `proxy_set_header Host example.test;`
 - 全locationで一貫したホスト名設定
 
 ### 3. Active Storage URL オプション中間件
@@ -38,7 +38,7 @@ class ActiveStorageUrlOptionsMiddleware
 
   def call(env)
     # Set trusted host from environment or request
-    trusted_host = ENV['TRUSTED_HOST'] || 'miyakawa.codes'
+    trusted_host = ENV['TRUSTED_HOST'] || 'example.test'
     
     # Configure Active Storage URL options
     ActiveStorage::Current.url_options = {

@@ -66,7 +66,7 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: "example.com" }
 
   # URL生成（ActiveStorage/OGP等）で必要な host/protocol を固定
-  Rails.application.routes.default_url_options[:host] = ENV.fetch("APP_HOST", "miyakawa.codes")
+  Rails.application.routes.default_url_options[:host] = ENV.fetch("APP_HOST", "example.test")
   Rails.application.routes.default_url_options[:protocol] = "https"
 
   config.action_controller.default_url_options = Rails.application.routes.default_url_options
@@ -99,7 +99,7 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.default_url_options = {
-    host: ENV["APP_HOST"] || "miyakawa.codes",
+    host: ENV["APP_HOST"] || "example.test",
     protocol: ENV["FORCE_SSL"] == "true" ? "https" : "http"
   }
 
