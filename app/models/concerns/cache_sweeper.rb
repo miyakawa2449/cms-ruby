@@ -45,5 +45,7 @@ module CacheSweeper
     else
       Rails.logger.warn "[CacheSweeper] Cache store does not support delete_matched: #{pattern}"
     end
+  rescue NotImplementedError
+    Rails.logger.warn "[CacheSweeper] delete_matched not supported by cache store: #{pattern}"
   end
 end
