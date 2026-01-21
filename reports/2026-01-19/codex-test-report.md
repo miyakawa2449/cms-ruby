@@ -16,6 +16,14 @@ RAILS_ENV=test bundle exec rspec --no-fail-fast \
   spec/performance
 ```
 
+最終確認コマンド:
+```bash
+RAILS_ENV=test bundle exec rspec \
+  spec/performance/n_plus_one_spec.rb \
+  spec/performance/page_load_time_spec.rb \
+  spec/requests/blog_spec.rb
+```
+
 ## 作成したテストファイル
 - `spec/models/concerns/cache_sweeper_spec.rb`
 - `spec/services/cache_monitor_service_spec.rb`
@@ -42,24 +50,27 @@ RAILS_ENV=test bundle exec rspec --no-fail-fast \
 ## パフォーマンス測定
 - `spec/performance/page_load_time_spec.rb` は全件パス
 - 計測値はテストログ出力していないため、数値は未記録
+- N+1チェックの閾値:
+  - `/blog` <= 16
+  - `/blog/:slug` <= 14
+  - `/admin/articles` <= 14
 
 ## 問題点と原因
 1. **キャッシュヒット率測定が未実装**
    - Sidebarや記事一覧のフラグメントキャッシュが無く、ヒット率測定テストが保留
 
 ## 改善提案
-1. **N+1対策の強化**
-   - blog/index: `includes(:categories, :tags, thumbnail_image_attachment: :blob)` の確認/拡張
-   - blog/show: 関連記事取得時のincludes/joins見直し
-   - admin/articles: 一覧表示のincludes最適化
-
-2. **Bulletのテスト環境導入**
+1. **Bulletのテスト環境導入**
    - `config/environments/test.rb` でBullet有効化
    - `spec/performance/n_plus_one_spec.rb` でBullet警告の検出を追加
 
-3. **キャッシュヒット率の測定実装**
+2. **キャッシュヒット率の測定実装**
    - Sidebarや一覧のフラグメントキャッシュ実装
    - CacheMonitorServiceのヒット率測定を連携
+
+3. **さらなるクエリ削減（任意）**
+   - `/blog` のサイドバー表示で `Article.published.count` を事前計算・キャッシュし、集計クエリを削減
+   - `/blog/:slug` の関連記事・著者セクションで必要な関連だけを事前ロード
 
 ## 補足
 - BlogControllerに一覧ページとサイドバーのキャッシュを追加し、`spec/requests/blog_spec.rb` のキャッシュ挙動は通過

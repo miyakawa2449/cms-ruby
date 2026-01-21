@@ -72,4 +72,43 @@ RSpec.describe Media::UploadService do
       end
     end
   end
+
+  describe 'dimension extraction' do
+    let(:service) { described_class.new([]) }
+
+    it 'extracts PNG dimensions' do
+      png = ("\x89PNG\r\n\x1A\n" + ("\x00" * 8) + [1, 2].pack("N2") + ("\x00" * 4)).b
+      blob = instance_double(ActiveStorage::Blob, metadata: {}, download: png)
+
+      width, height = service.send(:extract_dimensions, blob)
+
+      expect([width, height]).to eq([1, 2])
+    end
+
+    it 'extracts GIF dimensions' do
+      gif = "GIF89a" + [3, 4].pack("v2") + ("\x00" * 4)
+      blob = instance_double(ActiveStorage::Blob, metadata: {}, download: gif)
+
+      width, height = service.send(:extract_dimensions, blob)
+
+      expect([width, height]).to eq([3, 4])
+    end
+
+    it 'returns nil dimensions for unknown data' do
+      blob = instance_double(ActiveStorage::Blob, metadata: {}, download: "xxxx")
+
+      width, height = service.send(:extract_dimensions, blob)
+
+      expect([width, height]).to eq([nil, nil])
+    end
+
+    it 'returns nil dimensions when download fails' do
+      blob = instance_double(ActiveStorage::Blob, metadata: {})
+      allow(blob).to receive(:download).and_raise(StandardError, "fail")
+
+      width, height = service.send(:extract_dimensions, blob)
+
+      expect([width, height]).to eq([nil, nil])
+    end
+  end
 end

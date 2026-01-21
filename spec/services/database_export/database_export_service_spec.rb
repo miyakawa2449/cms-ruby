@@ -53,7 +53,7 @@ RSpec.describe DatabaseExport::DatabaseExportService do
         admin_users = result[:models]["AdminUser"]
         expect(admin_users).to be_an(Array)
         expect(admin_users.size).to eq(AdminUser.count)
-        expect(admin_users.first["email"]).to eq(@admin.email)
+        expect(admin_users.map { |row| row["email"] }).to include(@admin.email)
       end
 
       it "exports Article records" do

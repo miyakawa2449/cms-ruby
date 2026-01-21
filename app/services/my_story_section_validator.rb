@@ -60,7 +60,7 @@ class MyStorySectionValidator
 
     required_fields.each do |field|
       if field_missing?(field)
-        add_error(field, "#{field.humanize} is required for #{@section.section_type} section")
+        add_error(field, "#{field.to_s.humanize} is required for #{@section.section_type} section")
       end
     end
   end

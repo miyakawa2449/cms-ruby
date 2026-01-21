@@ -5,6 +5,28 @@ RSpec.describe Ai::BedrockClient do
   let(:model_id) { 'anthropic.claude-3-haiku-20240307-v1:0' }
   let(:prompt) { 'テストプロンプト' }
 
+  around do |example|
+    old_access_key = ENV["AWS_ACCESS_KEY_ID"]
+    old_secret_key = ENV["AWS_SECRET_ACCESS_KEY"]
+    old_region = ENV["AWS_REGION"]
+
+    ENV["AWS_ACCESS_KEY_ID"] = "test-access-key"
+    ENV["AWS_SECRET_ACCESS_KEY"] = "test-secret-key"
+    ENV["AWS_REGION"] = "us-east-1"
+
+    example.run
+  ensure
+    ENV["AWS_ACCESS_KEY_ID"] = old_access_key
+    ENV["AWS_SECRET_ACCESS_KEY"] = old_secret_key
+    ENV["AWS_REGION"] = old_region
+  end
+
+  before do
+    allow(Aws::BedrockRuntime::Client).to receive(:new).and_return(
+      instance_double(Aws::BedrockRuntime::Client, invoke_model: nil)
+    )
+  end
+
   describe '#invoke_model' do
     context '正常系' do
       it 'モデルを呼び出してレスポンスを返す' do
@@ -66,6 +88,17 @@ RSpec.describe Ai::BedrockClient do
         expect {
           client.invoke_model(model_id, prompt)
         }.to raise_error(Ai::RateLimitError)
+      end
+
+      it 'サービス利用不可エラーでModelUnavailableErrorを発生させる' do
+        mock_bedrock_error(
+          error_class: Aws::BedrockRuntime::Errors::ServiceUnavailableException,
+          message: 'Service Unavailable'
+        )
+
+        expect {
+          client.invoke_model(model_id, prompt)
+        }.to raise_error(Ai::ModelUnavailableError)
       end
     end
   end

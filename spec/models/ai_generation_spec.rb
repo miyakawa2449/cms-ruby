@@ -134,7 +134,7 @@ RSpec.describe AiGeneration, type: :model do
 
     it 'sums cost for completed generations in date range' do
       total = described_class.total_cost_for(5.days.ago.to_date)
-      expect(total).to eq(0.5) # recent + today, not failed
+      expect(total).to be_within(0.01).of(0.5) # recent + today, not failed
     end
 
     it 'excludes failed generations' do

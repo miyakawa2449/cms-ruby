@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Ai::UsageTracker do
+  before do
+    AiUsageStat.delete_all
+  end
+
   describe '.track' do
     let(:model_id) { 'anthropic.claude-3-haiku-20240307-v1:0' }
 

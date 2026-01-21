@@ -7,6 +7,11 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
+# Prevent AWS SDK from hitting instance metadata in test runs.
+ENV["AWS_ACCESS_KEY_ID"] ||= "test-access-key"
+ENV["AWS_SECRET_ACCESS_KEY"] ||= "test-secret-key"
+ENV["AWS_REGION"] ||= "us-east-1"
+
 # FactoryBot support
 require 'factory_bot_rails'
 

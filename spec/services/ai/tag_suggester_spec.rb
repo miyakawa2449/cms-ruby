@@ -53,6 +53,25 @@ RSpec.describe Ai::TagSuggester do
         result = suggester.suggest(max_tags: 10)
         expect(result[:success]).to be true
       end
+
+      it 'include_existingをfalseにすると既存タグを参照しない' do
+        mock_bedrock_client(response_content: mock_tag_response(tags: [ { name: 'Ruby', confidence: 0.9 } ]))
+
+        result = suggester.suggest(include_existing: false)
+
+        expect(result[:success]).to be true
+        expect(result[:data][:suggested_tags].first[:existing]).to be false
+        expect(result[:data][:suggested_tags].first[:tag_id]).to be_nil
+      end
+
+      it '不正なJSONレスポンスでも空配列を返す' do
+        mock_bedrock_client(response_content: "not-json")
+
+        result = suggester.suggest
+
+        expect(result[:success]).to be true
+        expect(result[:data][:suggested_tags]).to eq([])
+      end
     end
 
     context '異常系' do

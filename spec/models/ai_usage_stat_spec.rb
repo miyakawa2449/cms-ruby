@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe AiUsageStat, type: :model do
+  before do
+    AiUsageStat.delete_all
+  end
+
   describe 'validations' do
     subject { build(:ai_usage_stat) }
 

@@ -218,6 +218,11 @@ RSpec.describe "Admin::Database", type: :request do
           FileUtils.rm_rf(temp_dir)
 
           # Clear database
+          AiGeneration.delete_all
+          MediaMetadata.delete_all
+          ActiveStorage::Attachment.delete_all
+          ActiveStorage::Blob.delete_all
+          ArticleTag.delete_all
           ArticleCategory.delete_all
           Article.delete_all
           Category.delete_all

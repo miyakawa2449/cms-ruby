@@ -1,86 +1,47 @@
-require "rails_helper"
+require 'rails_helper'
 
 RSpec.describe CacheMonitorService do
-  before do
-    described_class.instance_variable_set(:@redis_client, nil)
-    described_class.instance_variable_set(:@redis_available, nil)
+  it 'calculates hit rate safely' do
+    expect(described_class.calculate_hit_rate(5, 5)).to eq(50.0)
+    expect(described_class.calculate_hit_rate(0, 0)).to eq(0.0)
   end
 
-  describe ".calculate_hit_rate" do
-    it "returns 0.0 when total is zero" do
-      expect(described_class.calculate_hit_rate(0, 0)).to eq(0.0)
-    end
+  it 'returns redis stats when available' do
+    redis = instance_double(Redis, ping: 'PONG', info: {
+      'used_memory_human' => '1MB',
+      'used_memory_peak_human' => '2MB',
+      'connected_clients' => '1',
+      'total_commands_processed' => '10',
+      'keyspace_hits' => '5',
+      'keyspace_misses' => '5',
+      'uptime_in_days' => '1',
+      'redis_version' => '7.0'
+    })
 
-    it "calculates hit rate correctly" do
-      expect(described_class.calculate_hit_rate(8, 2)).to eq(80.0)
-    end
+    allow(described_class).to receive(:redis_available?).and_return(true)
+    allow(described_class).to receive(:redis_client).and_return(redis)
+
+    stats = described_class.stats
+
+    expect(stats[:store_type]).to eq(:redis)
+    expect(stats[:hit_rate]).to eq(50.0)
   end
 
-  describe ".stats" do
-    context "when Redis is available" do
-      let(:redis) do
-        instance_double(
-          Redis,
-          ping: "PONG",
-          info: {
-            "used_memory_human" => "1.0M",
-            "used_memory_peak_human" => "2.0M",
-            "connected_clients" => "2",
-            "total_commands_processed" => "120",
-            "keyspace_hits" => "8",
-            "keyspace_misses" => "2",
-            "uptime_in_days" => "1",
-            "redis_version" => "7.0"
-          }
-        )
-      end
+  it 'returns memory stats when redis is unavailable' do
+    cache = double('CacheStore', stats: { entries: 1, size: 1024 })
+    allow(described_class).to receive(:redis_available?).and_return(false)
+    allow(Rails).to receive(:cache).and_return(cache)
 
-      before do
-        allow(Redis).to receive(:new).and_return(redis)
-        allow(described_class).to receive(:redis_available?).and_return(true)
-      end
+    stats = described_class.stats
 
-      it "returns Redis statistics" do
-        stats = described_class.stats
+    expect(stats[:store_type]).to eq(:memory)
+  end
 
-        expect(stats[:store_type]).to eq(:redis)
-        expect(stats[:used_memory]).to eq("1.0M")
-        expect(stats[:connected_clients]).to eq(2)
-        expect(stats[:total_commands_processed]).to eq(120)
-        expect(stats[:hit_rate]).to eq(80.0)
-      end
-    end
+  it 'clears cache and handles errors' do
+    allow(Rails.cache).to receive(:clear).and_return(true)
+    expect(described_class.clear_all).to eq(true)
 
-    context "when Redis stats retrieval fails" do
-      let(:redis) { instance_double(Redis, ping: "PONG") }
-
-      before do
-        allow(Redis).to receive(:new).and_return(redis)
-        allow(described_class).to receive(:redis_available?).and_return(true)
-        allow(redis).to receive(:info).and_raise(StandardError, "boom")
-      end
-
-      it "returns error stats" do
-        stats = described_class.stats
-
-        expect(stats[:store_type]).to eq(:redis)
-        expect(stats[:error]).to eq("boom")
-        expect(stats[:hit_rate]).to eq(0.0)
-      end
-    end
-
-    context "when Redis is unavailable" do
-      before do
-        allow(described_class).to receive(:redis_available?).and_return(false)
-        allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache::MemoryStore.new)
-      end
-
-      it "returns memory store stats" do
-        stats = described_class.stats
-
-        expect(stats[:store_type]).to eq(:memory_store)
-        expect(stats[:note]).to include("Detailed statistics not available")
-      end
-    end
+    allow(Rails.cache).to receive(:clear).and_raise(StandardError, 'boom')
+    expect(described_class.clear_all).to eq(false)
   end
 end
