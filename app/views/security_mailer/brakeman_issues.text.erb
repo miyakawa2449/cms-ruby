@@ -1,0 +1,24 @@
+セキュリティアラート: Brakeman
+=============================
+
+Brakemanスキャンにより <%= @issues_count %> 件の問題が検出されました。
+
+監査種別: Brakeman
+ステータス: <%= @audit_log.status.humanize %>
+検出数: <%= @issues_count %>
+実行日時: <%= @audit_log.created_at.strftime('%Y-%m-%d %H:%M:%S %Z') %>
+
+<% if @issues.present? %>
+検出内容（先頭 <%= @issues.size %> 件）:
+<% @issues.each_with_index do |issue, index| %>
+<%= index + 1 %>. <%= issue['warning_type'] || issue['type'] || '不明' %>
+   <%= issue['message'] || issue['description'] || '詳細なし' %>
+   <% if issue['file'] %>ファイル: <%= issue['file'] %><% end %>
+
+<% end %>
+<% end %>
+
+対応要: 検出された問題の確認と対応をお願いします。
+
+---
+このメールはポートフォリオサイトからの自動送信です。

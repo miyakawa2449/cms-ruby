@@ -1,0 +1,24 @@
+セキュリティアラート: bundler-audit
+=================================
+
+bundler-audit により <%= @issues_count %> 件の脆弱性が検出されました。
+
+監査種別: bundler-audit
+ステータス: <%= @audit_log.status.humanize %>
+検出数: <%= @issues_count %>
+実行日時: <%= @audit_log.created_at.strftime('%Y-%m-%d %H:%M:%S %Z') %>
+
+<% if @issues.present? %>
+脆弱性一覧（先頭 <%= @issues.size %> 件）:
+<% @issues.each_with_index do |issue, index| %>
+<%= index + 1 %>. <%= issue['gem'] || issue['name'] || '不明' %>
+   CVE: <%= issue['cve'] || issue['advisory'] || 'N/A' %>
+   <% if issue['url'] %>URL: <%= issue['url'] %><% end %>
+
+<% end %>
+<% end %>
+
+対応要: 速やかに該当Gemの更新をご検討ください。
+
+---
+このメールはポートフォリオサイトからの自動送信です。

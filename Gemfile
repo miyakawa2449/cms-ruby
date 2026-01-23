@@ -31,7 +31,7 @@ gem "redis", ">= 4.0.1"
 
 # AI & External APIs
 gem "ruby-openai", "~> 8.3"
-gem "httparty", "~> 0.21"
+gem "httparty", "~> 0.24"
 
 # SEO & Performance
 gem "meta-tags", "~> 2.19"

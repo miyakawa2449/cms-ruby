@@ -445,6 +445,59 @@ Phase 6で実装したセキュリティ基盤をさらに強化し、運用面�
 
 ---
 
+## � 通知設定
+
+### Phase 7での実装
+
+#### 環境変数による設定
+```bash
+# メイン通知先（一般的な通知）
+ADMIN_EMAIL=your-admin-email@example.com
+
+# セキュリティ関連通知先
+SECURITY_AUDIT_EMAIL=your-security-email@example.com
+
+# Slack通知
+SLACK_WEBHOOK_URL=your-slack-webhook-url-here
+```
+
+**注意**: 実際のメールアドレスとSlack Webhook URLは`.env`、`.env.production`ファイルに設定してください。仕様書やGitリポジトリには含めないでください。
+
+#### 通知の種類
+
+| 通知種類 | メール送信先 | Slack通知 | 優先度 |
+|---------|------------|----------|--------|
+| 2FA有効化/無効化 | ADMIN_EMAIL | ✅ | 高 |
+| 管理画面URL変更 | ADMIN_EMAIL | ✅ | 高 |
+| URL自動ローテーション予告 | ADMIN_EMAIL | ✅ | 高 |
+| バックアップ成功 | ADMIN_EMAIL | ✅ | 中 |
+| バックアップ失敗 | ADMIN_EMAIL | ✅ | 高 |
+| 復元完了 | ADMIN_EMAIL | ✅ | 高 |
+| セキュリティ脆弱性検知 | SECURITY_AUDIT_EMAIL | ✅ | 高 |
+| 週次セキュリティレポート | SECURITY_AUDIT_EMAIL | ❌ | 中 |
+| ヘルスチェック異常 | ADMIN_EMAIL | ✅ | 高 |
+| ディスク容量警告 | ADMIN_EMAIL | ✅ | 中 |
+
+### Phase 7.5での実装予定
+
+Phase 7.5でユーザー管理機能を実装する際、以下の変更を行います：
+
+1. **スーパーユーザーとの紐づけ**
+   - スーパーユーザー作成時に通知先メールアドレスを登録
+   - `admin_users.email`カラムを通知先として使用
+
+2. **複数管理者対応**
+   - 権限に応じて通知先を振り分け
+   - super_admin: すべての通知
+   - admin: 一般的な通知のみ
+   - editor: 編集関連の通知のみ
+
+3. **環境変数からの移行**
+   - 環境変数はフォールバック用として残す
+   - データベース管理を優先
+
+---
+
 ## 🚫 制約条件
 
 ### 技術的制約

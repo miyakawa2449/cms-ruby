@@ -1,0 +1,12 @@
+復元完了
+=======
+
+バックアップの復元が正常に完了しました。
+
+バックアップ種別: <%= @backup_log.backup_type.humanize %>
+バックアップ日時: <%= @backup_log.created_at.strftime('%Y-%m-%d %H:%M:%S %Z') %>
+<% if @backup_log.s3_key %>S3キー: <%= @backup_log.s3_key %><% end %>
+復元日時: <%= @restored_at.strftime('%Y-%m-%d %H:%M:%S %Z') %>
+
+---
+このメールはポートフォリオサイトからの自動送信です。

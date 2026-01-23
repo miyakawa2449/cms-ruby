@@ -22,7 +22,7 @@
                       'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);' %>">
       <div class="container mx-auto px-6 text-center">
         <h1 class="text-4xl md:text-6xl font-bold mb-6">
-          <%= raw @hero_section.title %>
+          <%= sanitize(@hero_section.title, tags: %w[br span], attributes: %w[class]) %>
         </h1>
         <% if @hero_section.subtitle.present? %>
           <p class="text-xl md:text-2xl mb-8 text-blue-100">

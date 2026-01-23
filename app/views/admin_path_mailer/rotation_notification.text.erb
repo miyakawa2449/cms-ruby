@@ -1,0 +1,12 @@
+管理画面URL自動ローテーション予告
+===============================
+
+管理画面のURLは24時間後に自動ローテーションされる予定です。
+
+対象ユーザー: <%= @admin_user.email %>
+ローテーション予定: <%= @next_rotation.respond_to?(:strftime) ? @next_rotation.strftime('%Y-%m-%d %H:%M:%S %Z') : @next_rotation.to_s %>
+
+ローテーション後は新しいURLでアクセスしてください。
+
+---
+このメールはポートフォリオサイトからの自動送信です。

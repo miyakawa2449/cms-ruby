@@ -1,0 +1,17 @@
+緊急: 復元失敗
+===========
+
+バックアップの復元に失敗しました。
+
+バックアップ種別: <%= @backup_log.backup_type.humanize %>
+バックアップ日時: <%= @backup_log.created_at.strftime('%Y-%m-%d %H:%M:%S %Z') %>
+<% if @backup_log.s3_key %>S3キー: <%= @backup_log.s3_key %><% end %>
+
+<% if @error %>エラー内容:
+<%= @error %>
+<% end %>
+
+対応要: 速やかに原因を調査してください。
+
+---
+このメールはポートフォリオサイトからの自動送信です。

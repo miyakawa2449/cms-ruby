@@ -54,7 +54,8 @@ class Admin::DatabaseController < Admin::BaseController
     begin
       # Step 1: Save uploaded file temporarily
       uploaded_file = params[:zip_file]
-      temp_zip_path = save_uploaded_file(uploaded_file)
+      temp_zip = save_uploaded_file(uploaded_file)
+      temp_zip_path = temp_zip.path
 
       # Step 2: Extract and validate ZIP
       zip_extractor = DatabaseImport::ZipExtractorService.new(temp_zip_path)
@@ -82,7 +83,7 @@ class Admin::DatabaseController < Admin::BaseController
     ensure
       # Clean up
       zip_extractor&.cleanup
-      FileUtils.rm_f(temp_zip_path) if defined?(temp_zip_path) && temp_zip_path
+      temp_zip&.close!
     end
   end
 
@@ -119,9 +120,11 @@ class Admin::DatabaseController < Admin::BaseController
   # Import helpers
 
   def save_uploaded_file(uploaded_file)
-    temp_path = File.join(Dir.tmpdir, "upload_#{Time.current.to_i}_#{uploaded_file.original_filename}")
-    File.binwrite(temp_path, uploaded_file.read)
-    temp_path
+    tempfile = Tempfile.new([ "upload_", ".zip" ])
+    tempfile.binmode
+    tempfile.write(uploaded_file.read)
+    tempfile.flush
+    tempfile
   end
 
   def calculate_model_counts

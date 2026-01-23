@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #f44336; color: white; padding: 20px; text-align: center; }
+    .content { padding: 20px; background: #f9f9f9; }
+    .info-box { background: white; padding: 15px; margin: 10px 0; border-left: 4px solid #f44336; }
+    .label { font-weight: bold; color: #666; }
+    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>セキュリティアラート: Brakeman</h1>
+    </div>
+    <div class="content">
+      <p>Brakemanスキャンにより <%= @issues_count %> 件の問題が検出されました。</p>
+
+      <div class="info-box">
+        <p><span class="label">監査種別:</span> Brakeman</p>
+        <p><span class="label">ステータス:</span> <%= @audit_log.status.humanize %></p>
+        <p><span class="label">検出数:</span> <%= @issues_count %></p>
+        <p><span class="label">実行日時:</span> <%= @audit_log.created_at.strftime('%Y-%m-%d %H:%M:%S %Z') %></p>
+      </div>
+
+      <% if @issues.present? %>
+      <h3>検出内容（先頭 <%= @issues.size %> 件）</h3>
+      <% @issues.each do |issue| %>
+        <div class="info-box">
+          <p><span class="label">種別:</span> <%= issue['warning_type'] || issue['type'] || '不明' %></p>
+          <p><span class="label">内容:</span> <%= issue['message'] || issue['description'] || '詳細なし' %></p>
+          <% if issue['file'] %>
+          <p><span class="label">ファイル:</span> <%= issue['file'] %></p>
+          <% end %>
+        </div>
+      <% end %>
+      <% end %>
+
+      <p><strong>対応要:</strong> 検出された問題の確認と対応をお願いします。</p>
+    </div>
+    <div class="footer">
+      <p>このメールはポートフォリオサイトからの自動送信です。</p>
+    </div>
+  </div>
+</body>
+</html>

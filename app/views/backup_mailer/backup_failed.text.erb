@@ -1,0 +1,17 @@
+緊急: バックアップ失敗
+====================
+
+<%= @backup_log.backup_type %> バックアップに失敗しました。
+
+バックアップ種別: <%= @backup_log.backup_type.humanize %>
+ステータス: <%= @backup_log.status.humanize %>
+開始日時: <%= @backup_log.started_at&.strftime('%Y-%m-%d %H:%M:%S %Z') || 'N/A' %>
+
+<% if @error %>エラー内容:
+<%= @error %>
+<% end %>
+
+対応要: 速やかに原因を調査し、バックアップが正しく動作していることを確認してください。
+
+---
+このメールはポートフォリオサイトからの自動送信です。

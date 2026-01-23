@@ -1,0 +1,14 @@
+バックアップ完了
+===============
+
+<%= @backup_log.backup_type %> バックアップが正常に完了しました。
+
+バックアップ種別: <%= @backup_log.backup_type.humanize %>
+ステータス: <%= @backup_log.status.humanize %>
+<% if @file_size_mb %>ファイルサイズ: <%= @file_size_mb %> MB<% end %>
+<% if @backup_log.s3_key %>S3キー: <%= @backup_log.s3_key %><% end %>
+開始日時: <%= @backup_log.started_at&.strftime('%Y-%m-%d %H:%M:%S %Z') || 'N/A' %>
+完了日時: <%= @backup_log.completed_at&.strftime('%Y-%m-%d %H:%M:%S %Z') || 'N/A' %>
+
+---
+このメールはポートフォリオサイトからの自動送信です。

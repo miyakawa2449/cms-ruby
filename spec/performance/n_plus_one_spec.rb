@@ -17,6 +17,9 @@ RSpec.describe "N+1 query checks", type: :request do
   end
 
   before do
+    # Warm up site settings to avoid creating defaults during request,
+    # which inflates query counts in performance specs.
+    SiteSettingCacheManager.refresh_cache
     create_list(:article, 5, :published, :with_categories, :with_tags)
   end
 

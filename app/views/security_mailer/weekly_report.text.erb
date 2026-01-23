@@ -1,0 +1,17 @@
+週間セキュリティレポート
+======================
+
+対象期間: <%= @period %>
+
+Brakeman（静的解析）
+- 実行回数: <%= @brakeman_stats[:total_audits] || 0 %>
+- 検出数: <%= @brakeman_stats[:total_issues] || 0 %>
+
+bundler-audit（Gem脆弱性）
+- 実行回数: <%= @bundler_audit_stats[:total_audits] || 0 %>
+- 検出数: <%= @bundler_audit_stats[:total_issues] || 0 %>
+
+詳細は管理画面のレポートをご確認ください。
+
+---
+このメールはポートフォリオサイトからの自動送信です。
