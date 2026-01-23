@@ -53,6 +53,7 @@ RSpec.configure do |config|
 
   # Devise test helpers
   config.include Devise::Test::IntegrationHelpers, type: :request
+  config.include Devise::Test::ControllerHelpers, type: :controller
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [

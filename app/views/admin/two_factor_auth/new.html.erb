@@ -1,0 +1,71 @@
+<% content_for :page_title, t('two_factor_auth.enable_2fa') %>
+
+<div class="max-w-2xl mx-auto">
+  <div class="bg-white shadow rounded-lg">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900"><%= t('two_factor_auth.enable_2fa') %></h2>
+    </div>
+
+    <div class="p-6">
+      <!-- Instructions -->
+      <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+        <p class="text-sm text-blue-800"><%= t('two_factor_auth.setup_instructions') %></p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- QR Code -->
+        <div class="text-center">
+          <h3 class="text-md font-medium text-gray-900 mb-4"><%= t('two_factor_auth.qr_code') %></h3>
+          <div class="inline-block p-4 bg-white border rounded-lg">
+            <img src="<%= @qr_code %>" alt="2FA QR Code" class="w-48 h-48">
+          </div>
+        </div>
+
+        <!-- Secret Key (for manual entry) -->
+        <div>
+          <h3 class="text-md font-medium text-gray-900 mb-4"><%= t('two_factor_auth.secret_key') %></h3>
+          <p class="text-sm text-gray-600 mb-2">QRコードをスキャンできない場合は、以下のキーを手動で入力してください：</p>
+          <div class="p-3 bg-gray-100 rounded font-mono text-sm break-all select-all">
+            <%= @secret_key %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verification Form -->
+      <%= form_with url: admin_two_factor_auth_path,
+                    method: :post,
+                    local: true,
+                    data: { turbo: false },
+                    class: "space-y-6" do |f| %>
+        <div class="border-t pt-6">
+          <h3 class="text-md font-medium text-gray-900 mb-4"><%= t('two_factor_auth.verify') %></h3>
+          <p class="text-sm text-gray-600 mb-4">認証アプリに表示されているコードを入力して、設定を確認してください。</p>
+
+          <div class="mb-4">
+            <label for="otp_code" class="block text-sm font-medium text-gray-700"><%= t('two_factor_auth.verification_code') %></label>
+            <input type="text" name="otp_code" id="otp_code" required autocomplete="off" inputmode="numeric" pattern="[0-9]*" maxlength="6"
+                   class="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm text-center text-2xl tracking-widest"
+                   placeholder="000000">
+            <p class="mt-1 text-xs text-gray-500"><%= t('two_factor_auth.verification_code_hint') %></p>
+          </div>
+
+          <div class="mb-4">
+            <label for="current_password" class="block text-sm font-medium text-gray-700"><%= t('two_factor_auth.current_password') %></label>
+            <input type="password" name="current_password" id="current_password" required
+                   class="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            <p class="mt-1 text-xs text-gray-500"><%= t('two_factor_auth.password_required') %></p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between border-t pt-6">
+          <%= link_to admin_two_factor_auth_path, class: "text-sm text-gray-600 hover:text-gray-900" do %>
+            キャンセル
+          <% end %>
+          <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <%= t('two_factor_auth.enable_2fa') %>
+          </button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

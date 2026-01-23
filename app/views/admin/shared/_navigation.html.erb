@@ -97,6 +97,26 @@
 
 <div class="mt-6">
   <h3 class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+    セキュリティ
+  </h3>
+
+  <div class="mt-2 space-y-1">
+    <%= link_to admin_two_factor_auth_path,
+                class: "flex items-center px-4 py-2 text-sm font-medium rounded-md #{controller_name == 'two_factor_auth' ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}" do %>
+      <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+      </svg>
+      二要素認証
+      <% if current_admin_user.two_factor_enabled? %>
+        <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">有効</span>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<div class="mt-6">
+  <h3 class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
     システム設定
   </h3>
 

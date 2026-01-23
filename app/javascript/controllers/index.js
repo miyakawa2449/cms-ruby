@@ -12,6 +12,8 @@ import ContentImageEditorController from "./content_image_editor_controller"
 import AiAssistantController from "./ai_assistant_controller"
 import MobileMenuController from "./mobile_menu_controller"
 import ClipboardController from "./clipboard_controller"
+import BackupCodesController from "./backup_codes_controller"
+import TwoFactorVerifyController from "./two_factor_verify_controller"
 
 application.register("confirm-dialog", ConfirmDialogController)
 application.register("contact-form", ContactFormController)
@@ -25,3 +27,5 @@ application.register("content-image-editor", ContentImageEditorController)
 application.register("ai-assistant", AiAssistantController)
 application.register("mobile-menu", MobileMenuController)
 application.register("clipboard", ClipboardController)
+application.register("backup-codes", BackupCodesController)
+application.register("two-factor-verify", TwoFactorVerifyController)

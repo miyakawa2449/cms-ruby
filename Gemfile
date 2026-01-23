@@ -19,6 +19,8 @@ gem "jbuilder"
 
 # Authentication & Authorization
 gem "devise", "~> 4.9"
+gem "devise-two-factor", "~> 6.0"
+gem "rqrcode", "~> 2.2"
 gem "jwt", "~> 3.1"
 gem "pundit", "~> 2.3"
 

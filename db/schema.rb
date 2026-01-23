@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_14_081607) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_23_054351) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -44,17 +44,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_14_081607) do
   end
 
   create_table "admin_users", force: :cascade do |t|
+    t.integer "consumed_timestep"
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.integer "failed_attempts", default: 0, null: false
     t.datetime "locked_at"
+    t.text "otp_backup_codes", default: [], array: true
+    t.datetime "otp_enabled_at"
+    t.boolean "otp_required_for_login", default: false, null: false
+    t.string "otp_secret"
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
+    t.jsonb "trusted_devices", default: []
     t.string "unlock_token"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_admin_users_on_email", unique: true
+    t.index ["otp_required_for_login"], name: "index_admin_users_on_otp_required_for_login"
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_admin_users_on_unlock_token", unique: true
   end

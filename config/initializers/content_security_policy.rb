@@ -96,7 +96,7 @@ Rails.application.configure do
     policy.upgrade_insecure_requests if Rails.env.production?
 
     if Rails.env.development? || Rails.env.test?
-      policy.script_src :unsafe_inline, :unsafe_eval
+      policy.script_src :self, :unsafe_inline, :unsafe_eval
     end
   end
 

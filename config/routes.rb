@@ -23,6 +23,13 @@ Rails.application.routes.draw do
     root to: "dashboard#index", as: :root
     get "dashboard", to: "dashboard#index", as: :dashboard
 
+    # Two-Factor Authentication
+    resource :two_factor_auth, only: [ :show, :new, :create, :destroy ], controller: "two_factor_auth" do
+      post :regenerate_backup_codes
+      get :verify
+      post :verify, action: :verify_code
+    end
+
     resources :sections do
       resources :section_contents, only: [ :new, :create, :edit, :update, :destroy ] do
         member do

@@ -1,0 +1,100 @@
+<% content_for :page_title, t('two_factor_auth.title') %>
+
+<div class="max-w-3xl mx-auto">
+  <div class="bg-white shadow rounded-lg">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900"><%= t('two_factor_auth.title') %></h2>
+    </div>
+
+    <div class="p-6">
+      <!-- Status -->
+      <div class="mb-6">
+        <div class="flex items-center justify-between p-4 rounded-lg <%= @two_factor_enabled ? 'bg-green-50' : 'bg-yellow-50' %>">
+          <div class="flex items-center">
+            <% if @two_factor_enabled %>
+              <svg class="w-8 h-8 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <div>
+                <p class="text-lg font-medium text-green-800"><%= t('two_factor_auth.status') %>: <%= t('two_factor_auth.enabled') %></p>
+                <p class="text-sm text-green-600"><%= t('two_factor_auth.backup_codes_remaining') %>: <%= @backup_codes_count %></p>
+              </div>
+            <% else %>
+              <svg class="w-8 h-8 text-yellow-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <div>
+                <p class="text-lg font-medium text-yellow-800"><%= t('two_factor_auth.status') %>: <%= t('two_factor_auth.disabled') %></p>
+                <p class="text-sm text-yellow-600">アカウントのセキュリティを強化するため、二要素認証を有効にすることを推奨します。</p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <% if @two_factor_enabled %>
+        <!-- Enabled: Show options to disable or regenerate backup codes -->
+        <div class="space-y-6">
+          <!-- Regenerate Backup Codes -->
+          <div class="p-4 bg-gray-50 rounded-lg">
+            <h3 class="text-md font-medium text-gray-900 mb-2"><%= t('two_factor_auth.backup_codes') %></h3>
+            <p class="text-sm text-gray-600 mb-4"><%= t('two_factor_auth.regenerate_warning') %></p>
+
+            <%= form_with url: regenerate_backup_codes_admin_two_factor_auth_path,
+                          method: :post,
+                          local: true,
+                          data: { turbo: false },
+                          class: "space-y-4" do |f| %>
+              <div>
+                <label for="regenerate_password" class="block text-sm font-medium text-gray-700"><%= t('two_factor_auth.current_password') %></label>
+                <input type="password" name="current_password" id="regenerate_password" required
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+              </div>
+              <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <%= t('two_factor_auth.regenerate_backup_codes') %>
+              </button>
+            <% end %>
+          </div>
+
+          <!-- Disable 2FA -->
+          <div class="p-4 bg-red-50 rounded-lg">
+            <h3 class="text-md font-medium text-red-900 mb-2"><%= t('two_factor_auth.disable_2fa') %></h3>
+            <p class="text-sm text-red-600 mb-4">二要素認証を無効にすると、アカウントのセキュリティが低下します。</p>
+
+            <%= form_with url: admin_two_factor_auth_path,
+                          method: :delete,
+                          local: true,
+                          data: { turbo: false },
+                          class: "space-y-4" do |f| %>
+              <div>
+                <label for="disable_password" class="block text-sm font-medium text-gray-700"><%= t('two_factor_auth.current_password') %></label>
+                <input type="password" name="current_password" id="disable_password" required
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+              </div>
+              <div>
+                <label for="disable_otp_code" class="block text-sm font-medium text-gray-700"><%= t('two_factor_auth.verification_code') %></label>
+                <input type="text" name="otp_code" id="disable_otp_code" required autocomplete="off" inputmode="numeric" pattern="[0-9]*" maxlength="6"
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                <p class="mt-1 text-xs text-gray-500"><%= t('two_factor_auth.verification_code_hint') %></p>
+              </div>
+              <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                      data-turbo-confirm="本当に二要素認証を無効にしますか？">
+                <%= t('two_factor_auth.disable_2fa') %>
+              </button>
+            <% end %>
+          </div>
+        </div>
+      <% else %>
+        <!-- Disabled: Show button to enable -->
+        <div class="text-center">
+          <%= link_to new_admin_two_factor_auth_path, class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            <%= t('two_factor_auth.enable_2fa') %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

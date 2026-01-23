@@ -12,6 +12,7 @@ class ApplicationController < ActionController::Base
 
   before_action :set_current_request
   after_action :reset_current_request
+  before_action :configure_permitted_parameters, if: :devise_controller?
 
   private
 
@@ -37,5 +38,11 @@ class ApplicationController < ActionController::Base
     else
       root_path
     end
+  end
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_in, keys: [:otp_attempt])
   end
 end
