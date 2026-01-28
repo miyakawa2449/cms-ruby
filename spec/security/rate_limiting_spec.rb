@@ -88,7 +88,7 @@ RSpec.describe "Rate Limiting", type: :request do
     context "authenticated" do
       let(:admin_user) { create(:admin_user) }
 
-      before { sign_in admin_user }
+      before { sign_in admin_user, scope: :admin_user }
 
       it "allows authenticated requests without immediate block" do
         50.times do
