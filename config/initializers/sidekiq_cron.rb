@@ -1,6 +1,7 @@
 return if Rails.env.test?
 return if ENV["SECRET_KEY_BASE_DUMMY"].present?
 return if ENV["DISABLE_SIDEKIQ_CRON"] == "1"
+return if ENV["REDIS_URL"].blank?
 
 if defined?(Sidekiq::Cron)
   Sidekiq::Cron::Job.load_from_hash(

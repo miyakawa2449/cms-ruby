@@ -4,6 +4,10 @@ require Rails.root.join("app/services/admin_path/resolver").to_s
 
 class Rack::Attack
   if Rails.env.production?
+    if ENV["REDIS_URL"].blank?
+      Rails.logger.warn("[Rack::Attack] REDIS_URL missing, falling back to MemoryStore")
+      Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+    end
     begin
       Rack::Attack.cache.store = ActiveSupport::Cache.lookup_store(
         :redis_cache_store,
