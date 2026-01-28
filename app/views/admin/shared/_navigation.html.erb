@@ -130,5 +130,16 @@
       </svg>
       サイト設定
     <% end %>
+
+    <%= link_to edit_admin_admin_path_settings_path,
+                class: "flex items-center px-4 py-2 text-sm font-medium rounded-md #{controller_name == 'admin_path_settings' ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}" do %>
+      <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 11c0 2.761-2.239 5-5 5S2 13.761 2 11s2.239-5 5-5 5 2.239 5 5zm10 0c0 2.761-2.239 5-5 5s-5-2.239-5-5 2.239-5 5-5 5 2.239 5 5z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M7 11h10" />
+      </svg>
+      管理画面URL管理
+    <% end %>
   </div>
 </div>

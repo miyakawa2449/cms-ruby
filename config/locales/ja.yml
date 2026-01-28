@@ -92,6 +92,10 @@ ja:
       required: "を入力してください"
 
   hello: "こんにちは"
+
+  time:
+    formats:
+      short: "%Y/%m/%d %H:%M"
   
   devise:
     sessions:
