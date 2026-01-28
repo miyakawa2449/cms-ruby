@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_23_054351) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_28_020858) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -41,6 +41,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_23_054351) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "admin_path_histories", force: :cascade do |t|
+    t.bigint "admin_user_id", null: false
+    t.string "change_type"
+    t.datetime "created_at", null: false
+    t.string "ip_address"
+    t.string "new_path"
+    t.datetime "notified_at"
+    t.string "old_path"
+    t.text "reason"
+    t.datetime "updated_at", null: false
+    t.index ["admin_user_id"], name: "index_admin_path_histories_on_admin_user_id"
   end
 
   create_table "admin_users", force: :cascade do |t|
@@ -458,6 +471,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_23_054351) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "admin_path_histories", "admin_users"
   add_foreign_key "ai_generations", "admin_users"
   add_foreign_key "ai_generations", "articles"
   add_foreign_key "article_categories", "articles"

@@ -96,6 +96,11 @@ Rails.application.routes.draw do
       end
     end
 
+    # 管理画面URL管理
+    resource :admin_path_settings, only: [ :edit, :update ] do
+      post :emergency_rotation, on: :collection
+    end
+
     # Database export/import
     resource :database, only: [], controller: "database" do
       collection do

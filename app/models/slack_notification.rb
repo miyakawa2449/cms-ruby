@@ -1,6 +1,18 @@
 class SlackNotification < ApplicationRecord
+  VALID_NOTIFICATION_TYPES = %w[
+    contact
+    article_published
+    comment
+    error
+    2fa_changed
+    admin_path_changed
+    backup_status
+    security_issue
+    health_check_alert
+  ].freeze
+
   validates :notification_type, presence: true,
-                               inclusion: { in: %w[contact article_published comment error] }
+                               inclusion: { in: VALID_NOTIFICATION_TYPES }
   validates :payload, presence: true
   validates :status, presence: true,
                     inclusion: { in: %w[pending sent failed] }

@@ -123,6 +123,17 @@ RSpec.describe SlackNotifier do
       expect(result).to be true
     end
 
+    it 'creates a slack notification record on success' do
+      response = instance_double(HTTParty::Response, success?: true)
+      allow(HTTParty).to receive(:post).and_return(response)
+
+      expect {
+        described_class.notify_admin_path_changed(admin_user, 'old-path', 'new-path', 'manual')
+      }.to change(SlackNotification, :count).by(1)
+
+      expect(SlackNotification.last).to be_sent
+    end
+
     it 'sends notification for emergency rotation' do
       response = instance_double(HTTParty::Response, success?: true)
       allow(HTTParty).to receive(:post).and_return(response)
