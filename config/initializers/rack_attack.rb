@@ -1,5 +1,6 @@
 # Rack::Attack configuration for Portfolio CMS
 # Rate limiting and security rules
+require Rails.root.join("app/services/admin_path/resolver").to_s
 
 class Rack::Attack
   if Rails.env.production?
@@ -16,7 +17,7 @@ class Rack::Attack
     Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
   end
 
-  admin_path = ENV.fetch("ADMIN_PATH", "admin-secure-panel-miyakawa2449")
+  admin_path = ::AdminPath::Resolver.current_path
 
   safelist("allow from admin IPs") do |req|
     admin_ips = ENV.fetch("ADMIN_WHITELIST_IPS", "").split(",").map(&:strip)

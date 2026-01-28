@@ -6,7 +6,8 @@ export default class extends Controller {
   static targets = ["modal", "cropperContainer", "aspectRatio", "saveBtn"]
   static values = { 
     mediaId: Number, 
-    editUrl: String 
+    editUrl: String,
+    mediaIndexUrl: String
   }
 
   connect() {
@@ -193,7 +194,8 @@ export default class extends Controller {
         
         // メディアライブラリ一覧ページに戻る
         setTimeout(() => {
-          window.location.href = '/admin-secure-panel-miyakawa2449/media'
+          const targetUrl = this.mediaIndexUrlValue || "/admin/media"
+          window.location.href = targetUrl
         }, 1000)
       } else {
         throw new Error(data.error || "保存に失敗しました")

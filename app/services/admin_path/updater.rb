@@ -12,12 +12,12 @@ module AdminPath
       @new_path = new_path.to_s.strip.downcase
       @change_type = change_type
       @reason = reason
-      @old_path = ENV.fetch("ADMIN_PATH", "admin")
+      @old_path = AdminPath::Resolver.current_path
     end
 
     def call
       validate!
-      update_env_file!
+      update_runtime_env!
       create_history!
       reload_routes!
       send_notifications!
@@ -42,19 +42,7 @@ module AdminPath
       raise ArgumentError, "New path is same as current" if @new_path == @old_path
     end
 
-    def update_env_file!
-      env_file = Rails.root.join(".env.production")
-      return unless File.exist?(env_file)
-
-      content = File.read(env_file)
-
-      if content.match?(/^ADMIN_PATH=/)
-        content.gsub!(/^ADMIN_PATH=.*$/, "ADMIN_PATH=#{@new_path}")
-      else
-        content += "\nADMIN_PATH=#{@new_path}\n"
-      end
-
-      File.write(env_file, content)
+    def update_runtime_env!
       ENV["ADMIN_PATH"] = @new_path
     end
 

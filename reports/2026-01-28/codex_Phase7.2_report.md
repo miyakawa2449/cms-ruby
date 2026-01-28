@@ -12,6 +12,8 @@
 - 通知機能の結合テスト（Slack通知レコード作成）
 - テスト環境分離（Sidekiq-cronのテスト環境無効化）
 - 追加の広めテストスイート実行（security/services/jobs）
+- 追加対応（管理URLをDB正に変更・環境変数依存を削除）
+- CSP/フロント資産の調整（localhost許可、CSS watch安定化、JS再ビルド）
 
 ## 変更内容（主な検証対応）
 - AdminPath::Updater のバリデーション強化（最大長/ハイフン連続・先頭末尾禁止）
@@ -22,6 +24,16 @@
 - rate_limiting_spec の sign_in scope 修正
 - 管理画面メニューに「管理画面URL管理」を追加
 - `ja.time.formats.short` を追加して日時表示の翻訳エラーを解消
+## 変更内容（運用修正）
+- 管理画面URLはDBを正とし、ENV上書き/`.env*` への書き込みを撤廃
+- `AdminPath::Resolver` 追加（最新の `AdminPathHistory` を参照、ENVはフォールバック）
+- ルーティング/`rack_attack` の admin path 参照を `AdminPath::Resolver` に統一
+- 起動時の admin path 反映用 initializer 追加
+- `.env`, `.env.development`, `.env.production` から `ADMIN_PATH` を削除
+- CSPの開発許可を `localhost` のみに制限（127.0.0.1 ブロック）
+- media editor の保存後遷移を動的URLに修正（data 属性経由）
+- ビルド済みJSを更新（`yarn install` / `yarn build` 実行）
+- Tailwind CSS watch を `stdin_open`/`tty` 付与で安定化
 
 ## テスト結果
 - `bundle exec rspec spec/services/admin_path/updater_spec.rb spec/services/slack_notifier_spec.rb spec/jobs/admin_path/rotation_job_spec.rb`
@@ -33,6 +45,8 @@
   - **結果**: 353 examples, 0 failures
 - `bundle exec rspec spec/jobs`
   - **結果**: 9 examples, 0 failures
+### 追加対応分
+- 追加変更後の自動テストは未実施（手動動作確認のみ）
 
 ## 発生した課題と対応
 - Redis 接続エラー（Sidekiq-cron 初期化）
@@ -49,12 +63,28 @@
 - 管理画面メニューからURL管理に遷移できない
   - **原因**: サイドメニューにリンク未追加
   - **対応**: `app/views/admin/shared/_navigation.html.erb` にリンク追加
+### 追加対応分（運用）
+- 管理URL変更後に再起動で 404
+  - **原因**: ルーティングが `ENV["ADMIN_PATH"]` 固定
+  - **対応**: DB正の `AdminPath::Resolver` を導入し各所参照を統一
+- 管理画面のCSS/JSが反映されない
+  - **原因**: CSPが `localhost` のみ許可・URLが `127.0.0.1` でアクセス
+  - **対応**: CSPを `localhost` のみに統一し、アクセス先を揃える
+- メディア編集の保存後に旧管理URLへ遷移
+  - **原因**: ビルド済みJSに固定URLが残存
+  - **対応**: 動的URLに修正し `yarn build` で更新
+- CSS watch が即終了
+  - **原因**: `--watch` にTTYがない
+  - **対応**: `docker-compose.yml` に `stdin_open`/`tty` を追加
 
 ## コミット/反映
 - `08ce2f8` Phase 7.2 admin URL management
 - `f30fdde` Fix admin_user sign-in in rate limiting spec
 - **Push済み**: main に反映
+## 追加対応のコミット
+- ※このレポート更新と合わせて別コミット予定
 
 ## 結論
 - 依頼された検証項目はすべて満たし、関連テストは全てパス。
 - 既存機能（ルーティング再読み込み/通知）への影響は問題なし。
+- 管理URLの運用はDB正に統一し、再起動時の不整合を解消。

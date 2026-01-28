@@ -1,6 +1,9 @@
 <% content_for :page_title, "メディア詳細" %>
 
-<div class="max-w-4xl mx-auto" data-controller="media-editor" data-media-editor-edit-url-value="<%= edit_image_admin_medium_path(@media) %>">
+<div class="max-w-4xl mx-auto"
+     data-controller="media-editor"
+     data-media-editor-edit-url-value="<%= edit_image_admin_medium_path(@media) %>"
+     data-media-editor-media-index-url-value="<%= admin_media_path %>">
   <!-- 戻るリンク -->
   <div class="mb-6">
     <%= link_to admin_media_path, class: "inline-flex items-center text-gray-600 hover:text-gray-900" do %>

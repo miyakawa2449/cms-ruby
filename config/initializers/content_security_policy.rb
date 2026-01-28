@@ -11,6 +11,11 @@ Rails.application.configure do
       policy.default_src :self, :https
     end
 
+    local_dev_hosts = []
+    if Rails.env.development? || Rails.env.test?
+      local_dev_hosts = [ "http://localhost:3000" ]
+    end
+
     policy.script_src :self,
                       :https,
                       "https://cdn.jsdelivr.net",
@@ -26,16 +31,18 @@ Rails.application.configure do
                       "https://connect.facebook.net",
                       "https://www.facebook.com",
                       "https://www.instagram.com",
-                      "https://www.threads.net"
+                      "https://www.threads.net",
+                      *local_dev_hosts
 
     policy.style_src :self,
                      :https,
                      :unsafe_inline,
-                      "https://fonts.googleapis.com",
-                      "https://cdn.jsdelivr.net",
+                     "https://fonts.googleapis.com",
+                     "https://cdn.jsdelivr.net",
                      "https://www.googletagmanager.com",
                      "https://platform.twitter.com",
-                     "https://platform.x.com"
+                     "https://platform.x.com",
+                     *local_dev_hosts
 
     policy.font_src :self, :https, :data, "https://fonts.gstatic.com"
 
@@ -96,7 +103,10 @@ Rails.application.configure do
     policy.upgrade_insecure_requests if Rails.env.production?
 
     if Rails.env.development? || Rails.env.test?
-      policy.script_src :self, :unsafe_inline, :unsafe_eval
+      policy.script_src :self,
+                        :unsafe_inline,
+                        :unsafe_eval,
+                        "http://localhost:3000"
     end
   end
 

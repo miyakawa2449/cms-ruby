@@ -1,7 +1,7 @@
 module Admin
   class AdminPathSettingsController < Admin::BaseController
     def edit
-      @current_path = ENV.fetch("ADMIN_PATH", "admin")
+      @current_path = AdminPath::Resolver.current_path
       @histories = AdminPathHistory.recent.includes(:admin_user)
       @rotation_enabled = ENV.fetch("ADMIN_PATH_ROTATION_ENABLED", "false") == "true"
       @rotation_frequency = ENV.fetch("ADMIN_PATH_ROTATION_FREQUENCY", "monthly")

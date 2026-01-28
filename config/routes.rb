@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  admin_path = ENV.fetch("ADMIN_PATH", "admin-secure-panel-miyakawa2449")
+  admin_path = AdminPath::Resolver.current_path
   # SEO関連
   get "/sitemap.xml", to: "sitemaps#index", defaults: { format: "xml" }
   get "/feed.rss", to: "feeds#rss", defaults: { format: "rss" }, as: :feed_rss
