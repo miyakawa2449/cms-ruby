@@ -17,8 +17,10 @@ module Admin
       ).call
 
       if result[:success]
-        flash[:notice] = "管理画面URLを変更しました: #{result[:new_path]}"
-        redirect_to edit_admin_admin_path_settings_path
+        sign_out(current_admin_user)
+        reset_session
+        redirect_to new_admin_user_session_path,
+                    notice: "管理画面URLを変更しました。再ログインしてください。"
       else
         flash[:alert] = "URL変更に失敗しました: #{result[:error]}"
         redirect_to edit_admin_admin_path_settings_path
@@ -35,8 +37,10 @@ module Admin
       ).call
 
       if result[:success]
-        flash[:notice] = "緊急ローテーションを実行しました: #{result[:new_path]}"
-        redirect_to edit_admin_admin_path_settings_path
+        sign_out(current_admin_user)
+        reset_session
+        redirect_to new_admin_user_session_path,
+                    notice: "緊急ローテーションを実行しました。再ログインしてください。"
       else
         flash[:alert] = "緊急ローテーションに失敗しました: #{result[:error]}"
         redirect_to edit_admin_admin_path_settings_path

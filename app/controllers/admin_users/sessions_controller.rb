@@ -10,6 +10,9 @@ class AdminUsers::SessionsController < Devise::SessionsController
       session[:two_factor_authenticated_at] = Time.current.to_i
     end
 
+    latest = AdminPathHistory.order(created_at: :desc).limit(1).pick(:created_at)
+    session[:admin_path_changed_at] = latest.to_i if latest.present?
+
     stored_location_for(resource) || admin_root_path
   end
 
