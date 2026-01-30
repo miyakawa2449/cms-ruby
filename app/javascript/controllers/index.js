@@ -14,6 +14,7 @@ import MobileMenuController from "./mobile_menu_controller"
 import ClipboardController from "./clipboard_controller"
 import BackupCodesController from "./backup_codes_controller"
 import TwoFactorVerifyController from "./two_factor_verify_controller"
+import AiUsageChartsController from "./ai_usage_charts_controller"
 
 application.register("confirm-dialog", ConfirmDialogController)
 application.register("contact-form", ContactFormController)
@@ -29,3 +30,4 @@ application.register("mobile-menu", MobileMenuController)
 application.register("clipboard", ClipboardController)
 application.register("backup-codes", BackupCodesController)
 application.register("two-factor-verify", TwoFactorVerifyController)
+application.register("ai-usage-charts", AiUsageChartsController)
