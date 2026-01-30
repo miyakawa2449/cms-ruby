@@ -76,6 +76,11 @@ class Rack::Attack
 
   # Block suspicious requests
   blocklist("block suspicious requests") do |req|
+    # Never block authenticated admin sessions
+    if req.env["warden"]&.user
+      next false
+    end
+
     query = CGI.unescape(req.query_string.to_s)
 
     if req.path.start_with?("/#{admin_path}")
