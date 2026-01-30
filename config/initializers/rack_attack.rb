@@ -76,6 +76,11 @@ class Rack::Attack
 
   # Block suspicious requests
   blocklist("block suspicious requests") do |req|
+    # Allow authenticated admin requests under admin path (e.g., _method=delete)
+    if req.path.start_with?("/#{admin_path}") && req.env["warden"]&.user
+      next false
+    end
+
     query = CGI.unescape(req.query_string.to_s)
     query =~ /(\.|%2e)(\.|%2e)(\/|%2f|\\|%5c)/i ||
       query =~ /union.*select/i ||
