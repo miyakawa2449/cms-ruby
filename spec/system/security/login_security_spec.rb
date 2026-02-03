@@ -45,6 +45,6 @@ RSpec.describe "Login Security", type: :system do
       click_button "ログイン"
     end
 
-    expect(page).to have_content("アカウントがロックされています")
+    expect(page).to have_content("あなたのアカウントがロックされる前にもう1度お試しください")
   end
 end

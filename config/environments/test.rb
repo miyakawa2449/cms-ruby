@@ -32,6 +32,8 @@ Rails.application.configure do
   config.hosts.clear
   # Fully disable HostAuthorization in test (prevents 403 Blocked host in request specs)
   config.host_authorization = { exclude: ->(_request) { true } }
+  # Ensure Rack::Attack never interferes with request specs in test.
+  config.middleware.delete Rack::Attack
 
   # Store uploaded files on the local file system in a temporary directory.
   config.active_storage.service = :test
