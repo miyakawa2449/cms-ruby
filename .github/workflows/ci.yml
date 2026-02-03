@@ -163,7 +163,7 @@ jobs:
           RAILS_ENV: test
           COVERAGE: "true"
           SELENIUM: "true"
-          CHROME_BIN: /usr/bin/chromium
+          CHROME_BIN: /snap/bin/chromium
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
           ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
@@ -221,7 +221,7 @@ jobs:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           SELENIUM: "true"
-          CHROME_BIN: /usr/bin/chromium
+          CHROME_BIN: /snap/bin/chromium
           ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
           ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
           ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"
