@@ -94,4 +94,55 @@ RSpec.describe SecurityMailer, type: :mailer do
       expect(body).to include("問題は検出されませんでした")
     end
   end
+
+  # Phase 7.4 tests
+  describe "#security_alert" do
+    let(:scan) { create(:security_scan, :brakeman, :with_vulnerabilities) }
+    let(:mail) { described_class.security_alert(scan) }
+    let(:body) { mail.text_part ? mail.text_part.body.decoded : mail.body.decoded }
+
+    it "renders the headers" do
+      expect(mail.subject).to include("[SECURITY ALERT]")
+      expect(mail.subject).to include("Brakeman")
+    end
+
+    it "renders the body with vulnerability details" do
+      expect(body).to include("セキュリティ")
+    end
+  end
+
+  describe "#high_error_rate_alert" do
+    let(:mail) do
+      described_class.high_error_rate_alert(
+        rate: 0.15,
+        total_requests: 1000,
+        error_requests: 150
+      )
+    end
+    let(:body) { mail.text_part ? mail.text_part.body.decoded : mail.body.decoded }
+
+    it "renders the headers" do
+      expect(mail.subject).to eq("[ALERT] High Error Rate Detected: 15.0%")
+    end
+
+    it "renders the body with error statistics" do
+      expect(body).to include("エラー率")
+      expect(body).to include("1000")
+      expect(body).to include("150")
+    end
+  end
+
+  describe "#traffic_spike_alert" do
+    let(:mail) { described_class.traffic_spike_alert(requests_per_minute: 2500) }
+    let(:body) { mail.text_part ? mail.text_part.body.decoded : mail.body.decoded }
+
+    it "renders the headers" do
+      expect(mail.subject).to eq("[ALERT] Traffic Spike Detected: 2500 req/min")
+    end
+
+    it "renders the body with traffic details" do
+      expect(body).to include("トラフィック")
+      expect(body).to include("2500")
+    end
+  end
 end

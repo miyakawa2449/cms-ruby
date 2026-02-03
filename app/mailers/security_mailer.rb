@@ -51,4 +51,40 @@ class SecurityMailer < ApplicationMailer
       subject: "[Security] #{audit_type.humanize} audit completed - No issues found"
     )
   end
+
+  # Security alert for high/critical vulnerabilities (Phase 7.4)
+  def security_alert(scan)
+    @scan = scan
+    @vulnerabilities = scan.vulnerabilities.where(severity: [ :critical, :high ])
+    @summary = scan.summary
+
+    mail(
+      to: ENV.fetch("SECURITY_AUDIT_EMAIL", ENV.fetch("ADMIN_EMAIL", "admin@example.test")),
+      subject: "[SECURITY ALERT] #{scan.scan_type.titleize}: #{@vulnerabilities.count} High/Critical Issues"
+    )
+  end
+
+  # Alert for high error rate (Phase 7.4)
+  def high_error_rate_alert(rate:, total_requests:, error_requests:)
+    @rate = rate
+    @total_requests = total_requests
+    @error_requests = error_requests
+    @timestamp = Time.current
+
+    mail(
+      to: ENV.fetch("ADMIN_EMAIL", "admin@example.test"),
+      subject: "[ALERT] High Error Rate Detected: #{(rate * 100).round(2)}%"
+    )
+  end
+
+  # Alert for traffic spike (Phase 7.4)
+  def traffic_spike_alert(requests_per_minute:)
+    @requests_per_minute = requests_per_minute
+    @timestamp = Time.current
+
+    mail(
+      to: ENV.fetch("ADMIN_EMAIL", "admin@example.test"),
+      subject: "[ALERT] Traffic Spike Detected: #{requests_per_minute} req/min"
+    )
+  end
 end

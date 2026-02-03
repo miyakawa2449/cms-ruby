@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_28_020858) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_03_072657) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -292,6 +292,33 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_28_020858) do
     t.index ["position"], name: "index_sections_on_position"
   end
 
+  create_table "security_reports", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.jsonb "data", default: {}
+    t.datetime "generated_at"
+    t.datetime "period_end", null: false
+    t.datetime "period_start", null: false
+    t.integer "report_type", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["generated_at"], name: "index_security_reports_on_generated_at"
+    t.index ["report_type"], name: "index_security_reports_on_report_type"
+    t.index ["status"], name: "index_security_reports_on_status"
+  end
+
+  create_table "security_scans", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "error_message"
+    t.jsonb "raw_results"
+    t.integer "scan_type", null: false
+    t.datetime "scanned_at", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["scan_type"], name: "index_security_scans_on_scan_type"
+    t.index ["scanned_at"], name: "index_security_scans_on_scanned_at"
+    t.index ["status"], name: "index_security_scans_on_status"
+  end
+
   create_table "site_settings", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
@@ -469,6 +496,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_28_020858) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "vulnerabilities", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "cve_id"
+    t.text "description", null: false
+    t.string "file_path"
+    t.boolean "fixed", default: false
+    t.datetime "fixed_at"
+    t.string "gem_name"
+    t.string "gem_version"
+    t.integer "line_number"
+    t.string "patched_versions"
+    t.bigint "security_scan_id", null: false
+    t.integer "severity", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cve_id"], name: "index_vulnerabilities_on_cve_id"
+    t.index ["fixed"], name: "index_vulnerabilities_on_fixed"
+    t.index ["security_scan_id"], name: "index_vulnerabilities_on_security_scan_id"
+    t.index ["severity"], name: "index_vulnerabilities_on_severity"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "admin_path_histories", "admin_users"
@@ -490,4 +538,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_28_020858) do
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "vulnerabilities", "security_scans"
 end

@@ -50,7 +50,7 @@
 |----------|------|
 | Lightsail | 本番インフラ |
 | SES | メール送信 |
-| Bedrock | AI機能（Claude 3.5 Sonnet/Haiku） |
+| Bedrock | AI機能（Claude 4.5 Sonnet/Haiku） |
 
 ### 認証・セキュリティ
 - **認証**: Devise + JWT 3.1

@@ -1,0 +1,23 @@
+セキュリティアラート: <%= @scan.scan_type.titleize %> スキャン結果
+============================================================
+
+<%= @vulnerabilities.count %> 件の高深刻度・致命的な脆弱性が検出されました。
+
+スキャン情報
+------------
+スキャン種別: <%= @scan.scan_type.titleize %>
+スキャン日時: <%= @scan.scanned_at.strftime('%Y-%m-%d %H:%M:%S %Z') %>
+
+検出脆弱性:
+- 致命的 (Critical): <%= @summary[:critical] %> 件
+- 高 (High): <%= @summary[:high] %> 件
+- 中 (Medium): <%= @summary[:medium] %> 件
+- 低 (Low): <%= @summary[:low] %> 件
+
+詳細は管理画面で確認してください:
+<%= admin_security_scan_url(@scan) %>
+
+対応要: 検出された脆弱性の確認と対応をお願いします。
+
+--
+このメールはポートフォリオサイトからの自動送信です。

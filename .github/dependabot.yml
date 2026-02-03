@@ -1,12 +1,80 @@
 version: 2
 updates:
-- package-ecosystem: bundler
-  directory: "/"
-  schedule:
-    interval: weekly
-  open-pull-requests-limit: 10
-- package-ecosystem: github-actions
-  directory: "/"
-  schedule:
-    interval: weekly
-  open-pull-requests-limit: 10
+  # Ruby dependencies (Gemfile)
+  - package-ecosystem: "bundler"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    labels:
+      - "dependencies"
+      - "security"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "chore(deps):"
+    groups:
+      rails:
+        patterns:
+          - "rails*"
+          - "actioncable"
+          - "actionmailbox"
+          - "actionmailer"
+          - "actionpack"
+          - "actiontext"
+          - "actionview"
+          - "activejob"
+          - "activemodel"
+          - "activerecord"
+          - "activestorage"
+          - "activesupport"
+      security:
+        patterns:
+          - "devise*"
+          - "rack-attack"
+          - "bcrypt"
+          - "jwt"
+      testing:
+        patterns:
+          - "rspec*"
+          - "factory_bot*"
+          - "faker"
+          - "capybara"
+          - "selenium-webdriver"
+
+  # JavaScript dependencies (package.json)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    labels:
+      - "dependencies"
+      - "security"
+      - "javascript"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "chore(deps):"
+    groups:
+      stimulus:
+        patterns:
+          - "@hotwired/*"
+          - "stimulus*"
+      esbuild:
+        patterns:
+          - "esbuild*"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(deps):"

@@ -1,0 +1,221 @@
+<% content_for :page_title, "レポート詳細 ##{@security_report.id}" %>
+
+<!-- 戻るリンク -->
+<div class="mb-6 flex justify-between items-center">
+  <%= link_to "← レポート一覧に戻る", admin_security_reports_path, class: "text-blue-600 hover:text-blue-900" %>
+  <% if @security_report.completed? %>
+    <%= link_to "ダウンロード", download_admin_security_report_path(@security_report), class: "bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700" %>
+  <% end %>
+</div>
+
+<!-- レポート情報 -->
+<div class="bg-white rounded-lg shadow-sm border mb-6">
+  <div class="px-6 py-4 border-b bg-gray-50">
+    <h2 class="text-lg font-medium text-gray-900">レポート情報</h2>
+  </div>
+  <div class="p-6">
+    <dl class="grid grid-cols-2 gap-4">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">レポートID</dt>
+        <dd class="mt-1 text-sm text-gray-900">#<%= @security_report.id %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">レポート種別</dt>
+        <dd class="mt-1">
+          <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+            <%= case @security_report.report_type
+                when 'weekly' then 'bg-blue-100 text-blue-800'
+                when 'monthly' then 'bg-purple-100 text-purple-800'
+                else 'bg-gray-100 text-gray-800'
+                end %>">
+            <%= @security_report.report_type.titleize %>
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">期間</dt>
+        <dd class="mt-1 text-sm text-gray-900">
+          <%= @security_report.period_start.to_date %> 〜 <%= @security_report.period_end.to_date %>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">ステータス</dt>
+        <dd class="mt-1">
+          <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+            <%= case @security_report.status
+                when 'completed' then 'bg-green-100 text-green-800'
+                when 'failed' then 'bg-red-100 text-red-800'
+                when 'generating' then 'bg-yellow-100 text-yellow-800'
+                else 'bg-gray-100 text-gray-800'
+                end %>">
+            <%= @security_report.status.titleize %>
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">生成日時</dt>
+        <dd class="mt-1 text-sm text-gray-900">
+          <%= @security_report.generated_at&.strftime('%Y/%m/%d %H:%M:%S') || '-' %>
+        </dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
+<% report_data = @security_report.data || {} %>
+<% if report_data.present? %>
+  <!-- スキャン統計 -->
+  <% if report_data["scans"].present? %>
+    <div class="bg-white rounded-lg shadow-sm border mb-6">
+      <div class="px-6 py-4 border-b bg-gray-50">
+        <h2 class="text-lg font-medium text-gray-900">スキャン統計</h2>
+      </div>
+      <div class="p-6">
+        <% scans = report_data["scans"] %>
+        <div class="grid grid-cols-4 gap-4">
+          <div class="bg-gray-50 rounded-lg p-4 text-center">
+            <p class="text-2xl font-bold text-gray-900"><%= scans["total"] || 0 %></p>
+            <p class="text-sm text-gray-600">総スキャン数</p>
+          </div>
+          <div class="bg-purple-50 rounded-lg p-4 text-center">
+            <p class="text-2xl font-bold text-purple-600"><%= scans["brakeman"] || 0 %></p>
+            <p class="text-sm text-purple-800">Brakeman</p>
+          </div>
+          <div class="bg-blue-50 rounded-lg p-4 text-center">
+            <p class="text-2xl font-bold text-blue-600"><%= scans["bundler_audit"] || 0 %></p>
+            <p class="text-sm text-blue-800">bundler-audit</p>
+          </div>
+          <div class="bg-green-50 rounded-lg p-4 text-center">
+            <p class="text-2xl font-bold text-green-600"><%= scans["completed"] || 0 %></p>
+            <p class="text-sm text-green-800">成功</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- 脆弱性統計 -->
+  <% if report_data["vulnerabilities"].present? %>
+    <div class="bg-white rounded-lg shadow-sm border mb-6">
+      <div class="px-6 py-4 border-b bg-gray-50">
+        <h2 class="text-lg font-medium text-gray-900">脆弱性統計</h2>
+      </div>
+      <div class="p-6">
+        <% vulns = report_data["vulnerabilities"] %>
+        <div class="grid grid-cols-3 gap-4 mb-6">
+          <div class="bg-gray-50 rounded-lg p-4 text-center">
+            <p class="text-2xl font-bold text-gray-900"><%= vulns["total"] || 0 %></p>
+            <p class="text-sm text-gray-600">総数</p>
+          </div>
+          <div class="bg-red-50 rounded-lg p-4 text-center">
+            <p class="text-2xl font-bold text-red-600"><%= vulns["new"] || 0 %></p>
+            <p class="text-sm text-red-800">未修正</p>
+          </div>
+          <div class="bg-green-50 rounded-lg p-4 text-center">
+            <p class="text-2xl font-bold text-green-600"><%= vulns["fixed"] || 0 %></p>
+            <p class="text-sm text-green-800">修正済み</p>
+          </div>
+        </div>
+
+        <% if vulns["by_severity"].present? %>
+          <h3 class="text-sm font-medium text-gray-700 mb-3">深刻度別</h3>
+          <div class="grid grid-cols-5 gap-4">
+            <% severity_data = vulns["by_severity"] %>
+            <div class="bg-red-50 rounded-lg p-4 text-center">
+              <p class="text-2xl font-bold text-red-600"><%= severity_data["critical"] || 0 %></p>
+              <p class="text-sm text-red-800">Critical</p>
+            </div>
+            <div class="bg-orange-50 rounded-lg p-4 text-center">
+              <p class="text-2xl font-bold text-orange-600"><%= severity_data["high"] || 0 %></p>
+              <p class="text-sm text-orange-800">High</p>
+            </div>
+            <div class="bg-yellow-50 rounded-lg p-4 text-center">
+              <p class="text-2xl font-bold text-yellow-600"><%= severity_data["medium"] || 0 %></p>
+              <p class="text-sm text-yellow-800">Medium</p>
+            </div>
+            <div class="bg-blue-50 rounded-lg p-4 text-center">
+              <p class="text-2xl font-bold text-blue-600"><%= severity_data["low"] || 0 %></p>
+              <p class="text-sm text-blue-800">Low</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4 text-center">
+              <p class="text-2xl font-bold text-gray-600"><%= severity_data["info"] || 0 %></p>
+              <p class="text-sm text-gray-800">Info</p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- グラフ -->
+  <% if report_data["scans"].present? || report_data["vulnerabilities"].present? %>
+    <% scans = report_data["scans"] || {} %>
+    <% severity_data = report_data.dig("vulnerabilities", "by_severity") || {} %>
+    <% chart_data = {
+      scans: {
+        labels: [ "Brakeman", "bundler-audit", "Completed", "Failed" ],
+        data: [
+          scans["brakeman"] || 0,
+          scans["bundler_audit"] || 0,
+          scans["completed"] || 0,
+          scans["failed"] || 0
+        ]
+      },
+      vulnerabilities: {
+        labels: [ "Critical", "High", "Medium", "Low", "Info" ],
+        data: [
+          severity_data["critical"] || 0,
+          severity_data["high"] || 0,
+          severity_data["medium"] || 0,
+          severity_data["low"] || 0,
+          severity_data["info"] || 0
+        ]
+      }
+    } %>
+    <div class="bg-white rounded-lg shadow-sm border mb-6" data-controller="security-report-charts" data-security-report-charts-chart-data-value="<%= json_escape(chart_data.to_json) %>">
+      <div class="px-6 py-4 border-b bg-gray-50">
+        <h2 class="text-lg font-medium text-gray-900">グラフ</h2>
+      </div>
+      <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="h-72">
+          <h3 class="text-sm font-medium text-gray-700 mb-3">スキャン内訳</h3>
+          <canvas id="securityScansChart" class="w-full h-full"></canvas>
+        </div>
+        <div class="h-72">
+          <h3 class="text-sm font-medium text-gray-700 mb-3">脆弱性（深刻度別）</h3>
+          <canvas id="vulnerabilitySeverityChart" class="w-full h-full"></canvas>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- インシデント統計 -->
+  <% if report_data["incidents"].present? %>
+    <div class="bg-white rounded-lg shadow-sm border">
+      <div class="px-6 py-4 border-b bg-gray-50">
+        <h2 class="text-lg font-medium text-gray-900">インシデント統計</h2>
+      </div>
+      <div class="p-6">
+        <% incidents = report_data["incidents"] %>
+        <div class="grid grid-cols-4 gap-4">
+          <div class="bg-red-50 rounded-lg p-4 text-center">
+            <p class="text-2xl font-bold text-red-600"><%= incidents["failed_logins"] || 0 %></p>
+            <p class="text-sm text-red-800">ログイン失敗</p>
+          </div>
+          <div class="bg-orange-50 rounded-lg p-4 text-center">
+            <p class="text-2xl font-bold text-orange-600"><%= incidents["blocked_ips"] || 0 %></p>
+            <p class="text-sm text-orange-800">ブロックされたIP</p>
+          </div>
+          <div class="bg-yellow-50 rounded-lg p-4 text-center">
+            <p class="text-2xl font-bold text-yellow-600"><%= incidents["csrf_errors"] || 0 %></p>
+            <p class="text-sm text-yellow-800">CSRFエラー</p>
+          </div>
+          <div class="bg-purple-50 rounded-lg p-4 text-center">
+            <p class="text-2xl font-bold text-purple-600"><%= incidents["unauthorized_access"] || 0 %></p>
+            <p class="text-sm text-purple-800">不正アクセス</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>

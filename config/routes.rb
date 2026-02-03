@@ -109,6 +109,14 @@ Rails.application.routes.draw do
         post :import
       end
     end
+
+    # Security audit (Phase 7.4)
+    resources :security_scans, only: [ :index, :show ]
+    resources :security_reports, only: [ :index, :show ] do
+      member do
+        get :download
+      end
+    end
   end
 
   # Public routes
@@ -150,6 +158,14 @@ Rails.application.routes.draw do
 
       # API info endpoint
       get "", to: "base#info"
+    end
+
+    # Internal API routes (GitHub Actions integration)
+    namespace :internal do
+      resource :security, only: [], controller: "security" do
+        post :brakeman
+        post :bundler_audit
+      end
     end
   end
 

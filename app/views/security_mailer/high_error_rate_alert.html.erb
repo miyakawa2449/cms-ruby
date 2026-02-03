@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #f59e0b; color: white; padding: 20px; text-align: center; }
+    .content { padding: 20px; background: #f9f9f9; }
+    .info-box { background: white; padding: 15px; margin: 10px 0; border-left: 4px solid #f59e0b; }
+    .label { font-weight: bold; color: #666; }
+    .metric { font-size: 24px; font-weight: bold; color: #dc2626; }
+    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>高エラー率アラート</h1>
+    </div>
+    <div class="content">
+      <p>サーバーのエラー率が閾値を超えました。</p>
+
+      <div class="info-box">
+        <p><span class="label">エラー率:</span> <span class="metric"><%= (@rate * 100).round(2) %>%</span></p>
+        <p><span class="label">総リクエスト数:</span> <%= @total_requests %></p>
+        <p><span class="label">エラーリクエスト数:</span> <%= @error_requests %></p>
+        <p><span class="label">検出日時:</span> <%= @timestamp.strftime('%Y-%m-%d %H:%M:%S %Z') %></p>
+      </div>
+
+      <p><strong>推奨アクション:</strong></p>
+      <ul>
+        <li>サーバーログを確認してエラーの原因を特定してください</li>
+        <li>必要に応じてサービスを再起動してください</li>
+        <li>データベース接続やメモリ使用量を確認してください</li>
+      </ul>
+    </div>
+    <div class="footer">
+      <p>このメールはポートフォリオサイトからの自動送信です。</p>
+    </div>
+  </div>
+</body>
+</html>
