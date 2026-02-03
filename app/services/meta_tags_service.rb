@@ -22,7 +22,7 @@ class MetaTagsService
                  else
                    safe_url_for(article.ogp_image)
                  end
-               elsif article.thumbnail_image.attached?
+    elsif article.thumbnail_image.attached?
                  if article.thumbnail_image.variable?
                    # OGP用は1200x630を基準にセンタークロップ
                    Rails.application.routes.url_helpers.url_for(
@@ -31,9 +31,9 @@ class MetaTagsService
                  else
                    safe_url_for(article.thumbnail_image)
                  end
-               else
+    else
                  default_og_image_url
-               end
+    end
 
     build_meta_tags(
       title: article.title,

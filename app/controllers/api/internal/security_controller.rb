@@ -54,7 +54,7 @@ module Api
       def authenticate_internal_api
         token = request.headers["Authorization"]
         token = token.remove("Bearer ") if token
-      
+
         unless valid_token?(token)
           render json: { error: "Unauthorized" }, status: :unauthorized
         end
