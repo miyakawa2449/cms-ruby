@@ -130,6 +130,6 @@ ActiveSupport::Notifications.subscribe("rack.attack") do |_name, _start, _finish
   SecurityLogger.log_rate_limit_exceeded(matched, request)
 end
 
-if Rails.env.production? || Rails.env.staging? || Rails.env.test?
+if Rails.env.production? || Rails.env.staging? || (Rails.env.test? && ENV["RACK_ATTACK_ENABLED"] == "true")
   Rails.application.config.middleware.use Rack::Attack
 end

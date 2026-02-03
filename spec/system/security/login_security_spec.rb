@@ -33,7 +33,7 @@ RSpec.describe "Login Security", type: :system do
     fill_in "パスワード", with: "wrong"
     click_button "ログイン"
 
-    expect(page).to have_content("メールアドレスまたはパスワードが違います")
+    expect(page).to have_content("メールアドレスまたはパスワードが正しくありません")
   end
 
   it "locks account after repeated failures" do
