@@ -4,10 +4,21 @@ require "warden/test/helpers"
 
 Capybara.register_driver :selenium_headless do |app|
   options = Selenium::WebDriver::Chrome::Options.new
-  options.binary = ENV["CHROME_BIN"] if ENV["CHROME_BIN"]&.length&.positive?
-  options.add_argument("--headless")
+  chrome_bin = ENV["CHROME_BIN"]
+  if chrome_bin && !chrome_bin.empty?
+    options.binary = chrome_bin
+  else
+    %w[/snap/bin/chromium /usr/bin/chromium /usr/bin/chromium-browser /usr/bin/google-chrome].each do |path|
+      next unless File.exist?(path)
+
+      options.binary = path
+      break
+    end
+  end
+  options.add_argument("--headless=new")
   options.add_argument("--no-sandbox")
   options.add_argument("--disable-dev-shm-usage")
+  options.add_argument("--disable-gpu")
   options.add_argument("--window-size=1920,1080")
 
   Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
