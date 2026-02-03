@@ -86,7 +86,7 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev chromium chromium-driver
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
 
       - name: Checkout code
         uses: actions/checkout@v5
@@ -135,7 +135,7 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev chromium chromium-driver
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
 
       - name: Checkout code
         uses: actions/checkout@v5
@@ -150,6 +150,14 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Set up Chrome
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Set up ChromeDriver
+        id: setup-chromedriver
+        uses: browser-actions/setup-chromedriver@v1
+
       - name: Install JS dependencies
         run: npm ci
 
@@ -163,8 +171,8 @@ jobs:
           RAILS_ENV: test
           COVERAGE: "true"
           SELENIUM: "true"
-          CHROME_BIN: /snap/bin/chromium
-          CHROMEDRIVER_PATH: /usr/bin/chromedriver
+          CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.setup-chromedriver.outputs.chromedriver-path }}
           XDG_RUNTIME_DIR: /tmp
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
@@ -182,6 +190,12 @@ jobs:
             tail -n 200 tmp/chromedriver.log
           else
             echo "No tmp/chromedriver.log found"
+          fi
+          if [ -f tmp/chrome.log ]; then
+            echo "---- tmp/chrome.log (tail 200) ----"
+            tail -n 200 tmp/chrome.log
+          else
+            echo "No tmp/chrome.log found"
           fi
 
   system-test:
@@ -205,7 +219,7 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev chromium chromium-driver
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
 
       - name: Checkout code
         uses: actions/checkout@v5
@@ -220,6 +234,14 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Set up Chrome
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Set up ChromeDriver
+        id: setup-chromedriver
+        uses: browser-actions/setup-chromedriver@v1
+
       - name: Install JS dependencies
         run: npm ci
 
@@ -233,8 +255,8 @@ jobs:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           SELENIUM: "true"
-          CHROME_BIN: /snap/bin/chromium
-          CHROMEDRIVER_PATH: /usr/bin/chromedriver
+          CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.setup-chromedriver.outputs.chromedriver-path }}
           XDG_RUNTIME_DIR: /tmp
           ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
           ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
@@ -251,6 +273,12 @@ jobs:
             tail -n 200 tmp/chromedriver.log
           else
             echo "No tmp/chromedriver.log found"
+          fi
+          if [ -f tmp/chrome.log ]; then
+            echo "---- tmp/chrome.log (tail 200) ----"
+            tail -n 200 tmp/chrome.log
+          else
+            echo "No tmp/chrome.log found"
           fi
 
       - name: Keep screenshots from failed system tests
