@@ -124,7 +124,7 @@ end
 
 ActiveSupport::Notifications.subscribe("rack.attack") do |_name, _start, _finish, _request_id, payload|
   request = payload[:request]
-  matched = request&.env&.[]( "rack.attack.matched")
+  matched = request&.env&.[]("rack.attack.matched")
   next unless matched
 
   SecurityLogger.log_rate_limit_exceeded(matched, request)

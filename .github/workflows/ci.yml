@@ -104,6 +104,11 @@ jobs:
       - name: Install JS dependencies
         run: npm ci
 
+      - name: Build assets
+        run: |
+          npm run build:css
+          npm run build
+
       - name: Run tests
         env:
           RAILS_ENV: test
@@ -147,6 +152,11 @@ jobs:
 
       - name: Install JS dependencies
         run: npm ci
+
+      - name: Build assets
+        run: |
+          npm run build:css
+          npm run build
 
       - name: Run RSpec with coverage
         env:
@@ -200,6 +210,11 @@ jobs:
 
       - name: Install JS dependencies
         run: npm ci
+
+      - name: Build assets
+        run: |
+          npm run build:css
+          npm run build
 
       - name: Run System Tests
         env:

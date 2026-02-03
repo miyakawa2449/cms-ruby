@@ -36,6 +36,19 @@ Rails.application.configure do
   # Store uploaded files on the local file system in a temporary directory.
   config.active_storage.service = :test
 
+  config.active_record.encryption.primary_key = ENV.fetch(
+    "ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY",
+    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+  )
+  config.active_record.encryption.deterministic_key = ENV.fetch(
+    "ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY",
+    "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
+  )
+  config.active_record.encryption.key_derivation_salt = ENV.fetch(
+    "ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT",
+    "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"
+  )
+
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.

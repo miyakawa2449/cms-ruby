@@ -1,5 +1,5 @@
 /* Cropper.js v1 styles for image editing */
-@import 'cropperjs/dist/cropper.css';
+@import "../../../node_modules/cropperjs/dist/cropper.css";
 
 @import "tailwindcss/base";
 @import "tailwindcss/components";
