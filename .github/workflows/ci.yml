@@ -119,7 +119,7 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev chromium chromium-driver
 
       - name: Checkout code
         uses: actions/checkout@v5
@@ -133,6 +133,7 @@ jobs:
         env:
           RAILS_ENV: test
           COVERAGE: "true"
+          SELENIUM: "true"
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           # REDIS_URL: redis://localhost:6379/0
@@ -159,7 +160,7 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev chromium chromium-driver
 
       - name: Checkout code
         uses: actions/checkout@v5
