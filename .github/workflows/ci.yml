@@ -165,6 +165,7 @@ jobs:
           SELENIUM: "true"
           CHROME_BIN: /snap/bin/chromium
           CHROMEDRIVER_PATH: /usr/bin/chromedriver
+          XDG_RUNTIME_DIR: /tmp
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
           ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
@@ -234,6 +235,7 @@ jobs:
           SELENIUM: "true"
           CHROME_BIN: /snap/bin/chromium
           CHROMEDRIVER_PATH: /usr/bin/chromedriver
+          XDG_RUNTIME_DIR: /tmp
           ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
           ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
           ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"
