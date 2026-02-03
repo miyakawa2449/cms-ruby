@@ -164,6 +164,7 @@ jobs:
           COVERAGE: "true"
           SELENIUM: "true"
           CHROME_BIN: /snap/bin/chromium
+          CHROMEDRIVER_PATH: /usr/bin/chromedriver
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
           ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
@@ -171,6 +172,16 @@ jobs:
           # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           # REDIS_URL: redis://localhost:6379/0
         run: bin/rails db:test:prepare && bundle exec rspec --no-fail-fast
+
+      - name: Dump ChromeDriver log
+        if: always()
+        run: |
+          if [ -f tmp/chromedriver.log ]; then
+            echo "---- tmp/chromedriver.log (tail 200) ----"
+            tail -n 200 tmp/chromedriver.log
+          else
+            echo "No tmp/chromedriver.log found"
+          fi
 
   system-test:
     runs-on: ubuntu-latest
@@ -222,12 +233,23 @@ jobs:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           SELENIUM: "true"
           CHROME_BIN: /snap/bin/chromium
+          CHROMEDRIVER_PATH: /usr/bin/chromedriver
           ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
           ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
           ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"
           # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           # REDIS_URL: redis://localhost:6379/0
         run: bin/rails db:test:prepare test:system
+
+      - name: Dump ChromeDriver log
+        if: always()
+        run: |
+          if [ -f tmp/chromedriver.log ]; then
+            echo "---- tmp/chromedriver.log (tail 200) ----"
+            tail -n 200 tmp/chromedriver.log
+          else
+            echo "No tmp/chromedriver.log found"
+          fi
 
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v4
