@@ -152,11 +152,10 @@ jobs:
 
       - name: Set up Chrome
         id: setup-chrome
-        uses: browser-actions/setup-chrome@v1
-
-      - name: Set up ChromeDriver
-        id: setup-chromedriver
-        uses: browser-actions/setup-chromedriver@v1
+        uses: browser-actions/setup-chrome@v2
+        with:
+          install-chromedriver: true
+          install-dependencies: true
 
       - name: Install JS dependencies
         run: npm ci
@@ -172,7 +171,7 @@ jobs:
           COVERAGE: "true"
           SELENIUM: "true"
           CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
-          CHROMEDRIVER_PATH: ${{ steps.setup-chromedriver.outputs.chromedriver-path }}
+          CHROMEDRIVER_PATH: ${{ steps.setup-chrome.outputs.chromedriver-path }}
           XDG_RUNTIME_DIR: /tmp
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
@@ -236,11 +235,10 @@ jobs:
 
       - name: Set up Chrome
         id: setup-chrome
-        uses: browser-actions/setup-chrome@v1
-
-      - name: Set up ChromeDriver
-        id: setup-chromedriver
-        uses: browser-actions/setup-chromedriver@v1
+        uses: browser-actions/setup-chrome@v2
+        with:
+          install-chromedriver: true
+          install-dependencies: true
 
       - name: Install JS dependencies
         run: npm ci
@@ -256,7 +254,7 @@ jobs:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           SELENIUM: "true"
           CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
-          CHROMEDRIVER_PATH: ${{ steps.setup-chromedriver.outputs.chromedriver-path }}
+          CHROMEDRIVER_PATH: ${{ steps.setup-chrome.outputs.chromedriver-path }}
           XDG_RUNTIME_DIR: /tmp
           ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
           ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
