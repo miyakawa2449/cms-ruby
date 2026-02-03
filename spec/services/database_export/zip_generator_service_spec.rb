@@ -44,7 +44,7 @@ RSpec.describe DatabaseExport::ZipGeneratorService do
     it "creates a valid ZIP file" do
       zip_path = service.call
 
-      expect { Zip::File.open(zip_path) {} }.not_to raise_error
+      expect { Zip::File.open(zip_path) { } }.not_to raise_error
 
       # Clean up
       FileUtils.rm_f(zip_path)
