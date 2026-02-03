@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :media_metadata do
-    association :blob, factory: :active_storage_blob
+    association :blob, factory: :active_storage_blob_with_file
     alt_text { 'テスト画像' }
     width { 1920 }
     height { 1080 }

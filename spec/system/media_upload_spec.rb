@@ -16,12 +16,12 @@ RSpec.describe "画像・メディアフロー", type: :system do
   end
 
   it "一覧にメディアが表示される" do
-    blob = create(:active_storage_blob, filename: "test_document.pdf", content_type: "application/pdf")
+    blob = create(:active_storage_blob_with_file)
     create(:media_metadata, blob: blob)
 
     visit admin_media_path
 
-    expect(page).to have_content("test_document.pdf")
+    expect(page).to have_content("test_image.jpg")
   end
 
   it "アップロードモーダルが開く" do

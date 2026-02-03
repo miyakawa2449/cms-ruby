@@ -11,8 +11,8 @@ RSpec.describe "Login Security", type: :system do
   it "logs in successfully with valid credentials" do
     visit new_admin_user_session_path
 
-    fill_in "Email", with: admin_user.email
-    fill_in "Password", with: TestCredentials.admin_password
+    fill_in "メールアドレス", with: admin_user.email
+    fill_in "パスワード", with: TestCredentials.admin_password
     click_button "ログイン"
 
     expect(page).to have_current_path(admin_root_path)
@@ -22,15 +22,15 @@ RSpec.describe "Login Security", type: :system do
   it "renders login form" do
     visit new_admin_user_session_path
 
-    expect(page).to have_field("Email")
-    expect(page).to have_field("Password")
+    expect(page).to have_field("メールアドレス")
+    expect(page).to have_field("パスワード")
   end
 
   it "shows error with invalid credentials" do
     visit new_admin_user_session_path
 
-    fill_in "Email", with: admin_user.email
-    fill_in "Password", with: "wrong"
+    fill_in "メールアドレス", with: admin_user.email
+    fill_in "パスワード", with: "wrong"
     click_button "ログイン"
 
     expect(page).to have_content("メールアドレスまたはパスワードが違います")
@@ -40,8 +40,8 @@ RSpec.describe "Login Security", type: :system do
     visit new_admin_user_session_path
 
     5.times do
-      fill_in "Email", with: admin_user.email
-      fill_in "Password", with: "wrong"
+      fill_in "メールアドレス", with: admin_user.email
+      fill_in "パスワード", with: "wrong"
       click_button "ログイン"
     end
 
