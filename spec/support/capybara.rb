@@ -4,6 +4,7 @@ require "warden/test/helpers"
 
 Capybara.register_driver :selenium_headless do |app|
   options = Selenium::WebDriver::Chrome::Options.new
+  options.binary = ENV["CHROME_BIN"] if ENV["CHROME_BIN"]&.length&.positive?
   options.add_argument("--headless")
   options.add_argument("--no-sandbox")
   options.add_argument("--disable-dev-shm-usage")
