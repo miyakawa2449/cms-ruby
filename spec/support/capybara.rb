@@ -19,9 +19,31 @@ Capybara.register_driver :selenium_headless do |app|
   options.add_argument("--no-sandbox")
   options.add_argument("--disable-dev-shm-usage")
   options.add_argument("--disable-gpu")
+  options.add_argument("--disable-extensions")
+  options.add_argument("--disable-software-rasterizer")
+  options.add_argument("--remote-debugging-port=9222")
   options.add_argument("--window-size=1920,1080")
 
-  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+  service = nil
+  driver_path = ENV["CHROMEDRIVER_PATH"]
+  if driver_path && !driver_path.empty?
+    service = Selenium::WebDriver::Chrome::Service.new(
+      path: driver_path,
+      args: ["--verbose", "--log-path=tmp/chromedriver.log"]
+    )
+  else
+    %w[/usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver /snap/bin/chromedriver].each do |path|
+      next unless File.exist?(path)
+
+      service = Selenium::WebDriver::Chrome::Service.new(
+        path: path,
+        args: ["--verbose", "--log-path=tmp/chromedriver.log"]
+      )
+      break
+    end
+  end
+
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options, service: service)
 end
 
 Capybara.default_driver = :rack_test
