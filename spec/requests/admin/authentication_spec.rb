@@ -3,6 +3,10 @@ require "rails_helper"
 RSpec.describe "Admin authentication", type: :request do
   let(:admin_user) { create(:admin_user) }
 
+  before do
+    host! "localhost"
+  end
+
   describe "ログイン・ログアウト" do
     it "ログインページが表示される" do
       get new_admin_user_session_path

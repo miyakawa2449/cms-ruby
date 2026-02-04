@@ -128,5 +128,48 @@ RSpec.describe Security::ScannerService do
         service.process
       end
     end
+
+    context "with sensitive data in results" do
+      let(:results) do
+        {
+          "warnings" => [],
+          "metadata" => {
+            "token" => "token=super-secret",
+            "api_key" => "secret-key"
+          }
+        }
+      end
+      let(:service) { described_class.new(scan_type: "brakeman", results: results) }
+
+      it "redacts sensitive values in stored raw_results" do
+        scan = service.process
+
+        expect(scan.raw_results["metadata"]["token"]).to eq("[REDACTED]")
+        expect(scan.raw_results["metadata"]["api_key"]).to eq("[REDACTED]")
+      end
+    end
+
+    context "with many vulnerabilities" do
+      let(:results) do
+        {
+          "warnings" => Array.new(100) do |i|
+            {
+              "warning_type" => "Warning #{i}",
+              "confidence" => "High",
+              "message" => "Message #{i}",
+              "file" => "app/models/user.rb",
+              "line" => i + 1
+            }
+          end
+        }
+      end
+      let(:service) { described_class.new(scan_type: "brakeman", results: results) }
+
+      it "stores all vulnerabilities" do
+        scan = service.process
+
+        expect(scan.vulnerabilities.count).to eq(100)
+      end
+    end
   end
 end

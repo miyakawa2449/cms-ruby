@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe "Contacts", type: :request do
+  before do
+    host! "localhost"
+  end
+
   describe "POST /contacts" do
     let(:valid_params) do
       {

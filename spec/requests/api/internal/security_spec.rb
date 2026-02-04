@@ -77,6 +77,37 @@ RSpec.describe "Api::Internal::Security", type: :request do
         expect(response).to have_http_status(:unauthorized)
       end
     end
+
+    context "with empty token" do
+      let(:headers) do
+        {
+          "Authorization" => "Bearer ",
+          "Content-Type" => "application/json"
+        }
+      end
+
+      it "returns unauthorized" do
+        post path, params: valid_results.to_json, headers: headers
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context "with invalid JSON" do
+      let(:headers) do
+        {
+          "Authorization" => "Bearer #{valid_token}",
+          "Content-Type" => "application/json"
+        }
+      end
+
+      it "returns bad request" do
+        post path, params: "{ invalid_json }", headers: headers
+
+        expect(response).to have_http_status(:bad_request)
+        expect(JSON.parse(response.body)["error"]).to eq("Invalid JSON")
+      end
+    end
   end
 
   describe "POST /api/internal/security/bundler_audit" do

@@ -3,6 +3,10 @@ require "rails_helper"
 RSpec.describe "Authentication Security", type: :request do
   let(:admin_user) { create(:admin_user, password: TestCredentials.admin_password) }
 
+  before do
+    host! "localhost"
+  end
+
   describe "Login" do
     it "allows login with valid credentials" do
       post admin_user_session_path, params: {

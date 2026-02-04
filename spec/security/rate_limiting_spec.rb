@@ -2,6 +2,10 @@ require "rails_helper"
 
 RSpec.describe "Rate Limiting", type: :request do
   before do
+    host! "localhost"
+  end
+
+  before do
     Rack::Attack.enabled = true
     Rack::Attack.cache.store.clear
   end

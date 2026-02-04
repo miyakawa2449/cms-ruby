@@ -5,6 +5,7 @@ RSpec.describe 'Admin::SectionContents', type: :request do
   let(:section) { Section.find_by(name: 'hero') || create(:section, name: 'hero', display_name: 'Hero') }
 
   before do
+    host! "localhost"
     sign_in admin_user, scope: :admin_user
     SectionContent.delete_all
     ActiveRecord::Base.connection.reset_pk_sequence!('section_contents')

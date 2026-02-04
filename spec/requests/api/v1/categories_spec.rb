@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe "Api::V1::Categories", type: :request do
+  before do
+    host! "localhost"
+  end
+
   describe "GET /api/v1/categories" do
     it "カテゴリツリーを取得できる" do
       parent = create(:category, name: "親カテゴリ", slug: "parent")

@@ -7,6 +7,7 @@ RSpec.describe Admin::AiController, type: :request do
   let(:article) { create(:article, :published, content: "テスト記事の本文です。" * 50) }
 
   before do
+    host! "localhost"
     sign_in admin_user, scope: :admin_user
   end
 
@@ -37,9 +38,6 @@ RSpec.describe Admin::AiController, type: :request do
            params: { count: 2 },
            headers: { "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" }
 
-      puts "status=#{response.status}"
-      puts "body=#{response.body}"
-      puts "content_type=#{response.headers['Content-Type']}"
       expect(response).to have_http_status(:success)
       json = JSON.parse(response.body)
       expect(json['success']).to be true

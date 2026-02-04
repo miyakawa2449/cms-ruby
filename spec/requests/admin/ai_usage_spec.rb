@@ -14,6 +14,7 @@ RSpec.describe 'Admin::AiUsage', type: :request do
   end
 
   before do
+    host! "localhost"
     sign_in admin_user, scope: :admin_user
     allow(Ai::UsageStatisticsService).to receive(:dashboard_summary).and_return(summary)
     allow(Ai::UsageStatisticsService).to receive(:chart_data).and_return(labels: [], datasets: {})

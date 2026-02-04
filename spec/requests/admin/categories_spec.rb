@@ -4,6 +4,7 @@ RSpec.describe 'Admin::Categories', type: :request do
   let(:admin_user) { create(:admin_user) }
 
   before do
+    host! "localhost"
     sign_in admin_user, scope: :admin_user
   end
 

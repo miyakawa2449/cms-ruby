@@ -58,12 +58,21 @@
 
 ---
 
+## 📚 ドキュメント整備
+
+- [x] セキュリティ監査手順書
+- [x] トラブルシューティングガイド
+- [x] 脆弱性対応フロー
+
+---
+
 ## 🧪 テスト検証結果
 
-- `bundle exec rspec` 実行 → **0 failures / 24 pending**
-  - Pending は Selenium 未導入に起因
-- `bundle exec rspec spec/requests/api/internal/security_spec.rb` → **0 failures**
-- `bundle exec rspec spec/requests/admin/security_reports_spec.rb` → **0 failures**
+- `bundle install`（ホスト）実行 → **成功**
+- `docker compose run --rm web bundle install` 実行 → **成功**
+- `docker compose run --rm -e RAILS_ENV=test web bundle exec rspec spec/services/security/scanner_service_spec.rb spec/requests/api/internal/security_spec.rb spec/integration/security_audit_flow_spec.rb` 実行 → **21 examples, 0 failures**
+- `docker compose run --rm -e RAILS_ENV=test web bundle exec rspec` 実行 → **1076 examples, 0 failures, 24 pending**
+  - pending は Selenium 未導入やキャッシュ未実装によるもの
 
 ---
 
@@ -82,8 +91,8 @@
 
 ## ⚠️ 発見された問題
 
-- 重大な差し戻し事項なし
-- 既知の pending テストは Selenium 未導入によるもの（機能実装とは無関係）
+- Selenium未導入による system spec の pending が残存
+- Cache hit rate 系の pending が残存（実装方針未決定）
 
 ---
 
@@ -91,7 +100,7 @@
 
 **Phase 7.4は承認します。**
 
-主要要件（内部API認証、監査自動化、通知、レポートPDF、Chart.js表示、監視ロジック）を満たし、テストも全体で失敗なしのため承認と判断します。
+主要要件（内部API認証、監査自動化、通知、レポートPDF、Chart.js表示、監視ロジック）を満たし、追加テストも実行済みです。テスト後の `db:test:purge` の接続エラーは残っていますが、テスト結果自体は成功しています。
 
 ---
 

@@ -5,19 +5,16 @@ RSpec.describe "Admin::ArticleImages", type: :request do
   let(:article) { create(:article, admin_user: admin_user) }
 
   before do
+    host! "localhost"
     sign_in admin_user, scope: :admin_user
   end
 
   describe "POST /admin/articles/:article_id/images" do
     let(:valid_image) do
-      # Create a minimal valid JPEG file using Tempfile
-      file = Tempfile.new([ 'test', '.jpg' ])
-      file.binmode
-      file.write(Base64.decode64(
-        '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAABAAEDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAkI/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQCEAwEPwAB//9k='
-      ))
-      file.rewind
-      Rack::Test::UploadedFile.new(file.path, 'image/jpeg')
+      Rack::Test::UploadedFile.new(
+        Rails.root.join('spec/fixtures/files/test_image.jpg'),
+        'image/jpeg'
+      )
     end
 
     context "with valid parameters" do
