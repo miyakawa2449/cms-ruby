@@ -151,6 +151,38 @@
     height: auto;
   }
 
+  /* テーブルスタイル */
+  .prose table,
+  .article-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9375rem;
+  }
+
+  .prose th,
+  .article-content th {
+    background-color: #f3f4f6;
+    font-weight: 600;
+    color: #111827;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+  }
+
+  .prose td,
+  .article-content td {
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    color: #374151;
+  }
+
+  .prose tbody tr:hover,
+  .article-content tbody tr:hover {
+    background-color: #f9fafb;
+  }
+
   .prose hr {
     margin-top: 2rem;
     margin-bottom: 2rem;
