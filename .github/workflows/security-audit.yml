@@ -29,7 +29,7 @@ jobs:
           bundle exec brakeman -o brakeman-report.json -o brakeman-report.html --no-pager
 
       - name: Upload Brakeman results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: brakeman-results
           path: brakeman-report.*
@@ -91,7 +91,7 @@ jobs:
           fi
 
       - name: Upload bundler-audit results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: bundler-audit-results
           path: bundler-audit-report.json
