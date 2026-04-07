@@ -81,7 +81,7 @@ module MarkdownHelper
   end
 
   def sanitize_html(html)
-    ActionController::Base.helpers.sanitize(
+    Rails::HTML5::SafeListSanitizer.new.sanitize(
       html,
       tags: allowed_tags,
       attributes: allowed_attributes
@@ -148,7 +148,7 @@ module MarkdownHelper
     )
 
     markdown_processor = Redcarpet::Markdown.new(renderer, markdown_options)
-    html = sanitize(markdown_processor.render(processed_text), tags: allowed_tags, attributes: allowed_attributes).to_s
+    html = sanitize_html(markdown_processor.render(processed_text))
 
     # autolinkされたURLをOGPカードに置換
     url_cards.each_key do |url|
@@ -212,19 +212,12 @@ module MarkdownHelper
   end
 
   def allowed_attributes
-    {
-      "a" => %w[href title target rel],
-      "img" => %w[src alt title width height loading],
-      "code" => %w[class],
-      "pre" => %w[class],
-      "table" => %w[class],
-      "th" => %w[colspan rowspan],
-      "td" => %w[colspan rowspan],
-      "div" => %w[class],
-      "span" => %w[class],
-      "figure" => %w[class],
-      "figcaption" => %w[class]
-    }
+    %w[
+      href title target rel
+      src alt width height loading
+      class
+      colspan rowspan
+    ]
   end
 
   def renderer_options
