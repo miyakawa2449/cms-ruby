@@ -408,6 +408,8 @@ fi
 echo "3. Building Docker image..."
 dc build
 
+docker image prune -f
+
 # ----- 5. stop existing (safe) -----
 
 echo "4. Stopping existing containers (volumes preserved)..."

@@ -95,3 +95,4 @@ blog_*.md
 
 # macOS
 .DS_Store
+config/initializers/aws_ses.rb.disabled
