@@ -2,6 +2,23 @@ default: &default
   dispatchers:
     - polling_interval: 1
       batch_size: 500
+      recurring_tasks:
+        daily_backup:
+          class: Backup::DailyBackupJob
+          schedule: "0 3 * * *"        # 毎日午前3時（JST）
+          queue: backup
+        weekly_backup:
+          class: Backup::WeeklyBackupJob
+          schedule: "0 3 * * 0"        # 毎週日曜日午前3時（JST）
+          queue: backup
+        monthly_backup:
+          class: Backup::MonthlyBackupJob
+          schedule: "0 3 1 * *"        # 毎月1日午前3時（JST）
+          queue: backup
+        admin_path_rotation:
+          class: AdminPath::RotationJob
+          schedule: "0 */6 * * *"      # 6時間ごと
+          queue: default
   workers:
     - queues: "*"
       threads: 3
