@@ -117,6 +117,13 @@ Rails.application.routes.draw do
         get :download
       end
     end
+
+    # Backup management (Phase 7.3)
+    resources :backups, only: [ :index ] do
+      collection do
+        post :restore
+      end
+    end
   end
 
   # Public routes

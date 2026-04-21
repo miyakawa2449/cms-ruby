@@ -750,6 +750,7 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk-bedrockruntime (~> 1.0)
   aws-sdk-rails (~> 4.0)
+  aws-sdk-s3 (~> 1.0)
   aws-sdk-sesv2 (~> 1.35)
   better_errors (~> 2.10)
   binding_of_caller (~> 1.0)

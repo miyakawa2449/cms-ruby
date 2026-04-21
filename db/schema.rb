@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_03_072657) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_20_093100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -159,6 +159,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_03_072657) do
     t.index ["status", "published_at"], name: "index_articles_on_status_and_published_at"
     t.index ["status"], name: "index_articles_on_status"
     t.index ["title"], name: "index_articles_on_title_gin_trgm", opclass: :gin_trgm_ops, using: :gin
+  end
+
+  create_table "backup_logs", force: :cascade do |t|
+    t.integer "backup_type", default: 0, null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.text "error_message"
+    t.bigint "file_size"
+    t.string "s3_keys", default: [], array: true
+    t.datetime "started_at", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["backup_type"], name: "index_backup_logs_on_backup_type"
+    t.index ["started_at"], name: "index_backup_logs_on_started_at"
+    t.index ["status"], name: "index_backup_logs_on_status"
   end
 
   create_table "categories", force: :cascade do |t|
