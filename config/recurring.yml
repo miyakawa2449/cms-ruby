@@ -20,3 +20,19 @@ production:
     queue: default
     schedule: every monday at 10:00 Asia/Tokyo
     description: "Generate and send weekly security report"
+
+  # Backup jobs (Phase 7.3)
+  daily_backup:
+    class: "Backup::DailyBackupJob"
+    queue: backup
+    schedule: every day at 2:00 Asia/Tokyo
+
+  weekly_backup:
+    class: "Backup::WeeklyBackupJob"
+    queue: backup
+    schedule: every sunday at 3:00 Asia/Tokyo
+
+  monthly_backup:
+    class: "Backup::MonthlyBackupJob"
+    queue: backup
+    schedule: "0 4 1 * * Asia/Tokyo"
