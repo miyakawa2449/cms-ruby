@@ -1296,11 +1296,12 @@ S3のライフサイクルルールを使用して、自動的に古いバック
 1. **.envファイルに追加**
 
 ```bash
-# AWS S3 Backup Configuration
-AWS_ACCESS_KEY_ID=your_access_key_id_here
-AWS_SECRET_ACCESS_KEY=your_secret_access_key_here
-AWS_REGION=ap-northeast-1
-S3_BACKUP_BUCKET=portfolio-backup-miyakawa2449
+# AWS S3 Backup Configuration（バックアップ専用IAMユーザー）
+# 注意: SES用（AWS_SES_*）やBedrock用（AWS_BEDROCK_*）とは別のIAMユーザーを使用すること
+AWS_BACKUP_ACCESS_KEY_ID=your_backup_access_key_id_here
+AWS_BACKUP_SECRET_ACCESS_KEY=your_backup_secret_access_key_here
+AWS_BACKUP_REGION=ap-northeast-1
+S3_BACKUP_BUCKET=portfolio-backup-miyakawa-codes
 ```
 
 2. **.env.productionファイルにも追加**
@@ -1311,6 +1312,26 @@ S3_BACKUP_BUCKET=portfolio-backup-miyakawa2449
    - `.env`ファイルは`.gitignore`に含める（既に含まれているはず）
    - 本番環境では、環境変数を直接サーバーに設定するか、AWS Secrets Managerを使用
    - アクセスキーは定期的にローテーション（90日ごと推奨）
+
+4. **AWS認証情報の分離（重要）**
+
+   本プロジェクトでは以下のように認証情報を分離しています：
+
+   | サービス | IAMユーザー | 環境変数プレフィックス |
+   |---------|------------|---------------------|
+   | SES（メール送信） | miyakawa-codes-sendmail | AWS_SES_* |
+   | Bedrock（AI機能） | （Bedrock用ユーザー） | AWS_BEDROCK_* |
+   | S3（バックアップ） | miyakawa-codes-s3-backup | AWS_BACKUP_* |
+
+   **注意**: `AWS_ACCESS_KEY_ID`（プレフィックスなし）はAWS SDKのデフォルト認証情報チェーンで自動的に読み取られるため、サービス固有のプレフィックス付き環境変数を使用してください。
+
+5. **docker-compose.ymlのenvironment:設定に関する注意**
+
+   `docker-compose.production.yml`の`environment:`セクションで`${VAR}`形式で参照する場合、`.env.production`に対応する値が設定されていないと**空文字で上書き**されます。デプロイ前に以下のコマンドで確認してください：
+
+   ```bash
+   docker compose exec portfolio-web env | grep AWS_BACKUP
+   ```
 
 ---
 

@@ -207,8 +207,9 @@ Phase 7.3では、PostgreSQLデータベース、Active Storage、設定ファ�
 1. THE セットアップガイド SHALL IAMユーザー作成手順を含む
 2. THE セットアップガイド SHALL S3アクセス権限設定例を含む（最小権限の原則）
 3. THE セットアップガイド SHALL アクセスキー発行手順を含む
-4. THE セットアップガイド SHALL 環境変数設定手順を含む（AWS_ACCESS_KEY_ID、AWS_SECRET_ACCESS_KEY、AWS_REGION、S3_BACKUP_BUCKET）
+4. THE セットアップガイド SHALL 環境変数設定手順を含む（AWS_BACKUP_ACCESS_KEY_ID、AWS_BACKUP_SECRET_ACCESS_KEY、AWS_BACKUP_REGION、S3_BACKUP_BUCKET）
 5. THE セットアップガイド SHALL アクセスキーの安全な管理方法を含む
+6. THE セットアップガイド SHALL バックアップ用IAMユーザーは他のAWSサービス（SES、Bedrock等）のIAMユーザーとは別に作成することを明記する
 
 ---
 
@@ -236,6 +237,32 @@ Phase 7.3では、PostgreSQLデータベース、Active Storage、設定ファ�
 3. THE セットアップガイド SHALL MFA Delete設定手順を含む（オプション）
 4. THE セットアップガイド SHALL バケットポリシーのセキュリティベストプラクティスを含む
 5. THE セットアップガイド SHALL アクセスログ設定手順を含む（オプション）
+
+---
+
+### 要件14: AWS認証情報の分離
+
+**ユーザーストーリー**: 管理者として、AWS認証情報をサービスごとに分離したい。最小権限の原則を徹底し、認証情報の誤設定による障害を防ぐため。
+
+#### 受け入れ基準
+
+1. THE Backup_System SHALL バックアップ専用の環境変数プレフィックス（AWS_BACKUP_*）を使用する
+2. THE Backup_System SHALL SES用（AWS_SES_*）、Bedrock用（AWS_BEDROCK_*）、S3バックアップ用（AWS_BACKUP_*）の認証情報を明確に分離する
+3. THE Backup_System SHALL 汎用環境変数（AWS_ACCESS_KEY_ID、AWS_SECRET_ACCESS_KEY）に依存しない
+4. THE セットアップガイド SHALL 各AWSサービスのIAMユーザーと環境変数の対応表を含む
+5. IF docker-compose.ymlのenvironment:で環境変数を明示的に指定する場合 THEN .env.productionに対応する値が設定されていることを確認する手順を含む
+
+---
+
+### 要件15: デプロイ手順
+
+**ユーザーストーリー**: 管理者として、バックアップシステムを含むデプロイを安全に実行したい。デプロイ時の502エラーやサービス停止を防ぐため。
+
+#### 受け入れ基準
+
+1. WHEN --keep-sslモードでデプロイする THEN THE deploy.sh SHALL nginxの再起動後にhttps-portalを再起動してIPアドレスの変更を反映する
+2. THE deploy.sh SHALL デプロイ後にバックアップ関連の環境変数（AWS_BACKUP_*）がコンテナに正しく渡されていることを確認する手順を含む
+3. THE セットアップガイド SHALL 初回デプロイ時のチェックリスト（環境変数設定、IAMユーザー作成、S3バケット作成）を含む
 
 ---
 

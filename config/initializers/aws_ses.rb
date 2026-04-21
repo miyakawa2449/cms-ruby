@@ -2,6 +2,10 @@
 
 # AWS SES v2 API Configuration for Production
 # Using aws-sdk-sesv2 with IAM credentials
+#
+# 重要: Aws.config.update() はグローバルに認証情報を設定するため、
+# S3やBedrockなど他のAWSサービスのクライアントに干渉します。
+# SES専用の認証情報は sesv2_settings でスコープして渡します。
 
 if Rails.env.production?
   required_vars = %w[AWS_SES_ACCESS_KEY_ID AWS_SES_SECRET_ACCESS_KEY]
@@ -11,18 +15,19 @@ if Rails.env.production?
     Rails.logger.warn "AWS SES credentials not configured. Missing: #{missing_vars.join(', ')}"
     Rails.logger.warn "Email delivery will be disabled."
   else
-    # AWS SDK の設定
-    Aws.config.update(
-      region: ENV.fetch("AWS_SES_REGION", "ap-northeast-1"),
-      credentials: Aws::Credentials.new(
-        ENV.fetch("AWS_SES_ACCESS_KEY_ID"),
-        ENV.fetch("AWS_SES_SECRET_ACCESS_KEY")
-      )
-    )
+    ses_region = ENV.fetch("AWS_SES_REGION", "ap-northeast-1")
 
-    # ActionMailer で SES v2 を使用
+    # SESクライアントにのみ認証情報をスコープ（Aws.config.updateは使わない）
     Rails.application.configure do
       config.action_mailer.delivery_method = :sesv2
+
+      config.action_mailer.sesv2_settings = {
+        region: ses_region,
+        credentials: Aws::Credentials.new(
+          ENV.fetch("AWS_SES_ACCESS_KEY_ID"),
+          ENV.fetch("AWS_SES_SECRET_ACCESS_KEY")
+        )
+      }
 
       config.action_mailer.default_options = {
         from: ENV.fetch("MAIL_FROM", "noreply@example.test")
@@ -37,7 +42,7 @@ if Rails.env.production?
       config.action_mailer.raise_delivery_errors = true
     end
 
-    Rails.logger.info "AWS SES v2 API configured for region: #{ENV.fetch('AWS_SES_REGION', 'ap-northeast-1')}"
+    Rails.logger.info "AWS SES v2 configured for region: #{ses_region} (scoped credentials, no global Aws.config)"
     Rails.logger.info "Mail from: #{ENV.fetch('MAIL_FROM', 'noreply@example.test')}"
   end
 end
