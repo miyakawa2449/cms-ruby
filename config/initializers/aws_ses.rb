@@ -17,17 +17,17 @@ if Rails.env.production?
   else
     ses_region = ENV.fetch("AWS_SES_REGION", "ap-northeast-1")
 
-    # SESクライアントにのみ認証情報をスコープ（Aws.config.updateは使わない）
+    # SESクライアントにのみ認証情報をスコープ（他のAWSサービスに干渉しない）
+    Aws.config[:sesv2] = {
+      region: ses_region,
+      credentials: Aws::Credentials.new(
+        ENV.fetch("AWS_SES_ACCESS_KEY_ID"),
+        ENV.fetch("AWS_SES_SECRET_ACCESS_KEY")
+      )
+    }
+
     Rails.application.configure do
       config.action_mailer.delivery_method = :sesv2
-
-      config.action_mailer.sesv2_settings = {
-        region: ses_region,
-        credentials: Aws::Credentials.new(
-          ENV.fetch("AWS_SES_ACCESS_KEY_ID"),
-          ENV.fetch("AWS_SES_SECRET_ACCESS_KEY")
-        )
-      }
 
       config.action_mailer.default_options = {
         from: ENV.fetch("MAIL_FROM", "noreply@example.test")
