@@ -276,7 +276,12 @@ echo "  Starting $service..."
 dc up -d "$service"
 done
 
-echo "✅ Services started"
+# nginxが再作成されるとIPが変わるため、https-portalを再起動して
+# 新しいIPを解決させる（502エラー防止）
+echo "  Restarting https-portal to pick up new nginx IP..."
+dc restart https-portal
+
+echo "✅ Services started (https-portal refreshed)"
 }
 
 # 管理者ユーザーをリセット

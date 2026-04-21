@@ -143,6 +143,15 @@
   </h3>
 
   <div class="mt-2 space-y-1">
+    <%= link_to admin_backups_path,
+                class: "flex items-center px-4 py-2 text-sm font-medium rounded-md #{controller_name == 'backups' ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}" do %>
+      <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+      </svg>
+      バックアップ
+    <% end %>
+
     <%= link_to admin_site_settings_path,
                 class: "flex items-center px-4 py-2 text-sm font-medium rounded-md #{controller_name == 'site_settings' ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}" do %>
       <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
