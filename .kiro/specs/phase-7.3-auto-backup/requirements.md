@@ -115,9 +115,9 @@ Phase 7.3では、PostgreSQLデータベース、Active Storage、設定ファ�
 
 #### 受け入れ基準
 
-1. THE Backup_System SHALL 毎日午前3時（JST）に日次バックアップを実行する
+1. THE Backup_System SHALL 毎日午前2時（JST）に日次バックアップを実行する
 2. THE Backup_System SHALL 毎週日曜日午前3時（JST）に週次バックアップを実行する
-3. THE Backup_System SHALL 毎月1日午前3時（JST）に月次バックアップを実行する
+3. THE Backup_System SHALL 毎月1日午前4時（JST）に月次バックアップを実行する
 4. WHEN バックアップスケジュールが実行される THEN THE Backup_System SHALL Sidekiq-cronを使用してバックグラウンドジョブとして実行する
 5. WHEN バックアップが完了する THEN THE Backup_System SHALL 実行時間をログに記録する
 

@@ -149,7 +149,7 @@ if defined?(Sidekiq::Cron)
   Sidekiq::Cron::Job.load_from_hash(
     "daily_backup" => {
       "class" => "Backup::DailyBackupJob",
-      "cron" => "0 3 * * *",  # 毎日午前3時（JST）
+      "cron" => "0 2 * * *",  # 毎日午前2時（JST）— Lightsail負荷分散のため時間をずらす
       "queue" => "backup",
       "description" => "日次バックアップ"
     },
@@ -161,7 +161,7 @@ if defined?(Sidekiq::Cron)
     },
     "monthly_backup" => {
       "class" => "Backup::MonthlyBackupJob",
-      "cron" => "0 3 1 * *",  # 毎月1日午前3時（JST）
+      "cron" => "0 4 1 * *",  # 毎月1日午前4時（JST）— Lightsail負荷分散のため時間をずらす
       "queue" => "backup",
       "description" => "月次バックアップ"
     }
