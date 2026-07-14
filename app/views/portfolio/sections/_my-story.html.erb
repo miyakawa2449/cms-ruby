@@ -117,29 +117,11 @@
       </div>
       
       <!-- CTA -->
-      <div class="text-center mt-12 space-x-4">
-        <% if section.active_content&.cta_button_text.present? %>
-          <a href="/my-story" class="bg-blue-600 text-white font-semibold py-4 px-8 rounded-lg hover:bg-blue-700 transition-colors inline-block">
-            <%= section.active_content.cta_button_text %>
-          </a>
-        <% else %>
-          <a href="/my-story" class="bg-blue-600 text-white font-semibold py-4 px-8 rounded-lg hover:bg-blue-700 transition-colors inline-block">
-            🚀 詳細なストーリーを見る
-          </a>
-        <% end %>
-        
+      <div class="text-center mt-12">
         <a href="#contact" class="bg-gray-600 text-white font-semibold py-4 px-8 rounded-lg hover:bg-gray-700 transition-colors inline-block">
           プロジェクト相談をする
         </a>
       </div>
-      
-      <% if section.active_content&.cta_description.present? %>
-        <div class="text-center mt-4">
-          <p class="text-gray-600">
-            <%= section.active_content.cta_description %>
-          </p>
-        </div>
-      <% end %>
     </div>
   </div>
 </div>

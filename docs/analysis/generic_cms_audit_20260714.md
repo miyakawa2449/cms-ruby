@@ -513,6 +513,17 @@ MyStoryを削除すると、監査指摘のうち以下が**修正不要（削�
   - M-17（contacts editテンプレ不在）: 再現【事実確定】
 - **未実施**: 本番DBの手動バックアップ（本番サーバーへのアクセスが必要なため、プロジェクトオーナーによる実施が必要）
 
+## S1-1 実施記録（2026-07-15）
+
+**スコープ確定**: 剛さんの指示により「MyStory**独立ページ**（`/my-story` + `MyStorySection` システム）のみ削除。トップページの My Story **セクション**（SectionContentベース）は存続」。
+
+- **削除**: `MyStoryController`・`Admin::MyStorySectionsController`・`MyStorySection` モデル・サービス7ファイル・ビュー2ディレクトリ・spec 10ファイル+ファクトリ・seed 5ファイル・rakeタスク・JSコントローラ・`_my-story.html.erb.bak`（計約35ファイル）
+- **マイグレーション**: `20260715000000_drop_my_story_sections.rb`（reversible。本番はデプロイ時のdb:prepareで適用、データはS3日次バックアップで保全）
+- **旧URL対策**: `/my-story` → `/#my-story` へ301リダイレクト + 回帰spec（`spec/requests/my_story_redirect_spec.rb`）
+- **これで消滅した監査指摘**: H-1（バリデーション反転）、H-9（attr_accessorカラム隠蔽）、H-13（個人キャリア定数）、H-4の大半、M-18のposition管理2系統、M-19の一部
+- **付随対応**: `JsonStorable` concernがどのモデルからも未使用になったため削除。`publishable_spec` のテスト用ホストをPOROに置換。フッターの元から壊れていたアンカー `#my_story`（正: `#my-story`）を修正
+- **検証**: RSpec全1,229件グリーン（1,264→削除分減、失敗0）
+
 ## 未確定の判断事項
 
 1. ~~MyStory削除の最終確定~~ → **確定（2026-07-15）: 完全廃止**。理由: クリックされていない・記事が長すぎる・indexと内容が被る

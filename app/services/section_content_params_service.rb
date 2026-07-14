@@ -20,8 +20,7 @@ class SectionContentParamsService
       :badge_text, :main_title, :sub_title,
       :phase1_year, :phase1_title, :phase1_description, :phase1_period,
       :phase2_year, :phase2_title, :phase2_description, :phase2_period,
-      :phase3_year, :phase3_title, :phase3_description, :phase3_period,
-      :cta_button_text, :cta_description
+      :phase3_year, :phase3_title, :phase3_description, :phase3_period
     )
 
     # contentパラメータを処理

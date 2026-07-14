@@ -132,26 +132,6 @@ class MetaTagsService
     )
   end
 
-  def my_story_meta_tags(title = "My Story - 30年間のエンジニア人生",
-                        description = "パソコン講師からSE/PMを経て、50代でAIエンジニアへ。30年間の技術者としての成長と挑戦の軌跡。")
-    build_meta_tags(
-      title: title,
-      description: description,
-      keywords: "エンジニアキャリア,SE,PM,AIエンジニア,プログラミング学習,キャリアチェンジ",
-      og: {
-        title: "#{title} | 宮川 剛",
-        description: description,
-        type: "article",
-        image: default_og_image_url
-      },
-      twitter: {
-        title: "#{title} | 宮川 剛",
-        description: description,
-        image: default_og_image_url
-      }
-    )
-  end
-
   private
 
   def build_meta_tags(options = {})

@@ -19,7 +19,6 @@ module DatabaseImport
       ArticleCategory
       ArticleTag
       SectionContent
-      MyStorySection
       Contact
       SiteSetting
     ].freeze

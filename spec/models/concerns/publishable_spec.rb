@@ -7,8 +7,19 @@ RSpec.describe Publishable do
     ActiveRecord::Base.connection.reset_pk_sequence!("sections")
   end
 
-  class PublishableStorySection < MyStorySection
+  class PublishableActiveFlag
+    def self.scope(*); end
     include Publishable
+    attr_accessor :is_active
+
+    def is_active?
+      !!is_active
+    end
+
+    def update!(attrs)
+      attrs.each { |key, value| public_send("#{key}=", value) }
+      true
+    end
   end
 
   class PublishableActiveContent
@@ -117,17 +128,13 @@ RSpec.describe Publishable do
   end
 
   it 'uses is_active branch when present' do
-    section = PublishableStorySection.create!(
-      section_type: 'chapter_1',
-      title: 'Chapter',
-      is_active: false,
-      additional_data: {}
-    )
+    model = PublishableActiveFlag.new
+    model.is_active = false
 
-    expect(section.published?).to eq(false)
-    expect(section.status_display).to eq('無効')
-    section.toggle_published!
-    expect(section.is_active).to eq(true)
+    expect(model.published?).to eq(false)
+    expect(model.status_display).to eq('無効')
+    model.toggle_published!
+    expect(model.is_active).to eq(true)
   end
 
   it 'uses active content when no status flags are present' do

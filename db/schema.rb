@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_20_093100) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_15_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -232,26 +232,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_20_093100) do
     t.index ["usage_count"], name: "index_media_metadata_on_usage_count"
   end
 
-  create_table "my_story_sections", force: :cascade do |t|
-    t.text "achievements"
-    t.jsonb "additional_data", default: {}
-    t.text "content"
-    t.datetime "created_at", null: false
-    t.boolean "is_active", default: true, null: false
-    t.integer "position", default: 0, null: false
-    t.text "quote"
-    t.string "section_type", null: false
-    t.text "skills"
-    t.string "subtitle"
-    t.string "title", null: false
-    t.datetime "updated_at", null: false
-    t.index ["additional_data"], name: "index_my_story_sections_on_additional_data", using: :gin
-    t.index ["is_active", "position"], name: "index_my_story_sections_on_is_active_and_position"
-    t.index ["is_active"], name: "index_my_story_sections_on_is_active"
-    t.index ["position"], name: "index_my_story_sections_on_position"
-    t.index ["section_type"], name: "index_my_story_sections_on_section_type", unique: true
-  end
-
   create_table "section_contents", force: :cascade do |t|
     t.text "backend_skills"
     t.string "badge_text"
@@ -259,8 +239,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_20_093100) do
     t.jsonb "content", default: {}, null: false
     t.text "core_skills"
     t.datetime "created_at", null: false
-    t.string "cta_button_text"
-    t.text "cta_description"
     t.string "cta_primary_text"
     t.string "cta_primary_url"
     t.string "cta_secondary_text"

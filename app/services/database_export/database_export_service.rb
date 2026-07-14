@@ -14,7 +14,6 @@ module DatabaseExport
       ArticleCategory,
       ArticleTag,
       SectionContent,
-      MyStorySection,
       Contact,
       SiteSetting
     ].freeze

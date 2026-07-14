@@ -36,10 +36,4 @@ RSpec.describe MetaTagsService do
     expect(html).to include('Tech')
   end
 
-  it 'builds my story meta tags' do
-    html = described_class.new.my_story_meta_tags('Story', 'Desc')
-
-    expect(html).to include('Story')
-    expect(html).to include('Desc')
-  end
 end

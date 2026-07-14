@@ -91,7 +91,7 @@
                   <% else %>
                     <%= link_to "ホーム", root_path, class: "block bg-white/90 py-4 px-3", data: { action: "click->mobile-menu#close" } %>
                     <%= link_to "ブログ", blog_path, class: "block bg-white/90 py-4 px-3", data: { action: "click->mobile-menu#close" } %>
-                    <%= link_to "My Story", my_story_path, class: "block bg-white/90 py-4 px-3", data: { action: "click->mobile-menu#close" } %>
+                    <%= link_to "My Story", "/#my-story", class: "block bg-white/90 py-4 px-3", data: { action: "click->mobile-menu#close" } %>
                   <% end %>
                 </div>
               </nav>

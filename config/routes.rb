@@ -88,14 +88,6 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :my_story_sections do
-      member do
-        patch :move_up
-        patch :move_down
-        patch :toggle_active
-      end
-    end
-
     # 管理画面URL管理
     resource :admin_path_settings, only: [ :edit, :update ] do
       post :emergency_rotation, on: :collection
@@ -133,8 +125,8 @@ Rails.application.routes.draw do
   get "blog", to: "blog#index", as: :blog
   get "blog/:slug", to: "blog#show", as: :blog_article
 
-  # My Story route
-  get "my-story", to: "my_story#index", as: :my_story
+  # 旧My Story独立ページ（廃止済み）からトップページの同名セクションへ恒久リダイレクト
+  get "my-story", to: redirect("/#my-story", status: 301)
 
   # Public API routes
   namespace :api do

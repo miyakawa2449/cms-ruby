@@ -347,28 +347,6 @@
                 placeholder: "全スキル統合" %>
           </div>
         </div>
-        
-        <!-- CTA情報 -->
-        <div class="border-t border-gray-200 pt-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">CTA情報</h3>
-          
-          <div class="grid grid-cols-1 gap-4">
-            <div>
-              <%= form.label :cta_button_text, "ボタンテキスト", class: "block text-sm font-medium text-gray-700 mb-1" %>
-              <%= form.text_field :cta_button_text, 
-                  class: "form-input", 
-                  placeholder: "🚀 詳細なストーリーを見る" %>
-            </div>
-            
-            <div>
-              <%= form.label :cta_description, "説明文", class: "block text-sm font-medium text-gray-700 mb-1" %>
-              <%= form.text_area :cta_description, 
-                  class: "form-input", 
-                  rows: 2,
-                  placeholder: "このキャリアパスがなぜ希少価値があるのか詳しく解説" %>
-            </div>
-          </div>
-        </div>
       </div>
       
     <% when 'works' %>

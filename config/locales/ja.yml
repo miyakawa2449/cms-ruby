@@ -7,7 +7,6 @@ ja:
       category: "カテゴリ"
       tag: "タグ"
       admin_user: "管理者"
-      my_story_section: "My Storyセクション"
       contact: "お問い合わせ"
       site_setting: "サイト設定"
     
@@ -41,14 +40,6 @@ ja:
         meta_title: "メタタイトル"
         meta_description: "メタ説明"
       
-      my_story_section:
-        title: "タイトル"
-        subtitle: "サブタイトル"
-        content: "内容"
-        position: "位置"
-        is_active: "公開状態"
-        section_type: "セクションタイプ"
-    
     errors:
       models:
         section_content:
@@ -68,12 +59,6 @@ ja:
             content:
               blank: "内容を入力してください"
         
-        my_story_section:
-          attributes:
-            title:
-              blank: "タイトルを入力してください"
-            position:
-              taken: "この位置は既に使用されています"
 
   errors:
     format: "%{attribute}%{message}"
