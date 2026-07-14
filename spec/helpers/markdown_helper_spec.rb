@@ -39,7 +39,8 @@ RSpec.describe MarkdownHelper, type: :helper do
 
       html = helper.markdown_with_ogp_cards("https://example.com")
 
-      expect(html).to include("https://example.com")
+      expect(html).to include("<div>OGP</div>")
+      expect(html).not_to include(%(<a href="https://example.com">))
     end
 
     it "renders plain link when OGP fetch fails" do
