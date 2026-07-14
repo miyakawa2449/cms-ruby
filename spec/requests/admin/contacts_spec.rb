@@ -59,12 +59,13 @@ RSpec.describe "Admin::Contacts", type: :request do
       expect(contact.reload.status).to eq("archived")
     end
 
-    it "renders edit on update failure" do
+    it "redirects to show with alert on update failure" do
       allow_any_instance_of(Contact).to receive(:update).and_return(false)
 
-      expect {
-        patch admin_contact_path(contact), params: { contact: { notes: "" } }
-      }.to raise_error(ActionView::MissingTemplate)
+      patch admin_contact_path(contact), params: { contact: { notes: "" } }
+
+      expect(response).to redirect_to(admin_contact_path(contact))
+      expect(flash[:alert]).to be_present
     end
   end
 

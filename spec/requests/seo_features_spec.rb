@@ -100,9 +100,11 @@ RSpec.describe "SEO Features", type: :request do
       expect(content).to include("Sitemap:")
     end
 
-    it "disallows admin paths" do
+    it "does not expose the admin path" do
+      # 管理パスは秘匿対象。Disallowに書くこと自体がパスの公開になるため、
+      # robots.txtに管理パスを記載しないことを検証する（監査C-7）
       content = File.read(robots_txt_path)
-      expect(content).to include("Disallow: /admin")
+      expect(content).not_to include("admin")
     end
 
     it "allows public pages" do

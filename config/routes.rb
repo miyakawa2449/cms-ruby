@@ -5,9 +5,6 @@ Rails.application.routes.draw do
   get "/feed.rss", to: "feeds#rss", defaults: { format: "rss" }, as: :feed_rss
   get "/feed.atom", to: "feeds#atom", defaults: { format: "atom" }, as: :feed_atom
 
-  # Simple test
-  get "test" => "simple_test#index"
-
   # Contact form submission
   post "contacts", to: "contacts#create"
   # NOTE: registrations skipped for security (single-user CMS)
@@ -19,7 +16,7 @@ Rails.application.routes.draw do
   # Admin routes (セキュリティのため長いURL使用)
   namespace :admin, path: admin_path do
     resource :site_settings, only: [ :show, :update ]
-    resources :contacts, only: [ :index, :show, :edit, :update, :destroy ]
+    resources :contacts, only: [ :index, :show, :update, :destroy ]
     root to: "dashboard#index", as: :root
     get "dashboard", to: "dashboard#index", as: :dashboard
 

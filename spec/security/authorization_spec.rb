@@ -81,7 +81,7 @@ RSpec.describe "Authorization Security", type: :request do
   describe "Property: Admin routes require authentication" do
     let(:admin_routes) do
       Rails.application.routes.routes
-        .select { |r| r.path.spec.to_s.start_with?("/#{ENV.fetch("ADMIN_PATH", "admin-secure-panel-miyakawa2449")}") }
+        .select { |r| r.path.spec.to_s.start_with?("/#{AdminPath::Resolver.current_path}") }
         .map { |r| r.path.spec.to_s.gsub(/\(.*?\)/, "") }
         .uniq
         .reject { |p| p.include?("sign_in") || p.include?("sign_out") || p.include?("password") }

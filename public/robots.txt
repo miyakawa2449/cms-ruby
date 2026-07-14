@@ -7,9 +7,8 @@ User-agent: *
 # 公開ページへのクロールを許可
 Allow: /
 
-# 管理画面へのクロールを禁止
-Disallow: /admin-secure-panel-miyakawa2449
-Disallow: /admin-secure-panel-miyakawa2449/
+# 管理画面のパスは秘匿対象のためrobots.txtには記載しない
+# （Disallowに書くこと自体がパスの公開になるため）
 
 # APIエンドポイントはクロール不要（検索エンジン向けではない）
 Disallow: /api/

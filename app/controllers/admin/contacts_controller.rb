@@ -1,5 +1,5 @@
 class Admin::ContactsController < Admin::BaseController
-  before_action :set_contact, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_contact, only: [ :show, :update, :destroy ]
 
   def index
     @contacts = Contact.includes(:admin_user).recent
@@ -10,9 +10,6 @@ class Admin::ContactsController < Admin::BaseController
 
   def show
     @contact.mark_as_read! if @contact.unread?
-  end
-
-  def edit
   end
 
   def update
@@ -35,7 +32,7 @@ class Admin::ContactsController < Admin::BaseController
     elsif @contact.update(contact_params)
       redirect_to admin_contact_path(@contact), notice: "お問い合わせを更新しました。"
     else
-      render :edit, status: :unprocessable_entity
+      redirect_to admin_contact_path(@contact), alert: "更新に失敗しました。"
     end
   end
 
@@ -51,6 +48,6 @@ class Admin::ContactsController < Admin::BaseController
   end
 
   def contact_params
-    params.require(:contact).permit(:status, :assigned_to, :notes)
+    params.require(:contact).permit(:status, :assigned_to_id, :notes)
   end
 end

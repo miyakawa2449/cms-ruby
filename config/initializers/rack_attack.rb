@@ -3,21 +3,18 @@
 require Rails.root.join("app/services/admin_path/resolver").to_s
 
 class Rack::Attack
-  if Rails.env.production?
-    if ENV["REDIS_URL"].blank?
-      Rails.logger.warn("[Rack::Attack] REDIS_URL missing, falling back to MemoryStore")
-      Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
-    end
-    begin
-      Rack::Attack.cache.store = ActiveSupport::Cache.lookup_store(
-        :redis_cache_store,
-        { url: ENV.fetch("REDIS_URL", "redis://localhost:6379/1") }
-      )
-    rescue ArgumentError => e
-      Rails.logger.warn("[Rack::Attack] Redis cache store init failed, falling back to MemoryStore: #{e.message}")
-      Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
-    end
+  # REDIS_URLがある本番のみRedisを使い、それ以外はMemoryStoreにフォールバックする。
+  # 注意: MemoryStoreはプロセスローカルのため、マルチワーカー構成では
+  # レート制限のカウントがワーカーごとに分かれる（制限が実質N倍緩くなる）
+  if Rails.env.production? && ENV["REDIS_URL"].present?
+    Rack::Attack.cache.store = ActiveSupport::Cache.lookup_store(
+      :redis_cache_store,
+      { url: ENV["REDIS_URL"] }
+    )
   else
+    if Rails.env.production?
+      Rails.logger.warn("[Rack::Attack] REDIS_URL missing, falling back to MemoryStore (per-process counters)")
+    end
     Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
   end
 

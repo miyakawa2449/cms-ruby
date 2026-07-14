@@ -1,5 +1,5 @@
 class Contact < ApplicationRecord
-  belongs_to :admin_user, foreign_key: :assigned_to, optional: true
+  belongs_to :admin_user, foreign_key: :assigned_to_id, optional: true
 
   # 個人情報の暗号化（Active Record Encryption）
   encrypts :email, deterministic: true  # 検索可能にするためdeterministic

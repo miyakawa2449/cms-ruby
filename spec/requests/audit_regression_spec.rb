@@ -8,8 +8,6 @@ RSpec.describe "監査指摘バグの回帰テスト", type: :request do
 
   describe "C-3: serviceセクションとパーシャル名の不一致" do
     it "serviceセクションのコンテンツを有効化してもトップページが表示できる" do
-      pending "監査C-3: _service.html.erb が存在せず MissingTemplate になる"
-
       section = create(:section, name: "service", display_name: "Service", is_visible: true)
       create(:section_content, section: section, is_active: true)
 
@@ -23,16 +21,12 @@ RSpec.describe "監査指摘バグの回帰テスト", type: :request do
     before { sign_in admin_user, scope: :admin_user }
 
     it "タグ新規作成画面が表示できる" do
-      pending "監査C-4: _form.html.erb が description/color/icon を参照し NoMethodError になる"
-
       get new_admin_tag_path
 
       expect(response).to have_http_status(:ok)
     end
 
     it "タグ編集画面が表示できる" do
-      pending "監査C-4: _form.html.erb が description/color/icon を参照し NoMethodError になる"
-
       tag = create(:tag)
       get edit_admin_tag_path(tag)
 
@@ -42,8 +36,6 @@ RSpec.describe "監査指摘バグの回帰テスト", type: :request do
 
   describe "C-5: Contactの担当者アサイン（FK名不一致）" do
     it "assigned_to_idを設定するとadmin_user関連が取得できる" do
-      pending "監査C-5: belongs_toのforeign_keyが実在しないカラム assigned_to を指しており関連が常にnil"
-
       contact = create(:contact)
       contact.update!(assigned_to_id: admin_user.id)
 
@@ -51,16 +43,29 @@ RSpec.describe "監査指摘バグの回帰テスト", type: :request do
     end
   end
 
+  describe "C-11: デフォルトOGP画像" do
+    it "og-default.jpg が有効なJPEG画像である" do
+      path = Rails.public_path.join("og-default.jpg")
+
+      expect(File.exist?(path)).to be true
+      # JPEGマジックバイト（FF D8 FF）で実画像であることを検証
+      expect(File.binread(path, 3).bytes).to eq([0xFF, 0xD8, 0xFF])
+    end
+  end
+
   describe "M-17: contacts editテンプレート不在" do
-    before { sign_in admin_user, scope: :admin_user }
+    it "テンプレート不在だったeditルートは廃止されている" do
+      expect(Rails.application.routes.url_helpers).not_to respond_to(:edit_admin_contact_path)
+    end
 
-    it "問い合わせ編集画面が表示できる（またはeditアクションが存在しない）" do
-      pending "監査M-17: editアクションはあるが edit.html.erb が存在せず MissingTemplate になる"
-
+    it "管理画面から担当者をアサインできる（C-5修正の経路検証）" do
+      sign_in admin_user, scope: :admin_user
       contact = create(:contact)
-      get edit_admin_contact_path(contact)
 
-      expect(response).to have_http_status(:ok)
+      patch admin_contact_path(contact), params: { contact: { assigned_to_id: admin_user.id, notes: "対応中" } }
+
+      expect(response).to redirect_to(admin_contact_path(contact))
+      expect(contact.reload.admin_user).to eq(admin_user)
     end
   end
 end

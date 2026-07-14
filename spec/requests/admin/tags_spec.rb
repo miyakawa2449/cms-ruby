@@ -37,7 +37,7 @@ RSpec.describe 'Admin::Tags', type: :request do
       end
     end
 
-    get admin_tag_path(tag.id)
+    get admin_tag_path(tag)
 
     expect(response).to have_http_status(:success)
   end
@@ -52,7 +52,7 @@ RSpec.describe 'Admin::Tags', type: :request do
     tag = create(:tag)
     new_name = "Updated-#{SecureRandom.hex(4)}"
 
-    patch admin_tag_path(tag.id), params: { tag: { name: new_name } }
+    patch admin_tag_path(tag), params: { tag: { name: new_name } }
 
     expect(tag.reload.name).to eq(new_name)
   end
@@ -61,7 +61,7 @@ RSpec.describe 'Admin::Tags', type: :request do
     tag = create(:tag)
 
     expect {
-      delete admin_tag_path(tag.id)
+      delete admin_tag_path(tag)
     }.to change(Tag, :count).by(-1)
   end
 end

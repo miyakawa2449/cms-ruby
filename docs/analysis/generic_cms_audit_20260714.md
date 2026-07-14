@@ -524,6 +524,22 @@ MyStoryを削除すると、監査指摘のうち以下が**修正不要（削�
 - **付随対応**: `JsonStorable` concernがどのモデルからも未使用になったため削除。`publishable_spec` のテスト用ホストをPOROに置換。フッターの元から壊れていたアンカー `#my_story`（正: `#my-story`）を修正
 - **検証**: RSpec全1,229件グリーン（1,264→削除分減、失敗0）
 
+## S1-2 実施記録（2026-07-15）
+
+8件すべて修正完了。回帰テスト（audit_regression_spec）のpendingは全解除。全1,230specグリーン。
+
+- **C-6**: `/test` 一式削除（ルート・コントローラ・モデル・`test_items`テーブルdrop・seed・spec）
+- **C-4**: タグフォームから存在しない3フィールド削除。**併せて発見・修正**: `Tag#to_param`がslugを返すのにコントローラが`Tag.find`（ID検索）で、編集リンクが404になる不整合 → slug検索に統一。既存specが`.id`明示渡しでバグを回避していたのも正規形に修正
+- **C-5**: `foreign_key: :assigned_to_id` へ修正、permitも統一。アサイン機能がコントローラ経由で動作することをspecで検証
+- **M-17**: テンプレート不在のeditアクション/ルートを削除、update失敗はshowへリダイレクトに変更。「MissingTemplateが発生すること」を期待していた既存specも正常系に書き換え
+- **C-3**: パーシャルを`_service.html.erb`にリネームし'service'で統一。既存DBの'services'を直すdata migration追加。壊れていた`scripts/init_sections.rb`を削除し、entrypointは冪等なdb:seedに一本化
+- **C-7**: robots.txtから管理パスのDisallow削除、nginxの`/admin`→秘密パス301（秘匿の自己否定）削除、`DEFAULT_PATH="admin"`へ変更、deploy.shの秘密パスecho削除、`deploy.sh.bak`削除。**残課題**: docs/reports内に旧パスの記載が多数残るため、本番の管理パス自体を変更（ローテーション）することを推奨
+- **C-11**: `og-default.jpg` を実JPEG（1200x630、ブランド要素なし）に差し替え + マジックバイト検証spec
+- **M-5**: rack_attackを「REDIS_URLがある本番のみRedis、他はMemoryStore」の正しい分岐に修正
+- **発見**: `.rspec` に `--fail-fast` があり、全件実行は失敗ゼロの時のみ完走する挙動（CI解釈時に注意）
+
+**デプロイ前チェック（本番）**: `.env.production` に `ADMIN_PATH` が設定されているか、または `AdminPathHistory` にレコードがあるかを確認。どちらも無い場合、デプロイ後の管理画面URLは `/admin` に変わる（DEFAULT_PATH変更のため）。
+
 ## 未確定の判断事項
 
 1. ~~MyStory削除の最終確定~~ → **確定（2026-07-15）: 完全廃止**。理由: クリックされていない・記事が長すぎる・indexと内容が被る

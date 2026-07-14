@@ -49,7 +49,8 @@ class Admin::TagsController < Admin::BaseController
   private
 
   def set_tag
-    @tag = Tag.find(params[:id])
+    # Tag#to_param はslugを返すため、URLパラメータはslugで検索する
+    @tag = Tag.find_by!(slug: params[:id])
   end
 
   def tag_params
