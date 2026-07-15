@@ -11,6 +11,11 @@ RSpec.describe MarkdownHelper, type: :helper do
     it "returns empty string for blank input" do
       expect(helper.markdown("")).to eq("")
     end
+
+    it "returns html_safe output so views render HTML instead of escaped tags" do
+      # サニタイズ済みHTMLをhtml_safeにしないと、ビューで <p>...</p> が文字として表示される
+      expect(helper.markdown("**Bold**")).to be_html_safe
+    end
   end
 
   describe "#markdown_with_highlight" do
@@ -22,6 +27,10 @@ RSpec.describe MarkdownHelper, type: :helper do
   end
 
   describe "#safe_markdown" do
+    it "returns html_safe output" do
+      expect(helper.safe_markdown("*excerpt*")).to be_html_safe
+    end
+
     it "returns simple formatted text when markdown fails" do
       allow(helper).to receive(:markdown).and_raise(StandardError, "boom")
 

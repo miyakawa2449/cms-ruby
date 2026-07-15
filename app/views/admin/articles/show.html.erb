@@ -82,11 +82,11 @@
       
       <!-- 本文 -->
       <div class="px-6 py-4">
-        <h3 class="text-sm font-medium text-gray-700 mb-4">本文</h3>
+        <h3 class="text-sm font-medium text-gray-700 mb-4">本文プレビュー</h3>
         <div class="prose max-w-none">
-          <pre class="whitespace-pre-wrap bg-gray-50 p-4 rounded-md text-sm"><%= @article.content %></pre>
+          <%= markdown_with_ogp_cards(@article.content) %>
         </div>
-        <p class="mt-2 text-xs text-gray-500">※ Markdownのプレビュー機能は後日実装予定です</p>
+        <p class="mt-2 text-xs text-gray-500">※ 公開ページと同じMarkdown描画で表示しています</p>
       </div>
     </div>
 

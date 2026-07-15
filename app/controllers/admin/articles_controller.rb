@@ -94,7 +94,7 @@ class Admin::ArticlesController < Admin::BaseController
 
   def article_params
     params.require(:article).permit(
-      :title, :slug, :content, :excerpt, :status,
+      :title, :slug, :content, :excerpt, :status, :published_at,
       :meta_description, :meta_keywords, :og_title, :og_description,
       :tag_names, :thumbnail_image, :ogp_image, :work_type, :github_url, :demo_url, :tech_stack,
       category_ids: []

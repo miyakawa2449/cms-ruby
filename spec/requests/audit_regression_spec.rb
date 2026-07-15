@@ -43,6 +43,19 @@ RSpec.describe "監査指摘バグの回帰テスト", type: :request do
     end
   end
 
+  describe "C-8関連: トップページのブログセクション" do
+    it "公開記事が無いときダミー記事カード（架空の日付・タイトル）を表示しない" do
+      section = create(:section, name: "blog", display_name: "Blog", is_visible: true)
+      create(:section_content, section: section, is_active: true)
+
+      get root_path
+
+      expect(response.body).not_to include("サンプル記事タイトル")
+      expect(response.body).not_to include("2024年12月05日")
+      expect(response.body).to include("記事はまだありません")
+    end
+  end
+
   describe "C-11: デフォルトOGP画像" do
     it "og-default.jpg が有効なJPEG画像である" do
       path = Rails.public_path.join("og-default.jpg")

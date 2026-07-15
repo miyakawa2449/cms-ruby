@@ -540,6 +540,34 @@ MyStoryを削除すると、監査指摘のうち以下が**修正不要（削�
 
 **デプロイ前チェック（本番）**: `.env.production` に `ADMIN_PATH` が設定されているか、または `AdminPathHistory` にレコードがあるかを確認。どちらも無い場合、デプロイ後の管理画面URLは `/admin` に変わる（DEFAULT_PATH変更のため）。
 
+## S1-3 実施記録（2026-07-15）
+
+未完成機能4件を完成。全1,253specグリーン。
+
+- **S1-3a（回答9）**: SiteSettingのtext型バリデーションに `optional` フラグを導入。gtm_idのみ空更新可（＝GTM無効化が可能に）、site_title/site_descriptionは必須維持
+- **S1-3b（要望1）**: 管理画面の記事詳細を公開側と同じ `markdown_with_ogp_cards` 描画に変更（「後日実装予定」コメントを撤去）。フォームの文言も更新
+- **S1-3c（回答2）**: article_count = 公開記事数に統一
+  - `Category#refresh_article_count!` / `Tag#refresh_article_count!` に一元化
+  - ArticleTagにコールバック追加（タグ解除時の更新漏れ解消）、ArticleCategoryの全件カウントを公開数に修正
+  - **has_many :throughの一括置換はjoinコールバックが発火しない**ことを実測で確認 → Articleの `category_ids=`/`categories=`/`tag_ids=`/`tags=` をオーバーライドし、外された側も更新
+  - Categoryの親ロールアップ（`update_parent_article_count`）は`update_column`起点では発火しない完全な死にコードだったため削除
+  - ArticlePublishingManagerの重複カウント処理を削除、Articleのafter_saveは公開状態変化時のみに限定
+  - 再計算タスク `article_counts:recalculate` 追加（本番デプロイ後に1回実行を推奨: 既存カウントを正しい定義で再計算）
+  - 新spec: `spec/models/article_count_spec.rb`（12例）
+- **S1-3d（回答1）**: 予約投稿を完成
+  - フォームに公開日時（datetime-local）入力欄、permitに `:published_at` 追加
+  - バリデーション: scheduledは published_at 必須（宙に浮く状態を防止）
+  - `PublishScheduledArticlesJob` 新設 + recurring.yml（本番・5分間隔）登録
+  - 既存 `publish_scheduled_articles!` が予約時刻を実行時刻で上書きするバグを発見・修正（予約時刻を維持）
+  - 新spec: `spec/jobs/publish_scheduled_articles_job_spec.rb`（6例、recurring.yml登録検証含む）
+
+**本番デプロイ後の作業**: `docker compose exec web bin/rails article_counts:recalculate` を1回実行（既存カウントの再計算）。
+
+**S1-3追加対応（動作テスト中の発見、2026-07-15）**:
+- 記事抜粋がエスケープされ `<p>` タグが文字表示されるバグを修正（`sanitize_html` がhtml_safeを付けていなかった。本文用ヘルパーだけ付けていて抜粋用は漏れ）
+- トップページのブログセクションのダミー記事プレースホルダー（「2024年12月05日」「サンプル記事タイトル」の偽カード3枚）を削除し、「記事はまだありません」表示に変更。実在しないコンテンツが本物に見えるUIは誤解の元（今回、DB参照先ズレの疑い調査の原因になった）
+- 検証で確認した事実: dev環境のDB参照はDocker `db` コンテナで正常。予約公開ジョブはdevでは手動実行（`PublishScheduledArticlesJob.perform_now`）、本番は5分間隔の自動実行
+
 ## 未確定の判断事項
 
 1. ~~MyStory削除の最終確定~~ → **確定（2026-07-15）: 完全廃止**。理由: クリックされていない・記事が長すぎる・indexと内容が被る

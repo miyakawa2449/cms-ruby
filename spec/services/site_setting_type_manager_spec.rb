@@ -39,6 +39,19 @@ RSpec.describe SiteSettingTypeManager do
       expect(result[:valid]).to eq(false)
       expect(result[:errors]).to include("Expected type 'text', got 'image'")
     end
+
+    it "allows blank value for optional settings (gtm_id)" do
+      # gtm_idはオプショナル設定。空に戻すと「GTMタグを出力しない」状態になる（監査M-1）
+      result = described_class.validate_setting_config(:gtm_id, "", "text")
+
+      expect(result[:valid]).to eq(true)
+    end
+
+    it "keeps blank check for required settings (site_title)" do
+      result = described_class.validate_setting_config(:site_title, "", "text")
+
+      expect(result[:valid]).to eq(false)
+    end
   end
 
   describe ".settings_by_type" do

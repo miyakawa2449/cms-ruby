@@ -81,11 +81,13 @@ module MarkdownHelper
   end
 
   def sanitize_html(html)
+    # 許可リストでサニタイズ済みのHTMLなので html_safe を付けて返す。
+    # これがないとビュー側でエスケープされ、<p>等のタグが文字として表示される
     Rails::HTML5::SafeListSanitizer.new.sanitize(
       html,
       tags: allowed_tags,
       attributes: allowed_attributes
-    )
+    ).html_safe
   end
 
   # 安全なMarkdown処理（エラーハンドリング付き）

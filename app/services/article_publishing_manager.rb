@@ -8,19 +8,16 @@ class ArticlePublishingManager
     @article.status = "published"
     @article.published_at = published_at
     save_article
-    update_related_counts
   end
 
   def unpublish!
     @article.status = "draft"
     save_article
-    update_related_counts
   end
 
   def archive!
     @article.status = "archived"
     save_article
-    update_related_counts
   end
 
   def schedule!(published_at:)
@@ -91,7 +88,8 @@ class ArticlePublishingManager
            .find_each do |article|
       manager = new(article)
       begin
-        manager.publish!
+        # published_at は予約時刻を維持する（実行時刻で上書きしない）
+        manager.publish!(published_at: article.published_at)
         Rails.logger.info "Published scheduled article: #{article.title} (ID: #{article.id})"
       rescue => e
         Rails.logger.error "Failed to publish article #{article.id}: #{e.message}"
@@ -178,21 +176,4 @@ class ArticlePublishingManager
     @article.save!
   end
 
-  def update_related_counts
-    # タグとカテゴリの記事数を更新
-    update_category_counts
-    update_tag_counts
-  end
-
-  def update_category_counts
-    @article.categories.find_each do |category|
-      category.update_column(:article_count, category.articles.published.count)
-    end
-  end
-
-  def update_tag_counts
-    @article.tags.find_each do |tag|
-      tag.update_column(:article_count, tag.articles.published.count)
-    end
-  end
 end

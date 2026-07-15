@@ -18,6 +18,11 @@ class Tag < ApplicationRecord
     slug
   end
 
+  # article_count = 公開中(published)の記事数（2026-07-15仕様確定）
+  def refresh_article_count!
+    update_column(:article_count, articles.published.count)
+  end
+
   private
 
   def generate_slug

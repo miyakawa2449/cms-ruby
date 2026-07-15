@@ -8,6 +8,38 @@ RSpec.describe "Admin::Articles CRUD", type: :request do
     sign_in admin_user, scope: :admin_user
   end
 
+  describe "記事詳細のプレビュー表示" do
+    it "本文がMarkdownとしてHTML描画される（生テキスト表示にならない）" do
+      article = create(:article, admin_user: admin_user, content: "**強調テキスト**\n\n## 見出し2")
+
+      get admin_article_path(article)
+
+      expect(response.body).to include("<strong>強調テキスト</strong>")
+      expect(response.body).to include("見出し2</h2>")
+    end
+  end
+
+  describe "予約投稿" do
+    it "予約時刻付きで予約投稿を作成できる" do
+      scheduled_time = 1.day.from_now.change(sec: 0)
+      params = { article: attributes_for(:article).merge(status: "scheduled", published_at: scheduled_time) }
+
+      post admin_articles_path, params: params
+
+      article = Article.order(:created_at).last
+      expect(article.status).to eq("scheduled")
+      expect(article.published_at).to be_within(1.second).of(scheduled_time)
+    end
+
+    it "予約時刻なしの予約投稿は保存できない" do
+      params = { article: attributes_for(:article).merge(status: "scheduled", published_at: nil) }
+
+      expect {
+        post admin_articles_path, params: params
+      }.not_to change(Article, :count)
+    end
+  end
+
   describe "記事作成フロー" do
     it "記事作成ページが表示される" do
       get new_admin_article_path

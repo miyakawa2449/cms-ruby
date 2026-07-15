@@ -130,7 +130,7 @@
 # コードブロック例
 puts 'Hello, World!'
 ```" %>
-          <p class="mt-1 text-sm text-gray-500">Markdownで記述してください。プレビュー機能は後日追加予定です。</p>
+          <p class="mt-1 text-sm text-gray-500">Markdownで記述してください。保存後、記事詳細ページでプレビューを確認できます。</p>
         </div>
       </div>
 
@@ -385,6 +385,13 @@ puts 'Hello, World!'
                 [["下書き", "draft"], ["公開", "published"], ["予約投稿", "scheduled"], ["アーカイブ", "archived"]],
                 {},
                 class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+          </div>
+
+          <div>
+            <%= form.label :published_at, "公開日時", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.datetime_local_field :published_at,
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+            <p class="mt-1 text-sm text-gray-500">予約投稿では必須です。指定した日時になると自動で公開されます（5分間隔でチェック）。</p>
           </div>
         </div>
       </div>

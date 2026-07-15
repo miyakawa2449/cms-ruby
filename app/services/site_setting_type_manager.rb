@@ -6,7 +6,7 @@ class SiteSettingTypeManager
     og_image: { key: "og_image", type: "image", description: "デフォルトOG画像（1200x630px推奨）" },
     site_title: { key: "site_title", type: "text", description: "サイトのタイトル", default: "Miyakawa Codes - ポートフォリオ" },
     site_description: { key: "site_description", type: "text", description: "サイトの説明文", default: "要件定義からプログラミングまで一人でできるエンジニアのポートフォリオサイト" },
-    gtm_id: { key: "gtm_id", type: "text", description: "Google Tag Manager ID（例: GTM-XXXXXXX）", default: "" }
+    gtm_id: { key: "gtm_id", type: "text", description: "Google Tag Manager ID（例: GTM-XXXXXXX）", default: "", optional: true }
   }.freeze
 
   VALID_TYPES = %w[text image file].freeze
@@ -73,7 +73,8 @@ class SiteSettingTypeManager
     # 値の検証
     case config[:type]
     when "text"
-      errors << "Value cannot be blank" if value.blank?
+      # optional指定のある設定（gtm_id等）は空に戻すことを許可する
+      errors << "Value cannot be blank" if value.blank? && !config[:optional]
       errors << "Value too long (max 1000 chars)" if value.to_s.length > 1000
     when "image", "file"
       # ファイルの検証は別途Active Storageで行う

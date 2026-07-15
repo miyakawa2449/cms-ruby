@@ -16,7 +16,11 @@ class Category < ApplicationRecord
   scope :with_published_articles, -> { joins(:articles).where(articles: { status: "published" }).distinct }
 
   before_validation :generate_slug, if: -> { name_changed? && slug.blank? }
-  after_commit :update_parent_article_count, if: :saved_change_to_article_count?
+
+  # article_count = 公開中(published)の記事数（2026-07-15仕様確定）
+  def refresh_article_count!
+    update_column(:article_count, articles.published.count)
+  end
 
   def root?
     parent_id.nil?
@@ -38,10 +42,6 @@ class Category < ApplicationRecord
 
   def generate_slug
     self.slug = name.parameterize
-  end
-
-  def update_parent_article_count
-    parent&.update_column(:article_count, parent.articles.count)
   end
 
   # CacheSweeper implementation

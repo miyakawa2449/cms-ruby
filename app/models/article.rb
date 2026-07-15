@@ -36,6 +36,8 @@ class Article < ApplicationRecord
   validates :slug, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 255 }
   validates :content, presence: true
   validates :status, presence: true, inclusion: { in: %w[draft published scheduled archived] }
+  # 予約投稿には公開予定日時が必須（ないと永遠に公開されない「宙に浮いた」状態になる）
+  validates :published_at, presence: true, if: -> { status == "scheduled" }
 
   enum :work_type, {
     standard: nil,
@@ -89,8 +91,35 @@ class Article < ApplicationRecord
 
   before_validation :generate_slug_if_needed
   before_save :set_published_at_if_needed
-  after_save :update_related_counts
-  after_destroy :update_related_counts
+  # 公開状態が変わった時のみカウンタを更新（関連の増減はArticleCategory/ArticleTagの
+  # コールバックが、記事削除は dependent: :destroy 経由で同コールバックが処理する）
+  after_save :update_related_counts, if: -> { saved_change_to_status? || saved_change_to_published_at? }
+
+  # has_many :through の一括置換（category_ids= 等）はjoinレコードをdelete_allで消すため
+  # joinモデルのコールバックが発火しない。外された側も含めてカウントを明示的に更新する。
+  def category_ids=(ids)
+    affected = category_ids
+    super
+    Category.where(id: affected | category_ids).find_each(&:refresh_article_count!)
+  end
+
+  def categories=(records)
+    affected = category_ids
+    super
+    Category.where(id: affected | category_ids).find_each(&:refresh_article_count!)
+  end
+
+  def tag_ids=(ids)
+    affected = tag_ids
+    super
+    Tag.where(id: affected | tag_ids).find_each(&:refresh_article_count!)
+  end
+
+  def tags=(records)
+    affected = tag_ids
+    super
+    Tag.where(id: affected | tag_ids).find_each(&:refresh_article_count!)
+  end
 
   # Service delegation methods
   def content_manager
@@ -140,16 +169,8 @@ class Article < ApplicationRecord
   end
 
   def update_related_counts
-    update_category_counts
-    update_tag_counts
-  end
-
-  def update_category_counts
-    categories.find_each { |category| category.update_column(:article_count, category.articles.published.count) }
-  end
-
-  def update_tag_counts
-    tags.find_each { |tag| tag.update_column(:article_count, tag.articles.published.count) }
+    categories.find_each(&:refresh_article_count!)
+    tags.find_each(&:refresh_article_count!)
   end
 
   # CacheSweeper implementation
