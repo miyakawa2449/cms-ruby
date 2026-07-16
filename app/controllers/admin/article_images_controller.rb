@@ -1,7 +1,4 @@
 class Admin::ArticleImagesController < Admin::BaseController
-  # Content image settings (800x600px, 4:3 aspect ratio)
-  CONTENT_IMAGE_WIDTH = 800
-  CONTENT_IMAGE_HEIGHT = 600
   MAX_FILE_SIZE = 10.megabytes
   ALLOWED_CONTENT_TYPES = %w[image/jpeg image/png image/gif image/webp].freeze
 
@@ -50,8 +47,8 @@ class Admin::ArticleImagesController < Admin::BaseController
         alt_text: params[:alt_text],
         caption: caption,
         filename: image.filename.to_s,
-        width: CONTENT_IMAGE_WIDTH,
-        height: CONTENT_IMAGE_HEIGHT
+        width: metadata.width,
+        height: metadata.height
       }
     else
       render_error("画像のアップロードに失敗しました")
@@ -73,11 +70,15 @@ class Admin::ArticleImagesController < Admin::BaseController
 
   # Create or update MediaMetadata
   def create_media_metadata(image, alt_text)
-    MediaMetadata.find_or_create_by(blob: image.blob) do |m|
-      m.mime_type = image.blob.content_type
-      m.file_size = image.blob.byte_size
-      m.width = CONTENT_IMAGE_WIDTH
-      m.height = CONTENT_IMAGE_HEIGHT
+    blob = image.blob
+    # 実画像を解析して寸法を取得する（メディアライブラリと同じパターン）
+    blob.analyze unless blob.analyzed?
+
+    MediaMetadata.find_or_create_by(blob: blob) do |m|
+      m.mime_type = blob.content_type
+      m.file_size = blob.byte_size
+      m.width = blob.metadata[:width]
+      m.height = blob.metadata[:height]
     end.tap do |metadata|
       # Update alt_text and track usage
       metadata.update(alt_text: alt_text)

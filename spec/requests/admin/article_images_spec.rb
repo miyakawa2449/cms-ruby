@@ -28,8 +28,11 @@ RSpec.describe "Admin::ArticleImages", type: :request do
         json = JSON.parse(response.body)
         expect(json['success']).to be true
         expect(json['alt_text']).to eq 'Test image description'
-        expect(json['width']).to eq 800
-        expect(json['height']).to eq 600
+        # S1-7 P0-5: 定数800x600ではなく実画像の解析結果を返す（fixtureは100x100）
+        expect(json['width']).to eq 100
+        expect(json['height']).to eq 100
+        expect(MediaMetadata.last.width).to eq 100
+        expect(MediaMetadata.last.height).to eq 100
         expect(json['markdown']).to include('![Test image description]')
       end
 

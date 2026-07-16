@@ -86,7 +86,8 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
+        # libvips: Active Storageの画像解析用（本番Dockerイメージと同じ）
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips42
 
       - name: Checkout code
         uses: actions/checkout@v5
@@ -135,7 +136,8 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
+        # libvips: Active Storageの画像解析用（本番Dockerイメージと同じ）
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips42
 
       - name: Checkout code
         uses: actions/checkout@v5
@@ -218,7 +220,8 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
+        # libvips: Active Storageの画像解析用（本番Dockerイメージと同じ）
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips42
 
       - name: Checkout code
         uses: actions/checkout@v5
