@@ -56,6 +56,14 @@ RSpec.describe "監査指摘バグの回帰テスト", type: :request do
     end
   end
 
+  describe "S1-7 P0-1: トップページの例外握りつぶし撤去" do
+    it "データ取得で例外が起きたとき空ページ200ではなくエラーを伝播させる" do
+      allow(Section).to receive(:visible).and_raise(StandardError, "boom")
+
+      expect { get root_path }.to raise_error(StandardError, "boom")
+    end
+  end
+
   describe "C-11: デフォルトOGP画像" do
     it "og-default.jpg が有効なJPEG画像である" do
       path = Rails.public_path.join("og-default.jpg")
