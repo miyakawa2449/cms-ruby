@@ -106,5 +106,41 @@ RSpec.describe "Api::V1::Articles", type: :request do
 
       expect(response).to have_http_status(:not_found)
     end
+
+    # S1-7 P0-3: 旧実装は常にnilを返すデッドフィールドだった
+    describe "og_image_url" do
+      it "OGP画像があればそのURLを返す（サムネイルより優先）" do
+        article = create(:article, :published, slug: "with-ogp")
+        article.ogp_image.attach(io: StringIO.new("ogp"), filename: "ogp.jpg", content_type: "image/jpeg")
+        article.thumbnail_image.attach(io: StringIO.new("thumb"), filename: "thumb.jpg", content_type: "image/jpeg")
+
+        get api_v1_article_path(article.slug)
+
+        json = JSON.parse(response.body)
+        expected = Rails.application.routes.url_helpers.rails_blob_url(article.ogp_image, only_path: true)
+        expect(json["data"]["og_image_url"]).to eq(expected)
+      end
+
+      it "OGP画像が無ければサムネイルのURLを返す" do
+        article = create(:article, :published, slug: "with-thumb-only")
+        article.thumbnail_image.attach(io: StringIO.new("thumb"), filename: "thumb.jpg", content_type: "image/jpeg")
+
+        get api_v1_article_path(article.slug)
+
+        json = JSON.parse(response.body)
+        expected = Rails.application.routes.url_helpers.rails_blob_url(article.thumbnail_image, only_path: true)
+        expect(json["data"]["og_image_url"]).to eq(expected)
+      end
+
+      it "画像が無ければnilを返す" do
+        article = create(:article, :published, slug: "no-image")
+
+        get api_v1_article_path(article.slug)
+
+        json = JSON.parse(response.body)
+        expect(json["data"]).to have_key("og_image_url")
+        expect(json["data"]["og_image_url"]).to be_nil
+      end
+    end
   end
 end

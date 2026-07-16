@@ -39,7 +39,7 @@ class ArticleSerializer
       meta_keywords: @article.meta_keywords,
       og_title: @article.og_title,
       og_description: @article.og_description,
-      og_image_url: @article.respond_to?(:og_image_url) ? @article.og_image_url : nil,
+      og_image_url: og_image_url,
       ai_summary: nil,
       ai_keywords: nil,
       created_at: @article.created_at.iso8601,
@@ -83,5 +83,17 @@ class ArticleSerializer
     return nil unless @article.thumbnail_image.attached?
 
     Rails.application.routes.url_helpers.rails_blob_url(@article.thumbnail_image, only_path: true)
+  end
+
+  # OGP画像の解決順はページ表示（MetaTagsService）と同じ: ogp_image → thumbnail_image
+  def og_image_url
+    image = if @article.ogp_image.attached?
+      @article.ogp_image
+    elsif @article.thumbnail_image.attached?
+      @article.thumbnail_image
+    end
+    return nil unless image
+
+    Rails.application.routes.url_helpers.rails_blob_url(image, only_path: true)
   end
 end
