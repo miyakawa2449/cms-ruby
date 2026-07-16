@@ -114,24 +114,27 @@ module Security
     end
 
     def count_failed_logins
-      # Count failed login attempts from Rails logs
-      # This is a simplified implementation
-      0
+      security_events_in_period.of_type("login_failure").count
     end
 
+    # スロットル超過またはブロックされたユニークIP数
     def count_blocked_ips
-      # Count blocked IPs from Rack::Attack logs
-      0
+      security_events_in_period
+        .of_type(%w[rate_limit_exceeded request_blocked])
+        .distinct
+        .count(:ip)
     end
 
     def count_csrf_errors
-      # Count CSRF errors from Rails logs
-      0
+      security_events_in_period.of_type("csrf_error").count
     end
 
     def count_unauthorized_access
-      # Count unauthorized access attempts
-      0
+      security_events_in_period.of_type("unauthorized_access").count
+    end
+
+    def security_events_in_period
+      SecurityEvent.occurred_between(@start_date, @end_date)
     end
 
     def count_brakeman_issues

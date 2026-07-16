@@ -1,6 +1,8 @@
 class ContactsController < ApplicationController
-  # CSRFトークンの検証をスキップ（JSON API使用時のみ）
-  protect_from_forgery with: :null_session, only: [:create], if: -> { request.format.json? }
+  # CSRF保護はApplicationControllerの protect_from_forgery with: :exception を継承する。
+  # フロントの contact_form_controller.js は X-CSRF-Token ヘッダーを送信している。
+  # 注意: ここで protect_from_forgery を再宣言すると親のverify_authenticity_token
+  # コールバックが置き換えられ、条件外のリクエストが無検証になる（S1-7 P0-4で修正済み）
 
   def create
     # Honeypot check - ボットはこのフィールドを自動入力する

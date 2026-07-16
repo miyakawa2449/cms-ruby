@@ -27,14 +27,21 @@ RSpec.describe "CSRF Protection", type: :request do
     ContactsController.allow_forgery_protection = original_contacts
   end
 
-  it "accepts JSON requests without CSRF token" do
-    post contacts_path, params: contact_params, as: :json
-    expect(response).to have_http_status(:created)
+  # S1-7 P0-4: 旧実装の protect_from_forgery 再宣言はHTML POSTのCSRF検証を
+  # 無効化する穴だったため削除し、JSONもトークン必須に統一した。
+  # 正規クライアント（contact_form_controller.js）はX-CSRF-Tokenを送信している
+  it "rejects JSON requests without CSRF token" do
+    expect {
+      post contacts_path, params: contact_params, as: :json
+    }.not_to change(Contact, :count)
+    expect(response).to have_http_status(:unprocessable_content)
   end
 
-  it "accepts JSON requests even with invalid CSRF token" do
-    post contacts_path, params: contact_params, as: :json, headers: { "X-CSRF-Token" => "invalid" }
-    expect(response).to have_http_status(:created)
+  it "rejects JSON requests with invalid CSRF token" do
+    expect {
+      post contacts_path, params: contact_params, as: :json, headers: { "X-CSRF-Token" => "invalid" }
+    }.not_to change(Contact, :count)
+    expect(response).to have_http_status(:unprocessable_content)
   end
 
   it "allows GET requests without token" do

@@ -129,7 +129,12 @@ ActiveSupport::Notifications.subscribe("rack.attack") do |_name, _start, _finish
   matched = request&.env&.[]("rack.attack.matched")
   next unless matched
 
-  SecurityLogger.log_rate_limit_exceeded(matched, request)
+  # blocklist（攻撃パターン遮断）とthrottle（レート制限）を区別して記録する
+  if request.env["rack.attack.match_type"] == :blocklist
+    SecurityLogger.log_request_blocked(matched, request)
+  else
+    SecurityLogger.log_rate_limit_exceeded(matched, request)
+  end
 end
 
 if Rails.env.production? || Rails.env.staging? || Rails.env.test?

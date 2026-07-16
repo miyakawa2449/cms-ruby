@@ -45,4 +45,10 @@ class ApplicationController < ActionController::Base
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_in, keys: [:otp_attempt])
   end
+
+  # CSRF検証失敗を計測用に記録する（S1-7 P0-4）。挙動はsuper（例外）のまま変えない
+  def handle_unverified_request
+    SecurityLogger.log_csrf_error(request)
+    super
+  end
 end

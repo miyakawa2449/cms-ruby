@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_16_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_16_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -297,6 +297,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_16_120000) do
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_sections_on_name", unique: true
     t.index ["position"], name: "index_sections_on_position"
+  end
+
+  create_table "security_events", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.string "event_type", null: false
+    t.string "ip"
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "occurred_at", null: false
+    t.string "path"
+    t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.index ["event_type", "occurred_at"], name: "index_security_events_on_event_type_and_occurred_at"
+    t.index ["occurred_at"], name: "index_security_events_on_occurred_at"
   end
 
   create_table "security_reports", force: :cascade do |t|

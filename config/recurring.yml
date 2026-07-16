@@ -20,6 +20,11 @@ production:
     queue: default
     schedule: every 5 minutes
 
+  # セキュリティイベントの保持期間90日を超えた分を削除（S1-7 P0-4）
+  purge_old_security_events:
+    command: "SecurityEvent.purge_old!"
+    schedule: every day at 4:30 Asia/Tokyo
+
   # Weekly security report (Phase 7.4)
   weekly_security_report:
     class: "Security::WeeklyReportJob"
