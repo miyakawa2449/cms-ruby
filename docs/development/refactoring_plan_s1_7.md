@@ -66,6 +66,15 @@
 | P4-2 | `article_image_upload_controller.js`(124行・未登録未参照)の要否確認→削除 | 小 |
 | P4-3 | `ai_assistant_controller.js`(620行)のAPI通信部分離・機能別整理 | 中〜大 |
 
+## 障害記録: specによるdev実storage/削除事故（2026-07-16）
+
+- **事象**: dev環境のメディアライブラリ・記事の画像ファイルが消失（DBレコードは残存、ファイルのみ）。本番影響なし（ローカル完結）
+- **原因**: `storage_backup_service_spec` の「storage/が存在しない場合」contextが実 `Rails.root/storage` を `rm_rf`。`active_storage_import_service_spec` も実storageを退避→afterで退避先ごと削除。`active_storage_export_service_spec` は実storageへ書き込み汚染。プロジェクトはコンテナへbind mountされているためdev実体が消えた。suite実行のたびに再発していた
+- **性質**: S1-5の「restore specが実.envを破壊」と同一クラス（破壊的サービスのspecがRails.rootを差し替えていない）。P5-4/P5-6として後回しにしていた領域が先に顕在化した
+- **対処**（076c18c）: 3specを既存の隔離パターン（`allow(Rails).to receive(:root)` + `Dir.mktmpdir`）で修正。`spec/support/real_storage_guard.rb`（番兵）を追加し、実storage/がテストで変更されたらsuite終了時に失敗させる。番兵ファイルを置いた全suite実行で無傷を確認済み
+- **消失データ**: 復元不可（退避残骸なし）。剛さん判断で対処不要（テスト用画像のため）。孤児レコードは残置
+- **教訓**: `storage/`・`.env`・`config/` 等の実ファイルを操作するサービスのspecは、必ずfake_root隔離+番兵ガードをセットで導入する
+
 ## P5: テスト品質
 
 | # | 内容 | 規模 |
