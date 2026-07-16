@@ -67,15 +67,16 @@
                 <div class="flex items-center justify-between pt-4 border-t border-gray-100">
                   <!-- タグ -->
                   <div class="flex items-center">
+                    <%# limit/countはプリロード済みでも追加クエリを発行するため first/size を使う（N+1回避） %>
                     <% if article.tags.any? %>
                       <div class="flex flex-wrap gap-2">
-                        <% article.tags.limit(4).each do |tag| %>
+                        <% article.tags.first(4).each do |tag| %>
                           <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-md">
                             #<%= tag.name %>
                           </span>
                         <% end %>
-                        <% if article.tags.count > 4 %>
-                          <span class="text-gray-400 text-xs">+<%= article.tags.count - 4 %></span>
+                        <% if article.tags.size > 4 %>
+                          <span class="text-gray-400 text-xs">+<%= article.tags.size - 4 %></span>
                         <% end %>
                       </div>
                     <% end %>
