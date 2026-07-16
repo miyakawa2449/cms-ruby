@@ -9,6 +9,11 @@
 
 ## P0: 即効バグ修正（S1-7初日に一括で）
 
+> **2026-07-16 第1弾完了**: P0-1〜P0-5、P3-1(b)、P4-1を実施（コミット2a41a75〜5958173）。
+> - P0-4は剛さんの判断で「削除ではなく計測を実装」: SecurityEventテーブル新設（要マイグレーション）+ SecurityLoggerのDB永続化 + CSRFフック + Rack::Attackのblocklist/throttle区別記録 + 90日パージ（recurring.yml）
+> - P0-4の副産物としてContactsControllerの `protect_from_forgery` 再宣言がHTML POSTのCSRF検証を無効化していた穴を発見・修正（JSONもトークン必須に統一。正規クライアントはX-CSRF-Token送信済みのため影響なし）
+> - P0-5の副産物: libvips不在だとActive Storageの画像解析が黙って空になるため、Mac（brew install vips）とCI（libvips42）に導入。本番Dockerイメージは元々libvipsあり
+
 | # | 内容 | 対象 | 規模 |
 |---|---|---|---|
 | P0-1 | トップページの**無限retry**修正（DB障害時にPumaワーカーを食い潰す）+ 全体rescueで空ページ200を返す設計の撤去 | `portfolio_controller.rb:40-44` | 小 |
@@ -93,4 +98,4 @@ S2連携: P3-4 / P3-9 は汎用化フェーズの個人文言削除と同一作�
 2. **管理画面の記事検索**をpg_search（あいまい・再現率広い）に統一してよいか、管理画面だけILIKE（正確な部分一致）を残すか
 3. `article_image_upload_controller.js` は将来使う予定のある機能か（未登録・未参照）
 4. 本番DBのsectionsに `footer` レコードが存在するか（P3-5の前提）
-5. `Security::ReporterService` の失敗ログイン集計（現状常にゼロ）は実装したいか、レポート項目から外すか
+5. ~~`Security::ReporterService` の失敗ログイン集計（現状常にゼロ）は実装したいか、レポート項目から外すか~~ → **2026-07-16回答済み: 計測できるように実装（P0-4で対応完了）**
