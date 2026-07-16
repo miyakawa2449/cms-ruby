@@ -9,7 +9,8 @@
 
 ## P0: 即効バグ修正（S1-7初日に一括で）
 
-> **2026-07-16 第1弾完了**: P0-1〜P0-5、P3-1(b)、P4-1を実施（コミット2a41a75〜5958173）。
+> **2026-07-16 第1弾完了・本番デプロイ済み・剛さん稼働確認済み**: P0-1〜P0-5、P3-1(b)、P4-1を実施（コミット2a41a75〜5958173）。incidents実測値が入る初回レポートは2026-07-20(月)10:00の週次生成分。
+> 次は第2弾（P1-1〜P1-5 + P5-2）。着手前に「要確認事項」の①unpublish時のpublished_at扱い・②管理画面検索の方式を剛さんに確認すること。
 > - P0-4は剛さんの判断で「削除ではなく計測を実装」: SecurityEventテーブル新設（要マイグレーション）+ SecurityLoggerのDB永続化 + CSRFフック + Rack::Attackのblocklist/throttle区別記録 + 90日パージ（recurring.yml）
 > - P0-4の副産物としてContactsControllerの `protect_from_forgery` 再宣言がHTML POSTのCSRF検証を無効化していた穴を発見・修正（JSONもトークン必須に統一。正規クライアントはX-CSRF-Token送信済みのため影響なし）
 > - P0-5の副産物: libvips不在だとActive Storageの画像解析が黙って空になるため、Mac（brew install vips）とCI（libvips42）に導入。本番Dockerイメージは元々libvipsあり
