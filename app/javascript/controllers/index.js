@@ -1,8 +1,6 @@
 // Import and register all your controllers
 import { application } from "./application"
-import ConfirmDialogController from "./confirm_dialog_controller"
 import ContactFormController from "./contact_form_controller"
-import ImageUploadController from "./image_upload_controller"
 import MediaLibraryController from "./media_library_controller"
 import MediaUploadController from "./media_upload_controller"
 import MediaEditorController from "./media_editor_controller"
@@ -12,15 +10,12 @@ import AiAssistantController from "./ai_assistant_controller"
 import MobileMenuController from "./mobile_menu_controller"
 import ClipboardController from "./clipboard_controller"
 import BackupCodesController from "./backup_codes_controller"
-import TwoFactorVerifyController from "./two_factor_verify_controller"
 import AiUsageChartsController from "./ai_usage_charts_controller"
 import SecurityReportChartsController from "./security_report_charts_controller"
 import PasskeyRegistrationController from "./passkey_registration_controller"
 import PasskeyLoginController from "./passkey_login_controller"
 
-application.register("confirm-dialog", ConfirmDialogController)
 application.register("contact-form", ContactFormController)
-application.register("image-upload", ImageUploadController)
 application.register("media-library", MediaLibraryController)
 application.register("media-upload", MediaUploadController)
 application.register("media-editor", MediaEditorController)
@@ -30,7 +25,6 @@ application.register("ai-assistant", AiAssistantController)
 application.register("mobile-menu", MobileMenuController)
 application.register("clipboard", ClipboardController)
 application.register("backup-codes", BackupCodesController)
-application.register("two-factor-verify", TwoFactorVerifyController)
 application.register("ai-usage-charts", AiUsageChartsController)
 application.register("security-report-charts", SecurityReportChartsController)
 application.register("passkey-registration", PasskeyRegistrationController)

@@ -34,37 +34,13 @@ RSpec.describe PortfolioController, type: :controller do
       expect(assigns(:recent_articles)).to eq([:hit])
     end
 
-    it "handles standard errors and clears assigns" do
-      allow(Section).to receive_message_chain(:visible, :ordered, :preload).and_raise(StandardError, "boom")
-      allow(Rails.logger).to receive(:error)
+    # S1-7 P0-1: 例外を握りつぶして空ページ200を返す設計と、
+    # ConnectionNotEstablishedの無限retryを撤去したため、例外はそのまま伝播する
+    # （回帰テストは spec/requests/audit_regression_spec.rb 参照）
+    it "does not swallow errors from data loading" do
+      allow(Section).to receive(:visible).and_raise(StandardError, "boom")
 
-      get :index
-
-      expect(assigns(:sections)).to eq([])
-      expect(assigns(:section_data)).to eq({})
-      expect(assigns(:recent_articles)).to eq([])
-    end
-
-    it "retries once when DB connection is lost" do
-      visible_relation = double("VisibleRelation")
-      ordered_relation = double("OrderedRelation")
-      allow(visible_relation).to receive(:ordered).and_return(ordered_relation)
-      allow(ordered_relation).to receive(:preload).and_return([])
-
-      attempts = 0
-      allow(Section).to receive(:visible) do
-        attempts += 1
-        attempts == 1 ? raise(ActiveRecord::ConnectionNotEstablished) : visible_relation
-      end
-      allow(ActiveRecord::Base).to receive(:establish_connection)
-      allow(Article).to receive_message_chain(:published, :includes, :where, :not, :recent, :limit).and_return([])
-      allow(Rails.logger).to receive(:error)
-
-      get :index
-
-      expect(ActiveRecord::Base).to have_received(:establish_connection)
-      expect(assigns(:sections)).to eq([])
-      expect(assigns(:section_data)).to eq({})
+      expect { get :index }.to raise_error(StandardError, "boom")
     end
   end
 end
