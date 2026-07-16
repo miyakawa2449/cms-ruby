@@ -3,13 +3,26 @@ class AdminUser < ApplicationRecord
   # Future: Re-enable when implementing multi-tenant CMS sales version
   # otp_secretはdevise-two-factor 6系がRails標準のActive Record Encryptionで暗号化する
   # （旧v4系のotp_secret_encryption_keyオプションは廃止済みのため指定しない）
+  # :timeoutable は2026-07-16に廃止（剛さん決定）。
+  # セッション寿命はクッキー有効期限24時間（session_store.rb）+ remember me 2週間で管理する
   devise :two_factor_authenticatable,
          :recoverable, :rememberable, :validatable,
-         :lockable, :timeoutable
+         :lockable
 
   has_many :published_section_contents, class_name: "SectionContent", foreign_key: :published_by, dependent: :nullify
   has_many :articles, dependent: :destroy
   has_many :ai_generations, dependent: :nullify
+  has_many :passkey_credentials, dependent: :destroy
+
+  # WebAuthnのユーザーハンドル。初回アクセス時に生成して永続化する
+  # （メールアドレス変更に影響されない安定した識別子）
+  def webauthn_id
+    super.presence || begin
+      new_id = WebAuthn.generate_user_id
+      update_column(:webauthn_id, new_id)
+      new_id
+    end
+  end
 
   validates :email, presence: true, uniqueness: true
 

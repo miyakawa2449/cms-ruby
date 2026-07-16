@@ -20,6 +20,11 @@ class Rack::Attack
 
   admin_path = ::AdminPath::Resolver.current_path
 
+  # パスキーの登録・認証エンドポイントの総当たり対策（S1-6）
+  throttle("passkey/ip", limit: 10, period: 1.minute) do |req|
+    req.ip if req.post? && req.path.include?("passkey")
+  end
+
   safelist("allow from admin IPs") do |req|
     admin_ips = ENV.fetch("ADMIN_WHITELIST_IPS", "").split(",").map(&:strip)
     admin_ips.include?(req.ip) if admin_ips.any?

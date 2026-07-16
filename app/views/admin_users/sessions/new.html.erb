@@ -57,7 +57,23 @@
                    class: "login-button w-full text-white font-semibold py-3 px-4 rounded-lg cursor-pointer",
                    data: { disable_with: "ログイン中..." } %>
     <% end %>
-    
+
+    <!-- パスキーログイン（S1-6） -->
+    <div class="mt-4"
+         data-controller="passkey-login"
+         data-passkey-login-options-url-value="<%= passkey_session_options_path %>"
+         data-passkey-login-login-url-value="<%= passkey_session_path %>">
+      <div class="relative my-4">
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-300"></div></div>
+        <div class="relative flex justify-center text-sm"><span class="px-2 bg-white text-gray-500">または</span></div>
+      </div>
+      <button type="button" data-action="passkey-login#login"
+              class="w-full flex justify-center items-center gap-2 border border-gray-300 rounded-lg py-3 px-4 text-gray-700 font-semibold hover:bg-gray-50">
+        🔑 パスキーでログイン
+      </button>
+      <div data-passkey-login-target="error" class="hidden mt-2 text-sm text-red-600 text-center"></div>
+    </div>
+
     <!-- パスワードリセットリンク -->
     <div class="text-center mt-6 space-y-2">
       <%= link_to "パスワードをお忘れですか？", new_admin_user_password_path,

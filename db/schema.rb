@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_16_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_16_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -72,6 +72,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_16_000000) do
     t.string "reset_password_token"
     t.string "unlock_token"
     t.datetime "updated_at", null: false
+    t.string "webauthn_id"
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["otp_required_for_login"], name: "index_admin_users_on_otp_required_for_login"
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
@@ -229,6 +230,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_16_000000) do
     t.index ["created_at"], name: "index_media_metadata_on_created_at"
     t.index ["mime_type"], name: "index_media_metadata_on_mime_type"
     t.index ["usage_count"], name: "index_media_metadata_on_usage_count"
+  end
+
+  create_table "passkey_credentials", force: :cascade do |t|
+    t.bigint "admin_user_id", null: false
+    t.datetime "created_at", null: false
+    t.string "external_id", null: false
+    t.datetime "last_used_at"
+    t.string "nickname", null: false
+    t.string "public_key", null: false
+    t.bigint "sign_count", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_user_id", "nickname"], name: "index_passkey_credentials_on_admin_user_id_and_nickname", unique: true
+    t.index ["admin_user_id"], name: "index_passkey_credentials_on_admin_user_id"
+    t.index ["external_id"], name: "index_passkey_credentials_on_external_id", unique: true
   end
 
   create_table "section_contents", force: :cascade do |t|
@@ -515,6 +530,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_16_000000) do
   add_foreign_key "categories", "categories", column: "parent_id"
   add_foreign_key "contacts", "admin_users", column: "assigned_to_id"
   add_foreign_key "media_metadata", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "passkey_credentials", "admin_users"
   add_foreign_key "section_contents", "admin_users", column: "published_by", on_delete: :nullify
   add_foreign_key "section_contents", "sections"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

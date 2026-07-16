@@ -134,6 +134,25 @@ RSpec.describe AdminUser, type: :model do
       end
     end
 
+    describe "2FA安定化設定（S1-6①）" do
+      it "OTPの許容ドリフトが前後60秒に拡大されている" do
+        # 時計ズレによる「正しいコードが弾かれる」不安定さ対策（仕様書§3-4）
+        expect(Devise.otp_allowed_drift).to eq(60)
+      end
+
+      it "60秒前に生成されたOTPコードでも認証できる" do
+        admin_user.enable_two_factor!
+        old_code = ROTP::TOTP.new(admin_user.otp_secret).at(Time.now - 60)
+
+        expect(admin_user.validate_and_consume_otp!(old_code)).to be true
+      end
+
+      it "セッションタイムアウト（timeoutable）は廃止されている" do
+        # 剛さん決定（2026-07-16）: タイムアウトより短い再ログイン問題の是正の一環
+        expect(AdminUser.devise_modules).not_to include(:timeoutable)
+      end
+    end
+
     describe "#validate_and_consume_otp!" do
       it "accepts a backup code when OTP verification fails" do
         codes = admin_user.generate_otp_backup_codes!

@@ -15,6 +15,12 @@ Rails.application.routes.draw do
     skip: [ :registrations ],
     controllers: { sessions: "admin_users/sessions" }
 
+  # パスキーログイン（S1-6。ログイン画面と同じ管理パス配下に置く）
+  devise_scope :admin_user do
+    post "#{admin_path}/passkey_session/options", to: "admin_users/passkey_sessions#options", as: :passkey_session_options
+    post "#{admin_path}/passkey_session", to: "admin_users/passkey_sessions#create", as: :passkey_session
+  end
+
   # Admin routes (セキュリティのため長いURL使用)
   namespace :admin, path: admin_path do
     resource :site_settings, only: [ :show, :update ]
@@ -25,6 +31,13 @@ Rails.application.routes.draw do
     # Two-Factor Authentication
     resource :two_factor_auth, only: [ :show, :new, :create, :destroy ], controller: "two_factor_auth" do
       post :regenerate_backup_codes
+    end
+
+    # パスキー（WebAuthn）管理（S1-6）
+    resources :passkeys, only: [ :index, :create, :destroy ] do
+      collection do
+        post :options
+      end
     end
 
     resources :sections do

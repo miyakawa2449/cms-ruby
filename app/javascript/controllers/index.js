@@ -15,6 +15,8 @@ import BackupCodesController from "./backup_codes_controller"
 import TwoFactorVerifyController from "./two_factor_verify_controller"
 import AiUsageChartsController from "./ai_usage_charts_controller"
 import SecurityReportChartsController from "./security_report_charts_controller"
+import PasskeyRegistrationController from "./passkey_registration_controller"
+import PasskeyLoginController from "./passkey_login_controller"
 
 application.register("confirm-dialog", ConfirmDialogController)
 application.register("contact-form", ContactFormController)
@@ -31,3 +33,5 @@ application.register("backup-codes", BackupCodesController)
 application.register("two-factor-verify", TwoFactorVerifyController)
 application.register("ai-usage-charts", AiUsageChartsController)
 application.register("security-report-charts", SecurityReportChartsController)
+application.register("passkey-registration", PasskeyRegistrationController)
+application.register("passkey-login", PasskeyLoginController)

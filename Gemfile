@@ -20,6 +20,8 @@ gem "jbuilder"
 # Authentication & Authorization
 gem "devise", "~> 5.0"
 gem "devise-two-factor", "~> 6.0"
+# パスキー認証（WebAuthn標準実装。S1-6）
+gem "webauthn", "~> 3.4"
 gem "rqrcode", "~> 2.2"
 gem "jwt", "~> 3.1"
 gem "pundit", "~> 2.3"
