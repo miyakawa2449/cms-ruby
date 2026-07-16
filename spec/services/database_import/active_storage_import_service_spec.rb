@@ -4,15 +4,21 @@ require "rails_helper"
 
 RSpec.describe DatabaseImport::ActiveStorageImportService do
   describe "#call" do
+    # 重要: このサービスは Rails.root/storage を退避・置換する破壊的な処理。
+    # 実リポジトリのstorage/（devの実画像）を壊さないよう、必ず一時ディレクトリを
+    # Rails.root に差し替えてテストする（2026-07-16の実画像削除事故を受けて隔離）
+    let(:fake_root) { Pathname.new(Dir.mktmpdir("as_import_spec_root_")) }
     let(:temp_dir) { Dir.mktmpdir }
     let(:extracted_storage_path) { File.join(temp_dir, "storage") }
 
+    before do
+      allow(Rails).to receive(:root).and_return(fake_root)
+    end
+
     after do
       FileUtils.rm_rf(temp_dir)
-      # Clean up any backup directories
-      Dir.glob("#{Rails.root.join('storage')}_backup_*").each do |backup|
-        FileUtils.rm_rf(backup)
-      end
+      # storage_backup_* もfake_root配下に作られるためまとめて削除される
+      FileUtils.rm_rf(fake_root)
     end
 
     context "when extracted storage directory exists" do
@@ -51,10 +57,6 @@ RSpec.describe DatabaseImport::ActiveStorageImportService do
         before do
           FileUtils.mkdir_p(Rails.root.join("storage"))
           File.write(existing_file_path, "existing content")
-        end
-
-        after do
-          FileUtils.rm_rf(Rails.root.join("storage"))
         end
 
         it "backs up existing storage directory" do

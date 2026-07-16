@@ -4,10 +4,18 @@ require "rails_helper"
 
 RSpec.describe DatabaseExport::ActiveStorageExportService do
   describe "#call" do
+    # 実リポジトリのstorage/を読み書きしないよう一時ディレクトリをRails.rootに差し替える
+    # （2026-07-16の実画像削除事故を受けてストレージ系specは全て隔離）
+    let(:fake_root) { Pathname.new(Dir.mktmpdir("as_export_spec_root_")) }
     let(:temp_dir) { Dir.mktmpdir }
+
+    before do
+      allow(Rails).to receive(:root).and_return(fake_root)
+    end
 
     after do
       FileUtils.rm_rf(temp_dir)
+      FileUtils.rm_rf(fake_root)
     end
 
     subject(:service) { described_class.new(temp_dir) }
@@ -36,10 +44,6 @@ RSpec.describe DatabaseExport::ActiveStorageExportService do
         # Create test files in storage
         FileUtils.mkdir_p(storage_dir.join("ab", "cd"))
         File.write(storage_dir.join("ab", "cd", "test_file.txt"), "test content")
-      end
-
-      after do
-        FileUtils.rm_rf(storage_dir.join("ab"))
       end
 
       it "returns true" do

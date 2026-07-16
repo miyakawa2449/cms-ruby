@@ -1,14 +1,21 @@
 require "rails_helper"
 
 RSpec.describe StorageBackupService do
+  # 重要: このspecは storage/ の削除・作成を伴う破壊的なセットアップを含む。
+  # 実リポジトリのstorage/（devの実画像）を壊さないよう、必ず一時ディレクトリを
+  # Rails.root に差し替えてテストする（StorageRestoreService specと同じ隔離パターン）。
+  # 2026-07-16: 未隔離だったこのspecがdev環境の実画像を削除する事故が発生（S1-7で修正）
+  let(:fake_root) { Pathname.new(Dir.mktmpdir("storage_backup_spec_")) }
   let(:backup_type) { "daily" }
   let(:service) { described_class.new(backup_type) }
-  let(:backup_dir) { Rails.root.join("tmp", "backup").to_s }
-  let(:storage_dir) { Rails.root.join("storage").to_s }
+  let(:backup_dir) { fake_root.join("tmp", "backup").to_s }
+  let(:storage_dir) { fake_root.join("storage").to_s }
 
-  after do
-    Dir.glob(File.join(backup_dir, "storage_*")).each { |f| File.delete(f) if File.exist?(f) }
+  before do
+    allow(Rails).to receive(:root).and_return(fake_root)
   end
+
+  after { FileUtils.rm_rf(fake_root) }
 
   describe "#execute" do
     context "when storage/ directory exists" do
@@ -46,10 +53,6 @@ RSpec.describe StorageBackupService do
           File.write(test_file, "fake image data")
         end
 
-        after do
-          File.delete(test_file) if File.exist?(test_file)
-        end
-
         it "includes files from storage/ in the archive" do
           result = service.execute
           contents = `tar -tzf #{result}`
@@ -59,14 +62,7 @@ RSpec.describe StorageBackupService do
     end
 
     context "when storage/ directory does not exist" do
-      before do
-        FileUtils.rm_rf(storage_dir) if Dir.exist?(storage_dir)
-      end
-
-      after do
-        # Restore empty storage dir
-        FileUtils.mkdir_p(storage_dir)
-      end
+      # fake_root配下にstorage/を作らないだけでよい（実storageは絶対に消さない）
 
       it "logs a warning" do
         expect(Rails.logger).to receive(:warn).with(/storage\/ directory not found/)
