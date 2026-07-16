@@ -605,6 +605,25 @@ MyStoryを削除すると、監査指摘のうち以下が**修正不要（削�
   - 起動時にパスの決定元（DB履歴/ENV/デフォルト）をログ出力、ENVとDB履歴の食い違い時は警告（値は秘匿）
   - URLヘルパー無変更（既存コード非侵襲）
 
+## S1-5 実施記録（2026-07-16）
+
+整理・統合完了。全1,196specグリーン（削除したテスト分減少）、RuboCopクリーン。
+
+- **S1-5a**: Sidekiq系gem削除（sidekiq/sidekiq-cron/sentry-sidekiq。LGPL懸念解消）。`redis` gemはrack_attackのオプション用に残置。sidekiq_cron.rb初期化子削除、queue.ymlのrecurring_tasks削除（定期実行はrecurring.ymlに一本化。admin_path_rotationは元々未稼働だったため未移設=S1-6で機構ごと廃止予定）、dev composeからsidekiq/redisサービス削除
+- **S1-5b**: 未使用コード削除（計約20ファイル/断片）: CacheMonitorService、Media::EditService、Media::GenerateVariantsJob、StructuredDataHelper(292行)、TimeHelper**全体**（6メソッド全て未使用と判明）、image_helperの2メソッド、navigation_helperをpage_titleのみに縮小（breadcrumbs/nav_link_class/tag_cloud等も未使用、カスタムcurrent_page?はRails標準をシャドウしていた）、Articleの未使用スコープ4つ（works/standard_blog/search_ilike/by_tags）、空のcontacts_helper、scaffold残骸ビュー3つ、ヘッダーのデバッグHTMLコメント
+- **S1-5c**: categoriesのmove_up/downを`Positionable`使用に修正（**position重複バグM-16解消**、回帰テスト付き）。SlackNotifier二重APIは両方使用中のためS1-7へ
+- **S1-5d**: 2FAデッドフロー削除: 到達不能なverify画面（コントローラ2アクション+ビュー+ルート）、デバイス信頼機能一式（モデル4メソッド+`trusted_devices`カラムdrop migration）、冗長なセッションフラグ層（base_controllerの二重ガード+sessions_controllerのフラグ設定）、旧v4系の`otp_secret_encryption_key`オプション。**バックアップコード使用通知メールは実際のログイン経路（validate_and_consume_otp!）に移植**（旧実装では通知が一度も送られない状態だった）。認証・セキュリティspec 128件グリーン
+- **S1-5e**: git残骸削除: brakemanレポート3種、database.old/new.yml、docker-compose.old/new.yml、kamal一式（gem+deploy.yml+.kamal。デプロイはdeploy.sh方式のため未使用。thrusterは本番CMDで使用中のため残置）、scripts/.DS_Store。HTTPS_RECOVERY.mdは `docs/infrastructure/https_recovery.md` へ移動（deploy.shの参照も更新）
+
+## S1-5f 実施記録（2026-07-16）: 全体検証とS1-7計画
+
+3並列エージェント（設計負債/ビュー・パフォーマンス/テスト品質）でリポジトリ全体を検証し、**S1-7リファクタリング計画を策定**: `docs/development/refactoring_plan_s1_7.md`（P0即効バグ5件〜P5テスト品質まで約30項目、実施順序・要確認事項5件付き）。
+
+**検証中に発見した緊急事故と即時対応**:
+- **restore_service_specが実物の `.env` をテスト実行のたびに破壊していた**（`ConfigRestoreService` が実Rails.rootへtar展開。`.env` が `SECRET=restored` 15バイトに上書きされていた）。fake_root（一時ディレクトリ）への隔離で修正し、番兵ファイル+チェックサムで「テスト後も.env無傷」を実証。StorageRestoreServiceのspecも同様に隔離。**剛さんの.envは要復元**（.env.developmentと.env.exampleが復元の土台）
+- 7/15の「dev環境の管理パスが変わった」件は、この破壊が原因だった可能性が高い（.envが上書きされADMIN_PATH等が消失）
+- テスト高速化: BCryptコストをテスト時MIN_COSTに（2FAバックアップコード関連が高速化）
+
 ## 未確定の判断事項
 
 1. ~~MyStory削除の最終確定~~ → **確定（2026-07-15）: 完全廃止**。理由: クリックされていない・記事が長すぎる・indexと内容が被る

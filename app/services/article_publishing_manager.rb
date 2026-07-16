@@ -175,5 +175,4 @@ class ArticlePublishingManager
   def save_article
     @article.save!
   end
-
 end

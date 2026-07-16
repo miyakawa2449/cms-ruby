@@ -53,7 +53,7 @@ RSpec.describe Restore::RestoreJob, type: :job do
         .on_queue("backup")
     end
 
-    it "inherits from ApplicationJob (Sidekiq backend)" do
+    it "inherits from ApplicationJob" do
       expect(described_class.superclass).to eq(ApplicationJob)
     end
   end

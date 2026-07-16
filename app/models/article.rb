@@ -55,8 +55,6 @@ class Article < ApplicationRecord
     joins(:article_tags).where(article_tags: { tag_id: tag_id })
   }
   scope :search_by_content, ->(query) { where("title ILIKE ? OR content ILIKE ? OR excerpt ILIKE ?", "%#{query}%", "%#{query}%", "%#{query}%") }
-  scope :works, -> { joins(:categories).where(categories: { slug: "works" }) }
-  scope :standard_blog, -> { joins(:categories).where.not(categories: { slug: "works" }) }
 
   # 検索機能用スコープ（Phase 4.5 - pg_search full-text search）
   # Uses trigram-based search for Japanese text support
@@ -66,28 +64,12 @@ class Article < ApplicationRecord
     full_text_search(query.to_s.strip)
   }
 
-  # Fallback ILIKE search (kept for backward compatibility)
-  scope :search_ilike, ->(query) {
-    return all if query.blank?
-
-    sanitized_query = sanitize_sql_like(query.to_s.strip)
-    where(
-      "title ILIKE :q OR content ILIKE :q OR excerpt ILIKE :q",
-      q: "%#{sanitized_query}%"
-    )
-  }
-
   # カテゴリフィルター（単数）
   scope :by_category, ->(category_id) {
     return all if category_id.blank?
     joins(:article_categories).where(article_categories: { category_id: category_id })
   }
 
-  scope :by_tags, ->(tag_ids) {
-    return all if tag_ids.blank?
-
-    joins(:tags).where(tags: { id: tag_ids }).distinct
-  }
 
   before_validation :generate_slug_if_needed
   before_save :set_published_at_if_needed

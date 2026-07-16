@@ -44,19 +44,9 @@ RSpec.describe "Admin::TwoFactorAuth", type: :request do
     end
   end
 
-  describe "GET /admin/two_factor_auth/verify" do
-    before do
-      admin_user.enable_two_factor!
-    end
-
-    it "returns success" do
-      get verify_admin_two_factor_auth_path
-      expect(response).to be_successful
-    end
-
-    it "shows verification form" do
-      get verify_admin_two_factor_auth_path
-      expect(response.body).to include("認証コード")
+  describe "廃止されたverify画面（監査M-3）" do
+    it "verifyルートは存在しない（2FA検証はDeviseのログインフローが担う）" do
+      expect(Rails.application.routes.url_helpers).not_to respond_to(:verify_admin_two_factor_auth_path)
     end
   end
 end

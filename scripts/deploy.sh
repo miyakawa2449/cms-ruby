@@ -502,7 +502,7 @@ echo "  View logs:    dc logs [service]"
 echo "  Rails console: dc exec portfolio-web bundle exec rails console"
 echo ""
 echo "🚨 Emergency HTTP recovery (if HTTPS fails):"
-echo "  See HTTPS_RECOVERY.md for instructions"
+echo "  See docs/infrastructure/https_recovery.md for instructions"
 echo ""
 echo "⚠️  Status:"
 if [[ "$KEEP_SSL" == "true" ]]; then

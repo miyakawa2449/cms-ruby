@@ -52,12 +52,13 @@ class Admin::CategoriesController < Admin::BaseController
   end
 
   def move_up
-    @category.update(position: [ @category.position - 1, 0 ].max)
+    # Positionable#move_upは隣のカテゴリとpositionを交換する（重複を作らない）
+    @category.move_up
     redirect_to admin_categories_path
   end
 
   def move_down
-    @category.update(position: @category.position + 1)
+    @category.move_down
     redirect_to admin_categories_path
   end
 

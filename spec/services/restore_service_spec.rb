@@ -229,23 +229,24 @@ RSpec.describe DatabaseRestoreService do
 end
 
 RSpec.describe StorageRestoreService do
-  let(:restore_dir) { Rails.root.join("tmp", "restore").to_s }
-  let(:storage_dir) { Rails.root.join("storage").to_s }
+  # 重要: このサービスは Rails.root 直下の storage/ に展開する破壊的な処理。
+  # 実リポジトリを壊さないよう、必ず一時ディレクトリを Rails.root に差し替えてテストする
+  let(:fake_root) { Pathname.new(Dir.mktmpdir) }
+  let(:restore_dir) { fake_root.join("tmp", "restore").to_s }
+  let(:storage_dir) { fake_root.join("storage").to_s }
   let(:archive) { File.join(restore_dir, "storage_test.tar.gz") }
 
   before do
+    allow(Rails).to receive(:root).and_return(fake_root)
     FileUtils.mkdir_p(restore_dir)
     FileUtils.mkdir_p(storage_dir)
     # Create a real tar.gz for testing
     test_file = File.join(storage_dir, "test.txt")
     File.write(test_file, "test content")
-    system("tar", "-czf", archive, "-C", Rails.root.to_s, "storage")
+    system("tar", "-czf", archive, "-C", fake_root.to_s, "storage")
   end
 
-  after do
-    FileUtils.rm_rf(restore_dir)
-    Dir.glob(File.join(storage_dir, "test.txt")).each { |f| File.delete(f) }
-  end
+  after { FileUtils.rm_rf(fake_root) }
 
   describe "#execute" do
     it "extracts the archive to storage/ directory" do
@@ -261,23 +262,28 @@ RSpec.describe StorageRestoreService do
 end
 
 RSpec.describe ConfigRestoreService do
-  let(:restore_dir) { Rails.root.join("tmp", "restore").to_s }
+  # 重要: このサービスは Rails.root 直下の .env / master.key 等を上書きする破壊的な処理。
+  # 過去にこのspecが実リポジトリの .env をテスト実行のたびに破壊していた事故があった。
+  # 必ず一時ディレクトリを Rails.root に差し替えてテストすること
+  let(:fake_root) { Pathname.new(Dir.mktmpdir) }
+  let(:restore_dir) { fake_root.join("tmp", "restore").to_s }
   let(:archive) { File.join(restore_dir, "config_test.tar.gz") }
   let(:staging) { File.join(restore_dir, "config_source") }
 
   before do
+    allow(Rails).to receive(:root).and_return(fake_root)
     FileUtils.mkdir_p(restore_dir)
     FileUtils.mkdir_p(staging)
     File.write(File.join(staging, ".env"), "SECRET=restored")
     system("tar", "-czf", archive, "-C", staging, ".")
   end
 
-  after { FileUtils.rm_rf(restore_dir) }
+  after { FileUtils.rm_rf(fake_root) }
 
   describe "#execute" do
     it "restores files from the archive to Rails.root" do
       described_class.new(archive).execute
-      expect(File.read(Rails.root.join(".env"))).to include("SECRET=restored")
+      expect(File.read(fake_root.join(".env"))).to include("SECRET=restored")
     end
 
     it "raises an error when tar fails" do

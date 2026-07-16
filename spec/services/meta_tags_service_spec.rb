@@ -35,5 +35,4 @@ RSpec.describe MetaTagsService do
 
     expect(html).to include('Tech')
   end
-
 end

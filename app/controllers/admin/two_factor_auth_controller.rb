@@ -49,10 +49,6 @@ module Admin
       TwoFactorAuthMailer.enabled(current_admin_user).deliver_later
       SlackNotifier.notify_2fa_changed(current_admin_user, "enabled")
 
-      # Mark session as 2FA-authenticated right after enable
-      session[:two_factor_authenticated] = true
-      session[:two_factor_authenticated_at] = Time.current.to_i
-
       flash[:notice] = t("two_factor_auth.enabled_success")
       render :backup_codes
     end
@@ -95,32 +91,6 @@ module Admin
       render :backup_codes
     end
 
-    # GET /admin/two_factor_auth/verify
-    def verify
-      # This action is called during login when 2FA is required
-    end
-
-    # POST /admin/two_factor_auth/verify
-    def verify_code
-      if params[:use_backup_code] == "1"
-        if current_admin_user.validate_backup_code(params[:code])
-          complete_two_factor_authentication
-          remaining = current_admin_user.backup_codes_count
-          TwoFactorAuthMailer.backup_code_used(current_admin_user, remaining).deliver_later
-          return
-        end
-      else
-        if current_admin_user.validate_and_consume_otp!(params[:code])
-          handle_device_trust
-          complete_two_factor_authentication
-          return
-        end
-      end
-
-      flash.now[:alert] = t("two_factor_auth.invalid_verification_code")
-      render :verify, status: :unprocessable_entity
-    end
-
     private
 
     def verify_password
@@ -130,25 +100,6 @@ module Admin
       redirect_back fallback_location: admin_two_factor_auth_path,
                     alert: t("two_factor_auth.invalid_password")
       false
-    end
-
-    def handle_device_trust
-      return unless params[:trust_device] == "1"
-
-      device_token = SecureRandom.hex(32)
-      current_admin_user.trust_device!(device_token)
-      cookies.encrypted[:trusted_device_token] = {
-        value: device_token,
-        expires: 30.days.from_now,
-        httponly: true,
-        secure: Rails.env.production?
-      }
-    end
-
-    def complete_two_factor_authentication
-      session[:two_factor_authenticated] = true
-      session[:two_factor_authenticated_at] = Time.current.to_i
-      redirect_to admin_dashboard_path, notice: t("two_factor_auth.verification_success")
     end
   end
 end

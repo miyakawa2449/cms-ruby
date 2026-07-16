@@ -25,8 +25,6 @@ Rails.application.routes.draw do
     # Two-Factor Authentication
     resource :two_factor_auth, only: [ :show, :new, :create, :destroy ], controller: "two_factor_auth" do
       post :regenerate_backup_codes
-      get :verify
-      post :verify, action: :verify_code
     end
 
     resources :sections do

@@ -48,6 +48,10 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+# テスト高速化: 2FAバックアップコードのBCryptハッシュ化をテストでは最小コストにする
+# （Deviseのstretches=1はパスワードのみでBCrypt直接利用箇所には効かないため）
+BCrypt::Engine.cost = BCrypt::Engine::MIN_COST if defined?(BCrypt)
+
 RSpec.configure do |config|
   # FactoryBot methods
   config.include FactoryBot::Syntax::Methods

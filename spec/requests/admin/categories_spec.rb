@@ -56,6 +56,7 @@ RSpec.describe 'Admin::Categories', type: :request do
   end
 
   it 'moves category up and down' do
+    other = create(:category, position: 0)
     category = create(:category, position: 1)
 
     patch move_up_admin_category_path(category)
@@ -63,5 +64,27 @@ RSpec.describe 'Admin::Categories', type: :request do
 
     patch move_down_admin_category_path(category)
     expect(category.reload.position).to eq(1)
+  end
+
+  it 'does nothing when there is no neighbor to swap with' do
+    # 隣が存在しない（最上位/最下位）場合は位置を変えない
+    category = create(:category, position: 1)
+
+    patch move_up_admin_category_path(category)
+
+    expect(category.reload.position).to eq(1)
+  end
+
+  it 'swaps positions with the neighboring category (no duplicates)' do
+    # 監査M-16の回帰テスト: 旧実装は隣とスワップせず position を±1するだけで、
+    # 同じpositionを持つカテゴリが複数できてしまっていた
+    first = create(:category, position: 0)
+    second = create(:category, position: 1)
+
+    patch move_up_admin_category_path(second)
+
+    expect(second.reload.position).to eq(0)
+    expect(first.reload.position).to eq(1)
+    expect(Category.pluck(:position).tally.values.max).to eq(1)
   end
 end

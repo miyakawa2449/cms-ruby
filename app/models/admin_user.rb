@@ -1,10 +1,11 @@
 class AdminUser < ApplicationRecord
   # NOTE: :registerable is intentionally disabled for security
   # Future: Re-enable when implementing multi-tenant CMS sales version
+  # otp_secretはdevise-two-factor 6系がRails標準のActive Record Encryptionで暗号化する
+  # （旧v4系のotp_secret_encryption_keyオプションは廃止済みのため指定しない）
   devise :two_factor_authenticatable,
          :recoverable, :rememberable, :validatable,
-         :lockable, :timeoutable,
-         otp_secret_encryption_key: ENV.fetch("OTP_SECRET_ENCRYPTION_KEY", Rails.application.secret_key_base[0..31])
+         :lockable, :timeoutable
 
   has_many :published_section_contents, class_name: "SectionContent", foreign_key: :published_by, dependent: :nullify
   has_many :articles, dependent: :destroy
@@ -32,7 +33,6 @@ class AdminUser < ApplicationRecord
     self.otp_required_for_login = false
     self.otp_enabled_at = nil
     self.otp_backup_codes = []
-    self.trusted_devices = []
     save!
   end
 
@@ -71,7 +71,13 @@ class AdminUser < ApplicationRecord
     normalized = code.to_s.strip
     return true if super(normalized, options)
 
-    validate_backup_code(normalized)
+    if validate_backup_code(normalized)
+      # バックアップコードの使用と残数を管理者に通知する
+      TwoFactorAuthMailer.backup_code_used(self, backup_codes_count).deliver_later
+      true
+    else
+      false
+    end
   end
 
   # Get remaining backup codes count
@@ -83,41 +89,6 @@ class AdminUser < ApplicationRecord
   # Device Trust Methods
   # ====================
 
-  # Trust a device for 30 days
-  def trust_device!(device_token)
-    devices = trusted_devices || []
-    devices << {
-      "token" => device_token,
-      "expires_at" => 30.days.from_now.iso8601,
-      "trusted_at" => Time.current.iso8601
-    }
-    update!(trusted_devices: devices)
-  end
-
-  # Check if a device is trusted
-  def device_trusted?(device_token)
-    return false if device_token.blank? || trusted_devices.blank?
-
-    trusted_devices.any? do |device|
-      device["token"] == device_token &&
-        Time.parse(device["expires_at"]) > Time.current
-    end
-  end
-
-  # Remove expired trusted devices
-  def cleanup_expired_devices!
-    return if trusted_devices.blank?
-
-    valid_devices = trusted_devices.select do |device|
-      Time.parse(device["expires_at"]) > Time.current
-    end
-    update!(trusted_devices: valid_devices) if valid_devices.size != trusted_devices.size
-  end
-
-  # Revoke all trusted devices
-  def revoke_all_trusted_devices!
-    update!(trusted_devices: [])
-  end
 
   private
 

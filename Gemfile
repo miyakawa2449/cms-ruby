@@ -24,11 +24,7 @@ gem "rqrcode", "~> 2.2"
 gem "jwt", "~> 3.1"
 gem "pundit", "~> 2.3"
 
-# Background Processing
-gem "sidekiq", "~> 8.0"
-gem "sidekiq-cron", "~> 2.3"
-
-# Caching & Redis
+# Redis（rack_attackのレート制限カウンタ用・REDIS_URL設定時のみ使用。ジョブ基盤はSolid Queue）
 gem "redis", ">= 4.0.1"
 
 # AI & External APIs
@@ -46,7 +42,6 @@ gem "pg_search", "~> 2.3"
 # Security & Monitoring
 gem "rack-attack", "~> 6.6"
 gem "sentry-rails", "~> 5.15"
-gem "sentry-sidekiq", "~> 5.15"
 
 # CSS Framework & Assets
 gem "tailwindcss-rails", "~> 3.0"
@@ -67,8 +62,6 @@ gem "solid_cable"
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
-# Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
-gem "kamal", require: false
 
 # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
 gem "thruster", require: false

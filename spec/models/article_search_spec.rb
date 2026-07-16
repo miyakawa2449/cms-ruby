@@ -79,18 +79,6 @@ RSpec.describe Article, 'pg_search full-text search', type: :model do
     end
   end
 
-  describe '.search_ilike fallback' do
-    it 'performs ILIKE search' do
-      results = Article.search_ilike('Ruby')
-      expect(results).to include(ruby_article)
-    end
-
-    it 'is case insensitive' do
-      results = Article.search_ilike('ruby')
-      expect(results).to include(ruby_article)
-    end
-  end
-
   describe 'Japanese text search' do
     it 'finds articles with Japanese query' do
       results = Article.search('開発')

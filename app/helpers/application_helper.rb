@@ -2,7 +2,6 @@ module ApplicationHelper
   # 他のヘルパーモジュールをインクルード
   include MarkdownHelper
   include SectionHelper
-  include TimeHelper
   include NavigationHelper
   include GtmHelper
 

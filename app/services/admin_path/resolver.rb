@@ -1,6 +1,6 @@
 module AdminPath
   class Resolver
-    # 未設定時の無害なデフォルト。秘匿したい場合はENV(ADMIN_PATH)か
+  # 未設定時の無害なデフォルト。秘匿したい場合はENV(ADMIN_PATH)か
   # 管理画面のURL変更機能（DB履歴が優先される）で設定する
   DEFAULT_PATH = "admin"
 

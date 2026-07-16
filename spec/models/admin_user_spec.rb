@@ -38,7 +38,6 @@ RSpec.describe AdminUser, type: :model do
       before do
         admin_user.enable_two_factor!
         admin_user.generate_otp_backup_codes!
-        admin_user.trust_device!(SecureRandom.hex(32))
       end
 
       it "clears the OTP secret" do
@@ -59,11 +58,6 @@ RSpec.describe AdminUser, type: :model do
       it "clears backup codes" do
         admin_user.disable_two_factor!
         expect(admin_user.otp_backup_codes).to be_empty
-      end
-
-      it "clears trusted devices" do
-        admin_user.disable_two_factor!
-        expect(admin_user.trusted_devices).to be_empty
       end
     end
 
@@ -145,84 +139,22 @@ RSpec.describe AdminUser, type: :model do
         codes = admin_user.generate_otp_backup_codes!
         expect(admin_user.validate_and_consume_otp!(codes.first)).to be true
       end
-    end
-  end
 
-  describe "Device Trust Methods" do
-    let(:device_token) { SecureRandom.hex(32) }
+      it "sends a notification email when a backup code is used" do
+        # 旧verify画面にあった通知を実際のログイン経路に移植（S1-5d）
+        codes = admin_user.generate_otp_backup_codes!
 
-    describe "#trust_device!" do
-      it "adds a device to the trusted devices list" do
-        admin_user.trust_device!(device_token)
-        expect(admin_user.trusted_devices.size).to eq(1)
+        expect {
+          admin_user.validate_and_consume_otp!(codes.first)
+        }.to have_enqueued_mail(TwoFactorAuthMailer, :backup_code_used)
       end
 
-      it "sets the device token" do
-        admin_user.trust_device!(device_token)
-        expect(admin_user.trusted_devices.first["token"]).to eq(device_token)
-      end
+      it "does not send email for invalid codes" do
+        admin_user.generate_otp_backup_codes!
 
-      it "sets an expiration date 30 days in the future" do
-        admin_user.trust_device!(device_token)
-        expires_at = Time.parse(admin_user.trusted_devices.first["expires_at"])
-        expect(expires_at).to be_within(1.minute).of(30.days.from_now)
-      end
-
-      it "can trust multiple devices" do
-        admin_user.trust_device!(device_token)
-        admin_user.trust_device!(SecureRandom.hex(32))
-        expect(admin_user.trusted_devices.size).to eq(2)
-      end
-    end
-
-    describe "#device_trusted?" do
-      before do
-        admin_user.trust_device!(device_token)
-      end
-
-      it "returns true for a trusted device" do
-        expect(admin_user.device_trusted?(device_token)).to be true
-      end
-
-      it "returns false for an untrusted device" do
-        expect(admin_user.device_trusted?("unknown_token")).to be false
-      end
-
-      it "returns false for a blank token" do
-        expect(admin_user.device_trusted?("")).to be false
-        expect(admin_user.device_trusted?(nil)).to be false
-      end
-
-      it "returns false for an expired device" do
-        admin_user.trusted_devices.first["expires_at"] = 1.day.ago.iso8601
-        admin_user.save!
-        expect(admin_user.device_trusted?(device_token)).to be false
-      end
-    end
-
-    describe "#cleanup_expired_devices!" do
-      it "removes expired devices" do
-        admin_user.trust_device!(device_token)
-        admin_user.trusted_devices.first["expires_at"] = 1.day.ago.iso8601
-        admin_user.save!
-
-        admin_user.cleanup_expired_devices!
-        expect(admin_user.trusted_devices).to be_empty
-      end
-
-      it "keeps valid devices" do
-        admin_user.trust_device!(device_token)
-        admin_user.cleanup_expired_devices!
-        expect(admin_user.trusted_devices.size).to eq(1)
-      end
-    end
-
-    describe "#revoke_all_trusted_devices!" do
-      it "removes all trusted devices" do
-        admin_user.trust_device!(device_token)
-        admin_user.trust_device!(SecureRandom.hex(32))
-        admin_user.revoke_all_trusted_devices!
-        expect(admin_user.trusted_devices).to be_empty
+        expect {
+          admin_user.validate_and_consume_otp!("invalid-code")
+        }.not_to have_enqueued_mail(TwoFactorAuthMailer, :backup_code_used)
       end
     end
   end

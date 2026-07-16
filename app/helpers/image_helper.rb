@@ -21,42 +21,4 @@ module ImageHelper
 
     image_tag(source, options)
   end
-
-  # ActiveStorage添付ファイル用の遅延読み込み画像タグ
-  #
-  # @param attachment [ActiveStorage::Attached::One] 添付ファイル
-  # @param variant [Hash] 画像バリアントオプション（リサイズ等）
-  # @param options [Hash] image_tagに渡すオプション
-  # @return [String] imgタグのHTML、添付ファイルがない場合はnil
-  #
-  # @example バリアント指定
-  #   lazy_attachment_image(article.thumbnail, { resize_to_limit: [300, 200] }, alt: article.title)
-  #
-  def lazy_attachment_image(attachment, variant = nil, options = {})
-    return nil unless attachment&.attached?
-
-    source = variant ? attachment.variant(variant) : attachment
-    lazy_image_tag(source, options)
-  end
-
-  # プレースホルダー付きの遅延読み込み画像タグ
-  #
-  # @param source [String, ActiveStorage::Attached] 画像ソース
-  # @param placeholder [String] プレースホルダー画像のURL（オプション）
-  # @param options [Hash] image_tagに渡すオプション
-  # @return [String] imgタグのHTML
-  #
-  def lazy_image_with_placeholder(source, placeholder: nil, **options)
-    options[:loading] ||= "lazy"
-    options[:decoding] ||= "async"
-
-    # data-srcにはnoscript対応のために実際のURLを保持
-    if placeholder.present?
-      options[:src] = placeholder
-      options[:data] ||= {}
-      options[:data][:src] = url_for(source)
-    end
-
-    image_tag(placeholder.presence || source, options)
-  end
 end
