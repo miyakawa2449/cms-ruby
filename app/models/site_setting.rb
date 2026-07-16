@@ -43,10 +43,6 @@ class SiteSetting < ApplicationRecord
     SiteSettingCacheManager.clear_cache
   end
 
-  def self.preload_common_settings
-    SiteSettingCacheManager.preload_common_settings
-  end
-
   # Callbacks
   after_save :clear_settings_cache
   after_destroy :clear_settings_cache

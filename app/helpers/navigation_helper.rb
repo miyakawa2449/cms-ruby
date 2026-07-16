@@ -24,9 +24,12 @@ module NavigationHelper
     classes.join(" ").strip
   end
 
-  # ページタイトルの生成
+  # ページタイトルの生成（レイアウトの<title>で使用）
+  # ビュー側の content_for(:title) には「ページ固有部分のみ」を渡すこと。
+  # サイト名の付与はここで一元管理する（二重付与の防止）
   def page_title(title = nil, site_name = nil)
-    site_name ||= SiteSetting.site_title&.get_value || "Miyakawa Codes"
+    site_name ||= SiteSetting.site_title&.get_value.presence ||
+                  SiteSettingTypeManager.setting_config(:site_title)[:default]
 
     if title.present?
       "#{title} | #{site_name}"

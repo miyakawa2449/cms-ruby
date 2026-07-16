@@ -4,14 +4,14 @@
     <!-- Google Tag Manager -->
     <%= gtm_head_tag %>
     
-    <title><%= content_for(:title) || "宮川 剛 - シニアエンジニアのポートフォリオ" %></title>
+    <title><%= page_title(content_for(:title)) %></title>
     <% if content_for?(:meta_tags) %>
       <%= yield(:meta_tags) %>
     <% else %>
       <%= page_meta_tags %>
     <% end %>
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="宮川 剛 Portfolio">
+    <meta name="application-name" content="<%= page_title %>">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>

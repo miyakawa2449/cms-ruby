@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   admin_path = AdminPath::Resolver.current_path
+  # ルート構築時のパスを記録（AdminPathRouteReloaderが変更検知に使う）
+  AdminPathRouteReloader.active_path = admin_path
   # SEO関連
   get "/sitemap.xml", to: "sitemaps#index", defaults: { format: "xml" }
   get "/feed.rss", to: "feeds#rss", defaults: { format: "rss" }, as: :feed_rss

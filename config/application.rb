@@ -14,7 +14,11 @@ module PortfolioRb
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w[assets tasks])
+    config.autoload_lib(ignore: %w[assets tasks middleware])
+
+    # 管理画面パス変更を再起動なしで全プロセスに反映する（監査C-10）
+    require_relative "../lib/middleware/admin_path_route_reloader"
+    config.middleware.use AdminPathRouteReloader
 
     # Configuration for the application, engines, and railties goes here.
     #

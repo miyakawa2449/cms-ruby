@@ -7,8 +7,8 @@ RSpec.describe MetaTagsService do
 
   before do
     allow(SiteAssetsService).to receive(:new).and_return(assets_service)
-    allow(SiteSetting).to receive(:site_title).and_return(double(value: 'Site Title'))
-    allow(SiteSetting).to receive(:site_description).and_return(double(value: 'Site Description'))
+    allow(SiteSetting).to receive(:site_title).and_return(double(get_value: 'Site Title'))
+    allow(SiteSetting).to receive(:site_description).and_return(double(get_value: 'Site Description'))
   end
 
   it 'builds article meta tags' do

@@ -59,10 +59,8 @@ class MetaTagsService
   end
 
   def portfolio_meta_tags
-    title = SiteSetting.site_title.value.presence ||
-           "宮川 剛 - シニアエンジニアのポートフォリオ"
-    description = SiteSetting.site_description.value.presence ||
-                 "要件定義からプログラミングまで一人でできるエンジニア、宮川剛のポートフォリオサイト。20年以上の経験を活かしたシステム設計・開発を提供します。"
+    title = site_title_value
+    description = site_description_value
 
     build_meta_tags(
       title: title,
@@ -83,7 +81,7 @@ class MetaTagsService
   end
 
   def blog_top_meta_tags
-    title = "Miyakawa Codes Blog | 宮川 剛"
+    title = "Blog | #{site_title_value}"
     description = "技術情報やプロジェクト進捗を発信するブログページです。最新の技術トレンドや開発ノウハウをお届けします。"
 
     build_meta_tags(
@@ -107,7 +105,7 @@ class MetaTagsService
   def category_meta_tags(category)
     return blog_top_meta_tags unless category
 
-    title = "#{category.name} | Miyakawa Codes Blog"
+    title = "#{category.name} | #{site_title_value}"
     description = category.description.presence ||
                  "#{category.name}に関する記事一覧です。技術情報やプロジェクト進捗をお届けします。"
 
@@ -177,8 +175,8 @@ class MetaTagsService
   end
 
   def default_meta_tags
-    site_title = SiteSetting.site_title.value.presence || "宮川 剛 - シニアエンジニアのポートフォリオ"
-    site_description = SiteSetting.site_description.value.presence || "シニアエンジニアの技術発信・ポートフォリオサイト。20年以上の経験を活かしたシステム設計・開発を提供します。"
+    site_title = site_title_value
+    site_description = site_description_value
 
     {
       site: site_title,
@@ -190,9 +188,9 @@ class MetaTagsService
       canonical: @request&.original_url,
       noindex: !Rails.env.production?,
       og: {
-        site_name: "宮川 剛 - シニアエンジニアのポートフォリオ",
-        title: "宮川 剛 - シニアエンジニアのポートフォリオ",
-        description: "シニアエンジニアの技術発信・ポートフォリオサイト。20年以上の経験を活かしたシステム設計・開発を提供します。",
+        site_name: site_title,
+        title: site_title,
+        description: site_description,
         type: "website",
         url: @request&.original_url,
         image: default_og_image_url,
@@ -200,15 +198,26 @@ class MetaTagsService
       },
       twitter: {
         card: "summary_large_image",
-        site: "@miyakawa2449",  # TODO: 管理画面から設定可能にする
-        title: "宮川 剛 - シニアエンジニアのポートフォリオ",
-        description: "シニアエンジニアの技術発信・ポートフォリオサイト。20年以上の経験を活かしたシステム設計・開発を提供します。",
+        site: "@miyakawa2449",  # TODO: 管理画面から設定可能にする（S2/C-8で設定キー追加）
+        title: site_title,
+        description: site_description,
         image: default_og_image_url
       }
     }
   end
 
   private
+
+  # サイトタイトル/説明文の取得（未設定時はSETTING_TYPESのデフォルトへフォールバック）
+  def site_title_value
+    SiteSetting.site_title&.get_value.presence ||
+      SiteSettingTypeManager.setting_config(:site_title)[:default]
+  end
+
+  def site_description_value
+    SiteSetting.site_description&.get_value.presence ||
+      SiteSettingTypeManager.setting_config(:site_description)[:default]
+  end
 
   # SiteAssetsServiceへの委譲メソッド
   def safe_url_for(attachment)

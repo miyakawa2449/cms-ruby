@@ -45,6 +45,10 @@ module DatabaseImport
         update_counter_caches
       end
 
+      # insertベースのリストアはモデルのコールバック（キャッシュ無効化）を
+      # 経由しないため、旧データのキャッシュを明示的に全消去する（監査M-2）
+      Rails.cache.clear
+
       log_import_summary
 
       { success: true, imported: @imported_counts }

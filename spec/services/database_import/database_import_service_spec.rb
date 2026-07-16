@@ -45,6 +45,20 @@ RSpec.describe DatabaseImport::DatabaseImportService do
         expect(result[:imported]).to be_a(Hash)
       end
 
+      it "clears the application cache after import" do
+        # 監査M-2の回帰テスト: insertベースのリストアはモデルのコールバックを
+        # 経由しないため、キャッシュを明示的にクリアしないと旧サイト設定や
+        # 旧記事一覧が表示され続ける
+        # （test環境はnull_storeのため、実際に保存できるMemoryStoreに差し替えて検証）
+        memory_store = ActiveSupport::Cache::MemoryStore.new
+        allow(Rails).to receive(:cache).and_return(memory_store)
+        Rails.cache.write("site_settings_all", "stale-value")
+
+        described_class.new(data_json_path).call
+
+        expect(Rails.cache.exist?("site_settings_all")).to be false
+      end
+
       it "imports all model records" do
         described_class.new(data_json_path).call
 
