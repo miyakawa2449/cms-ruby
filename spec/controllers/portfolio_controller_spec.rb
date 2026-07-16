@@ -6,6 +6,9 @@ RSpec.describe PortfolioController, type: :controller do
   describe "#index" do
     before do
       allow(Article).to receive_message_chain(:joins, :where, :pluck).and_return([])
+      # Worksセクション用クエリ（並び順バグ修正で追加）のスタブ
+      # NOTE: このファイルのmessage_chainモック依存はS1-7(P5-6)で実レコードベースに書き換え予定
+      allow(Article).to receive_message_chain(:published, :joins, :where, :order, :includes, :limit, :to_a).and_return([])
     end
 
     it "assigns sections and recent articles" do

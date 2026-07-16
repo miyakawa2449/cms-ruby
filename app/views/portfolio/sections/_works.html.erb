@@ -9,17 +9,17 @@
         </p>
       </div>
       
-      <!-- プロジェクト一覧（記事ベース） -->
-      <% works_articles = Article.published.joins(:categories).where(categories: { slug: 'works' }).limit(6) %>
+      <!-- プロジェクト一覧（記事ベース。取得はコントローラ側: 公開日時の新しい順・最大6件） -->
+      <% works_articles = @works_articles.to_a %>
       <% if works_articles.any? %>
-        <% grid_class = case works_articles.count
+        <% grid_class = case works_articles.size
                         when 1 then "flex justify-center"
                         when 2 then "grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
                         else "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                         end %>
+        <% card_class = works_articles.size == 1 ? "bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 max-w-md" : "bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1" %>
         <div class="<%= grid_class %> mb-16">
           <% works_articles.each do |article| %>
-            <% card_class = works_articles.count == 1 ? "bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 max-w-md" : "bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1" %>
             <div class="<%= card_class %>">
               <% if article.thumbnail_image.attached? %>
                 <div class="h-48 bg-gradient-to-br from-blue-100 to-blue-200">

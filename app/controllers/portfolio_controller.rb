@@ -21,6 +21,16 @@ class PortfolioController < ApplicationController
         end
       end
 
+      # Worksセクションの実績記事（公開日時の新しい順・最大6件）
+      # 注意: order必須。無いと並び順がDB任せになり「ランダムに見える」バグになる
+      @works_articles = Article.published
+                               .joins(:categories)
+                               .where(categories: { slug: "works" })
+                               .order(published_at: :desc)
+                               .includes(thumbnail_image_attachment: :blob)
+                               .limit(6)
+                               .to_a
+
       # ブログの最新記事を取得（Works記事除外）
       works_article_ids = Article.joins(:categories)
                                  .where(categories: { slug: "works" })
@@ -47,6 +57,7 @@ class PortfolioController < ApplicationController
       @sections = []
       @section_data = {}
       @recent_articles = []
+      @works_articles = []
     end
   end
 end
