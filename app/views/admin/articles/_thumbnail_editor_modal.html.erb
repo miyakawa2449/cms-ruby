@@ -31,15 +31,9 @@
               <div class="flex gap-2">
                 <button type="button"
                         data-action="click->thumbnail-editor#changeAspectRatio"
-                        data-ratio="4:3"
+                        data-ratio="1.91:1"
                         class="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white">
-                  4:3（推奨）
-                </button>
-                <button type="button"
-                        data-action="click->thumbnail-editor#changeAspectRatio"
-                        data-ratio="3:2"
-                        class="px-3 py-1.5 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300">
-                  3:2
+                  OGP 1.91:1（推奨）
                 </button>
                 <button type="button"
                         data-action="click->thumbnail-editor#changeAspectRatio"
@@ -47,7 +41,14 @@
                         class="px-3 py-1.5 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300">
                   16:9
                 </button>
+                <button type="button"
+                        data-action="click->thumbnail-editor#changeAspectRatio"
+                        data-ratio="4:3"
+                        class="px-3 py-1.5 text-sm rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300">
+                  4:3（旧）
+                </button>
               </div>
+              <p class="mt-2 text-xs text-gray-500">OGP 1.91:1で切り抜くと、SNSシェア画像（OGP）とページヘッダーの両方に最適な横長画像になります。</p>
             </div>
           </div>
 

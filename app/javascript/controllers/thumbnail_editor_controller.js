@@ -15,7 +15,8 @@ export default class extends Controller {
   ]
   
   static values = {
-    aspectRatio: { type: String, default: "4:3" }
+    // デフォルトはOGP標準比率（1200x630）。サムネイル=OGP画像として使えるようにする
+    aspectRatio: { type: String, default: "1.91:1" }
   }
 
   connect() {
@@ -65,12 +66,12 @@ export default class extends Controller {
     
     this.cropperContainerTarget.innerHTML = ""
     this.cropperContainerTarget.appendChild(img)
-    
-    // 4:3のアスペクト比で初期化
+
+    // OGP標準比率（1200x630 = 1.91:1）で初期化
     this.cropper = new Cropper(img, {
       viewMode: 1,
       dragMode: 'move',
-      aspectRatio: 4 / 3,
+      aspectRatio: 1200 / 630,
       autoCropArea: 0.9,
       restore: false,
       guides: true,
@@ -178,12 +179,12 @@ export default class extends Controller {
     event.currentTarget.classList.add("bg-blue-600", "text-white")
 
     // アスペクト比を設定
-    if (ratio === "4:3") {
-      this.cropper.setAspectRatio(4 / 3)
-    } else if (ratio === "3:2") {
-      this.cropper.setAspectRatio(3 / 2)
+    if (ratio === "1.91:1") {
+      this.cropper.setAspectRatio(1200 / 630)
     } else if (ratio === "16:9") {
       this.cropper.setAspectRatio(16 / 9)
+    } else if (ratio === "4:3") {
+      this.cropper.setAspectRatio(4 / 3)
     }
   }
 
