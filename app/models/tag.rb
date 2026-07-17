@@ -14,6 +14,23 @@ class Tag < ApplicationRecord
 
   before_validation :generate_slug, if: -> { name_changed? && slug.blank? }
 
+  # タグ生成の唯一の入り口（S1-7 P1-3で一本化）。
+  # 大文字小文字を無視して既存タグを再利用し、無ければ入力の表記のまま作成する。
+  # 作成に失敗した場合はログを残してnilを返す（呼び出し側はfilter_mapで除外する想定）
+  def self.find_or_create_by_name(name)
+    normalized = name.to_s.strip
+    return nil if normalized.blank?
+
+    existing = find_by("LOWER(name) = ?", normalized.downcase)
+    return existing if existing
+
+    tag = create(name: normalized)
+    return tag if tag.persisted?
+
+    Rails.logger.warn("Tag creation failed for '#{normalized}': #{tag.errors.full_messages.join(', ')}")
+    nil
+  end
+
   def to_param
     slug
   end

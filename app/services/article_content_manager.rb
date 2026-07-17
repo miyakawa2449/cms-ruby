@@ -133,19 +133,6 @@ class ArticleContentManager
   end
 
   def find_or_create_tags(tag_names)
-    tag_names.filter_map do |name|
-      # 大文字小文字を無視して既存タグを検索
-      existing_tag = Tag.find_by("LOWER(name) = ?", name.downcase)
-      next existing_tag if existing_tag
-
-      # 新規タグ作成（エラー時はログ出力してスキップ）
-      new_tag = Tag.create(name: name)
-      if new_tag.persisted?
-        new_tag
-      else
-        Rails.logger.warn("Tag creation failed for '#{name}': #{new_tag.errors.full_messages.join(', ')}")
-        nil
-      end
-    end
+    tag_names.filter_map { |name| Tag.find_or_create_by_name(name) }
   end
 end

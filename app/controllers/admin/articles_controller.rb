@@ -87,9 +87,7 @@ class Admin::ArticlesController < Admin::BaseController
   end
 
   def setup_form_data
-    association_service = ArticleAssociationService.new(@article)
-    form_data = association_service.setup_for_form
-    @categories = form_data[:categories]
+    @categories = Category.ordered
   end
 
   def article_params
