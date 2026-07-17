@@ -1,0 +1,46 @@
+<%# 実績・作品設定 locals: form %>
+<!-- Works設定（実績・作品カテゴリ選択時のみ表示） -->
+<div class="bg-purple-50 border border-purple-200 rounded-lg p-6" id="works-settings">
+  <h3 class="text-lg font-medium text-purple-900 mb-4">実績・作品設定</h3>
+  <p class="text-sm text-purple-700 mb-4">「実績・作品」カテゴリを選択した場合の追加設定です。</p>
+
+  <div class="space-y-4">
+    <div>
+      <%= form.label :work_type, "作品タイプ", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.select :work_type,
+          [
+            ["標準記事", ""],
+            ["GitHub プロジェクト", "github"],
+            ["外部サイト・サービス", "external_url"],
+            ["内部プロジェクト", "internal"]
+          ],
+          {},
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <%= form.label :github_url, "GitHub URL", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.url_field :github_url,
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+            placeholder: "https://github.com/username/project" %>
+      </div>
+
+      <div>
+        <%= form.label :demo_url, "デモURL", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.url_field :demo_url,
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+            placeholder: "https://demo.example.com" %>
+      </div>
+    </div>
+
+    <div>
+      <%= form.label :tech_stack, "技術スタック", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.text_area :tech_stack,
+          rows: 3,
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+          placeholder: "Rails, PostgreSQL, AWS, Docker" %>
+      <p class="mt-1 text-sm text-gray-500">使用技術をカンマ区切りで入力してください。</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,90 @@
+<%# 記事情報: タイトル・スラッグ・抜粋（AI提案付き） locals: form, article %>
+<!-- タイトル -->
+<div class="bg-white shadow rounded-lg p-6">
+  <h3 class="text-lg font-medium text-gray-900 mb-4">記事情報</h3>
+
+  <div class="space-y-4">
+    <!-- タイトル with AI -->
+    <div>
+      <div class="flex items-center justify-between">
+        <%= form.label :title, "タイトル", class: "block text-sm font-medium text-gray-700" %>
+        <% if article.persisted? %>
+          <button type="button"
+                  data-action="click->ai-assistant#suggestTitle"
+                  data-ai-assistant-target="titleButton"
+                  class="inline-flex items-center px-2 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded hover:bg-purple-200 transition-colors">
+            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            AI提案
+          </button>
+        <% end %>
+      </div>
+      <%= form.text_field :title,
+          data: { ai_assistant_target: "title" },
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+          placeholder: "記事のタイトルを入力してください" %>
+      <!-- Title AI Results -->
+      <div data-ai-assistant-target="titleLoading" class="hidden mt-2">
+        <span class="text-sm text-purple-600">タイトルを提案中...</span>
+      </div>
+      <div data-ai-assistant-target="titleResults" class="mt-2"></div>
+    </div>
+
+    <!-- スラッグ with AI -->
+    <div>
+      <div class="flex items-center justify-between">
+        <%= form.label :slug, "URL スラッグ", class: "block text-sm font-medium text-gray-700" %>
+        <% if article.persisted? %>
+          <button type="button"
+                  data-action="click->ai-assistant#generateSlug"
+                  data-ai-assistant-target="slugButton"
+                  class="inline-flex items-center px-2 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded hover:bg-purple-200 transition-colors">
+            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            AI提案
+          </button>
+        <% end %>
+      </div>
+      <%= form.text_field :slug,
+          data: { ai_assistant_target: "slug" },
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+          placeholder: "article-url-slug" %>
+      <p class="mt-1 text-sm text-gray-500">URLで使用される部分です。英数字とハイフンのみ使用可能。</p>
+      <!-- Slug AI Results -->
+      <div data-ai-assistant-target="slugLoading" class="hidden mt-2">
+        <span class="text-sm text-purple-600">生成中...</span>
+      </div>
+      <div data-ai-assistant-target="slugResults" class="mt-2"></div>
+    </div>
+
+    <!-- 抜粋 with AI -->
+    <div>
+      <div class="flex items-center justify-between">
+        <%= form.label :excerpt, "抜粋", class: "block text-sm font-medium text-gray-700" %>
+        <% if article.persisted? %>
+          <button type="button"
+                  data-action="click->ai-assistant#generateSummary"
+                  data-ai-assistant-target="summaryButton"
+                  class="inline-flex items-center px-2 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded hover:bg-purple-200 transition-colors">
+            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            AI要約
+          </button>
+        <% end %>
+      </div>
+      <%= form.text_area :excerpt,
+          rows: 3,
+          data: { ai_assistant_target: "excerpt" },
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+          placeholder: "記事の概要を簡潔に入力してください" %>
+      <!-- Summary AI Results -->
+      <div data-ai-assistant-target="summaryLoading" class="hidden mt-2">
+        <span class="text-sm text-purple-600">要約を生成中...</span>
+      </div>
+      <div data-ai-assistant-target="summaryResults" class="mt-2"></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,61 @@
+<%# SEO設定（AI生成付き） locals: form, article %>
+<!-- SEO設定 with AI -->
+<div class="bg-white shadow rounded-lg p-6">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-medium text-gray-900">SEO設定</h3>
+    <% if article.persisted? %>
+      <button type="button"
+              data-action="click->ai-assistant#generateSeoMeta"
+              data-ai-assistant-target="seoButton"
+              class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-purple-700 bg-purple-100 rounded hover:bg-purple-200 transition-colors">
+        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+        AI生成
+      </button>
+    <% end %>
+  </div>
+
+  <!-- SEO AI Loading/Results -->
+  <div data-ai-assistant-target="seoLoading" class="hidden mb-4">
+    <span class="text-sm text-purple-600">SEOメタを生成中...</span>
+  </div>
+  <div data-ai-assistant-target="seoResults" class="mb-4"></div>
+
+  <div class="space-y-4">
+    <div>
+      <%= form.label :meta_description, "メタディスクリプション", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.text_area :meta_description,
+          rows: 2,
+          data: { ai_assistant_target: "metaDescription" },
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+          placeholder: "検索結果に表示される説明文（160文字以内推奨）" %>
+    </div>
+
+    <div>
+      <%= form.label :meta_keywords, "メタキーワード", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.text_field :meta_keywords,
+          data: { ai_assistant_target: "metaKeywords" },
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+          placeholder: "キーワード1, キーワード2, キーワード3" %>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <%= form.label :og_title, "OGタイトル", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :og_title,
+            data: { ai_assistant_target: "ogTitle" },
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+            placeholder: "SNSシェア用タイトル" %>
+      </div>
+
+      <div>
+        <%= form.label :og_description, "OG説明文", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :og_description,
+            data: { ai_assistant_target: "ogDescription" },
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+            placeholder: "SNSシェア用説明文" %>
+      </div>
+    </div>
+  </div>
+</div>

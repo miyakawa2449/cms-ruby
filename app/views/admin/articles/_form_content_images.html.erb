@@ -1,0 +1,51 @@
+<%# 本文内画像アップロード（トリミング付き） locals: article %>
+<!-- 本文内画像アップロード（トリミング機能付き） -->
+<div class="bg-blue-50 border border-blue-200 rounded-lg p-6"
+     data-controller="content-image-editor"
+     data-content-image-editor-article-id-value="<%= article.id || 'new' %>"
+     data-content-image-editor-upload-url-value="<%= article.persisted? ? admin_article_images_path(article_id: article.id) : '#' %>">
+  <h3 class="text-lg font-medium text-blue-900 mb-4">本文内画像アップロード</h3>
+  <p class="text-sm text-blue-700 mb-4">
+    画像をアップロードして、本文に挿入できます。<br>
+    <span class="text-blue-600">800x600px（4:3）にトリミングして最適化されます。</span>
+  </p>
+
+  <% if article.persisted? %>
+    <div class="space-y-4">
+      <!-- ファイル選択ボタン -->
+      <div>
+        <button type="button"
+                data-action="click->content-image-editor#openFileDialog"
+                class="w-full bg-blue-600 py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          <span class="flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            画像を選択してトリミング
+          </span>
+        </button>
+        <!-- 非表示のファイル入力 -->
+        <input type="file"
+               accept="image/jpeg,image/png,image/gif,image/webp"
+               data-content-image-editor-target="fileInput"
+               data-action="change->content-image-editor#selectFile"
+               class="hidden">
+      </div>
+
+      <div class="text-xs text-gray-600 space-y-1">
+        <p>出力サイズ: 800x600px（4:3固定）</p>
+        <p>対応形式: JPEG, PNG, GIF, WebP</p>
+        <p>最大ファイルサイズ: 10MB</p>
+      </div>
+    </div>
+
+    <!-- トリミングモーダル -->
+    <%= render 'content_image_editor_modal' %>
+  <% else %>
+    <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+      <p class="text-sm text-yellow-800">
+        画像をアップロードするには、まず記事を保存してください。
+      </p>
+    </div>
+  <% end %>
+</div>
