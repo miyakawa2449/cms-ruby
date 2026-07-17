@@ -40,6 +40,38 @@ RSpec.describe ArticlePublishingManager do
 
       expect(article.reload.published_at).to eq(original_time)
     end
+
+    it '再公開しても元の公開日時を維持する（現在時刻で上書きしない）' do
+      original_time = Time.zone.local(2026, 1, 5, 9, 0, 0)
+      article = build_article(status: 'draft')
+      manager = described_class.new(article)
+      manager.publish!(published_at: original_time)
+      manager.unpublish!
+
+      manager.publish!
+
+      expect(article.reload.status).to eq('published')
+      expect(article.published_at).to eq(original_time)
+    end
+
+    it '初回公開時はpublished_atが現在時刻になる' do
+      travel_to Time.zone.local(2026, 7, 17, 12, 0, 0) do
+        article = build_article(status: 'draft', published_at: nil)
+
+        described_class.new(article).publish!
+
+        expect(article.reload.published_at).to eq(Time.zone.local(2026, 7, 17, 12, 0, 0))
+      end
+    end
+
+    it '明示的にpublished_atを指定した場合はそれを優先する' do
+      article = build_article(status: 'draft', published_at: 1.month.ago)
+      specified = Time.zone.local(2026, 2, 1, 8, 0, 0)
+
+      described_class.new(article).publish!(published_at: specified)
+
+      expect(article.reload.published_at).to eq(specified)
+    end
   end
 
   describe 'コントローラ向け結果ハッシュ版（旧ArticlePublishingServiceの置き換え）' do

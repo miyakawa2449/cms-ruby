@@ -7,9 +7,10 @@ class ArticlePublishingManager
   end
 
   # Publishing status management
-  def publish!(published_at: Time.current)
+  # published_at の優先順: 明示指定 > 既存値（再公開時の温存） > 現在時刻（初回公開）
+  def publish!(published_at: nil)
     @article.status = "published"
-    @article.published_at = published_at
+    @article.published_at = published_at || @article.published_at || Time.current
     save_article
   end
 
