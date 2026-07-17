@@ -25,7 +25,7 @@ RSpec.describe PortfolioController, type: :controller do
     it "applies search when query is present" do
       allow(Section).to receive_message_chain(:visible, :ordered, :preload).and_return([])
       recent_relation = double("RecentRelation")
-      allow(recent_relation).to receive(:search_by_content).with("ruby").and_return([:hit])
+      allow(recent_relation).to receive(:search).with("ruby").and_return([:hit])
       allow(Article).to receive_message_chain(:published, :includes, :where, :not, :recent, :limit).and_return(recent_relation)
 
       get :index, params: { search: "ruby" }

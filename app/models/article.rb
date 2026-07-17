@@ -54,9 +54,15 @@ class Article < ApplicationRecord
     return all if tag_id.blank?
     joins(:article_tags).where(article_tags: { tag_id: tag_id })
   }
-  scope :search_by_content, ->(query) { where("title ILIKE ? OR content ILIKE ? OR excerpt ILIKE ?", "%#{query}%", "%#{query}%", "%#{query}%") }
+  # 管理画面専用の検索（S1-7 P1-1で用途を限定）。
+  # 管理者は「タイトルの一部を正確に入力して自分の記事を探す」ため、
+  # あいまい検索ではなく確実な部分一致（ILIKE）を維持する。公開側は :search を使うこと
+  scope :search_by_content, ->(query) {
+    return all if query.blank?
+    where("title ILIKE ? OR content ILIKE ? OR excerpt ILIKE ?", "%#{query}%", "%#{query}%", "%#{query}%")
+  }
 
-  # 検索機能用スコープ（Phase 4.5 - pg_search full-text search）
+  # 公開側の検索スコープ（Phase 4.5 - pg_search full-text search）
   # Uses trigram-based search for Japanese text support
   scope :search, ->(query) {
     return all if query.blank?

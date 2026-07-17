@@ -40,9 +40,9 @@ class PortfolioController < ApplicationController
                               .recent
                               .limit(3)
 
-    # 検索機能追加
+    # 検索機能追加（公開側はpg_searchの全文検索に統一。S1-7 P1-1）
     if params[:search].present?
-      @recent_articles = @recent_articles.search_by_content(params[:search])
+      @recent_articles = @recent_articles.search(params[:search])
       @search_query = params[:search]
     end
   end

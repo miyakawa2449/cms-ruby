@@ -11,7 +11,8 @@ class Api::V1::ArticlesController < Api::V1::BaseController
     # フィルタリング
     @articles = @articles.by_category(params[:category_id]) if params[:category_id].present?
     @articles = @articles.by_tag(params[:tag_id]) if params[:tag_id].present?
-    @articles = @articles.search_by_content(params[:search]) if params[:search].present?
+    # 公開APIの検索はpg_searchの全文検索に統一（S1-7 P1-1）
+    @articles = @articles.search(params[:search]) if params[:search].present?
 
     # ソート
     @articles = case params[:sort]
