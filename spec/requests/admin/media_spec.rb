@@ -9,8 +9,7 @@ RSpec.describe 'Admin::Media', type: :request do
   end
 
   it 'renders index and json' do
-    media = build(:media_metadata)
-    media.save!(validate: false)
+    media = create(:media_metadata)
 
     get admin_media_path
     expect(response).to have_http_status(:success)
@@ -20,8 +19,7 @@ RSpec.describe 'Admin::Media', type: :request do
   end
 
   it 'shows media in json' do
-    media = build(:media_metadata)
-    media.save!(validate: false)
+    media = create(:media_metadata)
 
     get admin_medium_path(media, format: :json)
 
@@ -41,8 +39,7 @@ RSpec.describe 'Admin::Media', type: :request do
   it 'updates media metadata' do
     allow_any_instance_of(MediaMetadata).to receive(:validate_blob_content_type).and_return(true)
     allow_any_instance_of(MediaMetadata).to receive(:validate_blob_file_size).and_return(true)
-    media = build(:media_metadata)
-    media.save!(validate: false)
+    media = create(:media_metadata)
 
     patch admin_medium_path(media), params: { media_metadata: { alt_text: 'Alt' } }, as: :json
 
@@ -51,8 +48,7 @@ RSpec.describe 'Admin::Media', type: :request do
   end
 
   it 'prevents deletion when used' do
-    media = build(:media_metadata, usage_count: 2)
-    media.save!(validate: false)
+    media = create(:media_metadata, usage_count: 2)
 
     delete admin_medium_path(media, format: :json)
 
@@ -60,8 +56,7 @@ RSpec.describe 'Admin::Media', type: :request do
   end
 
   it 'deletes unused media' do
-    media = build(:media_metadata, usage_count: 0)
-    media.save!(validate: false)
+    media = create(:media_metadata, usage_count: 0)
 
     allow(media.blob).to receive(:purge_later)
 
@@ -71,8 +66,7 @@ RSpec.describe 'Admin::Media', type: :request do
   end
 
   it 'returns usage list' do
-    media = build(:media_metadata)
-    media.save!(validate: false)
+    media = create(:media_metadata)
     article = create(:article, :published, content: "blob #{media.blob.key}")
 
     get usage_admin_medium_path(media, format: :json)
@@ -82,8 +76,7 @@ RSpec.describe 'Admin::Media', type: :request do
   end
 
   it 'handles edit_image without upload' do
-    media = build(:media_metadata)
-    media.save!(validate: false)
+    media = create(:media_metadata)
 
     post edit_image_admin_medium_path(media), params: { save_as_new: 'true' }
 
@@ -91,8 +84,7 @@ RSpec.describe 'Admin::Media', type: :request do
   end
 
   it 'creates new media on edit_image when save_as_new is true' do
-    media = build(:media_metadata)
-    media.save!(validate: false)
+    media = create(:media_metadata)
     file = fixture_file_upload('spec/fixtures/files/test_image.jpg', 'image/jpeg')
 
     post edit_image_admin_medium_path(media), params: { save_as_new: 'true', image: file }, as: :multipart
@@ -103,8 +95,7 @@ RSpec.describe 'Admin::Media', type: :request do
   end
 
   it 'updates existing media on edit_image when save_as_new is false' do
-    media = build(:media_metadata)
-    media.save!(validate: false)
+    media = create(:media_metadata)
     file = fixture_file_upload('spec/fixtures/files/test_image.jpg', 'image/jpeg')
 
     post edit_image_admin_medium_path(media), params: { save_as_new: 'false', image: file }, as: :multipart

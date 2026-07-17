@@ -16,10 +16,10 @@ RSpec.describe MediaMetadata, type: :model do
       MediaMetadata.destroy_all
     end
 
-    let!(:old_media) { build(:media_metadata, created_at: 2.days.ago).tap { _1.save!(validate: false) } }
-    let!(:used_media) { build(:media_metadata, usage_count: 3, created_at: 1.day.ago).tap { _1.save!(validate: false) } }
-    let!(:unused_media) { build(:media_metadata, usage_count: 0, created_at: 1.day.ago).tap { _1.save!(validate: false) } }
-    let!(:new_media) { build(:media_metadata, created_at: 1.hour.ago).tap { _1.save!(validate: false) } }
+    let!(:old_media) { create(:media_metadata, created_at: 2.days.ago) }
+    let!(:used_media) { create(:media_metadata, usage_count: 3, created_at: 1.day.ago) }
+    let!(:unused_media) { create(:media_metadata, usage_count: 0, created_at: 1.day.ago) }
+    let!(:new_media) { create(:media_metadata, created_at: 1.hour.ago) }
 
     describe '.used' do
       it '使用中の画像のみを返す' do
@@ -45,8 +45,7 @@ RSpec.describe MediaMetadata, type: :model do
 
   describe '#track_usage' do
     let(:metadata) do
-      record = build(:media_metadata, usage_count: 0)
-      record.save!(validate: false)
+      record = create(:media_metadata, usage_count: 0)
       record
     end
 
@@ -66,8 +65,7 @@ RSpec.describe MediaMetadata, type: :model do
 
   describe '#untrack_usage' do
     let(:metadata) do
-      record = build(:media_metadata, usage_count: 2)
-      record.save!(validate: false)
+      record = create(:media_metadata, usage_count: 2)
       record
     end
 
@@ -88,23 +86,19 @@ RSpec.describe MediaMetadata, type: :model do
 
   describe '#used?' do
     it '使用中の場合trueを返す' do
-      metadata = build(:media_metadata, usage_count: 1)
-      metadata.save!(validate: false)
+      metadata = create(:media_metadata, usage_count: 1)
       expect(metadata.used?).to be true
     end
 
     it '未使用の場合falseを返す' do
-      metadata = build(:media_metadata, usage_count: 0)
-      metadata.save!(validate: false)
+      metadata = create(:media_metadata, usage_count: 0)
       expect(metadata.used?).to be false
     end
   end
 
   describe '#filename' do
     it 'blobのファイル名を返す' do
-      blob = create(:active_storage_blob, filename: 'test_image.jpg')
-      metadata = build(:media_metadata, blob: blob)
-      metadata.save!(validate: false)
+      metadata = create(:media_metadata)
 
       expect(metadata.filename).to eq('test_image.jpg')
     end
@@ -112,8 +106,7 @@ RSpec.describe MediaMetadata, type: :model do
 
   describe '#url' do
     it 'blobのURLを返す' do
-      metadata = build(:media_metadata)
-      metadata.save!(validate: false)
+      metadata = create(:media_metadata)
       expect(metadata.url).to be_present
     end
   end
@@ -127,21 +120,19 @@ RSpec.describe MediaMetadata, type: :model do
 
   describe '#dimensions' do
     it '画像サイズを文字列で返す' do
-      metadata = build(:media_metadata, width: 1920, height: 1080)
-      metadata.save!(validate: false)
+      metadata = create(:media_metadata, width: 1920, height: 1080)
       expect(metadata.dimensions).to eq('1920x1080')
     end
 
     it 'サイズが不明な場合は「不明」を返す' do
-      metadata = build(:media_metadata, width: nil, height: nil)
-      metadata.save!(validate: false)
+      metadata = create(:media_metadata, width: nil, height: nil)
       expect(metadata.dimensions).to eq('不明')
     end
   end
 
   # S1-7 P2-2: 旧実装（全公開記事のRuby走査）をSQL化
   describe '#articles_using' do
-    let(:media) { build(:media_metadata).tap { _1.save!(validate: false) } }
+    let(:media) { create(:media_metadata) }
 
     it '本文にblob keyを含む公開記事のみ返す' do
       using_article = create(:article, :published, content: "画像あり ![img](/rails/blobs/#{media.blob.key})")
