@@ -2,7 +2,8 @@
 
 module Admin
   # Media library management controller
-  # Handles image uploads, listing, editing, and deletion
+  # 一覧フィルタはMediaMetadata.filtered、編集保存はMedia::ImageEditService、
+  # JSON整形はMediaMetadataSerializerに委譲する（S1-7 P2-2で分割）
   class MediaController < BaseController
     before_action :set_media, only: [ :show, :update, :destroy, :edit_image, :usage ]
 
@@ -21,7 +22,7 @@ module Admin
     def show
       respond_to do |format|
         format.html
-        format.json { render json: { success: true, data: media_data(@media) } }
+        format.json { render json: { success: true, data: MediaMetadataSerializer.new(@media).serializable_hash } }
       end
     end
 
@@ -55,7 +56,7 @@ module Admin
             flash[:notice] = "画像情報を更新しました"
             redirect_to admin_media_path
           end
-          format.json { render json: { success: true, data: media_data(@media) } }
+          format.json { render json: { success: true, data: MediaMetadataSerializer.new(@media).serializable_hash } }
         end
       else
         respond_to do |format|
@@ -96,12 +97,22 @@ module Admin
 
     # POST /admin/media/:id/edit_image
     def edit_image
-      save_edited_image
+      result = Media::ImageEditService.new(
+        @media,
+        params[:image],
+        save_as_new: params[:save_as_new] == "true"
+      ).call
+
+      if result[:success]
+        render json: result
+      else
+        render json: result, status: :unprocessable_entity
+      end
     end
 
     # GET /admin/media/:id/usage
     def usage
-      articles = find_articles_using_media(@media)
+      articles = @media.articles_using
 
       respond_to do |format|
         format.json do
@@ -118,101 +129,6 @@ module Admin
 
     private
 
-    def save_edited_image
-      save_as_new = params[:save_as_new] == "true"
-      uploaded_file = params[:image]
-
-      unless uploaded_file
-        render json: { success: false, error: "No image provided" }, status: :unprocessable_entity
-        return
-      end
-
-      if save_as_new
-        create_new_media(uploaded_file)
-      else
-        update_existing_media(uploaded_file)
-      end
-    rescue => e
-      Rails.logger.error "Edit image error: #{e.message}"
-      Rails.logger.error e.backtrace.join("\n")
-      render json: { success: false, error: e.message }, status: :unprocessable_entity
-    end
-
-    def create_new_media(uploaded_file)
-      new_blob = ActiveStorage::Blob.create_and_upload!(
-        io: uploaded_file,
-        filename: generate_edited_filename(@media.filename),
-        content_type: uploaded_file.content_type || "image/jpeg"
-      )
-
-      new_metadata = MediaMetadata.create!(
-        blob: new_blob,
-        mime_type: new_blob.content_type,
-        file_size: new_blob.byte_size,
-        alt_text: @media.alt_text
-      )
-
-      # Analyze for dimensions
-      analyze_and_update_dimensions(new_blob, new_metadata)
-
-      render json: {
-        success: true,
-        data: {
-          id: new_metadata.id,
-          filename: new_blob.filename.to_s,
-          message: "新しい画像として保存しました"
-        }
-      }
-    end
-
-    def update_existing_media(uploaded_file)
-      old_blob = @media.blob
-
-      new_blob = ActiveStorage::Blob.create_and_upload!(
-        io: uploaded_file,
-        filename: @media.filename,
-        content_type: uploaded_file.content_type || @media.mime_type
-      )
-
-      @media.update!(
-        blob: new_blob,
-        mime_type: new_blob.content_type,
-        file_size: new_blob.byte_size
-      )
-
-      # Analyze for dimensions
-      analyze_and_update_dimensions(new_blob, @media)
-
-      # Delete old blob
-      old_blob.purge_later if old_blob
-
-      render json: {
-        success: true,
-        data: {
-          id: @media.id,
-          filename: new_blob.filename.to_s,
-          message: "画像を上書き保存しました"
-        }
-      }
-    end
-
-    def analyze_and_update_dimensions(blob, metadata)
-      blob.analyze unless blob.analyzed?
-
-      if blob.metadata[:width] && blob.metadata[:height]
-        metadata.update(
-          width: blob.metadata[:width],
-          height: blob.metadata[:height]
-        )
-      end
-    end
-
-    def generate_edited_filename(original)
-      extension = File.extname(original)
-      basename = File.basename(original, extension)
-      "#{basename}_edited_#{Time.current.to_i}#{extension}"
-    end
-
     def set_media
       @media = MediaMetadata.find(params[:id])
     end
@@ -226,52 +142,21 @@ module Admin
     end
 
     def filtered_media
-      media = MediaMetadata.includes(:blob).recent
-
-      # Search by filename
-      media = media.search(params[:q]) if params[:q].present?
-
-      # Filter by usage
-      case params.dig(:filter, :usage)
-      when "used"
-        media = media.used
-      when "unused"
-        media = media.unused
-      end
-
-      # Filter by mime type
-      media = media.by_mime_type(params.dig(:filter, :mime_type)) if params.dig(:filter, :mime_type).present?
-
-      # Filter by date range
-      if params.dig(:filter, :date_from).present? && params.dig(:filter, :date_to).present?
-        media = media.created_between(
-          Date.parse(params.dig(:filter, :date_from)).beginning_of_day,
-          Date.parse(params.dig(:filter, :date_to)).end_of_day
-        )
-      end
-
-      # Sort
-      case params[:sort]
-      when "size_asc"
-        media = media.by_size(:asc)
-      when "size_desc"
-        media = media.by_size(:desc)
-      when "name_asc"
-        media = media.joins(:blob).order("active_storage_blobs.filename ASC")
-      when "name_desc"
-        media = media.joins(:blob).order("active_storage_blobs.filename DESC")
-      else
-        media = media.recent
-      end
-
-      media
+      MediaMetadata.filtered(
+        q: params[:q],
+        usage: params.dig(:filter, :usage),
+        mime_type: params.dig(:filter, :mime_type),
+        date_from: params.dig(:filter, :date_from),
+        date_to: params.dig(:filter, :date_to),
+        sort: params[:sort]
+      )
     end
 
     def media_json_response
       {
         success: true,
         data: {
-          media: @media.map { |m| media_data(m) },
+          media: MediaMetadataSerializer.collection(@media),
           meta: {
             current_page: @media.current_page,
             total_pages: @media.total_pages,
@@ -280,31 +165,6 @@ module Admin
           }
         }
       }
-    end
-
-    def media_data(media)
-      {
-        id: media.id,
-        filename: media.filename,
-        url: media.url,
-        thumbnail_url: media.variant_url(:thumb),
-        alt_text: media.alt_text,
-        width: media.width,
-        height: media.height,
-        file_size: media.file_size,
-        human_file_size: media.human_file_size,
-        mime_type: media.mime_type,
-        usage_count: media.usage_count,
-        created_at: media.created_at.iso8601,
-        dimensions: media.dimensions
-      }
-    end
-
-    def find_articles_using_media(media)
-      # Find articles that reference this media's blob
-      Article.published.select do |article|
-        article.content.to_s.include?(media.blob.key)
-      end
     end
 
     def article_summary(article)

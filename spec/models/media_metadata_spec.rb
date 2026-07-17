@@ -138,4 +138,17 @@ RSpec.describe MediaMetadata, type: :model do
       expect(metadata.dimensions).to eq('不明')
     end
   end
+
+  # S1-7 P2-2: 旧実装（全公開記事のRuby走査）をSQL化
+  describe '#articles_using' do
+    let(:media) { build(:media_metadata).tap { _1.save!(validate: false) } }
+
+    it '本文にblob keyを含む公開記事のみ返す' do
+      using_article = create(:article, :published, content: "画像あり ![img](/rails/blobs/#{media.blob.key})")
+      create(:article, :published, content: '画像なしの記事')
+      create(:article, :draft, content: "下書き ![img](/rails/blobs/#{media.blob.key})")
+
+      expect(media.articles_using).to contain_exactly(using_article)
+    end
+  end
 end

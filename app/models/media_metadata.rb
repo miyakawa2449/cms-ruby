@@ -19,6 +19,37 @@ class MediaMetadata < ApplicationRecord
   scope :search, ->(query) {
     joins(:blob).where("active_storage_blobs.filename LIKE ?", "%#{sanitize_sql_like(query)}%")
   }
+  scope :by_filename, ->(direction = :asc) {
+    joins(:blob).order("active_storage_blobs.filename #{direction == :desc ? 'DESC' : 'ASC'}")
+  }
+
+  # 管理画面一覧のフィルタ・並び替え（S1-7 P2-2でコントローラのif分岐からスコープ合成へ）
+  def self.filtered(q: nil, usage: nil, mime_type: nil, date_from: nil, date_to: nil, sort: nil)
+    media = includes(:blob).recent
+    media = media.search(q) if q.present?
+
+    case usage
+    when "used" then media = media.used
+    when "unused" then media = media.unused
+    end
+
+    media = media.by_mime_type(mime_type) if mime_type.present?
+
+    if date_from.present? && date_to.present?
+      media = media.created_between(
+        Date.parse(date_from).beginning_of_day,
+        Date.parse(date_to).end_of_day
+      )
+    end
+
+    case sort
+    when "size_asc" then media.by_size(:asc)
+    when "size_desc" then media.by_size(:desc)
+    when "name_asc" then media.by_filename(:asc)
+    when "name_desc" then media.by_filename(:desc)
+    else media.recent
+    end
+  end
 
   # Track usage
   def track_usage
@@ -33,6 +64,14 @@ class MediaMetadata < ApplicationRecord
 
   def used?
     usage_count > 0
+  end
+
+  # この画像（blob key）を本文で参照している公開記事。
+  # 旧実装は全公開記事をRubyで走査していた（S1-7 P2-2でSQL化）
+  def articles_using
+    Article.published.where(
+      "content LIKE ?", "%#{ActiveRecord::Base.sanitize_sql_like(blob.key)}%"
+    )
   end
 
   # Blob delegations
