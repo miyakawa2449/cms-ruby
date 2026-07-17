@@ -17,7 +17,12 @@
 > - P1-6: ArticlePublishingManagerに統合（Service削除、can_*/analytics系90行削除、unpublishはpublished_at温存で統一）。Publishableはvisibleスコープのみに縮小し、Sectionの`published?`は実態どおり`is_visible?`に置換
 > - P2-1: ArticleContentManager/ArticleMetaManagerを削除（-308行）。実使用分（to_param/slug生成/tech_stack_list/tag_names）はArticle本体へ移設。og_title/og_descriptionのdelegateフォールバックを廃止し、編集フォームへの焼き込み（監査M-12）を解消（公開ページのOGP出力はMetaTagsServiceのフォールバックで不変、APIはシリアライザで互換維持）
 > - 軽微な挙動変化: 管理画面の記事詳細でOGタイトル/説明が「未設定なら表示しない」正しい挙動に。API og_descriptionの最終フォールバック（全項目空のときの本文160字生成）は廃止しexcerptまでに
-> 次は第4弾（P3-3 記事カードパーシャル統合 → P3-7 フォーム分割 → P2-2 MediaController分割）。P3-3では**ブログ一覧カードデザイン見直しの約束**（現状分析→案提示→剛さん選択→実装）を先に実施すること。
+> **2026-07-17 第4弾完了**: P3-3 + P3-7 + P2-2を実施（push済み・未デプロイ）。
+> - P3-3: カードデザインは剛さん選択で「1カラム継続・画像1.91:1」。shared/_article_card（:large/:compact）に統合、card_image（OGP→サムネイル解決）、reading_time_minutes（「約0分」整数除算バグ修正・トップの「5分で読める」ハードコード解消）、plain_text_excerpt（カード抜粋の全文Markdownレンダリング廃止）
+> - 副産物: トリミングUIの位置ずれ修正（9831fff。旧4:3前提の中央切り出しが原因。選択範囲=保存画像方式に。**既存のずれた画像は再トリミングが必要**）
+> - P3-7: 記事フォーム520行→本体36行+セクション別10パーシャル
+> - P2-2: MediaController 319行→Media::ImageEditService＋MediaMetadata.filtered（スコープ合成）＋MediaMetadataSerializer。find_articles_using_mediaの全記事Ruby走査をLIKE検索にSQL化（MediaMetadata#articles_using）
+> 次は第5弾（P2-3 SiteSetting統合 + P3-8 MarkdownRendererサービス化〔XSS回帰テスト必須・独立コミット〕 + P5-3〜P5-6）。残りの要確認: ③article_image_upload_controller.jsの要否（P4-2）④本番DBのfooterセクション有無（P3-5）。
 > - P0-4は剛さんの判断で「削除ではなく計測を実装」: SecurityEventテーブル新設（要マイグレーション）+ SecurityLoggerのDB永続化 + CSRFフック + Rack::Attackのblocklist/throttle区別記録 + 90日パージ（recurring.yml）
 > - P0-4の副産物としてContactsControllerの `protect_from_forgery` 再宣言がHTML POSTのCSRF検証を無効化していた穴を発見・修正（JSONもトークン必須に統一。正規クライアントはX-CSRF-Token送信済みのため影響なし）
 > - P0-5の副産物: libvips不在だとActive Storageの画像解析が黙って空になるため、Mac（brew install vips）とCI（libvips42）に導入。本番Dockerイメージは元々libvipsあり
