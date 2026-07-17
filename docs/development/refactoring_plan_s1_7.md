@@ -22,7 +22,15 @@
 > - 副産物: トリミングUIの位置ずれ修正（9831fff。旧4:3前提の中央切り出しが原因。選択範囲=保存画像方式に。**既存のずれた画像は再トリミングが必要**）
 > - P3-7: 記事フォーム520行→本体36行+セクション別10パーシャル
 > - P2-2: MediaController 319行→Media::ImageEditService＋MediaMetadata.filtered（スコープ合成）＋MediaMetadataSerializer。find_articles_using_mediaの全記事Ruby走査をLIKE検索にSQL化（MediaMetadata#articles_using）
-> 次は第5弾（P2-3 SiteSetting統合 + P3-8 MarkdownRendererサービス化〔XSS回帰テスト必須・独立コミット〕 + P5-3〜P5-6）。残りの要確認: ③article_image_upload_controller.jsの要否（P4-2）④本番DBのfooterセクション有無（P3-5）。
+> **2026-07-18 第5弾を実施**（剛さん回答: ③旧JS削除OK④本番にfooterセクション無し→削除OK）:
+> - P4-2/P3-5: 旧画像アップロードJS・render元ゼロのフッターパーシャル・.backupファイルを削除
+> - **CI修復（重要）**: package-lock.json削除（7/16）以降、全CIが`npm ci`で失敗していたのを発見。rspecジョブをyarn化し、minitest残骸のtest/system-testジョブを削除（P5-8）。さらにその失敗に隠れていた「カバレッジのファイル単位70%割れ」を、未テスト領域へのspec追加37件（管理URL変更・2FA有効化/無効化・パスキー通知メール・DBリストア・GTMヘルパー等）+rakeタスク除外で解消。admin記事一覧のクエリ予算はSecurityEvent記録分を踏まえ16に調整
+> - P5-7: .rspecの--fail-fast撤去+spec_helper推奨設定有効化／P5-3: Blob#image?グローバルスタブ撤去／P5-4: メディアspecのvalidate:false全廃／P5-5: backupsspecの不要スタブ削除+Dashboardspec追加
+> - P2-3: SiteSetting 3Manager統合（Type/Valueをモデルへ吸収、`update_value`/`get_value`/`default_for`。CacheManagerのみ残置）
+> - P3-8: MarkdownRendererサービス化（設定3重複解消・スレッド毎メモ化・OGPカード生成はビュー層からブロック注入で逆流解消・**XSS回帰テスト新設**）
+> - P3-2: タグ一覧の過剰includes削除／P2-4/P2-5: conventions.mdにエラーハンドリング2原則とサービス命名規約を明文化
+>
+> **S1-7の残り（次回）**: P5-6（restore_service_specのFileスタブ・receive_message_chain削減）、P2-6（バックアップ改善: 基底クラス・Backup::Error階層・リストアchecksum検証・確認トークン←挙動追加のため要承認）、P3-6（パンくず・バッジ・統計カードのパーシャル化）。P4-3（ai_assistant.js 620行の分割）はJSテスト基盤が無くリスク>効果のため**S1-7では見送り推奨**（S2のフロント整備時に実施）。P3-4/P3-9はS2連携。
 > - P0-4は剛さんの判断で「削除ではなく計測を実装」: SecurityEventテーブル新設（要マイグレーション）+ SecurityLoggerのDB永続化 + CSRFフック + Rack::Attackのblocklist/throttle区別記録 + 90日パージ（recurring.yml）
 > - P0-4の副産物としてContactsControllerの `protect_from_forgery` 再宣言がHTML POSTのCSRF検証を無効化していた穴を発見・修正（JSONもトークン必須に統一。正規クライアントはX-CSRF-Token送信済みのため影響なし）
 > - P0-5の副産物: libvips不在だとActive Storageの画像解析が黙って空になるため、Mac（brew install vips）とCI（libvips42）に導入。本番Dockerイメージは元々libvipsあり
