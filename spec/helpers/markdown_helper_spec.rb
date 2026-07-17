@@ -44,7 +44,8 @@ RSpec.describe MarkdownHelper, type: :helper do
     it "replaces isolated URL with OGP card on success" do
       result = instance_double("OgpResult", success?: true, data: { title: "Title" })
       allow(OgpFetcherService).to receive(:new).and_return(instance_double(OgpFetcherService, fetch: result))
-      allow(ApplicationController).to receive(:render).and_return("<div>OGP</div>")
+      # カードHTMLの生成はビュー層（helperのrender）が担当する（S1-7 P3-8）
+      allow(helper).to receive(:render).and_return("<div>OGP</div>")
 
       html = helper.markdown_with_ogp_cards("https://example.com")
 
