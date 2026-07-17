@@ -47,6 +47,9 @@ RSpec.describe "N+1 query checks", type: :request do
     query_count = count_queries { get admin_articles_path }
 
     expect(response).to have_http_status(:success)
-    expect(query_count).to be <= 14
+    # 16の内訳: レコード数に比例しない固定分が大半。
+    # +1はS1-7 P0-4のSecurityEvent記録（request specのsign_inは毎リクエスト認証イベントを
+    # 発火するため。本番はセッション認証(fetch)なのでログイン時のみ記録される）
+    expect(query_count).to be <= 16
   end
 end
