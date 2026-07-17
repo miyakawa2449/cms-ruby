@@ -73,6 +73,18 @@ RSpec.describe Media::UploadService do
     end
   end
 
+  describe 'アップロード中の例外処理' do
+    it 'メタデータ作成に失敗したファイルはfailedに入り他の処理を止めない' do
+      allow(MediaMetadata).to receive(:create!).and_raise(ActiveRecord::RecordInvalid)
+
+      result = described_class.new([ valid_image ]).call
+
+      expect(result[:uploaded]).to be_empty
+      expect(result[:failed].count).to eq(1)
+      expect(result[:failed].first[:filename]).to eq('test_image.jpg')
+    end
+  end
+
   describe 'dimension extraction' do
     let(:service) { described_class.new([]) }
 
@@ -83,6 +95,15 @@ RSpec.describe Media::UploadService do
       width, height = service.send(:extract_dimensions, blob)
 
       expect([width, height]).to eq([1, 2])
+    end
+
+    it 'extracts JPEG dimensions（フォールバックパーサー）' do
+      jpeg = File.binread(Rails.root.join('spec/fixtures/files/test_image.jpg'))
+      blob = instance_double(ActiveStorage::Blob, metadata: {}, download: jpeg)
+
+      width, height = service.send(:extract_dimensions, blob)
+
+      expect([ width, height ]).to eq([ 100, 100 ])
     end
 
     it 'extracts GIF dimensions' do

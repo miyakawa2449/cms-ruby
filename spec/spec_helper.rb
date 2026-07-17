@@ -6,6 +6,8 @@ if ENV["COVERAGE"]
     add_filter "/config/"
     add_filter "/vendor/"
     add_filter "/db/"
+    # rakeタスクは運用スクリプトのためカバレッジ対象外（S1-7 P5）
+    add_filter "/lib/tasks/"
 
     add_group "Models", "app/models"
     add_group "Controllers", "app/controllers"
@@ -65,7 +67,7 @@ RSpec.configure do |config|
   # triggering implicit auto-inclusion in groups with matching metadata.
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
-# 推奨設定を有効化（S1-7 P5-7）
+  # 推奨設定を有効化（S1-7 P5-7）
   # This allows you to limit a spec run to individual examples or groups
   # you care about by tagging them with `:focus` metadata. When nothing
   # is tagged with `:focus`, all examples get run. RSpec also provides
