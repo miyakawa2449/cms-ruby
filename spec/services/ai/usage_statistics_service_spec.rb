@@ -142,4 +142,65 @@ RSpec.describe Ai::UsageStatisticsService do
       end
     end
   end
+
+  # S1-7 P1-5: UsageTrackerから移設した期間サマリー系
+  describe '.summary' do
+    before do
+      create(:ai_usage_stat, date: Date.current, ai_model: 'model1', total_requests: 10, total_tokens: 1000, total_cost: 0.10)
+      create(:ai_usage_stat, date: Date.yesterday, ai_model: 'model1', total_requests: 5, total_tokens: 500, total_cost: 0.05)
+      create(:ai_usage_stat, date: Date.current, ai_model: 'model2', total_requests: 3, total_tokens: 300, total_cost: 0.03)
+    end
+
+    it '期間の合計を返す' do
+      result = described_class.summary(start_date: 7.days.ago.to_date)
+
+      expect(result[:totals][:requests]).to eq(18)
+      expect(result[:totals][:tokens]).to eq(1800)
+      expect(result[:totals][:cost]).to eq(0.18)
+    end
+
+    it 'モデル別の内訳を返す' do
+      result = described_class.summary(start_date: 7.days.ago.to_date)
+
+      expect(result[:by_model]).to be_an(Array)
+      expect(result[:by_model].length).to eq(2)
+    end
+
+    it '日別の内訳を返す' do
+      result = described_class.summary(start_date: 7.days.ago.to_date)
+
+      expect(result[:by_date]).to be_an(Array)
+      expect(result[:by_date].first[:date]).to eq(Date.current)
+    end
+  end
+
+  describe '.today' do
+    before do
+      create(:ai_usage_stat, date: Date.current, ai_model: 'model1', total_requests: 10, total_tokens: 1000, total_cost: 0.10)
+      create(:ai_usage_stat, date: Date.current, ai_model: 'model2', total_requests: 5, total_tokens: 500, total_cost: 0.05)
+    end
+
+    it '今日の合計を返す' do
+      result = described_class.today
+
+      expect(result[:date]).to eq(Date.current)
+      expect(result[:requests]).to eq(15)
+      expect(result[:tokens]).to eq(1500)
+      expect(result[:cost]).to eq(0.15)
+    end
+  end
+
+  describe '.this_month' do
+    before do
+      create(:ai_usage_stat, date: Date.current, ai_model: 'model1', total_requests: 10, total_cost: 1.00)
+      create(:ai_usage_stat, date: Date.current.beginning_of_month, ai_model: 'model1', total_requests: 5, total_cost: 0.50)
+    end
+
+    it '今月の合計を返す' do
+      result = described_class.this_month
+
+      expect(result[:totals][:requests]).to eq(15)
+      expect(result[:totals][:cost]).to eq(1.50)
+    end
+  end
 end

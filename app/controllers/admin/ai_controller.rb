@@ -99,12 +99,12 @@ class Admin::AiController < Admin::BaseController
 
     stats = case period
     when "today"
-              Ai::UsageTracker.today
+              Ai::UsageStatisticsService.today
     when "month"
-              Ai::UsageTracker.this_month
+              Ai::UsageStatisticsService.this_month
     else
               start_date = parse_start_date(period)
-              Ai::UsageTracker.summary(start_date: start_date)
+              Ai::UsageStatisticsService.summary(start_date: start_date)
     end
 
     render json: { success: true, data: stats }

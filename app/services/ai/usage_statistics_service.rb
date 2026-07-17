@@ -2,6 +2,96 @@
 # Provides methods for various time ranges and export functionality
 module Ai
   class UsageStatisticsService
+    # ---- 期間サマリー（S1-7 P1-5でUsageTrackerから移設。丸めは4桁に統一） ----
+
+    # Get usage summary for a date range
+    # @return [Hash] Usage summary
+    def self.summary(start_date:, end_date: Date.current)
+      stats = AiUsageStat.where(date: start_date..end_date)
+
+      {
+        period: {
+          start_date: start_date,
+          end_date: end_date
+        },
+        totals: {
+          requests: stats.sum(:total_requests),
+          tokens: stats.sum(:total_tokens),
+          cost: stats.sum(:total_cost).to_f.round(4)
+        },
+        by_model: summary_model_breakdown(stats),
+        by_date: summary_daily_breakdown(stats),
+        by_type: summary_type_breakdown(start_date, end_date)
+      }
+    end
+
+    # Get today's usage
+    def self.today
+      stats = AiUsageStat.for_date(Date.current)
+      {
+        date: Date.current,
+        requests: stats.sum(:total_requests),
+        tokens: stats.sum(:total_tokens),
+        cost: stats.sum(:total_cost).to_f.round(4)
+      }
+    end
+
+    # Get this month's usage
+    def self.this_month
+      summary(start_date: Date.current.beginning_of_month)
+    end
+
+    def self.summary_model_breakdown(stats)
+      stats.group(:ai_model).pluck(
+        :ai_model,
+        Arel.sql("SUM(total_requests)"),
+        Arel.sql("SUM(total_tokens)"),
+        Arel.sql("SUM(total_cost)")
+      ).map do |model, requests, tokens, cost|
+        {
+          model: model,
+          display_name: ModelSelector.display_name(model),
+          requests: requests.to_i,
+          tokens: tokens.to_i,
+          cost: cost.to_f.round(4)
+        }
+      end
+    end
+    private_class_method :summary_model_breakdown
+
+    def self.summary_daily_breakdown(stats)
+      stats.group(:date).pluck(
+        :date,
+        Arel.sql("SUM(total_requests)"),
+        Arel.sql("SUM(total_tokens)"),
+        Arel.sql("SUM(total_cost)")
+      ).sort_by(&:first).reverse.map do |date, requests, tokens, cost|
+        {
+          date: date,
+          requests: requests.to_i,
+          tokens: tokens.to_i,
+          cost: cost.to_f.round(4)
+        }
+      end
+    end
+    private_class_method :summary_daily_breakdown
+
+    def self.summary_type_breakdown(start_date, end_date)
+      generations = AiGeneration.where(created_at: start_date..end_date.end_of_day)
+                                .where(status: "completed")
+
+      AiGeneration::GENERATION_TYPES.map do |type|
+        type_records = generations.where(generation_type: type)
+        {
+          type: type,
+          requests: type_records.count,
+          tokens: type_records.sum(:tokens_used),
+          cost: type_records.sum(:cost).to_f.round(4)
+        }
+      end
+    end
+    private_class_method :summary_type_breakdown
+
     # Get daily usage statistics for a date range
     # @param start_date [Date] Start date
     # @param end_date [Date] End date
