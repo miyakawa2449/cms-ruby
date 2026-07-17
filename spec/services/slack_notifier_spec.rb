@@ -11,47 +11,60 @@ RSpec.describe SlackNotifier do
     ENV['SLACK_WEBHOOK_URL'] = original
   end
 
-  describe 'instance methods (contact notifications)' do
+  # S1-7 P1-2: インスタンスAPI（new(contact).send_notification）を廃止しクラスメソッドに統合
+  describe '.notify_contact' do
     it 'returns false when contact is nil' do
-      notifier = described_class.new(nil)
-
-      expect(notifier.send_notification).to eq(false)
+      expect(described_class.notify_contact(nil)).to eq(false)
     end
 
     it 'sends a notification and records success' do
       response = instance_double(HTTParty::Response, success?: true)
       allow(HTTParty).to receive(:post).and_return(response)
 
-      notifier = described_class.new(contact)
-
-      expect { notifier.send_notification }.to change(SlackNotification, :count).by(1)
+      expect { described_class.notify_contact(contact) }.to change(SlackNotification, :count).by(1)
       expect(SlackNotification.last).to be_sent
+      expect(SlackNotification.last.notification_type).to eq('contact')
+      expect(SlackNotification.last.reference_id).to eq(contact.id)
     end
 
     it 'returns false when webhook is missing' do
       ENV['SLACK_WEBHOOK_URL'] = nil
-      notifier = described_class.new(contact)
 
-      expect(notifier.send_notification).to eq(false)
+      expect(described_class.notify_contact(contact)).to eq(false)
     end
 
     it 'records failure when request raises an error' do
       allow(HTTParty).to receive(:post).and_raise(StandardError, 'network error')
 
-      notifier = described_class.new(contact)
-
-      expect { notifier.send_notification }.to change(SlackNotification, :count).by(1)
+      expect { described_class.notify_contact(contact) }.to change(SlackNotification, :count).by(1)
       expect(SlackNotification.last).to be_failed
+      expect(SlackNotification.last.error_message).to eq('network error')
     end
 
     it 'truncates long messages in payload' do
-      allow(HTTParty).to receive(:post).and_return(instance_double(HTTParty::Response, success?: true))
+      response = instance_double(HTTParty::Response, success?: true)
+      sent_body = nil
+      allow(HTTParty).to receive(:post) do |_url, options|
+        sent_body = options[:body]
+        response
+      end
 
-      notifier = described_class.new(contact)
-      payload = notifier.send(:build_payload)
+      described_class.notify_contact(contact)
 
-      message_field = payload[:attachments][0][:fields].find { |f| f[:title].include?('Message') }
-      expect(message_field[:value].length).to be <= 303
+      message_field = JSON.parse(sent_body)['attachments'][0]['fields'].find { |f| f['title'] == 'Message' }
+      expect(message_field['value'].length).to be <= 303
+    end
+  end
+
+  describe '通知レコード作成の統一（失敗時も記録）' do
+    it 'notify_2fa_changedでも送信エラー時に失敗レコードを作る' do
+      admin_user = create(:admin_user)
+      allow(HTTParty).to receive(:post).and_raise(StandardError, 'network error')
+
+      expect {
+        described_class.notify_2fa_changed(admin_user, 'enabled')
+      }.to change(SlackNotification, :count).by(1)
+      expect(SlackNotification.last).to be_failed
     end
   end
 

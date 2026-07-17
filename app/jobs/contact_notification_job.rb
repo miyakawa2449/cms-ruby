@@ -3,7 +3,7 @@ class ContactNotificationJob < ApplicationJob
 
   def perform(contact)
     # Slack通知の送信
-    SlackNotifier.new(contact).send_notification
+    SlackNotifier.notify_contact(contact)
 
     # メール通知の送信（本番環境のみ）
     if Rails.env.production?

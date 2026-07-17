@@ -1,12 +1,40 @@
 # Slack notification service for various events
 # Supports contact notifications and Phase 7 security/operations notifications
+# S1-7 P1-2: クラスメソッドAPIに統一（インスタンスAPIは廃止）
 class SlackNotifier
-  include HTTParty
-
   class << self
     # Check if Slack notifications are enabled
     def enabled?
       webhook_url.present?
+    end
+
+    # Notify new contact submission
+    def notify_contact(contact)
+      return false if contact.blank?
+      return false unless enabled?
+
+      message = {
+        text: "New Contact Received",
+        attachments: [
+          {
+            color: "good",
+            title: "Contact Details",
+            fields: [
+              { title: "Name", value: contact.name, short: true },
+              { title: "Email", value: contact.email, short: true },
+              { title: "Subject", value: contact.subject, short: false },
+              { title: "Message", value: truncate_message(contact.message), short: false },
+              { title: "IP Address", value: contact.ip_address&.to_s || "N/A", short: true },
+              { title: "Received At", value: contact.created_at.strftime("%Y-%m-%d %H:%M"), short: true }
+            ],
+            footer: "Portfolio Contact Form",
+            footer_icon: "https://platform.slack-edge.com/img/default_application_icon.png",
+            ts: contact.created_at.to_i
+          }
+        ]
+      }
+
+      send_message(message, notification_type: "contact", reference: contact)
     end
 
     # Notify 2FA settings change
@@ -140,6 +168,16 @@ class SlackNotifier
       Rails.application.credentials.slack_webhook_url || ENV["SLACK_WEBHOOK_URL"]
     end
 
+    def truncate_message(message)
+      return "N/A" unless message.present?
+
+      if message.length > 300
+        "#{message.first(300)}..."
+      else
+        message
+      end
+    end
+
     def send_message(payload, notification_type: nil, reference: nil)
       response = HTTParty.post(webhook_url,
         body: payload.to_json,
@@ -159,6 +197,10 @@ class SlackNotifier
       response.success?
     rescue => e
       Rails.logger.error "Slack notification failed: #{e.message}"
+      # 失敗も監査できるよう通知レコードは必ず残す（S1-7 P1-2で統一）
+      if reference && notification_type
+        create_notification_record(notification_type, reference, payload, false, e.message)
+      end
       false
     end
 
@@ -175,82 +217,5 @@ class SlackNotifier
     rescue => e
       Rails.logger.error "Failed to create slack notification record: #{e.message}"
     end
-  end
-
-  # Instance methods for contact notifications (backward compatibility)
-  def initialize(contact)
-    @contact = contact
-    @webhook_url = Rails.application.credentials.slack_webhook_url || ENV["SLACK_WEBHOOK_URL"]
-  end
-
-  def send_notification
-    return false if @contact.blank?
-    return false unless @webhook_url.present?
-
-    begin
-      payload = build_payload
-      response = HTTParty.post(@webhook_url,
-        body: payload.to_json,
-        headers: { "Content-Type" => "application/json" }
-      )
-
-      # SlackNotificationレコード作成
-      create_notification_record(payload, response.success?)
-
-      response.success?
-    rescue => e
-      Rails.logger.error "Slack notification failed: #{e.message}"
-      create_notification_record(build_payload, false, e.message)
-      false
-    end
-  end
-
-  private
-
-  def build_payload
-    {
-      text: "New Contact Received",
-      attachments: [
-        {
-          color: "good",
-          title: "Contact Details",
-          fields: [
-            { title: "Name", value: @contact.name, short: true },
-            { title: "Email", value: @contact.email, short: true },
-            { title: "Subject", value: @contact.subject, short: false },
-            { title: "Message", value: truncate_message(@contact.message), short: false },
-            { title: "IP Address", value: @contact.ip_address&.to_s || "N/A", short: true },
-            { title: "Received At", value: @contact.created_at.strftime("%Y-%m-%d %H:%M"), short: true }
-          ],
-          footer: "Portfolio Contact Form",
-          footer_icon: "https://platform.slack-edge.com/img/default_application_icon.png",
-          ts: @contact.created_at.to_i
-        }
-      ]
-    }
-  end
-
-  def truncate_message(message)
-    return "N/A" unless message.present?
-
-    if message.length > 300
-      "#{message.first(300)}..."
-    else
-      message
-    end
-  end
-
-  def create_notification_record(payload, success, error_message = nil)
-    SlackNotification.create!(
-      notification_type: "contact",
-      reference_id: @contact.id,
-      reference_type: "Contact",
-      payload: payload.to_json,
-      status: success ? "sent" : "failed",
-      error_message: error_message,
-      sent_at: success ? Time.current : nil
-    )
-  rescue => e
-    Rails.logger.error "Failed to create slack notification record: #{e.message}"
   end
 end

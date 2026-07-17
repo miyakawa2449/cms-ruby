@@ -4,18 +4,16 @@ RSpec.describe ContactNotificationJob, type: :job do
   let(:contact) { create(:contact) }
 
   it 'sends slack notification in non-production' do
-    notifier = instance_double(SlackNotifier, send_notification: true)
-    allow(SlackNotifier).to receive(:new).and_return(notifier)
+    allow(SlackNotifier).to receive(:notify_contact).and_return(true)
     allow(Rails).to receive_message_chain(:env, :production?).and_return(false)
 
     described_class.new.perform(contact)
 
-    expect(SlackNotifier).to have_received(:new).with(contact)
+    expect(SlackNotifier).to have_received(:notify_contact).with(contact)
   end
 
   it 'sends emails in production' do
-    notifier = instance_double(SlackNotifier, send_notification: true)
-    allow(SlackNotifier).to receive(:new).and_return(notifier)
+    allow(SlackNotifier).to receive(:notify_contact).and_return(true)
     allow(Rails).to receive_message_chain(:env, :production?).and_return(true)
 
     admin_mail = instance_double(ActionMailer::MessageDelivery, deliver_now: true)
