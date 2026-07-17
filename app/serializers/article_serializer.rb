@@ -37,8 +37,9 @@ class ArticleSerializer
       content_html: @article.content_html,
       meta_description: @article.meta_description,
       meta_keywords: @article.meta_keywords,
-      og_title: @article.og_title,
-      og_description: @article.og_description,
+      # 旧Manager delegateのフォールバックをAPI互換のため明示的に維持（S1-7 P2-1）
+      og_title: @article.og_title.presence || @article.title,
+      og_description: @article.og_description.presence || @article.meta_description.presence || @article.excerpt,
       og_image_url: og_image_url,
       ai_summary: nil,
       ai_keywords: nil,

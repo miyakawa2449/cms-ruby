@@ -109,43 +109,58 @@ class Article < ApplicationRecord
   end
 
   # Service delegation methods
-  def content_manager
-    @content_manager ||= ArticleContentManager.new(self)
-  end
-
-  def meta_manager
-    @meta_manager ||= ArticleMetaManager.new(self)
-  end
-
   def publishing_manager
     @publishing_manager ||= ArticlePublishingManager.new(self)
   end
-
-  # Content management delegation
-  delegate :tech_stack_list, :tech_stack_list=,
-           :category_names, :tag_names,
-           :is_work?, :content_word_count, :content_reading_time,
-           to: :content_manager
-
-  # Meta management delegation
-  delegate :to_param, :url_path, :canonical_url,
-           :seo_title, :seo_description, :seo_keywords,
-           :og_title, :og_description, :structured_data,
-           to: :meta_manager
 
   # Publishing management delegation
   delegate :published?, :draft?, :scheduled?, :archived?,
            to: :publishing_manager
 
-  # Legacy method support for backward compatibility
+  # --- 属性系ヘルパー（S1-7 P2-1でManager層を解体して移設） ---
+  # 注意: og_title/og_description はカラムの生の値のまま扱う。
+  # 表示時のフォールバック（タイトル等）はMetaTagsServiceが行う（監査M-12対策）
+
+  def to_param
+    slug
+  end
+
+  def tech_stack_list
+    return [] if tech_stack.blank?
+    tech_stack.split(",").map(&:strip).reject(&:blank?)
+  end
+
+  def tag_names
+    tags.pluck(:name)
+  end
+
   def tag_names=(names)
-    content_manager.assign_tag_names(names)
+    parsed = case names
+    when String
+               names.split(",").map(&:strip).reject(&:blank?)
+    when Array
+               names.map(&:to_s).map(&:strip).reject(&:blank?)
+    else
+               []
+    end
+
+    self.tags = parsed.filter_map { |name| Tag.find_or_create_by_name(name) }
   end
 
   private
 
   def generate_slug_if_needed
-    meta_manager.generate_slug if title_changed? && slug.blank?
+    return unless title_changed? && slug.blank?
+    return if title.blank?
+
+    base_slug = title.parameterize
+    candidate = base_slug
+    counter = 1
+    while Article.where(slug: candidate).where.not(id: id).exists?
+      candidate = "#{base_slug}-#{counter}"
+      counter += 1
+    end
+    self.slug = candidate
   end
 
   def set_published_at_if_needed

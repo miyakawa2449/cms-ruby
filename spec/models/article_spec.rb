@@ -234,4 +234,81 @@ RSpec.describe Article, type: :model do
       end
     end
   end
+
+  # S1-7 P2-1: Manager層（ArticleContentManager/ArticleMetaManager）から移設した属性系ロジック
+  describe '#to_param' do
+    it 'slugを返す（URLはID非依存）' do
+      article = create(:article, slug: 'my-article')
+
+      expect(article.to_param).to eq('my-article')
+    end
+  end
+
+  describe 'slug自動生成' do
+    it 'タイトルからslugを生成する' do
+      article = create(:article, title: 'Hello World', slug: nil)
+
+      expect(article.slug).to eq('hello-world')
+    end
+
+    it '重複するslugには連番を付ける' do
+      create(:article, title: 'Hello World', slug: nil)
+      second = create(:article, title: 'Hello World', slug: nil)
+
+      expect(second.slug).to eq('hello-world-1')
+    end
+
+    it '明示的に指定したslugは上書きしない' do
+      article = create(:article, title: 'Hello World', slug: 'custom-slug')
+
+      expect(article.slug).to eq('custom-slug')
+    end
+  end
+
+  describe '#tech_stack_list' do
+    it 'カンマ区切りのtech_stackを配列で返す' do
+      article = create(:article, tech_stack: 'Ruby, Rails , PostgreSQL,')
+
+      expect(article.tech_stack_list).to eq(%w[Ruby Rails PostgreSQL])
+    end
+
+    it 'tech_stackが空なら空配列を返す' do
+      article = create(:article, tech_stack: nil)
+
+      expect(article.tech_stack_list).to eq([])
+    end
+  end
+
+  describe '#tag_names / #tag_names=' do
+    it 'タグ名の配列を返す' do
+      article = create(:article, tags: [create(:tag, name: 'ruby'), create(:tag, name: 'rails')])
+
+      expect(article.tag_names).to contain_exactly('ruby', 'rails')
+    end
+
+    it 'カンマ区切り文字列からタグを作成・紐付けする' do
+      article = create(:article)
+
+      article.tag_names = 'Ruby, Rails'
+
+      expect(article.reload.tags.map(&:name)).to contain_exactly('Ruby', 'Rails')
+    end
+
+    it '既存タグは大文字小文字を無視して再利用する' do
+      existing = create(:tag, name: 'ruby')
+      article = create(:article)
+
+      article.tag_names = 'RUBY'
+
+      expect(article.reload.tags).to contain_exactly(existing)
+    end
+  end
+
+  describe 'OGフィールド（M-12回帰: フォールバック焼き込み防止）' do
+    it 'og_titleはカラムの生の値を返す（未設定ならnil。フォールバックはMetaTagsServiceで行う）' do
+      article = create(:article, title: '記事タイトル', og_title: nil)
+
+      expect(article.og_title).to be_nil
+    end
+  end
 end
