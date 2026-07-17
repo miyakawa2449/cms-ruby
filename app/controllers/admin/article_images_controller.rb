@@ -1,6 +1,5 @@
 class Admin::ArticleImagesController < Admin::BaseController
-  MAX_FILE_SIZE = 10.megabytes
-  ALLOWED_CONTENT_TYPES = %w[image/jpeg image/png image/gif image/webp].freeze
+  # 検証定数はMediaValidatableに一元化（S1-7 P1-4）
 
   # POST /admin/articles/:article_id/images
   def create
@@ -21,7 +20,7 @@ class Admin::ArticleImagesController < Admin::BaseController
     end
 
     # Validate file size (server-side)
-    if params[:image].size > MAX_FILE_SIZE
+    if params[:image].size > MediaValidatable::MAX_FILE_SIZE
       return render_error("ファイルサイズは10MB以下にしてください。")
     end
 
@@ -65,7 +64,7 @@ class Admin::ArticleImagesController < Admin::BaseController
 
   # Validate file format
   def valid_image_format?(file)
-    ALLOWED_CONTENT_TYPES.include?(file.content_type)
+    MediaValidatable::ALLOWED_IMAGE_TYPES.include?(file.content_type)
   end
 
   # Create or update MediaMetadata

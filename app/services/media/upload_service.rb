@@ -4,8 +4,7 @@ module Media
   # Service for uploading media files
   # Handles validation, blob creation, and metadata extraction
   class UploadService
-    MAX_FILE_SIZE = 10.megabytes
-    ALLOWED_CONTENT_TYPES = %w[image/jpeg image/png image/gif image/webp].freeze
+    # 検証定数はMediaValidatableに一元化（S1-7 P1-4）
 
     def initialize(files, options = {})
       @files = Array(files)
@@ -34,11 +33,11 @@ module Media
     end
 
     def valid_content_type?(file)
-      ALLOWED_CONTENT_TYPES.include?(file.content_type)
+      MediaValidatable::ALLOWED_IMAGE_TYPES.include?(file.content_type)
     end
 
     def valid_file_size?(file)
-      file.size <= MAX_FILE_SIZE
+      file.size <= MediaValidatable::MAX_FILE_SIZE
     end
 
     def upload_file(file, results)
@@ -136,7 +135,7 @@ module Media
       error_message = if !valid_content_type?(file)
                         "Invalid file type"
       elsif !valid_file_size?(file)
-                        "File size exceeds limit (10MB)"
+                        "File size exceeds limit (#{MediaValidatable::MAX_FILE_SIZE / 1.megabyte}MB)"
       else
                         "Unknown error"
       end
