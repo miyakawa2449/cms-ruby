@@ -2,7 +2,8 @@ class Admin::TagsController < Admin::BaseController
   before_action :set_tag, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @tags = Tag.includes(:articles).alphabetical
+    # ビューはarticle_countカラムのみ参照するため関連記事のロードは不要（S1-7 P3-2）
+    @tags = Tag.alphabetical
     @tags = @tags.where("name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
 
     @total_count = Tag.count
