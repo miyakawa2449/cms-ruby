@@ -13,7 +13,11 @@
 > **2026-07-17 第2弾完了・本番デプロイ済み・剛さん稼働確認済み**: P1-1〜P1-5 + P5-2を実施。
 > - 剛さん判断: ①unpublish時のpublished_atは**温存**（Manager挙動に統一、P1-6で適用）②管理画面検索は**ILIKE維持**（`Article.search_by_content`として管理画面専用に限定、公開側=トップ検索・APIはpg_searchの`Article.search`に統一）
 > - P1-5補足: `monthly_limit_exceeded?`/`remaining_budget`は呼び出しゼロのため削除。集計の丸めは4桁に統一（usage_stats APIのcostが2桁→4桁表示に変化）
-> 次は第3弾（P1-6 記事公開ロジック統合 → P2-1 Manager層解体）。
+> **2026-07-17 第3弾完了**: P1-6 + P2-1を実施（push済み・未デプロイ）。
+> - P1-6: ArticlePublishingManagerに統合（Service削除、can_*/analytics系90行削除、unpublishはpublished_at温存で統一）。Publishableはvisibleスコープのみに縮小し、Sectionの`published?`は実態どおり`is_visible?`に置換
+> - P2-1: ArticleContentManager/ArticleMetaManagerを削除（-308行）。実使用分（to_param/slug生成/tech_stack_list/tag_names）はArticle本体へ移設。og_title/og_descriptionのdelegateフォールバックを廃止し、編集フォームへの焼き込み（監査M-12）を解消（公開ページのOGP出力はMetaTagsServiceのフォールバックで不変、APIはシリアライザで互換維持）
+> - 軽微な挙動変化: 管理画面の記事詳細でOGタイトル/説明が「未設定なら表示しない」正しい挙動に。API og_descriptionの最終フォールバック（全項目空のときの本文160字生成）は廃止しexcerptまでに
+> 次は第4弾（P3-3 記事カードパーシャル統合 → P3-7 フォーム分割 → P2-2 MediaController分割）。P3-3では**ブログ一覧カードデザイン見直しの約束**（現状分析→案提示→剛さん選択→実装）を先に実施すること。
 > - P0-4は剛さんの判断で「削除ではなく計測を実装」: SecurityEventテーブル新設（要マイグレーション）+ SecurityLoggerのDB永続化 + CSRFフック + Rack::Attackのblocklist/throttle区別記録 + 90日パージ（recurring.yml）
 > - P0-4の副産物としてContactsControllerの `protect_from_forgery` 再宣言がHTML POSTのCSRF検証を無効化していた穴を発見・修正（JSONもトークン必須に統一。正規クライアントはX-CSRF-Token送信済みのため影響なし）
 > - P0-5の副産物: libvips不在だとActive Storageの画像解析が黙って空になるため、Mac（brew install vips）とCI（libvips42）に導入。本番Dockerイメージは元々libvipsあり
