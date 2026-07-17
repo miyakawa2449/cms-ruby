@@ -1,6 +1,5 @@
 class Article < ApplicationRecord
   include PgSearch::Model
-  include Publishable
   include TrackableAttachment
   include CacheSweeper
 
@@ -136,7 +135,6 @@ class Article < ApplicationRecord
 
   # Publishing management delegation
   delegate :published?, :draft?, :scheduled?, :archived?,
-           :publishable?, :status_display,
            to: :publishing_manager
 
   # Legacy method support for backward compatibility

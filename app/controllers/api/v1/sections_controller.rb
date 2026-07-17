@@ -21,7 +21,8 @@ class Api::V1::SectionsController < Api::V1::BaseController
     name_param = params[:name] || params[:id]
     @section = Section.find_by!(name: name_param)
 
-    # 非公開または公開コンテンツがないセクションは404
-    raise ActiveRecord::RecordNotFound unless @section.is_visible? && @section.published?
+    # 非表示セクションは404
+    # （旧: is_visible? && published? だが、Sectionのpublished?はis_visible?と同義だった。S1-7 P1-6）
+    raise ActiveRecord::RecordNotFound unless @section.is_visible?
   end
 end

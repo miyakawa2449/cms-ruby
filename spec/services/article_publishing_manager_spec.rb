@@ -1,5 +1,7 @@
 require 'rails_helper'
 
+# S1-7 P1-6: 記事公開ロジックの唯一の実装（ArticlePublishingService・Publishableの
+# 記事系メソッドは削除済み）。can_*/analytics系の未使用メソッドも削除済み
 RSpec.describe ArticlePublishingManager do
   include ActiveSupport::Testing::TimeHelpers
 
@@ -28,37 +30,53 @@ RSpec.describe ArticlePublishingManager do
       expect(article.reload.status).to eq('draft')
     end
 
-    it 'archives articles' do
+    it 'unpublish!は公開日時を温存する（2026-07-17仕様確定: 再公開しても元の日付を維持）' do
+      original_time = Time.zone.local(2026, 1, 5, 9, 0, 0)
       article = build_article(status: 'draft')
       manager = described_class.new(article)
+      manager.publish!(published_at: original_time)
 
-      manager.archive!
+      manager.unpublish!
 
-      expect(article.reload.status).to eq('archived')
+      expect(article.reload.published_at).to eq(original_time)
+    end
+  end
+
+  describe 'コントローラ向け結果ハッシュ版（旧ArticlePublishingServiceの置き換え）' do
+    describe '#publish' do
+      it '成功時にsuccess:trueとメッセージを返す' do
+        article = build_article(status: 'draft')
+
+        result = described_class.new(article).publish
+
+        expect(result[:success]).to be true
+        expect(result[:message]).to eq('記事を公開しました。')
+        expect(article.reload.status).to eq('published')
+      end
+
+      it '保存失敗時にsuccess:falseとエラー内容を返す' do
+        article = build_article(status: 'draft')
+        article.title = ''
+
+        result = described_class.new(article).publish
+
+        expect(result[:success]).to be false
+        expect(result[:message]).to eq('公開に失敗しました。')
+        expect(result[:errors]).to be_present
+        expect(article.reload.status).to eq('draft')
+      end
     end
 
-    it 'schedules and reschedules future publications' do
-      article = build_article(status: 'draft')
-      manager = described_class.new(article)
+    describe '#unpublish' do
+      it '成功時にsuccess:trueとメッセージを返す' do
+        article = build_article(status: 'published', published_at: 1.day.ago)
 
-      future_time = 2.days.from_now
-      manager.schedule!(published_at: future_time)
+        result = described_class.new(article).unpublish
 
-      expect(article.reload.status).to eq('scheduled')
-
-      new_time = 3.days.from_now
-      manager.reschedule!(new_published_at: new_time)
-
-      expect(article.reload.published_at.to_i).to eq(new_time.to_i)
-    end
-
-    it 'rejects scheduling in the past' do
-      article = build_article(status: 'draft')
-      manager = described_class.new(article)
-
-      expect {
-        manager.schedule!(published_at: 1.day.ago)
-      }.to raise_error(ArgumentError)
+        expect(result[:success]).to be true
+        expect(result[:message]).to eq('記事を非公開にしました。')
+        expect(article.reload.status).to eq('draft')
+      end
     end
   end
 
@@ -71,51 +89,7 @@ RSpec.describe ArticlePublishingManager do
         expect(manager.published?).to eq(true)
         expect(manager.draft?).to eq(false)
         expect(manager.scheduled?).to eq(false)
-        expect(manager.published_recently?).to eq(true)
       end
-    end
-
-    it 'detects overdue scheduled articles' do
-      travel_to Time.zone.local(2026, 1, 10, 10, 0, 0) do
-        article = build_article(status: 'scheduled', published_at: 1.day.ago)
-        manager = described_class.new(article)
-
-        expect(manager.overdue?).to eq(false)
-      end
-    end
-  end
-
-  describe 'validation helpers' do
-    it 'checks publishing requirements' do
-      article = build_article(status: 'draft')
-      manager = described_class.new(article)
-
-      expect(manager.valid_for_publishing?).to eq(true)
-
-      article.title = nil
-      expect(manager.valid_for_publishing?).to eq(false)
-    end
-
-    it 'validates scheduled articles for future date' do
-      travel_to Time.zone.local(2026, 1, 10, 10, 0, 0) do
-        article = build_article(status: 'scheduled', published_at: 1.day.ago)
-        manager = described_class.new(article)
-
-        errors = manager.validate_publishing_requirements
-        expect(errors).to include('Published date must be in the future for scheduled articles')
-      end
-    end
-  end
-
-  describe '#status_display' do
-    it 'returns display text for statuses' do
-      article = build_article(status: 'draft')
-      manager = described_class.new(article)
-
-      expect(manager.status_display).to eq('下書き')
-
-      article.update!(status: 'archived')
-      expect(manager.status_display).to eq('アーカイブ')
     end
   end
 

@@ -54,8 +54,7 @@ class Admin::ArticlesController < Admin::BaseController
   end
 
   def publish
-    publishing_service = ArticlePublishingService.new(@article)
-    result = publishing_service.publish
+    result = @article.publishing_manager.publish
 
     if result[:success]
       redirect_to admin_articles_path, notice: result[:message]
@@ -65,8 +64,7 @@ class Admin::ArticlesController < Admin::BaseController
   end
 
   def unpublish
-    publishing_service = ArticlePublishingService.new(@article)
-    result = publishing_service.unpublish
+    result = @article.publishing_manager.unpublish
 
     if result[:success]
       redirect_to admin_articles_path, notice: result[:message]
