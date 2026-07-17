@@ -65,62 +65,6 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
-  test:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
-
-      # redis:
-      #   image: valkey/valkey:8
-      #   ports:
-      #     - 6379:6379
-      #   options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
-
-    steps:
-      - name: Install packages
-        # libvips: Active Storageの画像解析用（本番Dockerイメージと同じ）
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips42
-
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-
-      - name: Install JS dependencies
-        run: npm ci
-
-      - name: Build assets
-        run: |
-          npm run build:css
-          npm run build
-
-      - name: Run tests
-        env:
-          RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432
-          ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-          ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
-          ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"
-          # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-          # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare test
-
   rspec:
     runs-on: ubuntu-latest
 
@@ -160,12 +104,13 @@ jobs:
           install-dependencies: true
 
       - name: Install JS dependencies
-        run: npm ci
+        # Yarn一本化（package-lock.jsonは削除済みのためnpm ciは使えない）
+        run: yarn install --frozen-lockfile
 
       - name: Build assets
         run: |
-          npm run build:css
-          npm run build
+          yarn build:css
+          yarn build
 
       - name: Run RSpec with coverage
         env:
@@ -182,89 +127,6 @@ jobs:
           # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           # REDIS_URL: redis://localhost:6379/0
         run: bin/rails db:test:prepare && bundle exec rspec --no-fail-fast
-
-      - name: Dump ChromeDriver log
-        if: always()
-        run: |
-          if [ -f tmp/chromedriver.log ]; then
-            echo "---- tmp/chromedriver.log (tail 200) ----"
-            tail -n 200 tmp/chromedriver.log
-          else
-            echo "No tmp/chromedriver.log found"
-          fi
-          if [ -f tmp/chrome.log ]; then
-            echo "---- tmp/chrome.log (tail 200) ----"
-            tail -n 200 tmp/chrome.log
-          else
-            echo "No tmp/chrome.log found"
-          fi
-
-  system-test:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
-
-      # redis:
-      #   image: valkey/valkey:8
-      #   ports:
-      #     - 6379:6379
-      #   options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
-
-    steps:
-      - name: Install packages
-        # libvips: Active Storageの画像解析用（本番Dockerイメージと同じ）
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips42
-
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-
-      - name: Set up Chrome
-        id: setup-chrome
-        uses: browser-actions/setup-chrome@v2
-        with:
-          install-chromedriver: true
-          install-dependencies: true
-
-      - name: Install JS dependencies
-        run: npm ci
-
-      - name: Build assets
-        run: |
-          npm run build:css
-          npm run build
-
-      - name: Run System Tests
-        env:
-          RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432
-          SELENIUM: "true"
-          CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
-          CHROMEDRIVER_PATH: ${{ steps.setup-chrome.outputs.chromedriver-path }}
-          XDG_RUNTIME_DIR: /tmp
-          ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-          ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
-          ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"
-          # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-          # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare test:system
 
       - name: Dump ChromeDriver log
         if: always()
