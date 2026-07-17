@@ -14,8 +14,6 @@ RSpec.describe "Admin::Backups", type: :request do
   before do
     host! "localhost"
     sign_in admin_user, scope: :admin_user
-    allow_any_instance_of(Admin::BackupsController).to receive(:ensure_admin_path_session!)
-    allow_any_instance_of(Admin::BackupsController).to receive(:force_logout_if_admin_path_changed!)
   end
 
   describe "GET /admin/backups" do

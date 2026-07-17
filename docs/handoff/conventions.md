@@ -428,9 +428,27 @@ refactor/リファクタリング内容
 - 生SQLの直接実行（特別な理由がない限り）
 - パスワード・APIキーのハードコード
 
+## 🧭 エラーハンドリング規約（S1-7 P2-4で制定）
+
+処理の呼び出し元によって、エラーの返し方を以下の2原則に統一する。
+
+| 呼び出し元 | エラーの返し方 | 例 |
+|---|---|---|
+| **コントローラ向けのService** | 例外を投げず `{ success:, message:(, errors:) }` のハッシュを返す | `ArticlePublishingManager#publish`、`Media::ImageEditService#call` |
+| **ジョブ・バッチ・CLI向けの処理** | 例外をそのままraiseする（リトライ・失敗記録は呼び出し側の責務） | `StorageBackupService#execute`、`DatabaseRestoreService#execute` |
+
+- 既存コードの一斉変更は行わず、**触るファイルから漸進的に適用**する
+- ログはエラーの発生箇所（Service内）で `Rails.logger.error` に残す
+
+## 🏷️ サービス命名規約（S1-7 P2-5で制定）
+
+- **名前空間 + 役割名詞**を標準とする（例: `Media::UploadService`、`Media::ImageEditService`、`Backup::RestoreService`）
+- **エントリポイントは `call`** を標準とする（1メソッドのサービスの場合）
+- 既存サービスの一括リネームは行わず、**新規作成・大きな変更時に適用**する
+
 ---
 
 **作成者**: Kiro  
 **作成日**: 2025-12-26  
-**最終更新**: 2025-12-26  
+**最終更新**: 2026-07-17（エラーハンドリング・サービス命名規約を追加）  
 **バージョン**: 1.0

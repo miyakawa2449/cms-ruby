@@ -65,7 +65,8 @@ RSpec.configure do |config|
 
   config.before(:each, type: :system) do
     Warden.test_mode!
-    allow_any_instance_of(ActiveStorage::Blob).to receive(:image?).and_return(false)
+    # 旧: Blob#image?を全system specでfalseにスタブしていたが、
+    # メディア系E2Eの検証価値を失うためS1-7 P5-3で撤去（libvips導入済みで実解析可能）
   end
 
   config.after(:each, type: :system) do |example|
