@@ -73,11 +73,11 @@
         </div>
       <% end %>
 
-      <!-- ヒーロー画像（全幅・OGP比率1.91:1。既存の4:3画像はobject-coverで上下が自動トリミングされる） -->
-      <% if @article.thumbnail_image.attached? %>
+      <!-- ヒーロー画像（全幅・OGP比率1.91:1。OGP画像→サムネイルの順で解決、既存の4:3画像はobject-coverで上下が自動トリミングされる） -->
+      <% if @article.card_image %>
         <div class="mb-6">
           <div class="relative rounded-xl overflow-hidden shadow-lg" style="aspect-ratio: 1200 / 630;">
-            <%= image_tag @article.thumbnail_image,
+            <%= image_tag @article.card_image,
                 alt: @article.title,
                 class: "w-full h-full object-cover" %>
           </div>
@@ -156,52 +156,7 @@
             <h2 class="text-2xl font-bold text-gray-900 mb-6">関連記事</h2>
             <div class="grid grid-cols-1 md:grid-cols-<%= [@related_articles.count, 3].min %> gap-6">
               <% @related_articles.each do |article| %>
-                <article class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                  <!-- サムネイル画像 -->
-                  <% if article.thumbnail_image.attached? %>
-                    <%= link_to blog_article_path(article.slug), class: "block" do %>
-                      <div class="h-32 bg-gray-200 overflow-hidden">
-                        <%= lazy_image_tag article.thumbnail_image,
-                            alt: article.title,
-                            class: "w-full h-full object-cover hover:scale-105 transition-transform duration-300" %>
-                      </div>
-                    <% end %>
-                  <% else %>
-                    <!-- プレースホルダー画像 -->
-                    <%= link_to blog_article_path(article.slug), class: "block" do %>
-                      <div class="h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                      </div>
-                    <% end %>
-                  <% end %>
-                  
-                  <div class="p-6">
-                    <% if article.categories.any? %>
-                      <div class="flex gap-2 mb-3">
-                        <% article.categories.first(1).each do |category| %>
-                          <span class="text-xs font-medium px-2 py-1 rounded text-white"
-                                style="background-color: <%= category.color || '#3B82F6' %>;">
-                            <%= category.name %>
-                          </span>
-                        <% end %>
-                      </div>
-                    <% end %>
-                    
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
-                      <%= link_to article.title, blog_article_path(article.slug) %>
-                    </h3>
-                    
-                    <div class="text-gray-600 text-sm mb-3">
-                      <%= truncate(strip_tags(safe_markdown(article.content)), length: 100) %>
-                    </div>
-                    
-                    <time class="text-xs text-gray-500">
-                      <%= article.published_at&.strftime('%Y年%m月%d日') %>
-                    </time>
-                  </div>
-                </article>
+                <%= render 'shared/article_card', article: article, variant: :compact %>
               <% end %>
             </div>
           </section>

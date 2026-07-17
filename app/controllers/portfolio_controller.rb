@@ -25,7 +25,7 @@ class PortfolioController < ApplicationController
                              .joins(:categories)
                              .where(categories: { slug: "works" })
                              .order(published_at: :desc)
-                             .includes(thumbnail_image_attachment: :blob)
+                             .includes(thumbnail_image_attachment: :blob, ogp_image_attachment: :blob)
                              .limit(6)
                              .to_a
 

@@ -38,8 +38,8 @@
                     <% end %>
                   </div>
                   
-                  <!-- 読了時間 -->
-                  <span class="text-sm text-gray-400">5分で読める</span>
+                  <!-- 読了時間（旧: ハードコードの「5分で読める」。S1-7 P3-3で実測値に） -->
+                  <span class="text-sm text-gray-400">約<%= article.reading_time_minutes %>分で読める</span>
                 </div>
                 
                 <!-- タイトル -->
@@ -49,16 +49,10 @@
                   </a>
                 </h3>
                 
-                <!-- 抜粋 -->
-                <% if article.excerpt.present? %>
-                  <div class="text-gray-700 leading-relaxed mb-6 text-lg prose max-w-none">
-                    <%= truncate(strip_tags(safe_markdown(article.excerpt)), length: 200) %>
-                  </div>
-                <% else %>
-                  <div class="text-gray-700 leading-relaxed mb-6 text-lg prose max-w-none">
-                    <%= truncate(strip_tags(safe_markdown(article.content)), length: 200) %>
-                  </div>
-                <% end %>
+                <!-- 抜粋（軽量プレーンテキスト。Markdownレンダリングは行わない） -->
+                <div class="text-gray-700 leading-relaxed mb-6 text-lg prose max-w-none">
+                  <%= article.plain_text_excerpt %>
+                </div>
                 
                 <!-- 技術スタック -->
                 <%= render 'shared/tech_stack', article: article, tag_class: 'bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded', margin_class: 'mb-4' %>

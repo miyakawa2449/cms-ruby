@@ -14,7 +14,7 @@ class BlogController < ApplicationController
       if cached
         articles = Article.published
                           .where(id: cached[:ids])
-                          .includes(:categories, :tags, thumbnail_image_attachment: :blob)
+                          .includes(:categories, :tags, thumbnail_image_attachment: :blob, ogp_image_attachment: :blob)
                           .order(published_at: :desc)
                           .to_a
         preload_article_associations(articles)
@@ -24,7 +24,7 @@ class BlogController < ApplicationController
         @published_articles_count = cached[:total]
       else
         relation = Article.published
-                          .includes(:categories, :tags, thumbnail_image_attachment: :blob)
+                          .includes(:categories, :tags, thumbnail_image_attachment: :blob, ogp_image_attachment: :blob)
                           .order(published_at: :desc)
                           .page(page)
                           .per(10)
@@ -43,7 +43,7 @@ class BlogController < ApplicationController
                          .search(params[:q])
                          .by_category(params[:category_id])
                          .by_tag(params[:tag_id])
-                         .includes(:categories, :tags, thumbnail_image_attachment: :blob)
+                         .includes(:categories, :tags, thumbnail_image_attachment: :blob, ogp_image_attachment: :blob)
                          .order(published_at: :desc)
                          .page(page)
                          .per(10)
@@ -75,7 +75,7 @@ class BlogController < ApplicationController
                       .includes(
                         :categories,
                         :tags,
-                        thumbnail_image_attachment: :blob
+                        thumbnail_image_attachment: :blob, ogp_image_attachment: :blob
                       )
                       .find_by!(slug: params[:slug])
 
@@ -84,7 +84,7 @@ class BlogController < ApplicationController
                               .joins(:categories)
                               .where(categories: { id: @article.category_ids })
                               .where.not(id: @article.id)
-                              .eager_load(:categories, thumbnail_image_attachment: :blob)
+                              .eager_load(:categories, thumbnail_image_attachment: :blob, ogp_image_attachment: :blob)
                               .order(published_at: :desc)
                               .limit(3)
 
@@ -104,7 +104,7 @@ class BlogController < ApplicationController
   def preload_article_associations(articles)
     ActiveRecord::Associations::Preloader.new(
       records: articles,
-      associations: [ :categories, :tags, { thumbnail_image_attachment: :blob } ]
+      associations: [ :categories, :tags, { thumbnail_image_attachment: :blob, ogp_image_attachment: :blob } ]
     ).call
   end
 end

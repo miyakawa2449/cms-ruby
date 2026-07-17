@@ -21,14 +21,15 @@
         <div class="<%= grid_class %> mb-16">
           <% works_articles.each do |article| %>
             <div class="<%= card_class %>">
-              <% if article.thumbnail_image.attached? %>
-                <div class="h-48 bg-gradient-to-br from-blue-100 to-blue-200">
-                  <%= lazy_image_tag article.thumbnail_image,
+              <%# 画像はOGP比率1.91:1・OGP画像→サムネイルの順で解決（S1-7 P3-3で統一） %>
+              <% if article.card_image %>
+                <div class="bg-gradient-to-br from-blue-100 to-blue-200" style="aspect-ratio: 1200 / 630;">
+                  <%= lazy_image_tag article.card_image,
                       alt: article.title,
                       class: "w-full h-full object-cover" %>
                 </div>
               <% else %>
-                <div class="h-48 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                <div class="bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center" style="aspect-ratio: 1200 / 630;">
                   <svg class="w-16 h-16 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                   </svg>
@@ -41,7 +42,7 @@
                 </h3>
                 
                 <div class="text-gray-600 leading-relaxed mb-4">
-                  <%= truncate(strip_tags(safe_markdown(article.excerpt.presence || article.content)), length: 120) %>
+                  <%= article.plain_text_excerpt(length: 120) %>
                 </div>
                 
                 <!-- 技術スタック -->

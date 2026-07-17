@@ -311,4 +311,63 @@ RSpec.describe Article, type: :model do
       expect(article.og_title).to be_nil
     end
   end
+
+  # S1-7 P3-3: 記事カード表示用ヘルパー
+  describe '#card_image' do
+    it 'OGP画像があればそれを返す（サムネイルより優先）' do
+      article = create(:article)
+      article.ogp_image.attach(io: StringIO.new('ogp'), filename: 'ogp.jpg', content_type: 'image/jpeg')
+      article.thumbnail_image.attach(io: StringIO.new('thumb'), filename: 't.jpg', content_type: 'image/jpeg')
+
+      expect(article.card_image).to eq(article.ogp_image)
+    end
+
+    it 'OGP画像が無ければサムネイルを返す' do
+      article = create(:article)
+      article.thumbnail_image.attach(io: StringIO.new('thumb'), filename: 't.jpg', content_type: 'image/jpeg')
+
+      expect(article.card_image).to eq(article.thumbnail_image)
+    end
+
+    it 'どちらも無ければnilを返す' do
+      expect(create(:article).card_image).to be_nil
+    end
+  end
+
+  describe '#reading_time_minutes' do
+    it '日本語の文字数ベースで読了時間を計算する（500字/分）' do
+      article = create(:article, content: 'あ' * 1200)
+
+      expect(article.reading_time_minutes).to eq(3)
+    end
+
+    it '短い記事でも最低1分を返す（約0分バグの回帰テスト）' do
+      article = create(:article, content: '短い本文')
+
+      expect(article.reading_time_minutes).to eq(1)
+    end
+  end
+
+  describe '#plain_text_excerpt' do
+    it '抜粋があればMarkdown記法を除去して返す' do
+      article = create(:article, excerpt: '**強調**と[リンク](https://example.com)を含む抜粋')
+
+      expect(article.plain_text_excerpt).to eq('強調とリンクを含む抜粋')
+    end
+
+    it '抜粋が無ければ本文から生成し指定文字数で切り詰める' do
+      article = create(:article, excerpt: nil, content: '# 見出し' + "\n" + 'あ' * 300)
+
+      result = article.plain_text_excerpt(length: 100)
+
+      expect(result).not_to include('#')
+      expect(result.length).to be <= 100
+    end
+
+    it '画像記法は本文から除去される' do
+      article = create(:article, excerpt: nil, content: '![alt text](image.png) 本文テキスト')
+
+      expect(article.plain_text_excerpt).to eq('本文テキスト')
+    end
+  end
 end

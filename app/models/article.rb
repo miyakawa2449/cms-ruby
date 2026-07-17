@@ -147,7 +147,47 @@ class Article < ApplicationRecord
     self.tags = parsed.filter_map { |name| Tag.find_or_create_by_name(name) }
   end
 
+  # --- 記事カード表示用ヘルパー（S1-7 P3-3） ---
+
+  # カード・ヒーローに使う画像。OGP画像（1.91:1トリミング済み）を優先しサムネイルへフォールバック
+  def card_image
+    return ogp_image if ogp_image.attached?
+    return thumbnail_image if thumbnail_image.attached?
+
+    nil
+  end
+
+  # 読了時間（分）。日本語前提の文字数ベース（500字/分）、最低1分
+  READING_CHARS_PER_MINUTE = 500
+
+  def reading_time_minutes
+    chars = strip_markdown(content.to_s).length
+    [ (chars / READING_CHARS_PER_MINUTE.to_f).ceil, 1 ].max
+  end
+
+  # カード用の軽量抜粋。全文Markdownレンダリングを避け、記法除去のみで生成する
+  def plain_text_excerpt(length: 200)
+    source = excerpt.presence || content
+    return "" if source.blank?
+
+    strip_markdown(source).truncate(length)
+  end
+
   private
+
+  def strip_markdown(text)
+    text.gsub(/```.*?```/m, " ")            # コードブロック
+        .gsub(/!\[.*?\]\(.*?\)/, "")        # 画像（リンクより先に除去）
+        .gsub(/\[(.*?)\]\(.*?\)/, '\1')     # リンク
+        .gsub(/#+\s*/, "")                  # 見出し
+        .gsub(/\*\*(.*?)\*\*/, '\1')        # 太字
+        .gsub(/\*(.*?)\*/, '\1')            # 斜体
+        .gsub(/`(.*?)`/, '\1')              # インラインコード
+        .gsub(/^>\s*/, "")                  # 引用
+        .gsub(/^\s*[-*+]\s+/, "")           # 箇条書き
+        .gsub(/\s+/, " ")
+        .strip
+  end
 
   def generate_slug_if_needed
     return unless title_changed? && slug.blank?
