@@ -2,25 +2,30 @@ import { Controller } from "@hotwired/stimulus"
 import Cropper from "cropperjs"
 
 // Connects to data-controller="thumbnail-editor"
+//
+// サムネイル/OGP画像のトリミング。
+// 「編集エリアの選択範囲」がそのまま保存画像になる（サムネイル=OGP画像の設計）。
+// 旧実装は4:3(1200x900)キャンバス前提の中央切り出しをしており、
+// 1.91:1選択と前提がずれて保存画像の位置ずれ・黒帯が発生していた（2026-07-17修正）
 export default class extends Controller {
   static targets = [
-    "modal", 
-    "cropperContainer", 
+    "modal",
+    "cropperContainer",
     "fileInput",
     "ogpInput",
-    "previewArticle",
-    "previewOgp",
-    "previewThumbnail",
+    "preview",
     "saveBtn"
   ]
-  
+
   static values = {
     // デフォルトはOGP標準比率（1200x630）。サムネイル=OGP画像として使えるようにする
     aspectRatio: { type: String, default: "1.91:1" }
   }
 
+  // 保存画像の横幅（高さは選択範囲の比率に従う）
+  static OUTPUT_WIDTH = 1200
+
   connect() {
-    console.log("ThumbnailEditorController connected")
     this.cropper = null
   }
 
@@ -45,25 +50,25 @@ export default class extends Controller {
   // モーダルを開く
   openModal(file) {
     const reader = new FileReader()
-    
+
     reader.onload = (e) => {
       this.modalTarget.classList.remove("hidden")
       document.body.classList.add("overflow-hidden")
       this.initCropper(e.target.result)
     }
-    
+
     reader.readAsDataURL(file)
   }
 
   // Cropperを初期化
   initCropper(imageUrl) {
     this.destroyCropper()
-    
+
     const img = document.createElement("img")
     img.src = imageUrl
     img.style.maxWidth = "100%"
     img.style.display = "block"
-    
+
     this.cropperContainerTarget.innerHTML = ""
     this.cropperContainerTarget.appendChild(img)
 
@@ -82,94 +87,56 @@ export default class extends Controller {
       toggleDragModeOnDblclick: false,
       crop: () => {
         // 選択範囲が変更されたらプレビューを更新
-        this.updatePreviews()
+        this.updatePreview()
       },
       ready: () => {
-        console.log("Cropper ready")
-        this.updatePreviews()
+        this.updatePreview()
       }
     })
   }
 
-  // プレビューを更新
-  updatePreviews() {
-    if (!this.cropper) return
+  // 選択範囲をそのまま切り出したキャンバスを返す（サイズ強制しない＝位置ずれの再発防止）
+  croppedCanvas() {
+    return this.cropper.getCroppedCanvas({
+      maxWidth: 2400,
+      maxHeight: 2400,
+      imageSmoothingEnabled: true,
+      imageSmoothingQuality: 'high'
+    })
+  }
+
+  // 指定幅に縮小したキャンバスを返す（比率は選択範囲のまま）
+  scaledCanvas(source, targetWidth) {
+    const scale = targetWidth / source.width
+    const canvas = document.createElement('canvas')
+    canvas.width = targetWidth
+    canvas.height = Math.round(source.height * scale)
+
+    const ctx = canvas.getContext('2d')
+    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingQuality = 'high'
+    ctx.drawImage(source, 0, 0, canvas.width, canvas.height)
+    return canvas
+  }
+
+  // プレビューを更新（保存されるのは選択範囲そのものなのでプレビューは1つ）
+  updatePreview() {
+    if (!this.cropper || !this.hasPreviewTarget) return
 
     try {
-      // 記事表示用プレビュー（4:3そのまま）
-      this.updateArticlePreview()
-      
-      // OGP用プレビュー（1.9:1に切り出し）
-      this.updateOgpPreview()
-      
-      // サムネイル用プレビュー（縮小版）
-      this.updateThumbnailPreview()
+      const canvas = this.croppedCanvas()
+      if (canvas) {
+        this.previewTarget.src = canvas.toDataURL('image/jpeg', 0.9)
+      }
     } catch (error) {
       console.error("Preview update error:", error)
-    }
-  }
-
-  // 記事表示用プレビュー（4:3）
-  updateArticlePreview() {
-    const canvas = this.cropper.getCroppedCanvas({
-      width: 1200,
-      height: 900,
-      imageSmoothingEnabled: true,
-      imageSmoothingQuality: 'high'
-    })
-
-    if (canvas && this.hasPreviewArticleTarget) {
-      this.previewArticleTarget.src = canvas.toDataURL('image/jpeg', 0.9)
-    }
-  }
-
-  // OGP用プレビュー（1.9:1 = 1200x630）
-  updateOgpPreview() {
-    const canvas = this.cropper.getCroppedCanvas({
-      width: 1200,
-      height: 900,
-      imageSmoothingEnabled: true,
-      imageSmoothingQuality: 'high'
-    })
-
-    if (!canvas || !this.hasPreviewOgpTarget) return
-
-    // 4:3の画像から中央部分を1.9:1で切り出し
-    const ogpCanvas = document.createElement('canvas')
-    ogpCanvas.width = 1200
-    ogpCanvas.height = 630
-    
-    const ctx = ogpCanvas.getContext('2d')
-    
-    // 中央から切り出し
-    const sourceY = (900 - 630) / 2
-    ctx.drawImage(
-      canvas,
-      0, sourceY, 1200, 630,  // source
-      0, 0, 1200, 630          // destination
-    )
-
-    this.previewOgpTarget.src = ogpCanvas.toDataURL('image/jpeg', 0.9)
-  }
-
-  // サムネイル用プレビュー（600x450）
-  updateThumbnailPreview() {
-    const canvas = this.cropper.getCroppedCanvas({
-      width: 600,
-      height: 450,
-      imageSmoothingEnabled: true,
-      imageSmoothingQuality: 'high'
-    })
-
-    if (canvas && this.hasPreviewThumbnailTarget) {
-      this.previewThumbnailTarget.src = canvas.toDataURL('image/jpeg', 0.9)
     }
   }
 
   // アスペクト比を変更
   changeAspectRatio(event) {
     const ratio = event.currentTarget.dataset.ratio
-    
+
     // ボタンのアクティブ状態を更新
     document.querySelectorAll('[data-action*="thumbnail-editor#changeAspectRatio"]').forEach(btn => {
       btn.classList.remove("bg-blue-600", "text-white")
@@ -188,7 +155,7 @@ export default class extends Controller {
     }
   }
 
-  // 保存
+  // 保存: 選択範囲を1200px幅に整えて、サムネイルとOGPの両フィールドに設定する
   async save() {
     if (!this.cropper) return
 
@@ -198,26 +165,29 @@ export default class extends Controller {
     saveBtn.textContent = "保存中..."
 
     try {
-      // 3つのサイズのBlobを生成
-      const articleBlob = await this.getArticleBlob()
-      const ogpBlob = await this.getOgpBlob()
-      const thumbnailBlob = await this.getThumbnailBlob()
+      const output = this.scaledCanvas(this.croppedCanvas(), this.constructor.OUTPUT_WIDTH)
+      const blob = await new Promise((resolve, reject) => {
+        output.toBlob(
+          b => b ? resolve(b) : reject(new Error("変換失敗")),
+          'image/jpeg',
+          0.92
+        )
+      })
 
-      // FormDataを作成
-      // 元のフォームに画像を設定
-      const originalInput = this.fileInputTarget
+      // 元のフォームに画像を設定（サムネイル=OGP画像。同じ切り抜きを両方に使う）
       const dataTransfer = new DataTransfer()
-      dataTransfer.items.add(new File([articleBlob], 'thumbnail.jpg', { type: 'image/jpeg' }))
-      originalInput.files = dataTransfer.files
+      dataTransfer.items.add(new File([blob], 'thumbnail.jpg', { type: 'image/jpeg' }))
+      this.fileInputTarget.files = dataTransfer.files
+
       if (this.hasOgpInputTarget) {
         const ogpTransfer = new DataTransfer()
-        ogpTransfer.items.add(new File([ogpBlob], 'thumbnail_ogp.jpg', { type: 'image/jpeg' }))
+        ogpTransfer.items.add(new File([blob], 'thumbnail_ogp.jpg', { type: 'image/jpeg' }))
         this.ogpInputTarget.files = ogpTransfer.files
       }
 
       // モーダルを閉じる
       this.close()
-      
+
       this.showMessage('サムネイル画像を設定しました', 'success')
     } catch (error) {
       console.error("Save error:", error)
@@ -226,69 +196,6 @@ export default class extends Controller {
       saveBtn.disabled = false
       saveBtn.textContent = originalText
     }
-  }
-
-  // 記事表示用Blobを取得
-  async getArticleBlob() {
-    const canvas = this.cropper.getCroppedCanvas({
-      width: 1200,
-      height: 900,
-      imageSmoothingEnabled: true,
-      imageSmoothingQuality: 'high'
-    })
-
-    return new Promise((resolve, reject) => {
-      canvas.toBlob(
-        blob => blob ? resolve(blob) : reject(new Error("変換失敗")),
-        'image/jpeg',
-        0.92
-      )
-    })
-  }
-
-  // OGP用Blobを取得
-  async getOgpBlob() {
-    const canvas = this.cropper.getCroppedCanvas({
-      width: 1200,
-      height: 900,
-      imageSmoothingEnabled: true,
-      imageSmoothingQuality: 'high'
-    })
-
-    // 中央を切り出し
-    const ogpCanvas = document.createElement('canvas')
-    ogpCanvas.width = 1200
-    ogpCanvas.height = 630
-    
-    const ctx = ogpCanvas.getContext('2d')
-    const sourceY = (900 - 630) / 2
-    ctx.drawImage(canvas, 0, sourceY, 1200, 630, 0, 0, 1200, 630)
-
-    return new Promise((resolve, reject) => {
-      ogpCanvas.toBlob(
-        blob => blob ? resolve(blob) : reject(new Error("変換失敗")),
-        'image/jpeg',
-        0.92
-      )
-    })
-  }
-
-  // サムネイル用Blobを取得
-  async getThumbnailBlob() {
-    const canvas = this.cropper.getCroppedCanvas({
-      width: 600,
-      height: 450,
-      imageSmoothingEnabled: true,
-      imageSmoothingQuality: 'high'
-    })
-
-    return new Promise((resolve, reject) => {
-      canvas.toBlob(
-        blob => blob ? resolve(blob) : reject(new Error("変換失敗")),
-        'image/jpeg',
-        0.92
-      )
-    })
   }
 
   // モーダルを閉じる
@@ -312,7 +219,7 @@ export default class extends Controller {
     const bgColor = type === 'success' ? "bg-green-500" : "bg-red-500"
     div.className = `fixed top-4 right-4 px-6 py-3 rounded-md shadow-lg z-[100] ${bgColor} text-white`
     div.textContent = message
-    
+
     document.body.appendChild(div)
     setTimeout(() => div.remove(), 3000)
   }

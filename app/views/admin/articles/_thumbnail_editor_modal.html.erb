@@ -52,39 +52,17 @@
             </div>
           </div>
 
-          <!-- 右側: プレビュー -->
+          <!-- 右側: プレビュー（選択範囲がそのまま保存される。サムネイル=OGP画像） -->
           <div>
             <h4 class="text-sm font-medium text-gray-700 mb-3">プレビュー</h4>
-            <div class="space-y-4">
-              <!-- 記事表示用プレビュー -->
-              <div>
-                <p class="text-xs text-gray-600 mb-2">📄 記事表示用 (1200x900)</p>
-                <div class="bg-gray-100 rounded-lg overflow-hidden border border-gray-300">
-                  <img data-thumbnail-editor-target="previewArticle" 
-                       class="w-full h-auto"
-                       alt="記事表示用プレビュー">
-                </div>
+            <div>
+              <p class="text-xs text-gray-600 mb-2">🖼️ 保存される画像（サムネイル / OGP共通・幅1200px）</p>
+              <div class="bg-gray-100 rounded-lg overflow-hidden border border-gray-300">
+                <img data-thumbnail-editor-target="preview"
+                     class="w-full h-auto"
+                     alt="保存される画像のプレビュー">
               </div>
-
-              <!-- OGP用プレビュー -->
-              <div>
-                <p class="text-xs text-gray-600 mb-2">🔗 OGP用 (1200x630)</p>
-                <div class="bg-gray-100 rounded-lg overflow-hidden border border-gray-300">
-                  <img data-thumbnail-editor-target="previewOgp" 
-                       class="w-full h-auto"
-                       alt="OGP用プレビュー">
-                </div>
-              </div>
-
-              <!-- サムネイル用プレビュー -->
-              <div>
-                <p class="text-xs text-gray-600 mb-2">🖼️ サムネイル用 (600x450)</p>
-                <div class="bg-gray-100 rounded-lg overflow-hidden border border-gray-300">
-                  <img data-thumbnail-editor-target="previewThumbnail" 
-                       class="w-full h-auto"
-                       alt="サムネイル用プレビュー">
-                </div>
-              </div>
+              <p class="mt-2 text-xs text-gray-500">選択範囲がそのままカード・記事ヘッダー・SNSシェア画像（OGP）に使われます。</p>
             </div>
           </div>
         </div>
@@ -93,7 +71,7 @@
       <!-- フッター -->
       <div class="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
         <p class="text-sm text-gray-600">
-          選択範囲から3つのサイズが自動生成されます
+          選択範囲がサムネイル・OGP画像として保存されます
         </p>
         <div class="flex gap-2">
           <button type="button"
