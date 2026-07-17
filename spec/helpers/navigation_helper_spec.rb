@@ -13,7 +13,7 @@ RSpec.describe NavigationHelper, type: :helper do
     it 'falls back to the default site title when the setting is missing' do
       allow(SiteSetting).to receive(:site_title).and_return(nil)
 
-      expect(helper.page_title).to eq(SiteSettingTypeManager.setting_config(:site_title)[:default])
+      expect(helper.page_title).to eq(SiteSetting.default_for(:site_title))
     end
   end
 end

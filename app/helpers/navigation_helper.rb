@@ -4,7 +4,7 @@ module NavigationHelper
   # サイト名の付与はここで一元管理する（二重付与の防止）
   def page_title(title = nil, site_name = nil)
     site_name ||= SiteSetting.site_title&.get_value.presence ||
-                  SiteSettingTypeManager.setting_config(:site_title)[:default]
+                  SiteSetting.default_for(:site_title)
 
     if title.present?
       "#{title} | #{site_name}"

@@ -2,9 +2,8 @@ require 'rails_helper'
 
 RSpec.describe 'Admin::SiteSettings', type: :request do
   let(:admin_user) { create(:admin_user) }
-  let(:value_manager) { instance_double(SiteSettingValueManager, update_value: { valid: true }) }
   let(:attachment) { instance_double(ActiveStorage::Attached::One, attached?: false) }
-  let(:setting) { instance_double(SiteSetting, value_manager: value_manager, image_value: attachment, value: '') }
+  let(:setting) { instance_double(SiteSetting, update_value: { valid: true }, image_value: attachment, value: '') }
 
   before do
     sign_in admin_user, scope: :admin_user

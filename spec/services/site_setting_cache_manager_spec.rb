@@ -17,7 +17,7 @@ RSpec.describe SiteSettingCacheManager do
 
     expect(settings).to be_a(Hash)
     expect(settings[:site_title].get_value).to eq('Custom')
-    expect(SiteSetting.count).to eq(SiteSettingTypeManager::SETTING_TYPES.size)
+    expect(SiteSetting.count).to eq(SiteSetting::SETTING_TYPES.size)
   end
 
   it 'clears caches' do

@@ -211,12 +211,12 @@ class MetaTagsService
   # サイトタイトル/説明文の取得（未設定時はSETTING_TYPESのデフォルトへフォールバック）
   def site_title_value
     SiteSetting.site_title&.get_value.presence ||
-      SiteSettingTypeManager.setting_config(:site_title)[:default]
+      SiteSetting.default_for(:site_title)
   end
 
   def site_description_value
     SiteSetting.site_description&.get_value.presence ||
-      SiteSettingTypeManager.setting_config(:site_description)[:default]
+      SiteSetting.default_for(:site_description)
   end
 
   # SiteAssetsServiceへの委譲メソッド

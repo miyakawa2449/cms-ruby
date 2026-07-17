@@ -35,7 +35,7 @@ class SiteSettingCacheManager
     return if missing_keys.empty?
 
     missing_keys.each do |setting_name|
-      config = SiteSettingTypeManager.setting_config(setting_name)
+      config = SiteSetting::SETTING_TYPES[setting_name.to_sym]
       settings[setting_name] = SiteSetting.create!(
         key: config[:key],
         setting_type: config[:type],

@@ -22,7 +22,7 @@ class Admin::SiteSettingsController < Admin::BaseController
       # Faviconの更新
       if params[:site_setting][:favicon].present?
         begin
-          result = @favicon.value_manager.update_value(params[:site_setting][:favicon])
+          result = @favicon.update_value(params[:site_setting][:favicon])
           if result[:valid]
             updated_count += 1
             Rails.logger.info "Favicon updated successfully"
@@ -36,19 +36,19 @@ class Admin::SiteSettingsController < Admin::BaseController
 
       # ロゴの更新
       if params[:site_setting][:logo].present?
-        result = @logo.value_manager.update_value(params[:site_setting][:logo])
+        result = @logo.update_value(params[:site_setting][:logo])
         updated_count += 1 if result[:valid]
       end
 
       # OG画像の更新
       if params[:site_setting][:og_image].present?
-        result = @og_image.value_manager.update_value(params[:site_setting][:og_image])
+        result = @og_image.update_value(params[:site_setting][:og_image])
         updated_count += 1 if result[:valid]
       end
 
       # サイトタイトルの更新
       if params[:site_setting][:site_title].present?
-        result = @site_title.value_manager.update_value(params[:site_setting][:site_title])
+        result = @site_title.update_value(params[:site_setting][:site_title])
         if result[:valid]
           updated_count += 1
           Rails.logger.info "Site title updated successfully"
@@ -59,7 +59,7 @@ class Admin::SiteSettingsController < Admin::BaseController
 
       # サイト説明文の更新
       if params[:site_setting][:site_description].present?
-        result = @site_description.value_manager.update_value(params[:site_setting][:site_description])
+        result = @site_description.update_value(params[:site_setting][:site_description])
         if result[:valid]
           updated_count += 1
           Rails.logger.info "Site description updated successfully"
@@ -70,7 +70,7 @@ class Admin::SiteSettingsController < Admin::BaseController
 
       # Google Tag Manager IDの更新
       if params[:site_setting].has_key?(:gtm_id)
-        result = @gtm_id.value_manager.update_value(params[:site_setting][:gtm_id])
+        result = @gtm_id.update_value(params[:site_setting][:gtm_id])
         if result[:valid]
           updated_count += 1
           Rails.logger.info "GTM ID updated successfully"
