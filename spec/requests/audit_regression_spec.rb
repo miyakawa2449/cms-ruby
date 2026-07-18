@@ -8,7 +8,7 @@ RSpec.describe "監査指摘バグの回帰テスト", type: :request do
 
   describe "C-3: serviceセクションとパーシャル名の不一致" do
     it "serviceセクションのコンテンツを有効化してもトップページが表示できる" do
-      section = create(:section, name: "service", display_name: "Service", is_visible: true)
+      section = create(:section, name: "services", display_name: "Services", is_visible: true)
       create(:section_content, section: section, is_active: true)
 
       get root_path

@@ -45,26 +45,29 @@ document.addEventListener('DOMContentLoaded', () => {
     el.classList.add('animate-fade-in', 'opacity-0', 'translate-y-4', 'transition-all', 'duration-500');
   });
 
-  // ========================================
-  // 2. scroll-reveal animations (CSSクラスベース)
-  // ========================================
-  function revealScrollElements() {
-    const reveals = document.querySelectorAll('.scroll-reveal');
-    
-    reveals.forEach(element => {
-      const windowHeight = window.innerHeight;
-      const elementTop = element.getBoundingClientRect().top;
-      const elementVisible = 150;
-      
-      if (elementTop < windowHeight - elementVisible) {
-        element.classList.add('revealed');
+});
+
+// ========================================
+// 2. scroll-reveal animations (CSSクラスベース)
+// 旧実装はscrollイベント依存で、アンカーリンクの一発ジャンプでは判定が走らず
+// My Story年表が透明のまま残っていた。IntersectionObserverなら到達手段に
+// かかわらず「見えたら表示」が発火する。Turbo遷移後も動くようturbo:loadでも初期化
+// ========================================
+function setupScrollReveal() {
+  const reveals = document.querySelectorAll('.scroll-reveal:not(.revealed)');
+  if (reveals.length === 0) return;
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        revealObserver.unobserve(entry.target);
       }
     });
-  }
+  }, { threshold: 0.1 });
 
-  // 初期表示時にチェック
-  revealScrollElements();
-  
-  // スクロール時にチェック
-  window.addEventListener('scroll', revealScrollElements);
-});
+  reveals.forEach(el => revealObserver.observe(el));
+}
+
+document.addEventListener('DOMContentLoaded', setupScrollReveal);
+document.addEventListener('turbo:load', setupScrollReveal);

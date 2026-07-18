@@ -28,13 +28,14 @@
       
       <!-- Navigation Links -->
       <% if variant == 'portfolio' %>
+        <%# トップページ以外から使われても飛べるよう、ルート付きアンカーにする %>
         <div class="hidden md:flex space-x-8">
-          <a href="#story" class="text-blue-600 font-semibold hover:text-blue-800 transition-colors">💡 My Story</a>
-          <a href="#about" class="text-gray-700 hover:text-blue-600 transition-colors">About</a>
-          <a href="#services" class="text-gray-700 hover:text-blue-600 transition-colors">Services</a>
-          <a href="#works" class="text-gray-700 hover:text-blue-600 transition-colors">Works</a>
-          <a href="#blog" class="text-gray-700 hover:text-blue-600 transition-colors">Blog</a>
-          <a href="#contact" class="text-gray-700 hover:text-blue-600 transition-colors">Contact</a>
+          <a href="/#my-story" class="text-blue-600 font-semibold hover:text-blue-800 transition-colors">💡 My Story</a>
+          <a href="/#about" class="text-gray-700 hover:text-blue-600 transition-colors">About</a>
+          <a href="/#services" class="text-gray-700 hover:text-blue-600 transition-colors">Services</a>
+          <a href="/#works" class="text-gray-700 hover:text-blue-600 transition-colors">Works</a>
+          <a href="/#blog" class="text-gray-700 hover:text-blue-600 transition-colors">Blog</a>
+          <a href="/#contact" class="text-gray-700 hover:text-blue-600 transition-colors">Contact</a>
         </div>
       <% end %>
       
@@ -81,12 +82,12 @@
               <nav class="px-6 py-4 text-lg text-gray-900">
                 <div class="divide-y divide-gray-200 border-y border-gray-200">
                   <% if variant == 'portfolio' %>
-                    <a href="#story" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">💡 My Story</a>
-                    <a href="#about" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">About</a>
-                    <a href="#services" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">Services</a>
-                    <a href="#works" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">Works</a>
-                    <a href="#blog" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">Blog</a>
-                    <a href="#contact" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">Contact</a>
+                    <a href="/#my-story" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">💡 My Story</a>
+                    <a href="/#about" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">About</a>
+                    <a href="/#services" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">Services</a>
+                    <a href="/#works" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">Works</a>
+                    <a href="/#blog" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">Blog</a>
+                    <a href="/#contact" class="block bg-white/90 py-4 px-3" data-action="click->mobile-menu#close">Contact</a>
                   <% else %>
                     <%= link_to "ホーム", root_path, class: "block bg-white/90 py-4 px-3", data: { action: "click->mobile-menu#close" } %>
                     <%= link_to "ブログ", blog_path, class: "block bg-white/90 py-4 px-3", data: { action: "click->mobile-menu#close" } %>

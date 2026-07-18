@@ -58,7 +58,7 @@ end
 sections = [
   { name: 'hero', display_name: 'ヒーロー', position: 1 },
   { name: 'about', display_name: 'About', position: 2 },
-  { name: 'service', display_name: 'Service', position: 3 },
+  { name: 'services', display_name: 'Services', position: 3 },
   { name: 'my-story', display_name: 'My Story', position: 4 },
   { name: 'works', display_name: 'Works', position: 5 },
   { name: 'blog', display_name: 'Blog', position: 6 },
