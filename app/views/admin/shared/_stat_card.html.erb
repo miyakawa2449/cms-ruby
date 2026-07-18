@@ -1,0 +1,5 @@
+<%# 白背景の統計カード（ラベルが上・値が下）。value_class で値の文字色を上書きできる %>
+<div class="bg-white rounded-lg p-4 shadow-sm border">
+  <p class="text-sm text-gray-500"><%= label %></p>
+  <p class="text-2xl font-bold <%= local_assigns.fetch(:value_class, "text-gray-900") %>"><%= value %></p>
+</div>

@@ -8,14 +8,8 @@
   
   <!-- 統計情報 -->
   <div class="flex space-x-4">
-    <div class="bg-white rounded-lg p-4 shadow-sm border">
-      <p class="text-sm text-gray-500">未読</p>
-      <p class="text-2xl font-bold text-red-600"><%= @contacts.unread.count %></p>
-    </div>
-    <div class="bg-white rounded-lg p-4 shadow-sm border">
-      <p class="text-sm text-gray-500">総数</p>
-      <p class="text-2xl font-bold text-gray-900"><%= @contacts.count %></p>
-    </div>
+    <%= render "admin/shared/stat_card", label: "未読", value: @contacts.unread.count, value_class: "text-red-600" %>
+    <%= render "admin/shared/stat_card", label: "総数", value: @contacts.count %>
   </div>
 </div>
 

@@ -8,14 +8,8 @@
 
   <!-- 統計情報 -->
   <div class="flex space-x-4">
-    <div class="bg-white rounded-lg p-4 shadow-sm border">
-      <p class="text-sm text-gray-500">総スキャン数</p>
-      <p class="text-2xl font-bold text-gray-900"><%= SecurityScan.count %></p>
-    </div>
-    <div class="bg-white rounded-lg p-4 shadow-sm border">
-      <p class="text-sm text-gray-500">未修正脆弱性</p>
-      <p class="text-2xl font-bold text-red-600"><%= Vulnerability.unfixed.count %></p>
-    </div>
+    <%= render "admin/shared/stat_card", label: "総スキャン数", value: SecurityScan.count %>
+    <%= render "admin/shared/stat_card", label: "未修正脆弱性", value: Vulnerability.unfixed.count, value_class: "text-red-600" %>
   </div>
 </div>
 

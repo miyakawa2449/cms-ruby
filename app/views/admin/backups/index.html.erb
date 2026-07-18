@@ -6,14 +6,10 @@
     <p class="text-gray-600 mt-2">S3バックアップの確認・復元ができます</p>
   </div>
   <div class="flex space-x-4">
-    <div class="bg-white rounded-lg p-4 shadow-sm border">
-      <p class="text-sm text-gray-500">バックアップ件数</p>
-      <p class="text-2xl font-bold text-gray-900"><%= @backups.size %></p>
-    </div>
-    <div class="bg-white rounded-lg p-4 shadow-sm border">
-      <p class="text-sm text-gray-500">直近の実行</p>
-      <p class="text-2xl font-bold text-blue-600"><%= @backup_logs.first&.started_at&.strftime("%m/%d %H:%M") || "なし" %></p>
-    </div>
+    <%= render "admin/shared/stat_card", label: "バックアップ件数", value: @backups.size %>
+    <%= render "admin/shared/stat_card", label: "直近の実行",
+          value: @backup_logs.first&.started_at&.strftime("%m/%d %H:%M") || "なし",
+          value_class: "text-blue-600" %>
   </div>
 </div>
 

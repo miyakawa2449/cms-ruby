@@ -8,41 +8,12 @@
   <header class="bg-white shadow-sm border-b border-gray-200 pt-20">
     <div class="container mx-auto px-6 py-6">
       <!-- パンくずナビゲーション -->
-      <nav class="text-sm text-gray-500 mb-4" aria-label="パンくずナビゲーション">
-        <ol class="flex items-center space-x-2 flex-wrap">
-          <li>
-            <%= link_to "ホーム", root_path, class: "hover:text-blue-600 transition-colors" %>
-          </li>
-          <li class="text-gray-400">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-            </svg>
-          </li>
-          <li>
-            <%= link_to "Blog", blog_path, class: "hover:text-blue-600 transition-colors" %>
-          </li>
-          <% if @article.categories.any? %>
-            <li class="text-gray-400">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-              </svg>
-            </li>
-            <li>
-              <%= link_to @article.categories.first.name,
-                          blog_path(category_id: @article.categories.first.id),
-                          class: "hover:text-blue-600 transition-colors" %>
-            </li>
-          <% end %>
-          <li class="text-gray-400">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-            </svg>
-          </li>
-          <li>
-            <span class="text-gray-900 font-medium"><%= truncate(@article.title, length: 30) %></span>
-          </li>
-        </ol>
-      </nav>
+      <% breadcrumb_items = [["ホーム", root_path], ["Blog", blog_path]] %>
+      <% if (breadcrumb_category = @article.categories.first) %>
+        <% breadcrumb_items << [breadcrumb_category.name, blog_path(category_id: breadcrumb_category.id)] %>
+      <% end %>
+      <% breadcrumb_items << [truncate(@article.title, length: 30), nil] %>
+      <%= render "shared/breadcrumbs", items: breadcrumb_items, nav_class: "mb-4" %>
       
       <%# フルワイドヒーロー構成（2026-07-16 A案採用）:
           旧構成は4カラムグリッドの3列分+空のスペーサーdivで、広い画面で右上に

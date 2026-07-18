@@ -1,0 +1,23 @@
+<%# パンくずナビゲーション
+    items: [ラベル, パス] の配列。パスが nil の要素は現在地としてテキスト表示する
+    nav_class: nav要素に追加する余白等のクラス（デフォルト mb-6） %>
+<nav class="text-sm text-gray-500 <%= local_assigns.fetch(:nav_class, "mb-6") %>" aria-label="パンくずナビゲーション">
+  <ol class="flex items-center space-x-2 flex-wrap">
+    <% items.each_with_index do |(label, path), index| %>
+      <% if index.positive? %>
+        <li class="text-gray-400">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+          </svg>
+        </li>
+      <% end %>
+      <li>
+        <% if path %>
+          <%= link_to label, path, class: "hover:text-blue-600 transition-colors" %>
+        <% else %>
+          <span class="text-gray-900 font-medium"><%= label %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ol>
+</nav>
