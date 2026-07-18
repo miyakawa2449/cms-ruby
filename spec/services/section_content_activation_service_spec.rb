@@ -63,7 +63,8 @@ RSpec.describe SectionContentActivationService do
       service = described_class.new(content)
 
       allow(content).to receive(:update).and_return(false)
-      allow(content).to receive_message_chain(:errors, :full_messages).and_return(['invalid'])
+      allow(content).to receive(:errors)
+        .and_return(instance_double(ActiveModel::Errors, full_messages: ['invalid']))
 
       result = service.toggle_active
 

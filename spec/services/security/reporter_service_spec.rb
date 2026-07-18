@@ -7,7 +7,8 @@ RSpec.describe Security::ReporterService do
     let(:service) { described_class.new }
 
     before do
-      allow(SecurityMailer).to receive_message_chain(:weekly_report, :deliver_later)
+      allow(SecurityMailer).to receive(:weekly_report)
+        .and_return(instance_double(ActionMailer::MessageDelivery, deliver_later: nil))
     end
 
     it "creates a security report" do

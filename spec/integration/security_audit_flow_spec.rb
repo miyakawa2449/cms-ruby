@@ -19,7 +19,8 @@ RSpec.describe "Security audit flows", type: :integration do
     end
 
     it "creates scan, vulnerabilities, and triggers alert mail" do
-      allow(SecurityMailer).to receive_message_chain(:security_alert, :deliver_later)
+      allow(SecurityMailer).to receive(:security_alert)
+        .and_return(instance_double(ActionMailer::MessageDelivery, deliver_later: nil))
       allow(SlackNotifier).to receive(:enabled?).and_return(false)
 
       scan = Security::ScannerService.new(scan_type: "brakeman", results: results).process
@@ -37,7 +38,8 @@ RSpec.describe "Security audit flows", type: :integration do
       scan = create(:security_scan, scanned_at: 3.days.ago)
       create(:vulnerability, :high, security_scan: scan, created_at: 3.days.ago)
 
-      allow(SecurityMailer).to receive_message_chain(:weekly_report, :deliver_later)
+      allow(SecurityMailer).to receive(:weekly_report)
+        .and_return(instance_double(ActionMailer::MessageDelivery, deliver_later: nil))
 
       report = Security::ReporterService.new(
         start_date: 4.days.ago,

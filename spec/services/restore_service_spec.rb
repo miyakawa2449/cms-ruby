@@ -17,6 +17,9 @@ RSpec.describe RestoreService do
 
   let(:restore_dir) { Rails.root.join("tmp", "restore").to_s }
 
+  let(:success_mail) { instance_double(ActionMailer::MessageDelivery, deliver_later: nil) }
+  let(:failed_mail)  { instance_double(ActionMailer::MessageDelivery, deliver_later: nil) }
+
   before do
     allow(S3Service).to receive(:new).and_return(mock_s3)
     allow(mock_s3).to receive(:download) do |object_key:, destination:|
@@ -28,11 +31,8 @@ RSpec.describe RestoreService do
     allow(StorageRestoreService).to receive(:new).and_return(mock_st_restore)
     allow(ConfigRestoreService).to receive(:new).and_return(mock_cfg_restore)
 
-    allow(BackupMailer).to receive_message_chain(:restore_success, :deliver_later)
-    allow(BackupMailer).to receive_message_chain(:restore_failed, :deliver_later)
-
-    allow(File).to receive(:exist?).and_call_original
-    allow(File).to receive(:delete)
+    allow(BackupMailer).to receive(:restore_success).and_return(success_mail)
+    allow(BackupMailer).to receive(:restore_failed).and_return(failed_mail)
   end
 
   after do
@@ -76,14 +76,14 @@ RSpec.describe RestoreService do
 
       it "sends restore success notification" do
         expect(BackupMailer).to receive(:restore_success).with(instance_of(BackupLog))
-          .and_return(double(deliver_later: nil))
+          .and_return(success_mail)
+        expect(success_mail).to receive(:deliver_later)
         service.execute
       end
 
       it "cleans up downloaded temp files in ensure" do
-        allow(File).to receive(:exist?).and_return(true)
-        expect(File).to receive(:delete).at_least(3).times
         service.execute
+        expect(Dir.glob(File.join(restore_dir, "*"))).to be_empty
       end
     end
 
@@ -103,7 +103,8 @@ RSpec.describe RestoreService do
       it "sends restore failure notification" do
         expect(BackupMailer).to receive(:restore_failed).with(
           instance_of(BackupLog), instance_of(RuntimeError)
-        ).and_return(double(deliver_later: nil))
+        ).and_return(failed_mail)
+        expect(failed_mail).to receive(:deliver_later)
         expect { service.execute }.to raise_error(RuntimeError)
       end
 
@@ -112,9 +113,8 @@ RSpec.describe RestoreService do
       end
 
       it "still cleans up temp files" do
-        allow(File).to receive(:exist?).and_return(true)
-        expect(File).to receive(:delete).at_least(1).times
         expect { service.execute }.to raise_error(RuntimeError)
+        expect(Dir.glob(File.join(restore_dir, "*"))).to be_empty
       end
     end
 
@@ -169,7 +169,7 @@ RSpec.describe RestoreService do
 
     it "calls restore_success mailer on success" do
       expect(BackupMailer).to receive(:restore_success).with(instance_of(BackupLog))
-        .and_return(double(deliver_later: nil))
+        .and_return(success_mail)
       service.execute
     end
 
@@ -177,7 +177,7 @@ RSpec.describe RestoreService do
       allow(mock_db_restore).to receive(:execute).and_raise(RuntimeError, "error")
       expect(BackupMailer).to receive(:restore_failed).with(
         instance_of(BackupLog), instance_of(RuntimeError)
-      ).and_return(double(deliver_later: nil))
+      ).and_return(failed_mail)
       expect { service.execute }.to raise_error(RuntimeError)
     end
   end

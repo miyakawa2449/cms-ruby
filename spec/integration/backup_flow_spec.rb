@@ -56,8 +56,9 @@ RSpec.describe "Task 19.1: バックアップフロー統合テスト", type: :i
 
     allow(mock_s3_client).to receive(:delete_object)
 
-    allow(BackupMailer).to receive_message_chain(:backup_success, :deliver_later)
-    allow(BackupMailer).to receive_message_chain(:backup_failed, :deliver_later)
+    mail_delivery = instance_double(ActionMailer::MessageDelivery, deliver_later: nil)
+    allow(BackupMailer).to receive(:backup_success).and_return(mail_delivery)
+    allow(BackupMailer).to receive(:backup_failed).and_return(mail_delivery)
     allow(SlackNotifier).to receive(:notify_backup_status)
   end
 
@@ -120,7 +121,9 @@ RSpec.describe "Task 19.1: バックアップフロー統合テスト", type: :i
     end
 
     it "成功通知が送信される" do
-      expect(BackupMailer).to receive_message_chain(:backup_success, :deliver_later)
+      mail = instance_double(ActionMailer::MessageDelivery)
+      expect(BackupMailer).to receive(:backup_success).and_return(mail)
+      expect(mail).to receive(:deliver_later)
       run_backup
     end
   end

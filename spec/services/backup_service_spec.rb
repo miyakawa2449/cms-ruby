@@ -10,14 +10,17 @@ RSpec.describe BackupService do
   let(:mock_cfg_backup) { instance_double(ConfigBackupService, execute: "/tmp/backup/config_file.tar.gz") }
   let(:mock_retention) { instance_double(S3RetentionManager, cleanup: nil) }
 
+  let(:success_mail) { instance_double(ActionMailer::MessageDelivery, deliver_later: nil) }
+  let(:failed_mail)  { instance_double(ActionMailer::MessageDelivery, deliver_later: nil) }
+
   before do
     allow(S3Service).to receive(:new).and_return(mock_s3)
     allow(DatabaseBackupService).to receive(:new).with(backup_type).and_return(mock_db_backup)
     allow(StorageBackupService).to receive(:new).with(backup_type).and_return(mock_st_backup)
     allow(ConfigBackupService).to receive(:new).with(backup_type).and_return(mock_cfg_backup)
     allow(S3RetentionManager).to receive(:new).with(backup_type).and_return(mock_retention)
-    allow(BackupMailer).to receive_message_chain(:backup_success, :deliver_later)
-    allow(BackupMailer).to receive_message_chain(:backup_failed, :deliver_later)
+    allow(BackupMailer).to receive(:backup_success).and_return(success_mail)
+    allow(BackupMailer).to receive(:backup_failed).and_return(failed_mail)
     allow(SlackNotifier).to receive(:notify_backup_status)
 
     # Don't actually delete temp files (they're mocked paths)
@@ -76,7 +79,8 @@ RSpec.describe BackupService do
 
       it "sends success notification via BackupMailer" do
         expect(BackupMailer).to receive(:backup_success).with(instance_of(BackupLog))
-          .and_return(double(deliver_later: nil))
+          .and_return(success_mail)
+        expect(success_mail).to receive(:deliver_later)
         service.execute
       end
 
@@ -107,7 +111,8 @@ RSpec.describe BackupService do
 
       it "sends failure notification via BackupMailer" do
         expect(BackupMailer).to receive(:backup_failed).with(instance_of(BackupLog), instance_of(RuntimeError))
-          .and_return(double(deliver_later: nil))
+          .and_return(failed_mail)
+        expect(failed_mail).to receive(:deliver_later)
         expect { service.execute }.to raise_error(RuntimeError)
       end
 
@@ -229,7 +234,7 @@ RSpec.describe BackupService do
     # Feature: phase-7.3-auto-backup, Property 10: バックアップ成功通知
     it "calls BackupMailer.backup_success and SlackNotifier.notify_backup_status on success" do
       expect(BackupMailer).to receive(:backup_success).with(instance_of(BackupLog))
-        .and_return(double(deliver_later: nil))
+        .and_return(success_mail)
       expect(SlackNotifier).to receive(:notify_backup_status).with(instance_of(BackupLog))
       service.execute
     end
@@ -242,7 +247,7 @@ RSpec.describe BackupService do
 
       expect(BackupMailer).to receive(:backup_failed)
         .with(instance_of(BackupLog), instance_of(RuntimeError))
-        .and_return(double(deliver_later: nil))
+        .and_return(failed_mail)
 
       expect { service.execute }.to raise_error(RuntimeError)
     end

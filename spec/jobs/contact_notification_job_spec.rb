@@ -4,8 +4,8 @@ RSpec.describe ContactNotificationJob, type: :job do
   let(:contact) { create(:contact) }
 
   it 'sends slack notification in non-production' do
+    # test環境はもともと production? == false なのでスタブ不要
     allow(SlackNotifier).to receive(:notify_contact).and_return(true)
-    allow(Rails).to receive_message_chain(:env, :production?).and_return(false)
 
     described_class.new.perform(contact)
 
@@ -14,7 +14,7 @@ RSpec.describe ContactNotificationJob, type: :job do
 
   it 'sends emails in production' do
     allow(SlackNotifier).to receive(:notify_contact).and_return(true)
-    allow(Rails).to receive_message_chain(:env, :production?).and_return(true)
+    allow(Rails).to receive(:env).and_return(ActiveSupport::EnvironmentInquirer.new("production"))
 
     admin_mail = instance_double(ActionMailer::MessageDelivery, deliver_now: true)
     user_mail = instance_double(ActionMailer::MessageDelivery, deliver_now: true)

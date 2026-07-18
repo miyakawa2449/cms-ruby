@@ -77,10 +77,11 @@ RSpec.describe "Task 19.2: バックアップ→復元ラウンドトリップ�
 
     allow(mock_s3_client).to receive(:delete_object)
 
-    allow(BackupMailer).to receive_message_chain(:backup_success, :deliver_later)
-    allow(BackupMailer).to receive_message_chain(:backup_failed, :deliver_later)
-    allow(BackupMailer).to receive_message_chain(:restore_success, :deliver_later)
-    allow(BackupMailer).to receive_message_chain(:restore_failed, :deliver_later)
+    mail_delivery = instance_double(ActionMailer::MessageDelivery, deliver_later: nil)
+    allow(BackupMailer).to receive(:backup_success).and_return(mail_delivery)
+    allow(BackupMailer).to receive(:backup_failed).and_return(mail_delivery)
+    allow(BackupMailer).to receive(:restore_success).and_return(mail_delivery)
+    allow(BackupMailer).to receive(:restore_failed).and_return(mail_delivery)
     allow(SlackNotifier).to receive(:notify_backup_status)
   end
 

@@ -63,7 +63,8 @@ RSpec.describe Security::ScannerService do
       end
 
       it "sends notification for high severity" do
-        allow(SecurityMailer).to receive_message_chain(:security_alert, :deliver_later)
+        allow(SecurityMailer).to receive(:security_alert)
+          .and_return(instance_double(ActionMailer::MessageDelivery, deliver_later: nil))
         allow(SlackNotifier).to receive(:enabled?).and_return(false)
 
         service.process

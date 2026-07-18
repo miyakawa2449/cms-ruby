@@ -23,7 +23,8 @@ RSpec.describe Security::MonitorService do
       before do
         allow(service).to receive(:count_requests).and_return(100)
         allow(service).to receive(:count_errors).and_return(10)
-        allow(SecurityMailer).to receive_message_chain(:high_error_rate_alert, :deliver_now)
+        allow(SecurityMailer).to receive(:high_error_rate_alert)
+          .and_return(instance_double(ActionMailer::MessageDelivery, deliver_now: nil))
         allow(SlackNotifier).to receive(:enabled?).and_return(false)
       end
 
@@ -63,7 +64,8 @@ RSpec.describe Security::MonitorService do
     context "when traffic exceeds threshold" do
       before do
         allow(service).to receive(:count_requests).and_return(1500)
-        allow(SecurityMailer).to receive_message_chain(:traffic_spike_alert, :deliver_now)
+        allow(SecurityMailer).to receive(:traffic_spike_alert)
+          .and_return(instance_double(ActionMailer::MessageDelivery, deliver_now: nil))
         allow(SlackNotifier).to receive(:enabled?).and_return(false)
       end
 
