@@ -30,7 +30,11 @@
 > - P3-8: MarkdownRendererサービス化（設定3重複解消・スレッド毎メモ化・OGPカード生成はビュー層からブロック注入で逆流解消・**XSS回帰テスト新設**）
 > - P3-2: タグ一覧の過剰includes削除／P2-4/P2-5: conventions.mdにエラーハンドリング2原則とサービス命名規約を明文化
 >
-> **S1-7の残り（次回）**: P5-6（restore_service_specのFileスタブ・receive_message_chain削減）、P2-6（バックアップ改善: 基底クラス・Backup::Error階層・リストアchecksum検証・確認トークン←挙動追加のため要承認）、P3-6（パンくず・バッジ・統計カードのパーシャル化）。P4-3（ai_assistant.js 620行の分割）はJSテスト基盤が無くリスク>効果のため**S1-7では見送り推奨**（S2のフロント整備時に実施）。P3-4/P3-9はS2連携。
+> **2026-07-18 第6弾完了**: P5-6 + P3-6を実施（cf57354, c52b2fa）。
+> - P5-6: receive_message_chainを全廃（26箇所/11ファイル→0）。メーラー系は`instance_double(ActionMailer::MessageDelivery)`、`Rails.env`は`ActiveSupport::EnvironmentInquirer`に置換。portfolio_controller_specはARチェーンモック依存を捨てて実レコードベースに全面書き換え（pg_search実検索・Works並び順・Works除外を実DB検証）。restore_service_specの`File`クラス全体スタブ（exist?/delete）を撤去し、一時ファイルの後始末を`Dir.glob`実検証に変更。backup_service_specのFileスタブは対象パスが偽物（instance_doubleの戻り値）のため正当として残置
+> - P3-6: `shared/_breadcrumbs`（blog一覧・記事詳細の重複パンくず統合、items配列で階層を渡す）。admin統計カード3種を`admin/shared/`にパーシャル化: `_stat_card`（白）/`_stat_tile`（色付きタイル）/`_stat_icon_card`（ダッシュボード）。適用9画面・計28枚。**Tailwindのpurge対策**: タイル配色は`Admin::StatsHelper::STAT_TILE_COLORS`にクラス名を文字列リテラルで列挙（`"bg-#{color}-50"`のような動的生成はビルド後CSSから消える）。ステータスバッジは3c66bbcで完了済み
+>
+> **S1-7の残り**: P2-6（バックアップ改善: 基底クラス・Backup::Error階層・リストアchecksum検証・確認トークン←挙動追加のため**着手前に剛さんの承認必須**）。P4-3（ai_assistant.js 620行の分割）はJSテスト基盤が無くリスク>効果のため**S1-7では見送り推奨**（S2のフロント整備時に実施）。P3-4/P3-9はS2連携。
 > - P0-4は剛さんの判断で「削除ではなく計測を実装」: SecurityEventテーブル新設（要マイグレーション）+ SecurityLoggerのDB永続化 + CSRFフック + Rack::Attackのblocklist/throttle区別記録 + 90日パージ（recurring.yml）
 > - P0-4の副産物としてContactsControllerの `protect_from_forgery` 再宣言がHTML POSTのCSRF検証を無効化していた穴を発見・修正（JSONもトークン必須に統一。正規クライアントはX-CSRF-Token送信済みのため影響なし）
 > - P0-5の副産物: libvips不在だとActive Storageの画像解析が黙って空になるため、Mac（brew install vips）とCI（libvips42）に導入。本番Dockerイメージは元々libvipsあり
