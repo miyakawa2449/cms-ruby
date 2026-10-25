@@ -2,7 +2,7 @@
 # check=error=true
 
 ARG RUBY_VERSION=3.4.7
-ARG NODE_VERSION=20
+ARG NODE_VERSION=22
 FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 
 # Rails app lives here
@@ -11,15 +11,13 @@ WORKDIR /rails
 # Fix for macOS Docker hash mismatch issue
 RUN echo "Acquire::http::Pipeline-Depth 0; Acquire::http::No-Cache true; Acquire::BrokenProxy true;" > /etc/apt/apt.conf.d/90fix-hashsum-mismatch
 
-# Install base packages including Node.js and Yarn
+# Install base packages
+# apt-get upgrade picks up Debian security fixes not yet in the base image
+# (e.g. libbrotli1 for CVE-2026-111497)
 RUN apt-get clean && apt-get update && \
+    apt-get upgrade -y && \
     apt-get install --no-install-recommends -y curl libjemalloc2 libvips postgresql-client ca-certificates && \
     ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \
-    # Install Node.js from NodeSource
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs && \
-    # Install Yarn
-    npm install -g yarn && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -32,10 +30,15 @@ ENV RAILS_ENV="production" \
 
 # Throw-away build stage
 FROM base AS build
+ARG NODE_VERSION
 
-# Install packages needed to build gems
+# Install packages needed to build gems, plus Node.js and Yarn for asset builds
+# Node.js is only needed at build time and is not shipped in the final image
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config && \
+    curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g yarn && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Install application gems
@@ -61,7 +64,9 @@ RUN yarn build:css
 RUN yarn build
 
 # Precompiling assets for production
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+# node_modules is no longer needed once assets are built
+RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile && \
+    rm -rf node_modules
 
 # Final stage for app image
 FROM base
