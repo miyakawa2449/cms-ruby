@@ -136,6 +136,28 @@ RSpec.describe DatabaseImport::ZipExtractorService do
         )
       end
     end
+
+    context "with a ZIP file containing a path traversal entry" do
+      let(:outside_path) { File.join(Dir.tmpdir, "zip_traversal_#{SecureRandom.hex(4)}.txt") }
+
+      before do
+        create_zip_with_traversal_entry(temp_zip_path, "../#{File.basename(outside_path)}")
+      end
+
+      after do
+        FileUtils.rm_f(outside_path)
+      end
+
+      it "raises InvalidZipError without writing outside the temp directory" do
+        service = described_class.new(temp_zip_path)
+
+        expect { service.call }.to raise_error(
+          DatabaseImport::ZipExtractorService::InvalidZipError,
+          /不正なファイルパスが含まれています/
+        )
+        expect(File.exist?(outside_path)).to be false
+      end
+    end
   end
 
   describe "#cleanup" do
@@ -163,7 +185,7 @@ RSpec.describe DatabaseImport::ZipExtractorService do
 
   # Helper methods to create test ZIP files
   def create_valid_zip(path)
-    Zip::File.open(path, Zip::File::CREATE) do |zipfile|
+    Zip::File.open(path, create: true) do |zipfile|
       data = {
         metadata: { exported_at: Time.current.iso8601 },
         models: {},
@@ -174,7 +196,7 @@ RSpec.describe DatabaseImport::ZipExtractorService do
   end
 
   def create_valid_zip_with_storage(path)
-    Zip::File.open(path, Zip::File::CREATE) do |zipfile|
+    Zip::File.open(path, create: true) do |zipfile|
       data = {
         metadata: { exported_at: Time.current.iso8601 },
         models: {},
@@ -186,14 +208,23 @@ RSpec.describe DatabaseImport::ZipExtractorService do
   end
 
   def create_zip_without_data_json(path)
-    Zip::File.open(path, Zip::File::CREATE) do |zipfile|
+    Zip::File.open(path, create: true) do |zipfile|
       zipfile.get_output_stream("other_file.txt") { |f| f.write("content") }
     end
   end
 
   def create_zip_with_invalid_json(path)
-    Zip::File.open(path, Zip::File::CREATE) do |zipfile|
+    Zip::File.open(path, create: true) do |zipfile|
       zipfile.get_output_stream("data.json") { |f| f.write("not valid json {{{") }
+    end
+  end
+
+  def create_zip_with_traversal_entry(path, entry_name)
+    Zip::OutputStream.open(path) do |zos|
+      zos.put_next_entry("data.json")
+      zos.write(JSON.generate({ models: {} }))
+      zos.put_next_entry(entry_name)
+      zos.write("malicious")
     end
   end
 end

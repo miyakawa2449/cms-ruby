@@ -65,18 +65,23 @@ module DatabaseImport
       entry_count = 0
       Zip::File.open(@zip_file_path) do |zipfile|
         zipfile.each do |entry|
-          entry_path = File.join(@temp_dir, entry.name)
-
           # Security: Prevent path traversal attacks
-          unless entry_path.start_with?(@temp_dir)
+          # (expand_path resolves "..", so a plain start_with? on the joined path is not enough)
+          entry_path = File.expand_path(entry.name, @temp_dir)
+          unless entry_path.start_with?(File.join(@temp_dir, ""))
             raise InvalidZipError, "不正なファイルパスが含まれています: #{entry.name}"
+          end
+
+          # Security: Symlinks could point outside the temp directory
+          if entry.symlink?
+            raise InvalidZipError, "シンボリックリンクは使用できません: #{entry.name}"
           end
 
           if entry.directory?
             FileUtils.mkdir_p(entry_path)
           else
             FileUtils.mkdir_p(File.dirname(entry_path))
-            entry.extract(entry_path)
+            entry.extract(entry.name, destination_directory: @temp_dir)
           end
           entry_count += 1
         end

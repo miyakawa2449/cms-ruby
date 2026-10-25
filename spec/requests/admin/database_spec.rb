@@ -211,7 +211,7 @@ RSpec.describe "Admin::Database", type: :request do
           temp_dir = Dir.mktmpdir
           File.write(File.join(temp_dir, "data.json"), JSON.generate(export_data))
 
-          Zip::File.open(temp_zip_path, Zip::File::CREATE) do |zipfile|
+          Zip::File.open(temp_zip_path, create: true) do |zipfile|
             zipfile.add("data.json", File.join(temp_dir, "data.json"))
           end
 
@@ -289,7 +289,7 @@ RSpec.describe "Admin::Database", type: :request do
         it "redirects with error message" do
           temp_zip_path = Tempfile.new([ "missing", ".zip" ]).path
 
-          Zip::File.open(temp_zip_path, Zip::File::CREATE) do |zipfile|
+          Zip::File.open(temp_zip_path, create: true) do |zipfile|
             zipfile.get_output_stream("other.txt") { |f| f.write("content") }
           end
 

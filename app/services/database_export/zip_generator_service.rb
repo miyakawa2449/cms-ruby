@@ -40,7 +40,7 @@ module DatabaseExport
     def create_zip_file
       zip_path = generate_zip_path
 
-      Zip::File.open(zip_path, Zip::File::CREATE) do |zipfile|
+      Zip::File.open(zip_path, create: true) do |zipfile|
         add_directory_to_zip(zipfile, @temp_dir, "")
       end
 

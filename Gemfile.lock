@@ -611,7 +611,7 @@ GEM
     ruby-vips (2.3.0)
       ffi (~> 1.12)
       logger
-    rubyzip (2.4.1)
+    rubyzip (3.7.0)
     safety_net_attestation (0.5.0)
       jwt (>= 2.0, < 4.0)
     securerandom (0.4.1)
@@ -778,7 +778,7 @@ DEPENDENCIES
   rspec-rails (~> 6.1)
   rubocop-rails-omakase
   ruby-openai (~> 8.3)
-  rubyzip (~> 2.3)
+  rubyzip (~> 3.4)
   selenium-webdriver
   sentry-rails (~> 5.15)
   shoulda-matchers (~> 6.0)
