@@ -1,0 +1,2 @@
+# フラグファイル。サーバー上で `touch nginx/maintenance/on` するとメンテナンス画面に切り替わる
+on
