@@ -5,10 +5,12 @@ require "zip"
 
 RSpec.describe DatabaseImport::ZipExtractorService do
   describe "#call" do
-    let(:temp_zip_path) { Tempfile.new([ "test", ".zip" ]).path }
+    # Tempfile オブジェクトを保持しておかないと、GC の finalizer でファイルが途中で消えることがある
+    let(:temp_zip) { Tempfile.new([ "test", ".zip" ]) }
+    let(:temp_zip_path) { temp_zip.path }
 
     after do
-      FileUtils.rm_f(temp_zip_path)
+      temp_zip.close!
     end
 
     context "with a valid ZIP file containing data.json" do
@@ -161,14 +163,16 @@ RSpec.describe DatabaseImport::ZipExtractorService do
   end
 
   describe "#cleanup" do
-    let(:temp_zip_path) { Tempfile.new([ "test", ".zip" ]).path }
+    # Tempfile オブジェクトを保持しておかないと、GC の finalizer でファイルが途中で消えることがある
+    let(:temp_zip) { Tempfile.new([ "test", ".zip" ]) }
+    let(:temp_zip_path) { temp_zip.path }
 
     before do
       create_valid_zip(temp_zip_path)
     end
 
     after do
-      FileUtils.rm_f(temp_zip_path)
+      temp_zip.close!
     end
 
     it "removes the temporary directory" do
