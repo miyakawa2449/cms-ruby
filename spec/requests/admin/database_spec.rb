@@ -197,7 +197,9 @@ RSpec.describe "Admin::Database", type: :request do
       end
 
       context "with valid ZIP file" do
-        let(:temp_zip_path) { Tempfile.new([ "test", ".zip" ]).path }
+        # Tempfile オブジェクトを保持しておかないと、GC の finalizer でファイルが途中で消えることがある
+        let(:temp_zip) { Tempfile.new([ "test", ".zip" ]) }
+        let(:temp_zip_path) { temp_zip.path }
 
         before do
           # Create export data first
@@ -230,7 +232,7 @@ RSpec.describe "Admin::Database", type: :request do
         end
 
         after do
-          FileUtils.rm_f(temp_zip_path)
+          temp_zip.close!
         end
 
         it "imports data and redirects to dashboard" do
@@ -287,7 +289,8 @@ RSpec.describe "Admin::Database", type: :request do
 
       context "with ZIP missing data.json" do
         it "redirects with error message" do
-          temp_zip_path = Tempfile.new([ "missing", ".zip" ]).path
+          temp_zip = Tempfile.new([ "missing", ".zip" ])
+          temp_zip_path = temp_zip.path
 
           Zip::File.open(temp_zip_path, create: true) do |zipfile|
             zipfile.get_output_stream("other.txt") { |f| f.write("content") }
@@ -301,7 +304,7 @@ RSpec.describe "Admin::Database", type: :request do
           follow_redirect!
           expect(response.body).to include("data.jsonファイルが見つかりません")
 
-          FileUtils.rm_f(temp_zip_path)
+          temp_zip.close!
         end
       end
     end
