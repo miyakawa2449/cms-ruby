@@ -124,6 +124,7 @@ Password: ${ADMIN_PASSWORD:-(set in .env)}
 ```bash
 # RSpecテストスイート
 bundle exec rspec
+bin/rspec-ci   # CI と同じ条件(COVERAGE=true 等)で実行
 
 # セキュリティ監査
 bundle exec brakeman
