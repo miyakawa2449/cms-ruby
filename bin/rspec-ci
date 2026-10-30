@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# .github/workflows/ci.yml の rspec ジョブと同じ条件で RSpec を実行する。
+# 条件(環境変数・手順)を変えるときは、このスクリプトと ci.yml の両方を同時に直すこと。
+#
+# 使い方:
+#   bin/rspec-ci                                     # CI と同じ条件で全テスト
+#   bin/rspec-ci --no-selenium --no-assets spec/models
+#
+# オプション:
+#   --no-assets    yarn install / build:css / build を飛ばす(app/assets/builds に成果物がある前提)
+#   --no-selenium  SELENIUM を付けない(Chrome がない環境向け)
+#   それ以外の引数はそのまま rspec に渡す
+#
+# 環境変数は未設定のときだけ既定値を入れる。CI では ci.yml の env の値がそのまま使われる。
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+run_assets=true
+use_selenium=true
+rspec_args=()
+for arg in "$@"; do
+  case "$arg" in
+    --no-assets) run_assets=false ;;
+    --no-selenium) use_selenium=false ;;
+    *) rspec_args+=("$arg") ;;
+  esac
+done
+
+export RAILS_ENV="${RAILS_ENV:-test}"
+export COVERAGE="${COVERAGE:-true}"
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp}"
+# 既定値は開発用 docker-compose.yml の db サービスに合わせる(CI は postgres:postgres)
+export DATABASE_URL="${DATABASE_URL:-postgres://portfolio:portfolio_password@localhost:5432}"
+# テスト専用のダミー値(ci.yml と同じ)
+export ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY="${ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}"
+export ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY="${ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY:-abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789}"
+export ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT="${ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT:-00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff}"
+# CHROME_BIN / CHROMEDRIVER_PATH は CI では setup-chrome の出力が入る。ローカルでは未設定なら spec/support/capybara.rb の既定に任せる
+
+if [[ "$use_selenium" == true ]]; then
+  export SELENIUM="${SELENIUM:-true}"
+else
+  unset SELENIUM
+fi
+
+print_summary() {
+  local status=$1
+  local masked_url
+  masked_url=$(printf '%s' "$DATABASE_URL" | sed -E 's#(://[^:/@]*):[^@]*@#\1:****@#')
+  echo "bin/rspec-ci: exit code=${status} COVERAGE=${COVERAGE} DATABASE_URL=${masked_url}"
+}
+trap 'print_summary $?' EXIT
+
+if [[ "$run_assets" == true ]]; then
+  yarn install --frozen-lockfile
+  yarn build:css
+  yarn build
+fi
+
+bin/rails db:test:prepare
+# ${arr[@]+...} は macOS 標準の bash 3.2 で set -u かつ空配列のときのエラーを避けるため
+bundle exec rspec --no-fail-fast ${rspec_args[@]+"${rspec_args[@]}"}

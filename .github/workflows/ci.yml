@@ -107,12 +107,8 @@ jobs:
         # Yarn一本化（package-lock.jsonは削除済みのためnpm ciは使えない）
         run: yarn install --frozen-lockfile
 
-      - name: Build assets
-        run: |
-          yarn build:css
-          yarn build
-
       - name: Run RSpec with coverage
+        # 条件は bin/rspec-ci と共通(ローカルでも同じスクリプトを使う)。env を変えるときは両方直す
         env:
           RAILS_ENV: test
           COVERAGE: "true"
@@ -126,7 +122,7 @@ jobs:
           ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"
           # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare && bundle exec rspec --no-fail-fast
+        run: bin/rspec-ci
 
       - name: Dump ChromeDriver log
         if: always()
